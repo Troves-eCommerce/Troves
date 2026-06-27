@@ -1,3 +1,5 @@
+import org.gradle.kotlin.dsl.dependencies
+
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidMultiplatformLibrary)
@@ -70,6 +72,9 @@ kotlin {
                 implementation(libs.ktor.logging)
                 implementation(libs.ktor.client.content.negotiation)
                 implementation(libs.kotlinx.serialization)
+                implementation(libs.androidx.datastore)
+                implementation(libs.androidx.datastore.preferences)
+                implementation(libs.okio)
                 implementation(project(":domain"))
 
                 // Add KMP dependencies here
