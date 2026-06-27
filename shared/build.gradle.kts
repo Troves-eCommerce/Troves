@@ -39,7 +39,7 @@ kotlin {
     room {
         schemaDirectory("$projectDir/schemas")
     }
-    
+
     sourceSets {
         androidMain.dependencies {
             implementation(libs.compose.uiToolingPreview)
