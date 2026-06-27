@@ -2,18 +2,17 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidMultiplatformLibrary)
     alias(libs.plugins.android.lint)
+    alias(libs.plugins.kotlinx.serialization)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
 }
 
 kotlin {
 
-    // Target declarations - add or remove as needed below. These define
-    // which platforms this KMP module supports.
-    // See: https://kotlinlang.org/docs/multiplatform-discover-project.html#targets
+    // Target declarations
     android {
         namespace = "com.example.presintation"
-        compileSdk = 36
+        compileSdk = 34 // تم التوحيد لتجنب أخطاء الـ SDK
         minSdk = 24
 
         withHostTestBuilder {
@@ -26,30 +25,42 @@ kotlin {
         }
     }
 
-    // For iOS targets, this is also where you should
-    // configure native binary output. For more information, see:
-    // iOS targets are handled by the :shared module which assembles the XCFramework.
-    // Compose Multiplatform for iOS requires a UIKit bridge that lives in the app layer,
-    // not in a library module. ViewModels here are KMP-compatible and will work on iOS
-    // once wired through :shared.
+    // iOS targets
+    val xcfName = "presintationKit"
 
-    // Source set declarations.
-    // Declaring a target automatically creates a source set with the same name. By default, the
-    // Kotlin Gradle Plugin creates additional source sets that depend on each other, since it is
-    // common to share sources between related targets.
-    // See: https://kotlinlang.org/docs/multiplatform-hierarchy.html
+    iosArm64 {
+        binaries.framework {
+            baseName = xcfName
+        }
+    }
+
+    iosSimulatorArm64 {
+        binaries.framework {
+            baseName = xcfName
+        }
+    }
+
+    // Source set declarations
     sourceSets {
         commonMain {
             dependencies {
                 implementation(libs.kotlin.stdlib)
+                implementation(libs.kotlinx.serialization)
+                implementation(libs.androidx.navigation3.runtime)
+                implementation(libs.androidx.navigation3.ui)
+                implementation(libs.jetbrains.lifecycle.viewmodelNavigation3)
+                implementation(libs.jetbrains.material3.adaptiveNavigation3)
+
                 implementation(project(":domain"))
                 implementation(project(":designSystem"))
 
-                // Compose
+                // Compose & Resources
                 implementation(libs.compose.ui)
                 implementation(libs.compose.foundation)
                 implementation(libs.compose.material3)
                 implementation(libs.compose.runtime)
+                implementation(libs.compose.components.resources)
+                implementation(libs.compose.uiToolingPreview)
 
                 // ViewModel
                 implementation(libs.androidx.lifecycle.viewmodelCompose)
@@ -70,9 +81,7 @@ kotlin {
 
         androidMain {
             dependencies {
-                // Add Android-specific dependencies here. Note that this source set depends on
-                // commonMain by default and will correctly pull the Android artifacts of any KMP
-                // dependencies declared in commonMain.
+                // Add Android-specific dependencies here.
             }
         }
 
@@ -84,5 +93,4 @@ kotlin {
             }
         }
     }
-
 }

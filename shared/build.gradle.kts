@@ -21,7 +21,7 @@ kotlin {
         }
     }
     
-    androidLibrary {
+    android {
        namespace = "com.troves.shared"
        compileSdk = libs.versions.android.compileSdk.get().toInt()
        minSdk = libs.versions.android.minSdk.get().toInt()
@@ -64,7 +64,7 @@ kotlin {
             implementation(libs.androidx.lifecycle.runtimeCompose)
 
             //navigation
-            implementation(libs.jetbrains.navigation3.ui)
+            implementation(libs.jetbrains.navigation.compose)
             implementation(libs.jetbrains.material3.adaptiveNavigation3)
             implementation(libs.jetbrains.lifecycle.viewmodelNavigation3)
 
