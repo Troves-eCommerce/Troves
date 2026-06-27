@@ -50,6 +50,9 @@ kotlin {
 
         }
         commonMain.dependencies {
+            implementation(project(":domain"))
+            implementation(project(":Data"))
+            implementation(project(":presintation"))
             implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)
             implementation(libs.compose.material3)
