@@ -1,7 +1,18 @@
+import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
+import java.util.Properties
+
+// ── Load credentials from local.properties (never committed to VCS) ──────────
+val localProperties = Properties().apply {
+    val file = rootProject.file("local.properties")
+    if (file.exists()) file.inputStream().use { load(it) }
+}
+
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidMultiplatformLibrary)
     alias(libs.plugins.android.lint)
+    alias(libs.plugins.buildKonfig)
+    alias(libs.plugins.kotlinx.serialization)
 }
 
 kotlin {
@@ -11,11 +22,7 @@ kotlin {
     // See: https://kotlinlang.org/docs/multiplatform-discover-project.html#targets
     android {
         namespace = "com.example.data"
-        compileSdk {
-            version = release(36) {
-                minorApiLevel = 1
-            }
-        }
+        compileSdk = 36
         minSdk = 24
 
         withHostTestBuilder {
@@ -59,8 +66,16 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(libs.kotlin.stdlib)
+                implementation(libs.ktor.serialization.kotlinx.json)
+                implementation(libs.ktor.client.core)
+                implementation(libs.ktor.logging)
+                implementation(libs.ktor.client.content.negotiation)
+                implementation(libs.kotlinx.serialization)
                 implementation(project(":domain"))
+
                 // Add KMP dependencies here
+                implementation(libs.koin.core)
+                implementation(libs.bundles.ktor)
             }
         }
 
@@ -72,9 +87,7 @@ kotlin {
 
         androidMain {
             dependencies {
-                // Add Android-specific dependencies here. Note that this source set depends on
-                // commonMain by default and will correctly pull the Android artifacts of any KMP
-                // dependencies declared in commonMain.
+                implementation(libs.ktor.client.android)
             }
         }
 
@@ -88,13 +101,29 @@ kotlin {
 
         iosMain {
             dependencies {
-                // Add iOS-specific dependencies here. This a source set created by Kotlin Gradle
-                // Plugin (KGP) that each specific iOS target (e.g., iosX64) depends on as
-                // part of KMP’s default source set hierarchy. Note that this source set depends
-                // on common by default and will correctly pull the iOS artifacts of any
-                // KMP dependencies declared in commonMain.
+                implementation(libs.ktor.client.darwin)
             }
         }
     }
 
+}
+
+// ── BuildKonfig: inject local.properties secrets as compile-time constants ───
+buildkonfig {
+    packageName = "com.example.data"
+
+    defaultConfigs {
+        buildConfigField(
+            STRING, "SHOPIFY_API_KEY",
+            localProperties.getProperty("SHOPIFY_API_KEY") ?: error("SHOPIFY_API_KEY not set in local.properties")
+        )
+        buildConfigField(
+            STRING, "SHOPIFY_PASSWORD",
+            localProperties.getProperty("SHOPIFY_PASSWORD") ?: error("SHOPIFY_PASSWORD not set in local.properties")
+        )
+        buildConfigField(
+            STRING, "SHOPIFY_HOSTNAME",
+            localProperties.getProperty("SHOPIFY_HOSTNAME") ?: error("SHOPIFY_HOSTNAME not set in local.properties")
+        )
+    }
 }

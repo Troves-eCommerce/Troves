@@ -11,11 +11,7 @@ kotlin {
     // See: https://kotlinlang.org/docs/multiplatform-discover-project.html#targets
     android {
         namespace = "com.example.domain"
-        compileSdk {
-            version = release(36) {
-                minorApiLevel = 1
-            }
-        }
+        compileSdk = 36
         minSdk = 24
 
         withHostTestBuilder {
@@ -59,6 +55,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(libs.kotlin.stdlib)
+                implementation("io.insert-koin:koin-core:3.5.3")
                 // Add KMP dependencies here
             }
         }
