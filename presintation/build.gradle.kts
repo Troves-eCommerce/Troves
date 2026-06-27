@@ -64,7 +64,8 @@ kotlin {
                 implementation(libs.kotlin.stdlib)
 
                 implementation(libs.kotlinx.serialization)
-                implementation(libs.jetbrains.navigation3.ui)
+                implementation(libs.androidx.navigation3.runtime)
+                implementation(libs.androidx.navigation3.ui)
                 implementation(libs.jetbrains.lifecycle.viewmodelNavigation3)
                 implementation(libs.jetbrains.material3.adaptiveNavigation3)
 
