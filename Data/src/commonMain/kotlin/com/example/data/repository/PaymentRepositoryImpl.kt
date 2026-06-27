@@ -1,4 +1,5 @@
 package com.example.data.repository
 
-class PaymentRepositoryImpl {
-}
+import com.example.domain.PaymentRepository
+
+class PaymentRepositoryImpl : PaymentRepository

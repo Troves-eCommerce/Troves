@@ -1,4 +1,5 @@
 package com.example.data.repository
 
-class AuthenticationRepositoryImpl {
-}
+import com.example.domain.AuthenticationRepository
+
+class AuthenticationRepositoryImpl : AuthenticationRepository
