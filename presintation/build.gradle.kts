@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidMultiplatformLibrary)
     alias(libs.plugins.android.lint)
+    alias(libs.plugins.kotlinx.serialization)
 }
 
 kotlin {
@@ -59,6 +60,12 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(libs.kotlin.stdlib)
+
+                implementation(libs.kotlinx.serialization)
+                implementation(libs.jetbrains.navigation3.ui)
+                implementation(libs.jetbrains.lifecycle.viewmodelNavigation3)
+                implementation(libs.jetbrains.material3.adaptiveNavigation3)
+
                 implementation(project(":domain"))
                 implementation(project(":designSystem"))
                 // Add KMP dependencies here
