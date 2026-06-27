@@ -50,6 +50,7 @@ kotlin {
 
         }
         commonMain.dependencies {
+            implementation("io.insert-koin:koin-core:3.5.3")
             implementation(project(":domain"))
             implementation(project(":Data"))
             implementation(project(":presintation"))

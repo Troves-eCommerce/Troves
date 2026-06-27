@@ -66,6 +66,9 @@ kotlin {
                 implementation(libs.kotlin.stdlib)
                 implementation(project(":domain"))
                 implementation(project(":designSystem"))
+
+                implementation(libs.koin.core)
+                implementation(libs.koin.compose)
                 // Add KMP dependencies here
             }
         }
