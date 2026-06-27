@@ -1,7 +1,7 @@
 package com.troves.di
 
-import com.example.data.di.dataModule
-import com.example.domain.di.domainModule
+import com.troves.data.di.dataModule
+import com.troves.domain.di.domainModule
 import org.koin.core.context.startKoin
 import org.koin.dsl.KoinAppDeclaration
 

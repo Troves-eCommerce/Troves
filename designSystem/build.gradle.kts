@@ -1,5 +1,3 @@
-import org.jetbrains.compose.compose
-
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidMultiplatformLibrary)
@@ -14,7 +12,7 @@ kotlin {
 
     // Target declarations
     android {
-        namespace = "com.example.designsystem"
+        namespace = "com.troves.designsystem"
         compileSdk {
             version = release(36) {
                 minorApiLevel = 1

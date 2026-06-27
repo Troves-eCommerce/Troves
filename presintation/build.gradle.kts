@@ -11,7 +11,7 @@ kotlin {
 
     // Target declarations
     android {
-        namespace = "com.example.presintation"
+        namespace = "com.troves.presintation"
         compileSdk = 34 // تم التوحيد لتجنب أخطاء الـ SDK
         minSdk = 24
 

@@ -53,7 +53,7 @@ kotlin {
         commonMain.dependencies {
             implementation(libs.koin.core)
             implementation(project(":domain"))
-            implementation(project(":Data"))
+            implementation(project(":data"))
             implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)
             implementation(libs.compose.material3)
