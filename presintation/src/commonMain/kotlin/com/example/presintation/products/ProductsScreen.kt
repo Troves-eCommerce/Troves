@@ -130,10 +130,15 @@ private fun ProductCard(product: Product) {
 
 @Composable
 private fun StatusChip(status: String) {
-    val (bg, fg) = when (status.lowercase()) {
-        "active"   -> MaterialTheme.colorScheme.primaryContainer to MaterialTheme.colorScheme.onPrimaryContainer
-        "draft"    -> MaterialTheme.colorScheme.secondaryContainer to MaterialTheme.colorScheme.onSecondaryContainer
-        else       -> MaterialTheme.colorScheme.errorContainer to MaterialTheme.colorScheme.onErrorContainer
+    val bg = when (status) {
+        "active", "Active", "ACTIVE" -> MaterialTheme.colorScheme.primaryContainer
+        "draft", "Draft", "DRAFT"    -> MaterialTheme.colorScheme.secondaryContainer
+        else                         -> MaterialTheme.colorScheme.errorContainer
+    }
+    val fg = when (status) {
+        "active", "Active", "ACTIVE" -> MaterialTheme.colorScheme.onPrimaryContainer
+        "draft", "Draft", "DRAFT"    -> MaterialTheme.colorScheme.onSecondaryContainer
+        else                         -> MaterialTheme.colorScheme.onErrorContainer
     }
     Box(
         modifier = Modifier
@@ -142,7 +147,7 @@ private fun StatusChip(status: String) {
             .padding(horizontal = 8.dp, vertical = 2.dp)
     ) {
         Text(
-            text = status.replaceFirstChar { it.uppercaseChar() },
+            text = status,
             style = MaterialTheme.typography.labelSmall,
             color = fg
         )
