@@ -1,4 +1,4 @@
-package com.example.data.source.remote.service
+package com.example.domain
 
 sealed interface Result<out R> {
     data class Success<out T>(val value: T) : Result<T>

@@ -1,12 +1,10 @@
 package com.example.presintation.di
 
+import com.example.presintation.products.ProductsViewModel
+import org.koin.compose.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
-/**
- * Presentation-layer Koin module.
- * ViewModels are registered here as screens are built out.
- */
 val presentationModule = module {
-    // ViewModels will be registered here, e.g.:
-    // viewModel { ProductsViewModel(get()) }
+    // ViewModels — koin-compose-viewmodel handles lifecycle automatically
+    viewModel { ProductsViewModel(get()) }
 }

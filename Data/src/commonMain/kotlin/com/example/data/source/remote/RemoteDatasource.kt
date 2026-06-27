@@ -5,7 +5,7 @@ import com.example.data.source.remote.dto.CollectionImage
 import com.example.data.source.remote.dto.MarketingEventsResponse
 import com.example.data.source.remote.dto.ProductResponse
 import com.example.data.source.remote.dto.ProductDto
-import com.example.data.source.remote.service.Result
+import com.example.domain.Result
 
 interface RemoteDatasource {
     //region product

@@ -2,7 +2,6 @@ package com.troves.di
 
 import com.example.data.di.dataModule
 import com.example.domain.di.domainModule
-import com.example.presintation.di.presentationModule
 import org.koin.core.context.startKoin
 import org.koin.dsl.KoinAppDeclaration
 
@@ -16,7 +15,7 @@ fun initKoin(appDeclaration: KoinAppDeclaration = {}) {
         modules(
             dataModule,
             domainModule,
-            presentationModule
+            platformModule()
         )
     }
 }

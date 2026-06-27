@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidMultiplatformLibrary)
     alias(libs.plugins.android.lint)
+    alias(libs.plugins.composeMultiplatform)
+    alias(libs.plugins.composeCompiler)
 }
 
 kotlin {
@@ -11,11 +13,7 @@ kotlin {
     // See: https://kotlinlang.org/docs/multiplatform-discover-project.html#targets
     android {
         namespace = "com.example.presintation"
-        compileSdk {
-            version = release(36) {
-                minorApiLevel = 1
-            }
-        }
+        compileSdk = 36
         minSdk = 24
 
         withHostTestBuilder {
@@ -30,30 +28,10 @@ kotlin {
 
     // For iOS targets, this is also where you should
     // configure native binary output. For more information, see:
-    // https://kotlinlang.org/docs/multiplatform-build-native-binaries.html#build-xcframeworks
-
-    // A step-by-step guide on how to include this library in an XCode
-    // project can be found here:
-    // https://developer.android.com/kotlin/multiplatform/migrate
-    val xcfName = "presintationKit"
-
-    iosX64 {
-        binaries.framework {
-            baseName = xcfName
-        }
-    }
-
-    iosArm64 {
-        binaries.framework {
-            baseName = xcfName
-        }
-    }
-
-    iosSimulatorArm64 {
-        binaries.framework {
-            baseName = xcfName
-        }
-    }
+    // iOS targets are handled by the :shared module which assembles the XCFramework.
+    // Compose Multiplatform for iOS requires a UIKit bridge that lives in the app layer,
+    // not in a library module. ViewModels here are KMP-compatible and will work on iOS
+    // once wired through :shared.
 
     // Source set declarations.
     // Declaring a target automatically creates a source set with the same name. By default, the
@@ -67,9 +45,20 @@ kotlin {
                 implementation(project(":domain"))
                 implementation(project(":designSystem"))
 
+                // Compose
+                implementation(libs.compose.ui)
+                implementation(libs.compose.foundation)
+                implementation(libs.compose.material3)
+                implementation(libs.compose.runtime)
+
+                // ViewModel
+                implementation(libs.androidx.lifecycle.viewmodelCompose)
+                implementation(libs.androidx.lifecycle.runtimeCompose)
+
+                // Koin
                 implementation(libs.koin.core)
                 implementation(libs.koin.compose)
-                // Add KMP dependencies here
+                implementation(libs.koin.compose.viewmodel)
             }
         }
 
@@ -92,16 +81,6 @@ kotlin {
                 implementation(libs.androidx.core)
                 implementation(libs.androidx.junit)
                 implementation(libs.androidx.runner)
-            }
-        }
-
-        iosMain {
-            dependencies {
-                // Add iOS-specific dependencies here. This a source set created by Kotlin Gradle
-                // Plugin (KGP) that each specific iOS target (e.g., iosX64) depends on as
-                // part of KMP’s default source set hierarchy. Note that this source set depends
-                // on common by default and will correctly pull the iOS artifacts of any
-                // KMP dependencies declared in commonMain.
             }
         }
     }

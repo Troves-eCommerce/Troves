@@ -6,6 +6,7 @@ import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.request
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpStatusCode
+import com.example.domain.Result
 
 suspend inline fun <reified T> HttpClient.getResults(
     block: HttpRequestBuilder.() -> Unit

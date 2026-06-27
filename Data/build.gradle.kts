@@ -22,11 +22,7 @@ kotlin {
     // See: https://kotlinlang.org/docs/multiplatform-discover-project.html#targets
     android {
         namespace = "com.example.data"
-        compileSdk {
-            version = release(36) {
-                minorApiLevel = 1
-            }
-        }
+        compileSdk = 36
         minSdk = 24
 
         withHostTestBuilder {
