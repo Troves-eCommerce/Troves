@@ -34,8 +34,8 @@ fun IconButton(
 
 @Preview
 @Composable
-private fun IconButtonPreview() {
-    SpTheme() {
+fun IconButtonPreview() {
+    SpTheme {
         IconButton(
             onClick = {},
             icon = ColorPainter(Color.Black)

@@ -80,7 +80,8 @@ kotlin {
 
         androidMain {
             dependencies {
-                // Add Android-specific dependencies here.
+                implementation(libs.compose.uiTooling)
+                implementation(libs.compose.uiToolingPreview)
             }
         }
 

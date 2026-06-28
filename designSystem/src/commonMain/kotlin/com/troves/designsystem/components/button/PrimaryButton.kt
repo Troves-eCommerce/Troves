@@ -51,7 +51,7 @@ fun PrimaryButton(
 
 @Preview
 @Composable
-private fun PreviewPrimaryButton() {
+fun PreviewPrimaryButton() {
     SpTheme(
         isDarkTheme = false,
         locale = Locale("ar")
