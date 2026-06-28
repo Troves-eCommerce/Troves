@@ -8,8 +8,11 @@ plugins {
     alias(libs.plugins.composeCompiler)
 }
 
-kotlin {
+compose.resources {
+    publicResClass = true
+}
 
+kotlin {
     // Target declarations
     android {
         namespace = "com.troves.designsystem"
