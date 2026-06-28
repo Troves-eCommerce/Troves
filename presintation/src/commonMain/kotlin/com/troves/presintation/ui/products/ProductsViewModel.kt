@@ -2,8 +2,8 @@ package com.troves.presintation.products
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.troves.domain.GetProductsUseCase
-import com.troves.domain.Product
+import com.troves.domain.usecase.shared.GetProductsUseCase
+import com.troves.domain.entity.Product
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

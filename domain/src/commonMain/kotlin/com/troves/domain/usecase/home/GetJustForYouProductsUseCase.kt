@@ -1,9 +1,8 @@
 package com.troves.domain.home
 
-import com.troves.domain.Product
+import com.troves.domain.entity.Product
 import com.troves.domain.Result
 
-/** Fetches the personalised "Just For You" product list. */
 class GetJustForYouProductsUseCase(
     private val repository: HomeRepository,
 ) {

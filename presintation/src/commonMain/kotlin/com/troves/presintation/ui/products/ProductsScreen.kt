@@ -13,7 +13,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.troves.domain.Product
+import com.troves.domain.entity.Product
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable

@@ -1,8 +1,8 @@
 package com.troves.domain.home
 
 import com.troves.domain.Result
+import com.troves.domain.entity.Category
 
-/** Fetches the categories shown in the Home "Categories" rail. */
 class GetCategoriesUseCase(
     private val repository: HomeRepository,
 ) {

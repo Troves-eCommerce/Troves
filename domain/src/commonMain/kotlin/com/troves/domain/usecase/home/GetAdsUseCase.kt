@@ -1,8 +1,8 @@
 package com.troves.domain.home
 
 import com.troves.domain.Result
+import com.troves.domain.entity.Ad
 
-/** Fetches the promotional banners for the Home ad slider. */
 class GetAdsUseCase(
     private val repository: HomeRepository,
 ) {
