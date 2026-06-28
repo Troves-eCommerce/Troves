@@ -6,8 +6,8 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import androidx.savedstate.serialization.SavedStateConfiguration
-import com.example.presintation.ui.Home.HomeScreen
-import com.example.presintation.ui.Home.ProductDetailsScreen
+import com.example.presintation.ui.home.HomeScreen
+import com.example.presintation.ui.productdetails.ProductDetailsScreen
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 

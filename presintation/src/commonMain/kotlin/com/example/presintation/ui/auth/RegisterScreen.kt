@@ -1,4 +1,4 @@
-package com.example.presintation.ui.Auth
+package com.example.presintation.ui.auth
 import androidx.compose.runtime.Composable
 
 @Composable

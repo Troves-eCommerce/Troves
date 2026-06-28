@@ -1,4 +1,4 @@
-package com.example.presintation.ui.Home
+package com.example.presintation.ui.home
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,12 +10,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 @Composable
-fun ProductDetailsScreen(productId: String, onNavigateBack: () -> Unit) {
+fun HomeScreen(onNavigateToProduct: (String) -> Unit) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text("Product Details Screen for ID: $productId")
-            Button(onClick = onNavigateBack) {
-                Text("Back to Home")
+            Text("Home Screen")
+            Button(onClick = { onNavigateToProduct("123") }) {
+                Text("Go to Product 123")
             }
         }
     }
