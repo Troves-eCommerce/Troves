@@ -1,11 +1,11 @@
 package com.troves.domain.di
 
-import com.troves.domain.GetProductsUseCase
-import com.troves.domain.home.GetAdsUseCase
-import com.troves.domain.home.GetBrandsUseCase
-import com.troves.domain.home.GetCategoriesUseCase
-import com.troves.domain.home.GetJustForYouProductsUseCase
-import com.troves.domain.home.GetTrendingProductsUseCase
+import com.troves.domain.usecase.shared.GetProductsUseCase
+import com.troves.domain.usecase.home.GetAdsUseCase
+import com.troves.domain.usecase.home.GetBrandsUseCase
+import com.troves.domain.usecase.home.GetCategoriesUseCase
+import com.troves.domain.usecase.home.GetJustForYouProductsUseCase
+import com.troves.domain.usecase.home.GetTrendingProductsUseCase
 import org.koin.dsl.module
 
 val domainModule = module {

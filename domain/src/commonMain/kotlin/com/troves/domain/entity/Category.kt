@@ -1,4 +1,4 @@
-package com.troves.domain.home
+package com.troves.domain.entity
 
 /**
  * A product category surfaced in the Home "Categories" rail.

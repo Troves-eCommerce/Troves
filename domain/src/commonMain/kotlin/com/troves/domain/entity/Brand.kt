@@ -1,4 +1,4 @@
-package com.troves.domain.home
+package com.troves.domain.entity
 
 /**
  * A shoppable brand surfaced in the Home "Brands" rail.

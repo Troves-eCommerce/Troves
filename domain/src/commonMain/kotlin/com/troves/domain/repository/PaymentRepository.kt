@@ -1,4 +1,4 @@
-package com.troves.domain
+package com.troves.domain.repository
 
 interface PaymentRepository {
 }

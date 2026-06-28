@@ -1,4 +1,4 @@
-package com.troves.domain.home
+package com.troves.domain.entity
 
 /**
  * Promotional banner shown in the Home ad slider.
