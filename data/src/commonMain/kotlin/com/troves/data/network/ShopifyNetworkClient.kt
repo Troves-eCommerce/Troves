@@ -19,6 +19,10 @@ fun provideHttpClient(): HttpClient = HttpClient {
             ignoreUnknownKeys = true
             prettyPrint = true
             isLenient = true
+            // Shopify omits optional fields (e.g. a collection's `image`) entirely.
+            // Without this, kotlinx treats nullable-without-default props as required
+            // and the whole response fails to decode.
+            explicitNulls = false
         })
     }
     install(Logging) {

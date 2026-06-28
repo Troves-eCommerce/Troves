@@ -2,6 +2,7 @@ package com.troves.data.source.remote
 
 import com.troves.data.source.remote.dto.Collection
 import com.troves.data.source.remote.dto.CollectionImage
+import com.troves.data.source.remote.dto.CustomCollectionResponse
 import com.troves.data.source.remote.dto.MarketingEventsResponse
 import com.troves.data.source.remote.dto.ProductResponse
 import com.troves.data.source.remote.dto.ProductDto
@@ -35,11 +36,11 @@ class RemoteDatasourceImpl(
     }
 
     override suspend fun getAllBrands(): Result<Collection> {
-        TODO("Not yet implemented")
+        return trovesApiService.getAllBrands()
     }
 
-    override suspend fun getCategory(): Result<Collection> {
-        TODO("Not yet implemented")
+    override suspend fun getCategory(): Result<CustomCollectionResponse> {
+        return trovesApiService.getCategory()
     }
 
     override suspend fun getAllEventsById(eventId: String): MarketingEventsResponse {

@@ -3,6 +3,7 @@ package com.troves.data.source.remote.service
 import com.troves.data.source.remote.RemoteDatasource
 import com.troves.data.source.remote.dto.Collection
 import com.troves.data.source.remote.dto.CollectionImage
+import com.troves.data.source.remote.dto.CustomCollectionResponse
 import com.troves.data.source.remote.dto.MarketingEventsResponse
 import com.troves.data.source.remote.dto.ProductDto
 import com.troves.data.source.remote.dto.ProductResponse
@@ -50,13 +51,17 @@ class TrovesApiServiceImpl(
         TODO("Not yet implemented")
     }
 
-    override suspend fun getAllBrands(): Result<Collection> {
-        TODO("Not yet implemented")
-    }
+    override suspend fun getAllBrands(): Result<Collection> =
+        ktorClient.getResults {
+            method = HttpMethod.Get
+            url { path("smart_collections.json") }
+        }
 
-    override suspend fun getCategory(): kotlin.Result<Collection> {
-        TODO("Not yet implemented")
-    }
+    override suspend fun getCategory(): Result<CustomCollectionResponse> =
+        ktorClient.getResults {
+            method = HttpMethod.Get
+            url { path("custom_collections.json") }
+        }
 
 
     override suspend fun getAllEventsById(eventId: String): MarketingEventsResponse {

@@ -2,6 +2,7 @@ package com.troves.data.source.remote
 
 import com.troves.data.source.remote.dto.Collection
 import com.troves.data.source.remote.dto.CollectionImage
+import com.troves.data.source.remote.dto.CustomCollectionResponse
 import com.troves.data.source.remote.dto.MarketingEventsResponse
 import com.troves.data.source.remote.dto.ProductResponse
 import com.troves.data.source.remote.dto.ProductDto
@@ -21,7 +22,7 @@ interface RemoteDatasource {
     //region brands
 
     suspend fun getAllBrands(): Result<Collection>
-    suspend fun getCategory(): Result<Collection>
+    suspend fun getCategory(): Result<CustomCollectionResponse>
 
     //endregion
 
