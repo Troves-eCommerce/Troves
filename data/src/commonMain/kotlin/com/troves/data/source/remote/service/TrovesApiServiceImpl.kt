@@ -1,29 +1,45 @@
-package com.troves.data.source.remote
+package com.troves.data.source.remote.service
 
+import com.troves.data.source.remote.RemoteDatasource
 import com.troves.data.source.remote.dto.Collection
 import com.troves.data.source.remote.dto.CollectionImage
 import com.troves.data.source.remote.dto.MarketingEventsResponse
-import com.troves.data.source.remote.dto.ProductResponse
 import com.troves.data.source.remote.dto.ProductDto
-import com.troves.data.source.remote.service.TrovesApiService
+import com.troves.data.source.remote.dto.ProductResponse
 import com.troves.domain.Result
+import io.ktor.client.HttpClient
+import io.ktor.http.HttpMethod
+import io.ktor.http.path
 
-class RemoteDatasourceImpl(
-    private val trovesApiService: TrovesApiService
-): RemoteDatasource {
+class TrovesApiServiceImpl(
+    private val ktorClient: HttpClient
+) : TrovesApiService {
     override suspend fun createProduct(productDto: ProductDto): Result<ProductDto> {
         TODO("Not yet implemented")
     }
-    override suspend fun getAllProducts(): Result<ProductResponse> {
-        return trovesApiService.getAllProducts()
-    }
+
+    override suspend fun getAllProducts(): Result<ProductResponse> =
+        ktorClient.getResults {
+            method = HttpMethod.Get
+            url { path("products.json") }
+        }
 
     override suspend fun getProductImages(productId: String): Result<List<CollectionImage>> {
-        return trovesApiService.getProductImages(productId = productId)
+        return ktorClient.getResults {
+            method = HttpMethod.Get
+            url{
+                path("/products/$productId/images.json")
+            }
+        }
     }
 
     override suspend fun getProductById(productId: String): Result<ProductResponse> {
-        return trovesApiService.getProductById(productId = productId)
+        return ktorClient.getResults {
+            method = HttpMethod.Get
+            url{
+                path("/products/$productId/.json")
+            }
+        }
     }
 
     override suspend fun updateProduct(productId: String) {
@@ -38,9 +54,10 @@ class RemoteDatasourceImpl(
         TODO("Not yet implemented")
     }
 
-    override suspend fun getCategory(): Result<Collection> {
+    override suspend fun getCategory(): kotlin.Result<Collection> {
         TODO("Not yet implemented")
     }
+
 
     override suspend fun getAllEventsById(eventId: String): MarketingEventsResponse {
         TODO("Not yet implemented")
