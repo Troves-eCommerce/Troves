@@ -1,4 +1,4 @@
-package com.troves.presintation.components.productDetailsScreen
+package com.troves.presintation.ui.productDetailsScreen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

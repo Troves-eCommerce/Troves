@@ -1,4 +1,4 @@
-package com.troves.presintation.components
+package com.troves.presintation.ui.home.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

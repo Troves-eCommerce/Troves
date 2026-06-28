@@ -1,14 +1,14 @@
-package com.troves.presintation.ui.Home
+package com.troves.presintation.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.troves.domain.Result
 import com.troves.domain.getOrElse
-import com.troves.domain.home.GetAdsUseCase
-import com.troves.domain.home.GetBrandsUseCase
-import com.troves.domain.home.GetCategoriesUseCase
-import com.troves.domain.home.GetJustForYouProductsUseCase
-import com.troves.domain.home.GetTrendingProductsUseCase
+import com.troves.domain.usecase.home.GetAdsUseCase
+import com.troves.domain.usecase.home.GetBrandsUseCase
+import com.troves.domain.usecase.home.GetCategoriesUseCase
+import com.troves.domain.usecase.home.GetJustForYouProductsUseCase
+import com.troves.domain.usecase.home.GetTrendingProductsUseCase
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,16 +18,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-/**
- * MVI ViewModel for the Home screen.
- *
- * - Exposes a single [state] stream (the Model).
- * - Accepts [HomeIntent]s via [onIntent] (the Intent).
- * - Emits one-shot [HomeEffect]s through [effect] for navigation / toasts.
- *
- * All five home feeds are fetched concurrently so the screen settles in the
- * time of the slowest source rather than the sum of all of them.
- */
+
 class HomeViewModel(
     private val getAds: GetAdsUseCase,
     private val getBrands: GetBrandsUseCase,
@@ -65,7 +56,6 @@ class HomeViewModel(
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true, errorMessage = null) }
 
-            // Fetch every section concurrently.
             val adsDeferred = async { getAds() }
             val brandsDeferred = async { getBrands() }
             val categoriesDeferred = async { getCategories() }

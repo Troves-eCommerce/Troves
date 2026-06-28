@@ -1,4 +1,4 @@
-package com.troves.presintation.components
+package com.troves.presintation.ui.home.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -52,8 +52,8 @@ fun BrandItem(
             Image(
                 painter = imagePainter,
                 contentDescription = name,
-                contentScale = ContentScale.Fit,
-                modifier = Modifier.fillMaxSize(0.6f)
+                contentScale = ContentScale.FillBounds,
+                modifier = Modifier
             )
         }
         

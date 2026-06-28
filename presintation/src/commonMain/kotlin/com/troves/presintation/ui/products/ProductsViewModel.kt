@@ -1,7 +1,8 @@
-package com.troves.presintation.products
+package com.troves.presintation.ui.products
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.troves.domain.Result
 import com.troves.domain.usecase.shared.GetProductsUseCase
 import com.troves.domain.entity.Product
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -35,13 +36,13 @@ class ProductsViewModel(
             _uiState.value = ProductsUiState.Loading
             
             when (val result = getProductsUseCase()) {
-                is com.troves.domain.Result.Success -> {
+                is Result.Success -> {
                     _uiState.value = ProductsUiState.Success(result.value)
                 }
-                is com.troves.domain.Result.Error -> {
+                is Result.Error -> {
                     _uiState.value = ProductsUiState.Error(result.throwable.message ?: "Unknown error")
                 }
-                is com.troves.domain.Result.Loading -> {
+                is Result.Loading -> {
                     _uiState.value = ProductsUiState.Loading
                 }
             }

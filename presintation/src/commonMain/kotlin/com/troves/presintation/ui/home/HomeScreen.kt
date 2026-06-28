@@ -1,4 +1,4 @@
-package com.troves.presintation.ui.Home
+package com.troves.presintation.ui.home
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -22,6 +22,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Icon
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -36,16 +37,22 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.BrushPainter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil3.compose.rememberAsyncImagePainter
 import com.troves.designsystem.components.cards.MainCard
 import com.troves.designsystem.components.shimmer.shimmerEffect
 import com.troves.designsystem.components.topbar.TrovesTopBar
+import com.troves.designsystem.theme.SpTheme
 import com.troves.designsystem.theme.Theme
-import com.troves.domain.Product
-import com.troves.presintation.components.AdData
-import com.troves.presintation.components.AdSlider
-import com.troves.presintation.components.BrandItem
-import com.troves.presintation.components.CategoryItem
+import com.troves.domain.entity.Ad
+import com.troves.domain.entity.Brand
+import com.troves.domain.entity.Category
+import com.troves.domain.entity.Product
+import com.troves.presintation.ui.home.components.AdData
+import com.troves.presintation.ui.home.components.AdSlider
+import com.troves.presintation.ui.home.components.BrandItem
+import com.troves.presintation.ui.home.components.CategoryItem
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
 import troves.designsystem.generated.resources.Res
@@ -111,16 +118,12 @@ fun HomeScreen(
     }
 }
 
-// ── Loaded content ────────────────────────────────────────────────────────────
 
 @Composable
 private fun HomeContent(
     state: HomeUiState,
     onIntent: (HomeIntent) -> Unit,
 ) {
-    // The AdSlider overlays the ad's text/CTA from data, so it needs a text-free
-    // background. A brand gradient keeps the banner clean (the bundled ad_slider
-    // image already has text baked in, which would otherwise double up).
     val adImage = remember {
         BrushPainter(
             Brush.linearGradient(
@@ -128,14 +131,13 @@ private fun HomeContent(
             ),
         )
     }
-    val brandImage = painterResource(Res.drawable.brand_iteam)
+    val brandImage = painterResource(Res.drawable.img_onboarding1)
     val categoryImage = painterResource(Res.drawable.img_onboarding1)
-    val productImage = painterResource(Res.drawable.product_card)
+    val productImage = painterResource(Res.drawable.img_onboarding1)
     val chevron = painterResource(Res.drawable.ic_chevron_right)
     val starIcon = painterResource(Res.drawable.ic_star)
     val heartIcon = painterResource(Res.drawable.ic_heart)
 
-    // Ad slider
     if (state.ads.isNotEmpty()) {
         AdSlider(
             ads = state.ads.map { ad ->
@@ -155,7 +157,6 @@ private fun HomeContent(
         )
     }
 
-    // Brands
     if (state.brands.isNotEmpty()) {
         SectionHeader(
             title = "Brands",
@@ -170,14 +171,17 @@ private fun HomeContent(
             items(state.brands, key = { it.id }) { brand ->
                 BrandItem(
                     name = brand.name,
-                    imagePainter = brandImage,
+                    imagePainter = rememberAsyncImagePainter(
+                        model = brand.logoUrl,
+                        placeholder = brandImage,
+                        error = brandImage,
+                    ),
                     onClick = { onIntent(HomeIntent.BrandClicked(brand)) },
                 )
             }
         }
     }
 
-    // Just For You
     if (state.justForYou.isNotEmpty()) {
         SectionHeader(title = "Just For You")
         ProductRow(
@@ -190,7 +194,6 @@ private fun HomeContent(
         )
     }
 
-    // Categories
     if (state.categories.isNotEmpty()) {
         SectionHeader(title = "Categories")
         LazyRow(
@@ -200,7 +203,11 @@ private fun HomeContent(
             items(state.categories, key = { it.id }) { category ->
                 CategoryItem(
                     name = category.name,
-                    imagePainter = categoryImage,
+                    imagePainter = rememberAsyncImagePainter(
+                        model = category.imageUrl,
+                        placeholder = categoryImage,
+                        error = categoryImage,
+                    ),
                     onClick = { onIntent(HomeIntent.CategoryClicked(category)) },
                     modifier = Modifier.width(120.dp).height(150.dp),
                 )
@@ -240,7 +247,11 @@ private fun ProductRow(
                 title = product.title,
                 price = "$${product.price}",
                 rating = PLACEHOLDER_RATING,
-                imagePainter = productImage,
+                imagePainter = rememberAsyncImagePainter(
+                    model = product.imageUrl,
+                    placeholder = productImage,
+                    error = productImage,
+                ),
                 ratingIconPainter = starIcon,
                 favoriteIconPainter = heartIcon,
                 onClick = { onIntent(HomeIntent.ProductClicked(product)) },
@@ -285,7 +296,7 @@ private fun SectionHeader(
                     ),
                 )
                 if (actionIcon != null) {
-                    androidx.compose.material3.Icon(
+                    Icon(
                         painter = actionIcon,
                         contentDescription = null,
                         tint = Theme.colors.secondaryFont,
@@ -297,11 +308,9 @@ private fun SectionHeader(
     }
 }
 
-// ── Loading skeleton ──────────────────────────────────────────────────────────
 
 @Composable
 private fun HomeShimmer() {
-    // Ad banner
     Box(
         modifier = Modifier
             .padding(horizontal = 16.dp)
@@ -311,7 +320,6 @@ private fun HomeShimmer() {
             .shimmerEffect(),
     )
 
-    // Brands
     Row(
         modifier = Modifier.padding(horizontal = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -326,7 +334,6 @@ private fun HomeShimmer() {
         }
     }
 
-    // Product cards
     repeat(2) {
         Row(
             modifier = Modifier.padding(horizontal = 16.dp),
@@ -346,3 +353,60 @@ private fun HomeShimmer() {
 }
 
 private const val PLACEHOLDER_RATING = 4.5
+
+@Preview
+@Composable
+private fun HomeScreenPreview() {
+    SpTheme {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Theme.colors.backGround),
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(bottom = 24.dp),
+                verticalArrangement = Arrangement.spacedBy(20.dp),
+            ) {
+                TrovesTopBar(onSearchClick = {}, onCartClick = {})
+                HomeContent(state = previewHomeState(), onIntent = {})
+            }
+        }
+    }
+}
+
+private fun previewHomeState(): HomeUiState {
+    val products = List(4) { index ->
+        Product(
+            id = index.toLong(),
+            title = "Air Zoom Pegasus ${index + 1}",
+            vendor = "Nike",
+            price = "${120 + index * 10}.00",
+            imageUrl = null,
+            status = "active",
+        )
+    }
+    return HomeUiState(
+        isLoading = false,
+        ads = listOf(
+            Ad(
+                id = 1L,
+                titleTop = "Summer",
+                titleBottom = "Collection",
+                description = "Up to 50% off on selected items",
+                buttonText = "Shop now",
+            ),
+        ),
+        brands = List(6) { index ->
+            Brand(id = index.toLong(), name = "Brand ${index + 1}", logoUrl = null)
+        },
+        justForYou = products,
+        categories = List(4) { index ->
+            Category(id = index.toLong(), name = "Category ${index + 1}", imageUrl = null)
+        },
+        trending = products,
+        favoriteProductIds = setOf(0L),
+    )
+}

@@ -6,8 +6,8 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import androidx.savedstate.serialization.SavedStateConfiguration
-import com.troves.presintation.ui.Home.HomeScreen
-import com.troves.presintation.ui.Home.ProductDetailsScreen
+import com.troves.presintation.ui.home.HomeScreen
+import com.troves.presintation.ui.productDetails.ProductDetailsScreen
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 

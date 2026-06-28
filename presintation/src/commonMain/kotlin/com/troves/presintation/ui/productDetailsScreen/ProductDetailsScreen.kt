@@ -1,4 +1,4 @@
-package com.troves.presintation.ui.ProductDetails
+package com.troves.presintation.ui.productDetails
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
