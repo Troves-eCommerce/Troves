@@ -6,6 +6,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.tooling.preview.Preview
 
 import androidx.compose.ui.unit.dp
 import com.troves.designsystem.theme.SpTheme
@@ -31,7 +32,7 @@ fun IconButton(
     )
 }
 
-
+@Preview
 @Composable
 private fun IconButtonPreview() {
     SpTheme() {

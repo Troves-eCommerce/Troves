@@ -76,6 +76,10 @@ kotlin {
                 // Add KMP dependencies here
                 implementation(libs.koin.core)
                 implementation(libs.bundles.ktor)
+
+                implementation(libs.androidx.datastore)
+                // The Preferences DataStore library
+                implementation(libs.androidx.datastore.preferences)
             }
         }
 
