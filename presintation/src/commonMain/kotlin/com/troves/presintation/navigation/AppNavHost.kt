@@ -6,8 +6,11 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import androidx.savedstate.serialization.SavedStateConfiguration
+import com.troves.presintation.ui.Auth.LoginScreen
+import com.troves.presintation.ui.Auth.RegisterScreen
 import com.troves.presintation.ui.Home.HomeScreen
 import com.troves.presintation.ui.Home.ProductDetailsScreen
+import com.troves.presintation.ui.Splash.SplashScreen
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 
@@ -27,12 +30,50 @@ private val navSavedStateConfiguration = SavedStateConfiguration {
 
 @Composable
 fun AppNavHost() {
-    val backStack = rememberNavBackStack(navSavedStateConfiguration, AppRoute.Home)
+    val backStack = rememberNavBackStack(navSavedStateConfiguration, AppRoute.Splash)
 
     NavDisplay(
         backStack = backStack,
         onBack = { backStack.removeLastOrNull() },
         entryProvider = entryProvider {
+
+            entry<AppRoute.Splash> {
+                SplashScreen(
+                    onNavigateToHome = {
+                        backStack.clear()
+                        backStack.add(AppRoute.Home)
+                    },
+                    onNavigateToLogin = {
+                        backStack.clear()
+                        backStack.add(AppRoute.Login)
+                    }
+                )
+            }
+
+            entry<AppRoute.Login> {
+                LoginScreen(
+                    onNavigateToRegister = {
+                        backStack.add(AppRoute.Register)
+                    },
+                    onLoginSuccess = {
+                        backStack.clear()
+                        backStack.add(AppRoute.Home)
+                    }
+                )
+            }
+
+            entry<AppRoute.Register> {
+                RegisterScreen(
+                    onNavigateToLogin = {
+                        backStack.removeLastOrNull()
+                    },
+                    onRegisterSuccess = {
+                        backStack.clear()
+                        backStack.add(AppRoute.Home)
+                    }
+                )
+            }
+
             entry<AppRoute.Home> {
                 HomeScreen(
                     onNavigateToProduct = { productId ->

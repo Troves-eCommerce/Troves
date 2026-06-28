@@ -1,6 +1,6 @@
 package com.troves.data.config
 
-import com.example.data.BuildKonfig
+import com.troves.data.BuildKonfig
 
 /**
  * Shopify API credentials loaded from local.properties at build time via BuildKonfig.

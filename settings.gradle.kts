@@ -25,6 +25,9 @@ dependencyResolutionManagement {
             }
         }
         mavenCentral()
+        maven(url = "https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven")
+        // GitLive Firebase KMP SDK
+        maven(url = "https://jitpack.io")
     }
 }
 

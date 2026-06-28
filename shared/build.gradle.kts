@@ -47,13 +47,13 @@ kotlin {
             implementation(libs.androidx.core.ktx)
             implementation(libs.androidx.appcompat)
             implementation(libs.koin.android)
-            // presintation is Android-only (no iOS targets yet)
-            implementation(project(":presintation"))
         }
         commonMain.dependencies {
             implementation(libs.koin.core)
             implementation(project(":domain"))
             implementation(project(":data"))
+            implementation(project(":designSystem"))
+            implementation(project(":presintation"))
             implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)
             implementation(libs.compose.material3)
