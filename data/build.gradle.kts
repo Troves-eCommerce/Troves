@@ -110,7 +110,7 @@ kotlin {
 
 // ── BuildKonfig: inject local.properties secrets as compile-time constants ───
 buildkonfig {
-    packageName = "com.example.data"
+    packageName = "com.troves.data"
 
     defaultConfigs {
         buildConfigField(
