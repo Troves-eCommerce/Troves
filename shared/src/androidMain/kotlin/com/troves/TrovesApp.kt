@@ -1,4 +1,7 @@
+package com.troves
+
 import android.app.Application
+import com.troves.di.initKoin
 
 class TrovesApp: Application() {
     companion object{
@@ -8,6 +11,6 @@ class TrovesApp: Application() {
     override fun onCreate() {
         super.onCreate()
         trovesApplication = this
-        com.troves.di.initKoin()
+        initKoin()
     }
 }

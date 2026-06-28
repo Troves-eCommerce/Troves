@@ -7,6 +7,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import co.touchlab.kermit.Logger
 import com.troves.data.source.remote.RemoteDatasource
 import com.troves.data.source.remote.dto.ProductResponse
+import com.troves.designsystem.theme.SpTheme
 import com.troves.di.initKoin
 import com.troves.domain.Result
 import com.troves.domain.map
@@ -23,26 +24,28 @@ fun App() {
     val logger = Logger
     logger.setTag("Response")
     MaterialTheme {
-        val datasource: RemoteDatasource = koinInject()
-        LaunchedEffect(Unit) {
-            val products = datasource.getAllProducts()
-            when(products){
-                is Result.Error -> {
-                    logger.d {
-                        products.throwable.message.toString()
+        SpTheme {
+            val datasource: RemoteDatasource = koinInject()
+            LaunchedEffect(Unit) {
+                val products = datasource.getAllProducts()
+                when(products){
+                    is Result.Error -> {
+                        logger.d {
+                            products.throwable.message.toString()
+                        }
+                    }
+                    Result.Loading -> {
+
+                    }
+                    is Result.Success<ProductResponse> -> {
+                            logger.d {
+                                products.value.products.toString()
+                            }
                     }
                 }
-                Result.Loading -> {
 
-                }
-                is Result.Success<ProductResponse> -> {
-                        logger.d {
-                            products.value.products.toString()
-                        }
-                }
             }
-
+            AppNavHost()
         }
-        AppNavHost()
     }
 }
