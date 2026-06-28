@@ -8,5 +8,6 @@ class TrovesApp: Application() {
     override fun onCreate() {
         super.onCreate()
         trovesApplication = this
+        com.troves.di.initKoin()
     }
 }

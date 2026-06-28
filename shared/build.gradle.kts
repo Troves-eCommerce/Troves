@@ -54,6 +54,7 @@ kotlin {
             implementation(libs.koin.core)
             implementation(project(":domain"))
             implementation(project(":data"))
+            implementation(project(":designSystem"))
             implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)
             implementation(libs.compose.material3)
