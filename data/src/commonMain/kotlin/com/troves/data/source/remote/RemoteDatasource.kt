@@ -2,9 +2,11 @@ package com.troves.data.source.remote
 
 import com.troves.data.source.remote.dto.Collection
 import com.troves.data.source.remote.dto.CollectionImage
+import com.troves.data.source.remote.dto.CustomCollectionResponse
 import com.troves.data.source.remote.dto.MarketingEventsResponse
 import com.troves.data.source.remote.dto.ProductResponse
 import com.troves.data.source.remote.dto.ProductDto
+import com.troves.data.source.remote.dto.SingleProductResponse
 import com.troves.domain.Result
 
 interface RemoteDatasource {
@@ -12,7 +14,7 @@ interface RemoteDatasource {
     suspend fun createProduct(productDto: ProductDto): Result<ProductDto>
     suspend fun getAllProducts(): Result<ProductResponse>
     suspend fun getProductImages(productId: String):Result<List<CollectionImage>>
-    suspend fun getProductById(productId: String): Result<ProductResponse>
+    suspend fun getProductById(productId: String): Result<SingleProductResponse>
     suspend fun updateProduct(productId: String)
     suspend fun deleteProduct(productDto: ProductDto)
     // endregion
@@ -21,7 +23,7 @@ interface RemoteDatasource {
     //region brands
 
     suspend fun getAllBrands(): Result<Collection>
-    suspend fun getCategory(): Result<Collection>
+    suspend fun getCategory(): Result<CustomCollectionResponse>
 
     //endregion
 
