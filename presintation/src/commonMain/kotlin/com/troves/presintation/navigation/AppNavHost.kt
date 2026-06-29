@@ -31,7 +31,6 @@ import com.troves.presintation.ui.profile.ProfileScreen
 import com.troves.presintation.ui.splash.SplashScreen
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
-import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
 import troves.designsystem.generated.resources.Res
 import troves.designsystem.generated.resources.ic_explore
@@ -154,16 +153,12 @@ fun AppNavHost() {
         modifier = Modifier.fillMaxSize(),
         bottomBar = {
             if (shouldShowBottomBar) {
-                val homeIcon = painterResource(Res.drawable.ic_home)
-                val exploreIcon = painterResource(Res.drawable.ic_explore)
-                val orderIcon = painterResource(Res.drawable.ic_order)
-                val profileIcon = painterResource(Res.drawable.ic_profile)
                 SPBottomNavigation(
                     items = listOf(
-                        BottomNavItem("Home", homeIcon, homeIcon),
-                        BottomNavItem("Explore", exploreIcon, exploreIcon),
-                        BottomNavItem("Orders", orderIcon, orderIcon),
-                        BottomNavItem("Profile", profileIcon, profileIcon)
+                        BottomNavItem("Home", Res.drawable.ic_home),
+                        BottomNavItem("Explore", Res.drawable.ic_explore),
+                        BottomNavItem("Orders", Res.drawable.ic_order),
+                        BottomNavItem("Profile", Res.drawable.ic_profile)
                     ),
                     selectedIndex = if (selectedIndex != -1) selectedIndex else 0,
                     onItemSelected = { index -> onBottomNavItemSelected(index) }

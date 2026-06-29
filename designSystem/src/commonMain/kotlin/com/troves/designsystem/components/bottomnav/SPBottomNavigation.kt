@@ -24,11 +24,14 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.troves.designsystem.theme.Theme
+import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.painterResource
+import troves.designsystem.generated.resources.Res
+import troves.designsystem.generated.resources.img_onboarding1
 
 data class BottomNavItem(
     val label: String,
-    val unselectedIcon: Painter,
-    val selectedIcon: Painter,
+    val iconRes: DrawableResource
 )
 
 @Composable
@@ -66,17 +69,15 @@ private fun SPBottomNavigationItem(
     modifier: Modifier = Modifier
 ) {
     val backgroundColor = if (isSelected) Theme.colors.backGround else Color.Transparent
-    val iconTint = Theme.colors.primary
-    val textColor = Theme.colors.primaryFont
-    val icon = if (isSelected) item.selectedIcon else item.unselectedIcon
-
+    val iconTint = if (isSelected) Theme.colors.primary else Theme.colors.primaryFont.copy(alpha = 0.6f)
+    val textColor = if (isSelected) Theme.colors.primaryFont else Theme.colors.primaryFont.copy(alpha = 0.6f)
     Column(
         modifier = modifier
             .clip(RoundedCornerShape(32.dp))
             .background(backgroundColor)
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
-                indication = null, // Custom ripple could be added here, omitting default for clean design
+                indication = null,
                 onClick = onClick
             )
             .padding(vertical = 12.dp),
@@ -84,7 +85,7 @@ private fun SPBottomNavigationItem(
         verticalArrangement = Arrangement.Center
     ) {
         Icon(
-            painter = icon,
+            painter = painterResource(item.iconRes),
             contentDescription = item.label,
             tint = iconTint,
             modifier = Modifier.size(24.dp)
