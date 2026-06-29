@@ -26,7 +26,6 @@ class AuthenticationRepositoryFirebaseImpl(
         val result = firebaseAuth.signInWithEmailAndPassword(email, password)
         val token = result.user?.getIdToken(forceRefresh = false) ?: ""
         preferences.saveAuthToken(token)
-        print("heereee" + preferences.authToken)
         preferences.setLoggedIn(true)
         Result.Success(Unit)
     } catch (e: Exception) {
