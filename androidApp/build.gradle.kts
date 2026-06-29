@@ -20,8 +20,12 @@ dependencies {
     implementation(libs.compose.uiToolingPreview)
     debugImplementation(libs.compose.uiTooling)
     //Koin
-    implementation(libs.koin.android)
-    implementation(libs.koin.compose)
+    implementation("io.insert-koin:koin-android:3.5.3")
+    implementation("io.insert-koin:koin-androidx-compose:3.5.3")
+
+    // Firebase
+    implementation(project.dependencies.platform(libs.firebase.bom))
+    implementation(libs.firebase.auth)
 }
 
 android {

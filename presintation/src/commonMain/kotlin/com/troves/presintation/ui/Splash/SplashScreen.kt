@@ -24,6 +24,7 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -89,6 +90,7 @@ fun SplashScreen(onNavigateToOnboarding: () -> Unit) {
                 animationSpec = tween(durationMillis = 500, easing = LinearEasing)
             )
         }
+
         delay(1500)
         onNavigateToOnboarding()
     }
@@ -102,11 +104,12 @@ fun SplashScreen(onNavigateToOnboarding: () -> Unit) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+
             Image(
                 painter = painterResource(Res.drawable.troves_logo),
                 contentDescription = "Troves Logo",
                 modifier = Modifier
-                    .size(Theme.size.logo)
+                    .size(220.dp)
                     .graphicsLayer(
                         scaleX = logoScale.value,
                         scaleY = logoScale.value,
@@ -115,7 +118,7 @@ fun SplashScreen(onNavigateToOnboarding: () -> Unit) {
                     .alpha(logoAlpha.value)
             )
 
-            Spacer(Modifier.height(Theme.spacing.large))
+            Spacer(Modifier.height(24.dp))
 
             Text(
                 text = buildAnnotatedString {
@@ -134,8 +137,7 @@ fun SplashScreen(onNavigateToOnboarding: () -> Unit) {
                     .alpha(textAlpha.value)
             )
 
-            Spacer(Modifier.height(Theme.spacing.small))
-
+            Spacer(Modifier.height(12.dp))
             Text(
                 text = "Discover Your Next Treasure.",
                 style = Theme.typography.body.medium,

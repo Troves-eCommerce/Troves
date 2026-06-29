@@ -1,7 +1,5 @@
 package com.troves.presintation.navigation
 
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.NavEntry
@@ -10,6 +8,7 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberDecoratedNavEntries
 import androidx.navigation3.ui.NavDisplay
 import androidx.savedstate.serialization.SavedStateConfiguration
+import com.troves.presintation.products.ProductsScreen
 import com.troves.presintation.ui.Home.HomeScreen
 import com.troves.presintation.ui.auth.LoginScreen
 import com.troves.presintation.ui.auth.RegisterScreen
@@ -50,22 +49,9 @@ fun AppNavHost() {
                 }
             )
         }
-        
-        entry<AppRoute.Products> {
-            ProductDetailsScreen(
-                productId = "123",
-                onNavigateBack = { backStack.removeLastOrNull() }
-            )
-        }
-        
         entry<AppRoute.Favorites> {
             FavoriteScreen()
         }
-        
-        entry<AppRoute.Profile> {
-            ProfileScreen()
-        }
-
         entry<AppRoute.ProductDetails> { key ->
             ProductDetailsScreen(
                 productId = key.productId,
@@ -83,16 +69,40 @@ fun AppNavHost() {
         entry<AppRoute.Splash> {
             SplashScreen(
                 onNavigateToOnboarding = {
-                    backStack.removeLastOrNull()
+                    backStack.clear()
                     backStack.add(AppRoute.Onboarding)
                 }
             )
         }
         entry<AppRoute.Login> {
-            LoginScreen()
+            LoginScreen(
+                onNavigateToRegister = {
+                    backStack.add(AppRoute.Register)
+                },
+                onLoginSuccess = {
+                    backStack.clear()
+                    backStack.add(AppRoute.Home)
+                }
+            )
         }
         entry<AppRoute.Register> {
-            RegisterScreen()
+            RegisterScreen(
+                onNavigateToLogin = {
+                    backStack.removeLastOrNull()
+                },
+                onRegisterSuccess = {
+                    backStack.clear()
+                    backStack.add(AppRoute.Home)
+                }
+            )
+        }
+        entry<AppRoute.Products> {
+            ProductsScreen(
+
+            )
+        }
+        entry<AppRoute.Profile> {
+            ProfileScreen()
         }
     }
 

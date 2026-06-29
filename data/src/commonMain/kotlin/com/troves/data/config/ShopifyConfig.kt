@@ -1,6 +1,6 @@
 package com.troves.data.config
 
-import com.example.data.BuildKonfig
+import com.troves.data.BuildKonfig
 
 
 /**

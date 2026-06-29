@@ -52,8 +52,7 @@ kotlin {
                 implementation(libs.jetbrains.material3.adaptiveNavigation3)
 
                 implementation(project(":domain"))
-                implementation(compose.components.resources)
-                api(project(":designSystem"))
+                implementation(project(":designSystem"))
 
                 // Compose & Resources
                 implementation(libs.compose.ui)
@@ -72,6 +71,12 @@ kotlin {
                 implementation(libs.koin.compose)
                 implementation(libs.koin.compose.viewmodel)
                 implementation(libs.koin.compose.navigation3)
+
+                //Coil3
+                implementation(libs.bundles.coil)
+
+                // Coil
+                implementation(libs.bundles.coil)
             }
         }
 
