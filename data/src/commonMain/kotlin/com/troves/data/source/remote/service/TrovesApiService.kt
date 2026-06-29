@@ -5,13 +5,14 @@ import com.troves.data.source.remote.dto.CustomCollectionResponse
 import com.troves.data.source.remote.dto.MarketingEventsResponse
 import com.troves.data.source.remote.dto.ProductDto
 import com.troves.data.source.remote.dto.ProductResponse
+import com.troves.data.source.remote.dto.SingleProductResponse
 
 interface TrovesApiService {
     //region products
     suspend fun createProduct(productDto: ProductDto): com.troves.domain.Result<ProductDto>
     suspend fun getAllProducts(): com.troves.domain.Result<ProductResponse>
     suspend fun getProductImages(productId: String): com.troves.domain.Result<List<CollectionImage>>
-    suspend fun getProductById(productId: String): com.troves.domain.Result<ProductResponse>
+    suspend fun getProductById(productId: String): com.troves.domain.Result<SingleProductResponse>
     suspend fun updateProduct(productId: String)
     suspend fun deleteProduct(productDto: ProductDto)
     // endregion

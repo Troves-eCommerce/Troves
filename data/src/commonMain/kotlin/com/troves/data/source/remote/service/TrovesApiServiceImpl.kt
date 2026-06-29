@@ -7,6 +7,7 @@ import com.troves.data.source.remote.dto.CustomCollectionResponse
 import com.troves.data.source.remote.dto.MarketingEventsResponse
 import com.troves.data.source.remote.dto.ProductDto
 import com.troves.data.source.remote.dto.ProductResponse
+import com.troves.data.source.remote.dto.SingleProductResponse
 import com.troves.domain.Result
 import io.ktor.client.HttpClient
 import io.ktor.http.HttpMethod
@@ -29,16 +30,16 @@ class TrovesApiServiceImpl(
         return ktorClient.getResults {
             method = HttpMethod.Get
             url{
-                path("/products/$productId/images.json")
+                path("products/$productId/images.json")
             }
         }
     }
 
-    override suspend fun getProductById(productId: String): Result<ProductResponse> {
+    override suspend fun getProductById(productId: String): Result<SingleProductResponse> {
         return ktorClient.getResults {
             method = HttpMethod.Get
             url{
-                path("/products/$productId/.json")
+                path("products/$productId.json")
             }
         }
     }

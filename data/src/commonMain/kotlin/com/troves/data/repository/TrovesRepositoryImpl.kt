@@ -10,52 +10,65 @@ import com.troves.domain.entity.Brand
 import com.troves.domain.entity.Category
 import com.troves.domain.entity.Product
 import com.troves.domain.fold
-import com.troves.domain.getOrThrow
 import com.troves.domain.map
 import com.troves.domain.repository.TrovesRepository
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
+import kotlinx.coroutines.withContext
 
 class TrovesRepositoryImpl(
-    private val remoteDataSource: RemoteDatasource
+    private val remoteDataSource: RemoteDatasource,
+    private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : TrovesRepository {
 
-    override suspend fun getAllProducts(): Result<List<Product>> =
-        remoteDataSource.getAllProducts().map { response ->
-            response.products
-                ?.filterNotNull()
-                ?.map { it.toDomain() }
-                .orEmpty()
+    override suspend fun getAllProducts(): Result<List<Product>> {
+        return withContext(coroutineDispatcher) {
+            remoteDataSource.getAllProducts().map { response ->
+                response.products
+                    ?.filterNotNull()
+                    ?.map { it.toDomain() }
+                    .orEmpty()
+            }
         }
+    }
 
     override suspend fun getProductById(productId: String): Result<Product> {
-        return remoteDataSource.getProductById(productId = productId).fold(
-            onSuccess = { response ->
-                response.products
-                    ?.firstOrNull()
-                    ?.toDomain()
-                    ?.let { Result.Success(it) }
-                    ?: Result.Error(NoSuchElementException())
-            },
-            onError = { Result.Error(it) },
-            onLoading = { Result.Loading}
-        )
+        return withContext(coroutineDispatcher) {
+            remoteDataSource.getProductById(productId = productId).fold(
+                onSuccess = { response ->
+                    response.product
+                        ?.toDomain()
+                        ?.let { Result.Success(it) }
+                        ?: Result.Error(Exception("Product not found: $productId"))
+                },
+                onError = { Result.Error(it) },
+                onLoading = { Result.Loading }
+            )
+        }
     }
 
 
-    override suspend fun getBrands(): Result<List<Brand>> =
-        remoteDataSource.getAllBrands().map { collection ->
-            collection.smartCollections
-                ?.filterNotNull()
-                ?.map { it.toBrand() }
-                .orEmpty()
+    override suspend fun getBrands(): Result<List<Brand>> {
+        return withContext(coroutineDispatcher) {
+            remoteDataSource.getAllBrands().map { collection ->
+                collection.smartCollections
+                    ?.filterNotNull()
+                    ?.map { it.toBrand() }
+                    .orEmpty()
+            }
         }
+    }
 
-
-    override suspend fun getCategories(): Result<List<Category>> =
-        remoteDataSource.getCategory().map { response ->
-            response.customCollections
-                ?.map { it.toCategory() }
-                .orEmpty()
+    override suspend fun getCategories(): Result<List<Category>> {
+        return withContext(coroutineDispatcher) {
+            remoteDataSource.getCategory().map { response ->
+                response.customCollections
+                    ?.map { it.toCategory() }
+                    .orEmpty()
+            }
         }
+    }
 
     override suspend fun getAds(): Result<List<Ad>> = Result.Success(FAKE_ADS)
 
