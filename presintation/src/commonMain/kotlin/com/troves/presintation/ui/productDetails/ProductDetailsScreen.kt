@@ -41,6 +41,8 @@ import com.troves.presintation.ui.productDetails.components.ProductImageCarousel
 import com.troves.presintation.ui.productDetails.components.SectionHeaderRow
 import com.troves.presintation.ui.productDetails.components.SizeSelectorRow
 import com.troves.presintation.ui.productDetails.components.StarRatingRow
+import com.troves.presintation.utils.Currency
+import com.troves.presintation.utils.priceFormat
 import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -177,7 +179,7 @@ fun ProductDetailsScreenContent(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(
-                            text = uiState.priceFormatted,
+                            text = uiState.priceFormatted.priceFormat(Currency.USD),
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold,
                             color = Theme.colors.primary,
@@ -189,33 +191,35 @@ fun ProductDetailsScreenContent(
                     }
 
                     Spacer(Modifier.height(Theme.spacing.medium))
-
-                    SectionHeaderRow(
-                        title = "Size",
-                        actionLabel = "Size Guide",
-                        onActionClick = onSizeGuide,
-                    )
-                    Spacer(Modifier.height(10.dp))
-                    SizeSelectorRow(
-                        sizes = uiState.sizes,
-                        selectedSizeLabel = uiState.selectedSizeLabel,
-                        onSizeSelected = onSizeSelected,
-                    )
+                    if (uiState.sizes.isNotEmpty()){
+                        SectionHeaderRow(
+                            title = "Size",
+                            actionLabel = "Size Guide",
+                            onActionClick = onSizeGuide,
+                        )
+                        Spacer(Modifier.height(10.dp))
+                        SizeSelectorRow(
+                            sizes = uiState.sizes,
+                            selectedSizeLabel = uiState.selectedSizeLabel,
+                            onSizeSelected = onSizeSelected,
+                        )
+                    }
 
                     Spacer(Modifier.height(Theme.spacing.medium))
 
-
-                    SectionHeaderRow(
-                        title = "Colors",
-                        actionLabel = "Color Guide",
-                        onActionClick = onSizeGuide,
-                    )
-                    Spacer(Modifier.height(10.dp))
-                    ColorSelectorRow(
-                        colors = uiState.colors,
-                        selectedColorIndex = uiState.selectedColorIndex,
-                        onColorSelected = onColorSelected,
-                    )
+                    if (uiState.colors.isNotEmpty()){
+                        SectionHeaderRow(
+                            title = "Colors",
+                            actionLabel = "Color Guide",
+                            onActionClick = onSizeGuide,
+                        )
+                        Spacer(Modifier.height(10.dp))
+                        ColorSelectorRow(
+                            colors = uiState.colors,
+                            selectedColorIndex = uiState.selectedColorIndex,
+                            onColorSelected = onColorSelected,
+                        )
+                    }
 
                     Spacer(Modifier.height(Theme.spacing.medium))
 
@@ -233,7 +237,7 @@ fun ProductDetailsScreenContent(
 
                     AddToCartButton(
                         onAddToCart = onAddToCart,
-                        modifier = Modifier.fillMaxWidth(fraction = 0.8f)
+                        modifier = Modifier.fillMaxWidth()
                     )
 
                     Spacer(Modifier.height(Theme.spacing.large))

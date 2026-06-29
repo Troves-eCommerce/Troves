@@ -1,9 +1,12 @@
 package com.troves.presintation.ui.productDetails.components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.material3.AssistChip
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.troves.designsystem.theme.Theme
 
@@ -20,12 +23,17 @@ fun ColorSelectorRow(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        colors.forEachIndexed { index, colorUi ->
-            ColorCircle(
-                color = Theme.colors.onDisable,
-                isSelected = index == selectedColorIndex,
-                contentDescription = colorUi,
-                onClick = { onColorSelected(index) },
+        colors.forEachIndexed { index, colorName ->
+            AssistChip(
+                onClick = {onColorSelected(index)},
+                label = {
+                    Text(
+                        text = colorName,
+                        style = Theme.typography.body.medium,
+                        fontWeight =  FontWeight.SemiBold,
+                        color = Theme.colors.primary,
+                    )
+                }
             )
         }
     }

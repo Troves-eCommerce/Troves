@@ -22,7 +22,7 @@ class ProductDetailsViewModel(
 
     private val _effect = Channel<ProductDetailsEffect>(
         Channel.BUFFERED,
-        onBufferOverflow = BufferOverflow.DROP_OLDEST
+        /*onBufferOverflow = BufferOverflow.DROP_OLDEST*/
     )
     val effect = _effect.receiveAsFlow()
 
