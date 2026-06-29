@@ -99,7 +99,9 @@ class ProductDetailsViewModel(
                             colors = currentstate.colors,
                             title = currentstate.title,
                             priceFormatted = currentstate.price,
-                            errorMessage = null
+                            errorMessage = null,
+                            description = currentstate.description,
+                            rating = currentstate.rating
                         )
                     }
                 }

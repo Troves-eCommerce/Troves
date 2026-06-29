@@ -32,7 +32,7 @@ fun SectionHeaderRow(
             text = title,
             style = Theme.typography.body.medium,
             fontWeight = FontWeight.SemiBold,
-            color = Theme.colors.onPrimary,
+            color = Theme.colors.warning,
         )
         if (actionLabel != null) {
             Text(

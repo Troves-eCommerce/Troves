@@ -4,5 +4,5 @@ import com.troves.data.BuildKonfig
 
 object ShopifyConfig {
     val API_KEY: String   = BuildKonfig.SHOPIFY_API_KEY
-    val REST_URL: String  = BuildKonfig.SHOPIFY_HOSTNAME
+    val REST_URL: String  = BuildKonfig.SHOPIFY_REST_URL
 }

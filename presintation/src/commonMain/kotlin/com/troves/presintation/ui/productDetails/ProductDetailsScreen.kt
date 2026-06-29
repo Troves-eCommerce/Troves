@@ -100,7 +100,8 @@ fun ProductDetailsScreen(
                     onFavoriteClick = { intent(ProductDetailsIntent.OnFavoriteClick) },
                     onSeeAllReviews = { intent(ProductDetailsIntent.OnSeeAllReviews) },
                     onSizeGuide = { intent(ProductDetailsIntent.OnSizeGuide) },
-                    modifier = Modifier.fillMaxSize().statusBarsPadding()
+                    modifier = Modifier.fillMaxSize().statusBarsPadding(),
+                    backEnabled = true
                 )
             }
         }
@@ -126,6 +127,7 @@ fun ProductDetailsScreenContent(
     onFavoriteClick: () -> Unit,
     onSeeAllReviews: () -> Unit,
     onSizeGuide: () -> Unit,
+    backEnabled: Boolean = true,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
@@ -133,7 +135,8 @@ fun ProductDetailsScreenContent(
             ProductDetailTopBar(
                 title = "Details",
                 onBackClick = onBackClick,
-                modifier = Modifier.background(Theme.colors.backGround)
+                modifier = Modifier.background(Theme.colors.backGround),
+                enabled = backEnabled
             )
         },
         containerColor = Theme.colors.backGround,
@@ -186,7 +189,7 @@ fun ProductDetailsScreenContent(
                             color = Theme.colors.primary,
                         )
                         StarRatingRow(
-                            rating = uiState.rating,
+                            rating = uiState.rating.toFloat(),
                             reviewCount = uiState.reviewCount,
                         )
                     }
@@ -229,7 +232,7 @@ fun ProductDetailsScreenContent(
                     Text(
                         text = uiState.description,
                         style = MaterialTheme.typography.bodyMedium,
-                        color = Theme.colors.primaryVariant,
+                        color = Theme.colors.primary,
                         lineHeight = Theme.typography.body.small.fontSize,
                     )
 
