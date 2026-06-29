@@ -6,10 +6,7 @@ import com.troves.presintation.di.presentationModule
 import org.koin.core.context.startKoin
 import org.koin.dsl.KoinAppDeclaration
 
-/**
- * Initialises Koin for the whole app.
- * Call once — from the Android Application class or iOS entry point.
- */
+
 fun initKoin(appDeclaration: KoinAppDeclaration = {}) {
     startKoin {
         appDeclaration()
@@ -21,3 +18,6 @@ fun initKoin(appDeclaration: KoinAppDeclaration = {}) {
         )
     }
 }
+
+
+fun doInitKoin() = initKoin()
