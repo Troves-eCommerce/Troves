@@ -8,7 +8,7 @@ import com.troves.data.source.remote.RemoteDatasource
 import com.troves.data.source.remote.RemoteDatasourceImpl
 import com.troves.data.source.remote.service.TrovesApiService
 import com.troves.data.source.remote.service.TrovesApiServiceImpl
-import com.troves.domain.repository.AuthenticationRepository
+import com.troves.domain.AuthenticationRepository
 import com.troves.domain.repository.PaymentRepository
 import com.troves.domain.repository.TrovesRepository
 import io.ktor.client.HttpClient

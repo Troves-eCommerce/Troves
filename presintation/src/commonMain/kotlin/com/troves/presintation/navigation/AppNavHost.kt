@@ -1,13 +1,22 @@
 package com.troves.presintation.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.runtime.rememberDecoratedNavEntries
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import androidx.savedstate.serialization.SavedStateConfiguration
-import com.troves.presintation.ui.Home.HomeScreen
-import com.troves.presintation.ui.Home.ProductDetailsScreen
+import com.troves.presintation.ui.auth.LoginScreen
+import com.troves.presintation.ui.auth.RegisterScreen
+import com.troves.presintation.ui.fav.FavoriteScreen
+import com.troves.presintation.ui.home.HomeScreen
+import com.troves.presintation.ui.onboarding.OnboardingScreen
+import com.troves.presintation.ui.productDetails.ProductDetailsScreen
+import com.troves.presintation.ui.products.ProductsScreen
+import com.troves.presintation.ui.profile.ProfileScreen
+import com.troves.presintation.ui.splash.SplashScreen
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 
