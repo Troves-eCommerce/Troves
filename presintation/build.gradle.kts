@@ -52,7 +52,8 @@ kotlin {
                 implementation(libs.jetbrains.material3.adaptiveNavigation3)
 
                 implementation(project(":domain"))
-                implementation(project(":designSystem"))
+                implementation(compose.components.resources)
+                api(project(":designSystem"))
 
                 // Compose & Resources
                 implementation(libs.compose.ui)
@@ -70,6 +71,7 @@ kotlin {
                 implementation(libs.koin.core)
                 implementation(libs.koin.compose)
                 implementation(libs.koin.compose.viewmodel)
+                implementation(libs.koin.compose.navigation3)
             }
         }
 
