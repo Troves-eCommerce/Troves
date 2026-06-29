@@ -11,9 +11,12 @@ import com.troves.designsystem.theme.color.ColorScheme
 import com.troves.designsystem.theme.color.lightColors
 import com.troves.designsystem.theme.color.localSPColorScheme
 import com.troves.designsystem.dimensions.LocalSPShapes
+import com.troves.designsystem.dimensions.LocalSPSize
 import com.troves.designsystem.dimensions.LocalSPSpacing
 import com.troves.designsystem.dimensions.SPShapes
+import com.troves.designsystem.dimensions.SPSize
 import com.troves.designsystem.dimensions.SPSpacing
+import com.troves.designsystem.theme.color.darkColors
 import com.troves.designsystem.theme.typo.LocalSPFontFamily
 import com.troves.designsystem.theme.typo.LocalSPTypography
 import com.troves.designsystem.theme.typo.SPTextStyle
@@ -25,7 +28,7 @@ import com.troves.designsystem.theme.typo.spTypographyOf
 fun SpTheme(
     isDarkTheme: Boolean = isSystemInDarkTheme(),
     locale: Locale = Locale.current,
-    colors: ColorScheme = if (isDarkTheme) lightColors else lightColors,
+    colors: ColorScheme = if (isDarkTheme) darkColors else lightColors,
     fontFamily: FontFamily? = null,
     typography: SPTextStyle = fontFamily
         ?.let { spTypographyOf(it) }
@@ -43,6 +46,7 @@ fun SpTheme(
         LocalSPFontFamily provides (fontFamily ?: arabicFontFamily),
         LocalSPSpacing provides spacing,
         LocalSPShapes provides shapes,
+        LocalSPSize provides SPSize(),
         content = content,
     )
 }

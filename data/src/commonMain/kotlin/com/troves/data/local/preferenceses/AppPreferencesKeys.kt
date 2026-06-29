@@ -1,4 +1,4 @@
-package com.example.data.source.local.datasorce.preferenceses
+package com.troves.data.local.preferenceses
 
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey

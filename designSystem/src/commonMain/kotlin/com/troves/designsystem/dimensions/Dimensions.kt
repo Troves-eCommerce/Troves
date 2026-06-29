@@ -26,7 +26,10 @@ data class SPSize(
     val iconMedium: Dp = 24.dp,
     val componentsNormalHeight: Dp = 48.dp,
     val medium: Dp = 48.dp,
-    val large: Dp = 64.dp
+    val large: Dp = 64.dp ,
+    val logo: Dp = 220.dp,
+    val onboardingImage: Dp = 280.dp,
+    val onboardingBottomSpace: Dp = 120.dp
 )
 
 val LocalSPSpacing = staticCompositionLocalOf { SPSpacing() }

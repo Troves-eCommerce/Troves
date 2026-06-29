@@ -32,7 +32,8 @@ data class SPTextStyle(
     val display: TextStyle,
     val title: TextStyle,
     val body: SizedTextStyle,
-    val hint: SizedTextStyle
+    val hint: SizedTextStyle,
+    val displayMedium: TextStyle
 )
 
 internal val LocalSPTypography = staticCompositionLocalOf<SPTextStyle> {
@@ -56,6 +57,12 @@ internal fun spTypographyOf(fontFamily: FontFamily): SPTextStyle = SPTextStyle(
         fontSize = 32.sp,
         fontWeight = FontWeight.Bold,
         lineHeight = 42.sp
+    ),
+    displayMedium = TextStyle(
+        fontFamily = fontFamily,
+        fontSize = 26.sp,
+        fontWeight = FontWeight.Bold,
+        lineHeight = 34.sp
     ),
     title = TextStyle(
         fontFamily = fontFamily,
