@@ -76,6 +76,13 @@ kotlin {
                 // Add KMP dependencies here
                 implementation(libs.koin.core)
                 implementation(libs.bundles.ktor)
+
+                implementation(libs.androidx.datastore)
+                // The Preferences DataStore library
+                implementation(libs.androidx.datastore.preferences)
+
+                // Firebase (GitLive KMP SDK — works on both Android & iOS)
+                implementation(libs.firebase.auth)
             }
         }
 
@@ -88,6 +95,7 @@ kotlin {
         androidMain {
             dependencies {
                 implementation(libs.ktor.client.android)
+                implementation(project.dependencies.platform(libs.firebase.bom))
             }
         }
 
@@ -110,7 +118,7 @@ kotlin {
 
 // ── BuildKonfig: inject local.properties secrets as compile-time constants ───
 buildkonfig {
-    packageName = "com.example.data"
+    packageName = "com.troves.data"
 
     defaultConfigs {
         buildConfigField(
@@ -118,12 +126,8 @@ buildkonfig {
             localProperties.getProperty("SHOPIFY_API_KEY") ?: ""
         )
         buildConfigField(
-            STRING, "SHOPIFY_PASSWORD",
-            localProperties.getProperty("SHOPIFY_PASSWORD") ?: ""
-        )
-        buildConfigField(
-            STRING, "SHOPIFY_HOSTNAME",
-            localProperties.getProperty("SHOPIFY_HOSTNAME") ?: ""
+            STRING, "SHOPIFY_REST_URL",
+            localProperties.getProperty("SHOPIFY_REST_URL") ?: error("SHOPIFY_HOSTNAME not set in local.properties")
         )
     }
 }

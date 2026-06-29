@@ -20,5 +20,14 @@ sealed interface AppRoute : NavKey {
     data object Home : AppRoute
 
     @Serializable
+    data object Products : AppRoute
+
+    @Serializable
+    data object Favorites : AppRoute
+
+    @Serializable
+    data object Profile : AppRoute
+
+    @Serializable
     data class ProductDetails(val productId: String) : AppRoute
 }

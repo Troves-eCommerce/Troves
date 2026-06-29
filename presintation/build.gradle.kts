@@ -12,8 +12,8 @@ kotlin {
     // Target declarations
     android {
         namespace = "com.troves.presintation"
-        compileSdk = 34 // تم التوحيد لتجنب أخطاء الـ SDK
-        minSdk = 24
+        compileSdk = libs.versions.android.compileSdk.get().toInt()
+        minSdk = libs.versions.android.minSdk.get().toInt()
 
         withHostTestBuilder {
         }
@@ -59,7 +59,6 @@ kotlin {
                 implementation(libs.compose.foundation)
                 implementation(libs.compose.material3)
                 implementation(libs.compose.runtime)
-                implementation(libs.compose.components.resources)
                 implementation(libs.compose.uiToolingPreview)
 
                 // ViewModel
@@ -70,6 +69,13 @@ kotlin {
                 implementation(libs.koin.core)
                 implementation(libs.koin.compose)
                 implementation(libs.koin.compose.viewmodel)
+                implementation(libs.koin.compose.navigation3)
+
+                //Coil3
+                implementation(libs.bundles.coil)
+
+                // Coil
+                implementation(libs.bundles.coil)
             }
         }
 

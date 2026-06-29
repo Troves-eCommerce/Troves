@@ -1,10 +1,15 @@
 package com.troves.presintation.di
 
-import com.troves.presintation.products.ProductsViewModel
-import org.koin.compose.viewmodel.dsl.viewModel
+import com.troves.presintation.ui.products.ProductsViewModel
+import com.troves.presintation.ui.home.HomeViewModel
+import com.troves.presintation.ui.onboarding.OnboardingViewModel
+import com.troves.presintation.ui.productDetails.ProductDetailsViewModel
+import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
 val presentationModule = module {
-    // ViewModels — koin-compose-viewmodel handles lifecycle automatically
-    viewModel { ProductsViewModel(get()) }
+    viewModelOf(::ProductsViewModel)
+    viewModelOf(::HomeViewModel)
+    viewModelOf(::ProductDetailsViewModel)
+    viewModelOf(::OnboardingViewModel)
 }
