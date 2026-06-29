@@ -8,15 +8,10 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.emptyPreferences
 import okio.Path.Companion.toPath
 
-// Note: Although expect/actual requires matching signatures, 
-// we'll handle the Context injection at the module level in androidMain.
-// To satisfy the expect fun createDataStore(): DataStore<Preferences> in commonMain,
-// we'll use a trick or just provide it directly in the module.
-// However, the user specifically asked for:
-// androidMain: actual fun createDataStore(context: Context): DataStore<Preferences>
-// But Kotlin doesn't allow changing signatures. 
-// I will provide a version that works with the platform module.
-
+// Android needs a Context to locate filesDir, so the platform Koin module
+// supplies it (see androidMain platformModule). iOS provides its own no-arg
+// createDataStore() using NSHomeDirectory. Both back the same shared
+// AppPreferencesDataSource in commonMain.
 fun createDataStore(context: Context): DataStore<Preferences> =
     PreferenceDataStoreFactory.createWithPath(
         corruptionHandler = ReplaceFileCorruptionHandler { emptyPreferences() },

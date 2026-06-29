@@ -3,6 +3,7 @@ package com.troves.presintation.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.snapshots.Snapshot
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
@@ -44,21 +45,27 @@ private val navSavedStateConfiguration = SavedStateConfiguration {
 @Composable
 fun AppNavHost() {
     val mainViewModel: MainViewModel = koinViewModel()
-    val startDestination by mainViewModel.startDestination.collectAsState()
+    val uiState by mainViewModel.uiState.collectAsState()
 
-    // Show splash/blank while determining start destination
-    if (startDestination == null) {
-        SplashScreen(onNavigateToOnboarding = {}) 
+    if (uiState.isLoading) {
+        SplashScreen(onNavigateToOnboarding = {})
         return
     }
 
-    val initialRoute = when (startDestination) {
+    val initialRoute: NavKey = when (uiState.startDestination) {
         StartDestination.Onboarding -> AppRoute.Onboarding
-        StartDestination.Login -> AppRoute.Home // For now home, or Login
-        null -> AppRoute.Splash
+        StartDestination.Home -> AppRoute.Home
     }
 
     val backStack = rememberNavBackStack(navSavedStateConfiguration, initialRoute)
+
+
+    fun replaceWith(route: NavKey) {
+        Snapshot.withMutableSnapshot {
+            backStack.clear()
+            backStack.add(route)
+        }
+    }
 
     val entryProvider: (NavKey) -> NavEntry<NavKey> = entryProvider {
         entry<AppRoute.Home> {
@@ -79,41 +86,24 @@ fun AppNavHost() {
         }
         entry<AppRoute.Onboarding> {
             OnboardingScreen(
-                onNavigateToLogin = {
-                    // After onboarding, replace it with Home/Login
-                    backStack.clear()
-                    backStack.add(AppRoute.Home)
-                }
+                onOnboardingComplete = { replaceWith(AppRoute.Home) }
             )
         }
         entry<AppRoute.Splash> {
             SplashScreen(
-                onNavigateToOnboarding = {
-                    backStack.clear()
-                    backStack.add(AppRoute.Onboarding)
-                }
+                onNavigateToOnboarding = { replaceWith(AppRoute.Onboarding) }
             )
         }
         entry<AppRoute.Login> {
             LoginScreen(
-                onNavigateToRegister = {
-                    backStack.add(AppRoute.Register)
-                },
-                onLoginSuccess = {
-                    backStack.clear()
-                    backStack.add(AppRoute.Home)
-                }
+                onNavigateToRegister = { backStack.add(AppRoute.Register) },
+                onLoginSuccess = { replaceWith(AppRoute.Home) }
             )
         }
         entry<AppRoute.Register> {
             RegisterScreen(
-                onNavigateToLogin = {
-                    backStack.removeLastOrNull()
-                },
-                onRegisterSuccess = {
-                    backStack.clear()
-                    backStack.add(AppRoute.Home)
-                }
+                onNavigateToLogin = { backStack.removeLastOrNull() },
+                onRegisterSuccess = { replaceWith(AppRoute.Home) }
             )
         }
         entry<AppRoute.Products> {
@@ -129,6 +119,6 @@ fun AppNavHost() {
             backStack = backStack,
             entryProvider = entryProvider
         ),
-        onBack = { backStack.removeLastOrNull() }
+        onBack = { if (backStack.size > 1) backStack.removeLastOrNull() }
     )
 }

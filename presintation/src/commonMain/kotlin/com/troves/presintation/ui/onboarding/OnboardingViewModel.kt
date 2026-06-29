@@ -12,13 +12,13 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class OnboardingViewModel(
-    private val completeOnboarding: CompleteOnboardingUseCase
+    private val completeOnboardingUseCase: CompleteOnboardingUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(OnboardingState())
     val uiState: StateFlow<OnboardingState> = _uiState.asStateFlow()
 
-    private val _uiEvent = Channel<OnboardingUiEvent>()
+    private val _uiEvent = Channel<OnboardingUiEvent>(Channel.BUFFERED)
     val uiEvent = _uiEvent.receiveAsFlow()
 
     fun updatePage(page: Int, totalPages: Int) {
@@ -31,9 +31,15 @@ class OnboardingViewModel(
     }
 
     fun completeOnboarding() {
+        // Guard against double taps (e.g. spamming "Skip"/"Let's get started")
+        // emitting multiple navigation events.
+        if (_uiState.value.isCompleting) return
+        _uiState.update { it.copy(isCompleting = true) }
+
         viewModelScope.launch {
-            completeOnboarding()
-            _uiEvent.send(OnboardingUiEvent.NavigateToLogin)
+            // Persisting the flag must never block navigation; ignore write failures.
+            runCatching { completeOnboardingUseCase() }
+            _uiEvent.send(OnboardingUiEvent.Finished)
         }
     }
 }
