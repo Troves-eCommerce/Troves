@@ -58,6 +58,7 @@ fun ProductImageCarousel(
                 ) { imageUrls.count() },
                 modifier = Modifier
                     .fillMaxWidth()
+                    .background(Theme.colors.backGround)
                     .height(280.dp)
                     .align(Alignment.Center),
                 preferredItemWidth = 240.dp,
@@ -82,7 +83,7 @@ fun ProductImageCarousel(
                 .align(Alignment.TopEnd)
                 .padding(10.dp)
                 .size(Theme.size.small)
-                .background(Color.White, CircleShape),
+                .background(Theme.colors.backGround, CircleShape),
         ) {
             Icon(
                 painter = painterResource(Res.drawable.ic_heart),
@@ -118,6 +119,6 @@ private fun PageDot(
         modifier = modifier
             .size(if (isSelected) PageDotSelected else PageDotIdle)
             .clip(CircleShape)
-            .background(Color.White.copy(alpha = if (isSelected) 1f else 0.4f)),
+            .background(Theme.colors.secondary),
     )
 }
