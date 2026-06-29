@@ -7,6 +7,7 @@ sealed interface ProductDetailsIntent {
     data object OnSizeGuide : ProductDetailsIntent
     data object OnBackClick : ProductDetailsIntent
     data class OnSizeSelectedChange(val newSize: String) : ProductDetailsIntent
-    data class OnColorSelectedChange(val newColor: String) : ProductDetailsIntent
-    data class OnFavoriteClick(val productId: String) : ProductDetailsIntent
+    data class OnColorSelectedChange(val colorIndex: Int) : ProductDetailsIntent
+    data object OnAddToCart : ProductDetailsIntent
+    data object OnFavoriteClick : ProductDetailsIntent
 }

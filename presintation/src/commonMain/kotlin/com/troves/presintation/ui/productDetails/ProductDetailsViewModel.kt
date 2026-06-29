@@ -29,16 +29,43 @@ class ProductDetailsViewModel(
 
     fun onIntent(intent: ProductDetailsIntent) {
         when (intent) {
-            is ProductDetailsIntent.Load ->{
+            ProductDetailsIntent.OnBackClick -> {
+                sendEffect(ProductDetailsEffect.NavigateBack)
+            }
+
+            ProductDetailsIntent.OnSeeAllReviews -> {
+                sendEffect(ProductDetailsEffect.ShowToast("Coming soon..."))
+            }
+
+            ProductDetailsIntent.OnSizeGuide -> {
+                sendEffect(ProductDetailsEffect.NavigateBack)
+            }
+
+            ProductDetailsIntent.OnAddToCart -> {
+                sendEffect(ProductDetailsEffect.ShowToast("Coming soon..."))
+            }
+
+            is ProductDetailsIntent.OnColorSelectedChange -> {
+                _state.update { state ->
+                    state.copy(selectedColorIndex = intent.colorIndex)
+                }
+            }
+
+            is ProductDetailsIntent.OnFavoriteClick -> {
+                sendEffect(ProductDetailsEffect.ShowToast("Coming soon..."))
+            }
+
+            is ProductDetailsIntent.OnSizeSelectedChange -> {
+                _state.update { state ->
+                    state.copy(selectedSizeLabel = intent.newSize)
+                }
+            }
+
+            is ProductDetailsIntent.Retry -> {
                 fetchProduct(intent.productId)
             }
-            ProductDetailsIntent.OnBackClick -> TODO()
-            is ProductDetailsIntent.OnColorSelectedChange -> TODO()
-            is ProductDetailsIntent.OnFavoriteClick -> TODO()
-            ProductDetailsIntent.OnSeeAllReviews -> TODO()
-            ProductDetailsIntent.OnSizeGuide -> TODO()
-            is ProductDetailsIntent.OnSizeSelectedChange -> TODO()
-            is ProductDetailsIntent.Retry -> {
+
+            is ProductDetailsIntent.Load -> {
                 fetchProduct(intent.productId)
             }
         }
@@ -47,18 +74,31 @@ class ProductDetailsViewModel(
     private fun fetchProduct(productId: String) {
         viewModelScope.launch {
             val product = getProductByIdUseCase(productId)
-            when(product){
-                is Result.Error -> _state.update {
-                    it.copy(errorMessage = product.throwable.message.toString())
-                }
+            when (product) {
                 Result.Loading -> {
                     _state.update {
                         it.copy(isLoading = true)
                     }
                 }
-                is Result.Success<Product> -> {
+                is Result.Error -> {
                     _state.update {
-                        it.copy()
+                        it.copy(
+                            isLoading = false,
+                            errorMessage = product.throwable.stackTraceToString()
+                        )
+                    }
+                }
+
+                is Result.Success<Product> -> {
+                    val currentstate = product.value
+                    _state.update {
+                        it.copy(
+                            isLoading = false,
+                            images = currentstate.images,
+                            colors = currentstate.colors,
+                            title = currentstate.title,
+                            priceFormatted = currentstate.price
+                        )
                     }
                 }
             }
@@ -66,14 +106,10 @@ class ProductDetailsViewModel(
         }
 
 
-
     }
 
     private fun sendEffect(effect: ProductDetailsEffect) {
-        when (effect) {
-            ProductDetailsEffect.NavigateBack -> TODO()
-            is ProductDetailsEffect.ShowToast -> TODO()
-        }
+        viewModelScope.launch { _effect.send(effect) }
     }
 
 

@@ -9,15 +9,20 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.Button
+import androidx.compose.material3.CircularWavyProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,7 +32,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.troves.designsystem.theme.Theme
-import com.troves.presintation.ui.home.HomeViewModel
 import com.troves.presintation.ui.productDetails.components.AddToCartButton
 import com.troves.presintation.ui.productDetails.components.ColorSelectorRow
 import com.troves.presintation.ui.productDetails.components.CustomerReviewsSection
@@ -38,6 +42,7 @@ import com.troves.presintation.ui.productDetails.components.SizeSelectorRow
 import com.troves.presintation.ui.productDetails.components.StarRatingRow
 import org.koin.compose.viewmodel.koinViewModel
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ProductDetailsScreen(
     productId: String,
@@ -45,11 +50,11 @@ fun ProductDetailsScreen(
     viewModel: ProductDetailsViewModel = koinViewModel(),
 ) {
 
-    val uiState = viewModel.state.collectAsStateWithLifecycle()
+    val uiState by viewModel.state.collectAsStateWithLifecycle()
     val snackBarHostState = remember { SnackbarHostState() }
     LaunchedEffect(Unit) {
         viewModel.onIntent(intent = ProductDetailsIntent.Load(productId = productId))
-        val effect = viewModel.effect.collect { newEffect ->
+        viewModel.effect.collect { newEffect ->
             when (newEffect) {
                 ProductDetailsEffect.NavigateBack -> {
                     onNavigateBack()
@@ -62,17 +67,44 @@ fun ProductDetailsScreen(
         }
 
     }
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Theme.colors.backGround),
+        contentAlignment = Alignment.Center
+    ) {
+        when {
+            uiState.isLoading -> {
+                CircularWavyProgressIndicator()
+            }
 
-    ProductDetailsScreenContent(
-        uiState = TODO(),
-        onBackClick = TODO(),
-        onAddToCart = TODO(),
-        onSizeSelected = TODO(),
-        onColorSelected = TODO(),
-        onFavoriteClick = TODO(),
-        onSeeAllReviews = TODO(),
-        onSizeGuide = TODO()
-    )
+            uiState.hasError -> {
+                Text("${uiState.errorMessage}")
+            }
+
+            else -> {
+                val intent = viewModel::onIntent
+                ProductDetailsScreenContent(
+                    uiState = uiState,
+                    onBackClick = { intent(ProductDetailsIntent.OnBackClick) },
+                    onAddToCart = { intent(ProductDetailsIntent.OnAddToCart) },
+                    onSizeSelected = { intent(ProductDetailsIntent.OnSizeSelectedChange(it)) },
+                    onColorSelected = { intent(ProductDetailsIntent.OnColorSelectedChange(it)) },
+                    onFavoriteClick = { intent(ProductDetailsIntent.OnFavoriteClick) },
+                    onSeeAllReviews = { intent(ProductDetailsIntent.OnSeeAllReviews) },
+                    onSizeGuide = { intent(ProductDetailsIntent.OnSizeGuide) },
+                    modifier = Modifier.fillMaxSize().statusBarsPadding()
+                )
+            }
+        }
+        SnackbarHost(
+            hostState = snackBarHostState,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .navigationBarsPadding()
+                .padding(16.dp),
+        )
+    }
 
 
 }
@@ -103,7 +135,10 @@ fun ProductDetailsScreenContent(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding),
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
+
             item {
                 ProductImageCarousel(
                     imageUrls = uiState.images,
@@ -112,7 +147,6 @@ fun ProductDetailsScreenContent(
                     onFavoriteClick = onFavoriteClick,
                 )
             }
-
 
             item {
                 Column(
@@ -192,7 +226,10 @@ fun ProductDetailsScreenContent(
                     Spacer(Modifier.height(Theme.spacing.large))
 
 
-                    AddToCartButton(onAddToCart = onAddToCart)
+                    AddToCartButton(
+                        onAddToCart = onAddToCart,
+                        modifier = Modifier.fillMaxWidth(fraction = 0.8f)
+                    )
 
                     Spacer(Modifier.height(Theme.spacing.large))
 

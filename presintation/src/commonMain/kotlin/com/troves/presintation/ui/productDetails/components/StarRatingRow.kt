@@ -15,13 +15,6 @@ import org.jetbrains.compose.resources.painterResource
 import troves.designsystem.generated.resources.Res
 import troves.designsystem.generated.resources.ic_star
 
-
-/**
- * Inline rating display: ★ 4.8 (124 reviews).
- *
- * @param rating      Numeric rating value (e.g. 4.8).
- * @param reviewCount Total number of reviews shown in parentheses.
- */
 @Composable
 fun StarRatingRow(
     rating: Float,
@@ -43,12 +36,12 @@ fun StarRatingRow(
             text = rating.toString(),
             style = Theme.typography.body.medium,
             fontWeight = FontWeight.SemiBold,
-            color = Theme.colors.onPrimary
+            color = Theme.colors.amber
         )
         Text(
             text = "($reviewCount reviews)",
             style = Theme.typography.body.small,
-            color = Theme.colors.onSecondary,
+            color = Theme.colors.amber,
         )
     }
 }

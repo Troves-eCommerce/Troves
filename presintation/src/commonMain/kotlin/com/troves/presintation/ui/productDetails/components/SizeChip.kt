@@ -24,12 +24,12 @@ fun SizeChip(
     val strokeColor = if (isSelected) Theme.colors.onDisable else Theme.colors.disable
     val strokeWidth = if (isSelected) 1.5.dp else 1.dp
     val labelColor  = if (isSelected) Theme.colors.warning else Theme.colors.onPrimary
-    val bgColor     = if (isSelected) Theme.colors.onDisable.copy(alpha = 0.05f) else Color.White
+    val bgColor     = if (isSelected) Theme.colors.primary.copy(alpha = 0.05f) else Theme.colors.amber
 
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier
-            .clip(Theme.shapes.medium)
+            .clip(Theme.shapes.large)
             .background(bgColor)
             .border(strokeWidth, strokeColor, Theme.shapes.medium)
             .clickable(onClick = onClick)

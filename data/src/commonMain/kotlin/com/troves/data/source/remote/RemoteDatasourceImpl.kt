@@ -6,6 +6,7 @@ import com.troves.data.source.remote.dto.CustomCollectionResponse
 import com.troves.data.source.remote.dto.MarketingEventsResponse
 import com.troves.data.source.remote.dto.ProductResponse
 import com.troves.data.source.remote.dto.ProductDto
+import com.troves.data.source.remote.dto.SingleProductResponse
 import com.troves.data.source.remote.service.TrovesApiService
 import com.troves.domain.Result
 
@@ -23,7 +24,7 @@ class RemoteDatasourceImpl(
         return trovesApiService.getProductImages(productId = productId)
     }
 
-    override suspend fun getProductById(productId: String): Result<ProductResponse> {
+    override suspend fun getProductById(productId: String): Result<SingleProductResponse> {
         return trovesApiService.getProductById(productId = productId)
     }
 

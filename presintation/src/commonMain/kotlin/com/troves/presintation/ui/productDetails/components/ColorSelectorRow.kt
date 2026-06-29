@@ -5,12 +5,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.troves.presintation.ui.productDetails.models.ColorUi
+import com.troves.designsystem.theme.Theme
 
 
 @Composable
 fun ColorSelectorRow(
-    colors: List<ColorUi>,
+    colors: List<String>,
     selectedColorIndex: Int,
     onColorSelected: (Int) -> Unit,
     modifier: Modifier = Modifier,
@@ -22,9 +22,9 @@ fun ColorSelectorRow(
     ) {
         colors.forEachIndexed { index, colorUi ->
             ColorCircle(
-                color = colorUi.color,
+                color = Theme.colors.onDisable,
                 isSelected = index == selectedColorIndex,
-                contentDescription = colorUi.contentDescription,
+                contentDescription = colorUi,
                 onClick = { onColorSelected(index) },
             )
         }

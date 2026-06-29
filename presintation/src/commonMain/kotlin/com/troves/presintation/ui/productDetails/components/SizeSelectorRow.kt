@@ -16,6 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import com.troves.designsystem.components.button.IconButton
 import com.troves.designsystem.components.topbar.BaseTopAppBar
 import com.troves.designsystem.theme.Theme
+import com.troves.designsystem.theme.Theme.size
 import com.troves.presintation.ui.productDetails.models.SizeUi
 import org.jetbrains.compose.resources.painterResource
 import troves.designsystem.generated.resources.Res
@@ -23,7 +24,7 @@ import troves.designsystem.generated.resources.ic_arrow_back
 
 @Composable
 fun SizeSelectorRow(
-    sizes: List<SizeUi>,
+    sizes: List<String>,
     selectedSizeLabel: String,
     onSizeSelected: (String) -> Unit,
     modifier: Modifier = Modifier,
@@ -32,11 +33,11 @@ fun SizeSelectorRow(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(Theme.spacing.medium),
     ) {
-        sizes.forEach { size ->
+        sizes.forEach { lable ->
             SizeChip(
-                label = size.label,
-                isSelected = size.label == selectedSizeLabel,
-                onClick = { onSizeSelected(size.label) },
+                label = lable,
+                isSelected = lable == selectedSizeLabel,
+                onClick = { onSizeSelected(lable) },
             )
         }
     }
