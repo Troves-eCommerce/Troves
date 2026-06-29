@@ -2,6 +2,7 @@ package com.troves.presintation.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.troves.domain.usecase.onboarding.CompleteOnboardingUseCase
 import com.troves.domain.usecase.onboarding.IsOnboardingDoneUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -9,7 +10,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class MainViewModel(
-    private val isOnboardingDone: IsOnboardingDoneUseCase
+    private val isOnboardingDone: IsOnboardingDoneUseCase,
+    private val completeOnboardingUseCase: CompleteOnboardingUseCase,
 ) : ViewModel() {
 
     private val _startDestination = MutableStateFlow<StartDestination?>(null)
@@ -25,6 +27,7 @@ class MainViewModel(
             _startDestination.value = if (done) {
                 StartDestination.Login
             } else {
+                completeOnboardingUseCase()
                 StartDestination.Onboarding
             }
         }
