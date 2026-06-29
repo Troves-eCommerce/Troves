@@ -1,4 +1,4 @@
-﻿package com.troves.presintation.ui.Auth
+﻿package com.troves.presintation.ui.auth
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

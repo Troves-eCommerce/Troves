@@ -96,6 +96,7 @@ kotlin {
             implementation(libs.androidx.datastore)
             // The Preferences DataStore library
             implementation(libs.androidx.datastore.preferences)
+            implementation(project(":presintation"))
 
         }
         iosMain.dependencies {

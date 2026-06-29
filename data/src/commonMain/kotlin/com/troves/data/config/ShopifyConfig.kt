@@ -2,6 +2,7 @@ package com.troves.data.config
 
 import com.troves.data.BuildKonfig
 
+
 /**
  * Shopify API credentials loaded from local.properties at build time via BuildKonfig.
  * The actual values are NEVER stored in source code or version control.
