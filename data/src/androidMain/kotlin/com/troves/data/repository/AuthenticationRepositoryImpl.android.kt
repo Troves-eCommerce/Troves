@@ -1,4 +1,8 @@
 ﻿package com.troves.data.repository
 
-actual fun createAuthenticationRepository(): PlatformAuthenticationRepository =
-    AuthenticationRepositoryFirebaseImpl()
+import com.troves.data.local.preferenceses.AppPreferencesDataSource
+
+actual fun createAuthenticationRepository(
+    preferences: AppPreferencesDataSource
+): PlatformAuthenticationRepository =
+    AuthenticationRepositoryFirebaseImpl(preferences)

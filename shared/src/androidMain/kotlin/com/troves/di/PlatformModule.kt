@@ -1,10 +1,11 @@
 package com.troves.di
 
-import TrovesApp.Companion.trovesApplication
-import com.troves.data.local.preferenceses.createDataStoreAndroid
+import com.troves.TrovesApp.Companion.trovesApplication
+import com.troves.data.local.preferenceses.createDataStore
+import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
 actual fun platformModule(): Module = module {
-    module { single { createDataStoreAndroid(trovesApplication) } }
+    single { createDataStore(trovesApplication) }
 }

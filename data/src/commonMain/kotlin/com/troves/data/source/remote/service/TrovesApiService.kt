@@ -1,56 +1,31 @@
 package com.troves.data.source.remote.service
-
-import com.troves.data.source.remote.RemoteDatasource
 import com.troves.data.source.remote.dto.Collection
 import com.troves.data.source.remote.dto.CollectionImage
+import com.troves.data.source.remote.dto.CustomCollectionResponse
 import com.troves.data.source.remote.dto.MarketingEventsResponse
 import com.troves.data.source.remote.dto.ProductDto
 import com.troves.data.source.remote.dto.ProductResponse
-import com.troves.domain.Result
-import io.ktor.client.HttpClient
-import io.ktor.http.HttpMethod
-import io.ktor.http.path
+import com.troves.data.source.remote.dto.SingleProductResponse
 
-class TrovesApiService(
-    private val ktorClient: HttpClient
-) : RemoteDatasource {
-    override suspend fun createProduct(productDto: ProductDto): Result<ProductDto> {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun getAllProducts(): Result<ProductResponse> =
-        ktorClient.getResults {
-            method = HttpMethod.Get
-            url { path("products.json") }
-        }
-
-    override suspend fun getProductImages(productId: String): Result<List<CollectionImage>> {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun getProductById(productId: String): Result<ProductResponse> {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun updateProduct(productId: String) {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun deleteProduct(productDto: ProductDto) {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun getAllBrands(): Result<Collection> {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun getCategory(): Result<Collection> {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun getAllEventsById(eventId: String): MarketingEventsResponse {
-        TODO("Not yet implemented")
-    }
+interface TrovesApiService {
+    //region products
+    suspend fun createProduct(productDto: ProductDto): com.troves.domain.Result<ProductDto>
+    suspend fun getAllProducts(): com.troves.domain.Result<ProductResponse>
+    suspend fun getProductImages(productId: String): com.troves.domain.Result<List<CollectionImage>>
+    suspend fun getProductById(productId: String): com.troves.domain.Result<SingleProductResponse>
+    suspend fun updateProduct(productId: String)
+    suspend fun deleteProduct(productDto: ProductDto)
+    // endregion
 
 
+    //region brands
+
+    suspend fun getAllBrands(): com.troves.domain.Result<Collection>
+    suspend fun getCategory(): com.troves.domain.Result<CustomCollectionResponse>
+
+    //endregion
+
+    //region events
+    suspend fun getAllEventsById(eventId: String): MarketingEventsResponse
+    //endregion
 }
