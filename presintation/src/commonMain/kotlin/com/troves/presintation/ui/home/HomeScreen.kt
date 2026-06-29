@@ -394,7 +394,7 @@ private fun previewHomeState(): HomeUiState {
             title = "Air Zoom Pegasus ${index + 1}",
             vendor = "Nike",
             price = "${120 + index * 10}.00",
-            imageUrl = null,
+            imageUrl = "null",
             status = "active",
         )
     }

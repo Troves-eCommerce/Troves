@@ -7,7 +7,7 @@ import com.troves.presintation.ui.productDetails.models.SizeUi
 data class ProductDetailUiState(
     val title: String = "",
     val priceFormatted: String= "",
-    val rating: Float = 0f,
+    val rating: Int = 0,
     val reviewCount: Int = 0,
     val description: String= "",
     val images: List<String> = emptyList(),

@@ -38,6 +38,8 @@ fun ProductImageCarousel(
     onFavoriteClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+
+    val currentIndexState = rememberCarouselState(initialItem = currentIndex) { imageUrls.size }
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -53,17 +55,17 @@ fun ProductImageCarousel(
         ) {
 
             HorizontalMultiBrowseCarousel(
-                state = rememberCarouselState(
-                    initialItem = currentIndex
-                ) { imageUrls.count() },
+                state = currentIndexState,
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(Theme.colors.backGround)
-                    .height(280.dp)
+                    .height(400.dp)
                     .align(Alignment.Center),
-                preferredItemWidth = 240.dp,
+                preferredItemWidth = 380.dp,
                 itemSpacing = 8.dp,
-                contentPadding = PaddingValues(horizontal = 16.dp),
+                minSmallItemWidth = 180.dp,
+                maxSmallItemWidth = 300.dp,
+                contentPadding = PaddingValues(horizontal = 8.dp),
             ) { i ->
                 AsyncImage(
                     model = imageUrls.getOrNull(i),
@@ -76,21 +78,21 @@ fun ProductImageCarousel(
                     error = painterResource(Res.drawable.img_onboarding1),
                 )
             }
-        }
-        IconButton(
-            onClick = onFavoriteClick,
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .padding(10.dp)
-                .size(Theme.size.small)
-                .background(Theme.colors.backGround, CircleShape),
-        ) {
-            Icon(
-                painter = painterResource(Res.drawable.ic_heart),
-                contentDescription = if (isFavorite) "Remove from favourites" else "Add to favourites",
-                tint = if (isFavorite) Theme.colors.amber else Theme.colors.onDisable,
-                modifier = Modifier.size(18.dp),
-            )
+            IconButton(
+                onClick = onFavoriteClick,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(10.dp)
+                    .size(Theme.size.small)
+                    .background(Theme.colors.backGround, CircleShape),
+            ) {
+                Icon(
+                    painter = painterResource(Res.drawable.ic_heart),
+                    contentDescription = if (isFavorite) "Remove from favourites" else "Add to favourites",
+                    tint = if (isFavorite) Theme.colors.amber else Theme.colors.onDisable,
+                    modifier = Modifier.size(18.dp),
+                )
+            }
         }
 
 
@@ -102,7 +104,7 @@ fun ProductImageCarousel(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             repeat(imageUrls.size) { index ->
-                PageDot(isSelected = index == currentIndex)
+                PageDot(isSelected = index == currentIndexState.currentItem)
             }
         }
     }
