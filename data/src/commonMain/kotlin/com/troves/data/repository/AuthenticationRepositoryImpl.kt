@@ -24,6 +24,7 @@ class AuthenticationRepositoryFirebaseImpl(
 
     override suspend fun login(email: String, password: String): Result<Unit> = try {
         firebaseAuth.signInWithEmailAndPassword(email, password)
+        preferences.setLoggedIn(true)
         Result.Success(Unit)
     } catch (e: Exception) {
         Result.Error(e)
@@ -31,6 +32,7 @@ class AuthenticationRepositoryFirebaseImpl(
 
     override suspend fun register(email: String, password: String): Result<Unit> = try {
         firebaseAuth.createUserWithEmailAndPassword(email, password)
+        preferences.setLoggedIn(true)
         Result.Success(Unit)
     } catch (e: Exception) {
         Result.Error(e)
@@ -38,10 +40,13 @@ class AuthenticationRepositoryFirebaseImpl(
 
     override suspend fun logout() {
         firebaseAuth.signOut()
+        preferences.setLoggedIn(false)
     }
 
+    // The logged-in flag is persisted in DataStore so a gated action (e.g. the
+    // cart) can decide whether to prompt for sign-up without touching Firebase.
     override suspend fun isLoggedIn(): Boolean =
-        firebaseAuth.currentUser != null
+        preferences.isLoggedIn.first()
 
     override suspend fun isOnboardingDone(): Boolean =
         preferences.isOnboardingDone.first()

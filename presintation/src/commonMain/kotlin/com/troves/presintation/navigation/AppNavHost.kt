@@ -54,7 +54,6 @@ fun AppNavHost() {
 
     val initialRoute: NavKey = when (uiState.startDestination) {
         StartDestination.Onboarding -> AppRoute.Onboarding
-        StartDestination.Login -> AppRoute.Login
         StartDestination.Home -> AppRoute.Home
     }
 
@@ -73,7 +72,8 @@ fun AppNavHost() {
             HomeScreen(
                 onNavigateToProduct = { productId ->
                     backStack.add(AppRoute.ProductDetails(productId))
-                }
+                },
+                onNavigateToRegister = { backStack.add(AppRoute.Register) }
             )
         }
         entry<AppRoute.Favorites> {
@@ -87,7 +87,7 @@ fun AppNavHost() {
         }
         entry<AppRoute.Onboarding> {
             OnboardingScreen(
-                onOnboardingComplete = { replaceWith(AppRoute.Login) }
+                onOnboardingComplete = { replaceWith(AppRoute.Home) }
             )
         }
         entry<AppRoute.Splash> {
@@ -103,7 +103,7 @@ fun AppNavHost() {
         }
         entry<AppRoute.Register> {
             RegisterScreen(
-                onNavigateToLogin = { backStack.removeLastOrNull() },
+                onNavigateToLogin = { backStack.add(AppRoute.Login) },
                 onRegisterSuccess = { replaceWith(AppRoute.Home) }
             )
         }

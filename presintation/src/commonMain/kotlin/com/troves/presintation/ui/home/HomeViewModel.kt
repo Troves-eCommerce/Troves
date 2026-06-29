@@ -2,6 +2,7 @@ package com.troves.presintation.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.troves.domain.IsLoggedInUseCase
 import com.troves.domain.Result
 import com.troves.domain.getOrElse
 import com.troves.domain.usecase.home.GetAdsUseCase
@@ -25,6 +26,7 @@ class HomeViewModel(
     private val getCategories: GetCategoriesUseCase,
     private val getJustForYou: GetJustForYouProductsUseCase,
     private val getTrending: GetTrendingProductsUseCase,
+    private val isLoggedIn: IsLoggedInUseCase,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(HomeUiState())
@@ -41,7 +43,12 @@ class HomeViewModel(
         when (intent) {
             HomeIntent.Load, HomeIntent.Retry -> loadHomeFeed()
             HomeIntent.SearchClicked -> sendEffect(HomeEffect.ShowToast("Search is coming soon"))
-            HomeIntent.CartClicked -> sendEffect(HomeEffect.ShowToast("Your cart is empty"))
+            HomeIntent.CartClicked -> onCartClicked()
+            HomeIntent.SignUpPromptConfirmed -> {
+                _state.update { it.copy(showSignUpPrompt = false) }
+                sendEffect(HomeEffect.NavigateToRegister)
+            }
+            HomeIntent.SignUpPromptDismissed -> _state.update { it.copy(showSignUpPrompt = false) }
             HomeIntent.SeeAllBrandsClicked -> sendEffect(HomeEffect.ShowToast("All brands coming soon"))
             is HomeIntent.AdClicked -> sendEffect(HomeEffect.ShowToast(intent.ad.titleTop))
             is HomeIntent.BrandClicked -> sendEffect(HomeEffect.ShowToast(intent.brand.name))
@@ -86,6 +93,21 @@ class HomeViewModel(
                     trending = trendingResult.getOrElse(emptyList()),
                     errorMessage = firstError?.message ?: firstError?.let { "Something went wrong" },
                 )
+            }
+        }
+    }
+
+    /**
+     * The cart is a gated action: only signed-in users may open it. When the
+     * persisted login flag is false we surface the sign-up prompt instead of
+     * navigating, leaving browsing open to everyone.
+     */
+    private fun onCartClicked() {
+        viewModelScope.launch {
+            if (isLoggedIn()) {
+                sendEffect(HomeEffect.ShowToast("Your cart is empty"))
+            } else {
+                _state.update { it.copy(showSignUpPrompt = true) }
             }
         }
     }

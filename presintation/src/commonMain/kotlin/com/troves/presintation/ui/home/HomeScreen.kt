@@ -49,6 +49,7 @@ import com.troves.domain.entity.Ad
 import com.troves.domain.entity.Brand
 import com.troves.domain.entity.Category
 import com.troves.domain.entity.Product
+import com.troves.presintation.ui.components.SignUpPromptDialog
 import com.troves.presintation.ui.home.components.AdData
 import com.troves.presintation.ui.home.components.AdSlider
 import com.troves.presintation.ui.home.components.BrandItem
@@ -66,6 +67,7 @@ import troves.designsystem.generated.resources.product_card
 @Composable
 fun HomeScreen(
     onNavigateToProduct: (String) -> Unit,
+    onNavigateToRegister: () -> Unit,
     viewModel: HomeViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsState()
@@ -75,9 +77,17 @@ fun HomeScreen(
         viewModel.effect.collect { effect ->
             when (effect) {
                 is HomeEffect.NavigateToProduct -> onNavigateToProduct(effect.productId)
+                is HomeEffect.NavigateToRegister -> onNavigateToRegister()
                 is HomeEffect.ShowToast -> snackbarHostState.showSnackbar(effect.message)
             }
         }
+    }
+
+    if (state.showSignUpPrompt) {
+        SignUpPromptDialog(
+            onConfirm = { viewModel.onIntent(HomeIntent.SignUpPromptConfirmed) },
+            onDismiss = { viewModel.onIntent(HomeIntent.SignUpPromptDismissed) },
+        )
     }
 
     Box(
