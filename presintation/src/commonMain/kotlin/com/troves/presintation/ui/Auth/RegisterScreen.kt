@@ -42,11 +42,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.troves.designsystem.components.button.PrimaryButton
-import com.troves.designsystem.components.facebookIconPainter
-import com.troves.designsystem.components.googleIconPainter
 import com.troves.designsystem.components.textfield.TextField
 import com.troves.designsystem.theme.Theme
+import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
+import troves.designsystem.generated.resources.Res
+import troves.designsystem.generated.resources.facebook
+import troves.designsystem.generated.resources.ic_eye
+import troves.designsystem.generated.resources.ic_eye_off
+import troves.designsystem.generated.resources.ic_google
 
 @Composable
 fun RegisterScreen(
@@ -71,10 +75,10 @@ fun RegisterScreen(
     val remoteError = (uiState as? AuthUiState.Error)?.message
     val errorMessage = localError ?: remoteError
 
-    val googleIcon = googleIconPainter()
-    val facebookIcon = facebookIconPainter()
-    val eyeIcon = com.troves.designsystem.components.eyeIconPainter()
-    val eyeOffIcon = com.troves.designsystem.components.eyeOffIconPainter()
+    val googleIcon = Res.drawable.ic_google
+    val facebookIcon = Res.drawable.facebook
+    val eyeIcon = Res.drawable.ic_eye
+    val eyeOffIcon = Res.drawable.ic_eye_off
 
     val pageBg = Color(0xFFF0F2F5)
 
@@ -146,7 +150,7 @@ fun RegisterScreen(
                     keyboardType = KeyboardType.Password,
                     imeAction = ImeAction.Next
                 ),
-                trailingIcon = if (passwordVisible) eyeIcon else eyeOffIcon,
+                trailingIcon = if (passwordVisible) painterResource(eyeIcon) else painterResource(eyeOffIcon),
                 trailingIconColor = Theme.colors.hint,
                 onClickTrailingIcon = { passwordVisible = !passwordVisible },
                 isError = errorMessage != null && password.isBlank(),
@@ -175,7 +179,7 @@ fun RegisterScreen(
                     keyboardType = KeyboardType.Password,
                     imeAction = ImeAction.Done
                 ),
-                trailingIcon = if (confirmPasswordVisible) eyeIcon else eyeOffIcon,
+                trailingIcon = if (passwordVisible) painterResource(eyeIcon)  else painterResource(eyeOffIcon),
                 trailingIconColor = Theme.colors.hint,
                 onClickTrailingIcon = { confirmPasswordVisible = !confirmPasswordVisible },
                 isError = confirmPassword.isNotBlank() && confirmPassword != password,
@@ -263,7 +267,7 @@ fun RegisterScreen(
                         .padding(12.dp)
                 ) {
                     Image(
-                        painter = googleIcon,
+                        painter = painterResource(googleIcon),
                         contentDescription = "Sign up with Google",
                         modifier = Modifier.fillMaxSize()
                     )
@@ -281,7 +285,7 @@ fun RegisterScreen(
                         .padding(12.dp)
                 ) {
                     Image(
-                        painter = facebookIcon,
+                        painter = painterResource(facebookIcon),
                         contentDescription = "Sign up with Facebook",
                         modifier = Modifier.fillMaxSize()
                     )

@@ -131,7 +131,7 @@ buildkonfig {
         )
         buildConfigField(
             STRING, "SHOPIFY_HOSTNAME",
-            localProperties.getProperty("SHOPIFY_HOSTNAME") ?: error("SHOPIFY_HOSTNAME not set in local.properties")
+            localProperties.getProperty("SHOPIFY_REST_URL") ?: error("SHOPIFY_HOSTNAME not set in local.properties")
         )
     }
 }
