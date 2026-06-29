@@ -178,4 +178,5 @@ fun AppNavHost() {
             onBack = { if (backStack.size > 1) backStack.removeLastOrNull() }
         )
     }
+}
 
