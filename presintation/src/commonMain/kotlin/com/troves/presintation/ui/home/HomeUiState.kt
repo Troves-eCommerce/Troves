@@ -18,6 +18,3 @@ data class HomeUiState(
 ) {
     val hasError: Boolean get() = errorMessage != null
 }
-
-
-

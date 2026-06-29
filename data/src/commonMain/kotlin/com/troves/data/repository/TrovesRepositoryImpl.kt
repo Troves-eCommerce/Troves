@@ -9,6 +9,8 @@ import com.troves.domain.entity.Ad
 import com.troves.domain.entity.Brand
 import com.troves.domain.entity.Category
 import com.troves.domain.entity.Product
+import com.troves.domain.fold
+import com.troves.domain.getOrThrow
 import com.troves.domain.map
 import com.troves.domain.repository.TrovesRepository
 
@@ -24,6 +26,21 @@ class TrovesRepositoryImpl(
                 .orEmpty()
         }
 
+    override suspend fun getProductById(productId: String): Result<Product> {
+        return remoteDataSource.getProductById(productId = productId).fold(
+            onSuccess = { response ->
+                response.products
+                    ?.firstOrNull()
+                    ?.toDomain()
+                    ?.let { Result.Success(it) }
+                    ?: Result.Error(NoSuchElementException())
+            },
+            onError = { Result.Error(it) },
+            onLoading = { Result.Loading}
+        )
+    }
+
+
     override suspend fun getBrands(): Result<List<Brand>> =
         remoteDataSource.getAllBrands().map { collection ->
             collection.smartCollections
@@ -31,6 +48,7 @@ class TrovesRepositoryImpl(
                 ?.map { it.toBrand() }
                 .orEmpty()
         }
+
 
     override suspend fun getCategories(): Result<List<Category>> =
         remoteDataSource.getCategory().map { response ->
