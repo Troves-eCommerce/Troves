@@ -43,7 +43,9 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.troves.designsystem.components.button.PrimaryButton
 import com.troves.designsystem.components.textfield.TextField
+import com.troves.designsystem.components.toast.TrovesToast
 import com.troves.designsystem.theme.Theme
+import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
 import troves.designsystem.generated.resources.Res
@@ -60,8 +62,14 @@ fun RegisterScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
+    var successMessage by remember { mutableStateOf<String?>(null) }
+
     LaunchedEffect(uiState) {
-        if (uiState is AuthUiState.Success) onRegisterSuccess()
+        if (uiState is AuthUiState.Success) {
+            successMessage = "Account created successfully"
+            delay(1000)
+            onRegisterSuccess()
+        }
     }
 
     var email by remember { mutableStateOf("") }
@@ -315,5 +323,11 @@ fun RegisterScreen(
                     .clickable(onClick = onNavigateToLogin)
             )
         }
+
+        // ── Success Toast ────────────────────────────────────────────────────
+        TrovesToast(
+            message = successMessage,
+            onDismiss = { successMessage = null },
+        )
     }
 }
