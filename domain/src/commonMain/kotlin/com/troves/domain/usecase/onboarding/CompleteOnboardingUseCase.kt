@@ -1,9 +1,9 @@
 package com.troves.domain.usecase.onboarding
 
-import com.troves.domain.repository.OnboardingRepository
+import com.troves.domain.AuthenticationRepository
 
 class CompleteOnboardingUseCase(
-    private val repository: OnboardingRepository
+    private val repository: AuthenticationRepository
 ) {
     suspend operator fun invoke() = repository.setOnboardingDone()
 }

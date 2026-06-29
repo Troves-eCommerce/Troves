@@ -22,4 +22,15 @@ interface AuthenticationRepository {
      * Returns true if a user is currently signed in (session persisted).
      */
     suspend fun isLoggedIn(): Boolean
+
+    /**
+     * Returns true if the user has already completed the onboarding flow
+     * (persisted locally on both Android and iOS).
+     */
+    suspend fun isOnboardingDone(): Boolean
+
+    /**
+     * Marks the onboarding flow as completed so it is not shown again.
+     */
+    suspend fun setOnboardingDone()
 }
