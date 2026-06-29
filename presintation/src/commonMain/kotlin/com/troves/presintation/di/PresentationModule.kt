@@ -1,6 +1,7 @@
 package com.troves.presintation.di
 
 import com.troves.presintation.ui.MainViewModel
+import com.troves.presintation.ui.auth.AuthViewModel
 import com.troves.presintation.ui.products.ProductsViewModel
 import com.troves.presintation.ui.home.HomeViewModel
 import com.troves.presintation.ui.onboarding.OnboardingViewModel
@@ -10,6 +11,7 @@ import org.koin.dsl.module
 
 val presentationModule = module {
     viewModelOf(::MainViewModel)
+    viewModelOf(::AuthViewModel)
     viewModelOf(::OnboardingViewModel)
     viewModelOf(::HomeViewModel)
     viewModelOf(::ProductDetailsViewModel)

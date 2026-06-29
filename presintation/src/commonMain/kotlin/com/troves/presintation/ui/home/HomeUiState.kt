@@ -15,6 +15,7 @@ data class HomeUiState(
     val trending: List<Product> = emptyList(),
     val favoriteProductIds: Set<Long> = emptySet(),
     val errorMessage: String? = null,
+    val showSignUpPrompt: Boolean = false,
 ) {
     val hasError: Boolean get() = errorMessage != null
 }

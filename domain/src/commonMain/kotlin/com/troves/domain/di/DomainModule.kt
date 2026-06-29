@@ -1,5 +1,8 @@
 package com.troves.domain.di
 
+import com.troves.domain.IsLoggedInUseCase
+import com.troves.domain.LoginUseCase
+import com.troves.domain.RegisterUseCase
 import com.troves.domain.usecase.details.GetProductByIdUseCase
 import com.troves.domain.usecase.home.GetAdsUseCase
 import com.troves.domain.usecase.home.GetBrandsUseCase
@@ -26,4 +29,9 @@ val domainModule = module {
     // Onboarding
     factory { IsOnboardingDoneUseCase(get()) }
     factory { CompleteOnboardingUseCase(get()) }
+
+    // Authentication
+    factory { LoginUseCase(get()) }
+    factory { RegisterUseCase(get()) }
+    factory { IsLoggedInUseCase(get()) }
 }

@@ -3,9 +3,9 @@ package com.troves.data.di
 import com.troves.data.local.preferenceses.AppPreferencesDataSource
 import com.troves.data.local.preferenceses.AppPreferencesDataSourceImpl
 import com.troves.data.network.provideHttpClient
-import com.troves.data.repository.AuthenticationRepositoryImpl
 import com.troves.data.repository.PaymentRepositoryImpl
 import com.troves.data.repository.TrovesRepositoryImpl
+import com.troves.data.repository.createAuthenticationRepository
 import com.troves.data.source.remote.RemoteDatasource
 import com.troves.data.source.remote.RemoteDatasourceImpl
 import com.troves.data.source.remote.service.TrovesApiService
@@ -30,6 +30,6 @@ val dataModule = module {
 
     // ── Repositories ──────────────────────────────────────────────────────────
     single<TrovesRepository>          { TrovesRepositoryImpl(get()) }
-    single<AuthenticationRepository>  { AuthenticationRepositoryImpl(get()) }
+    single<AuthenticationRepository>  { createAuthenticationRepository(get()) }
     single<PaymentRepository>         { PaymentRepositoryImpl() }
 }

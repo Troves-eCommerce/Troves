@@ -14,6 +14,10 @@ import kotlinx.coroutines.launch
  * Decides the first screen the user should land on, based on whether onboarding
  * has already been completed (persisted in DataStore on both Android and iOS).
  *
+ * Authentication is NOT required to browse: a first-time user sees onboarding,
+ * everyone else lands straight on Home. Signing in is only prompted lazily when
+ * the user triggers a gated action (e.g. opening the cart).
+ *
  * It only *reads* the flag — completing onboarding is the responsibility of
  * [com.troves.presintation.ui.onboarding.OnboardingViewModel].
  */

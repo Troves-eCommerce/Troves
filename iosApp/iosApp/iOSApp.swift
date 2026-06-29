@@ -1,10 +1,17 @@
 import SwiftUI
+import FirebaseCore
+import FirebaseAuth
+import Shared
 
 @main
 struct iOSApp: App {
+    
     init() {
-            KoinKt.initKoin()
-        }
+        FirebaseApp.configure()
+        
+        KoinInitKt.doInitKoin()
+    }
+    
     var body: some Scene {
         WindowGroup {
             ContentView()

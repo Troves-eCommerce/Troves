@@ -107,7 +107,8 @@ fun AppNavHost() {
             HomeScreen(
                 onNavigateToProduct = { productId ->
                     backStack.add(AppRoute.ProductDetails(productId))
-                }
+                },
+                onNavigateToRegister = { backStack.add(AppRoute.Register) }
             )
         }
         entry<AppRoute.Favorites> {
@@ -137,7 +138,7 @@ fun AppNavHost() {
         }
         entry<AppRoute.Register> {
             RegisterScreen(
-                onNavigateToLogin = { backStack.removeLastOrNull() },
+                onNavigateToLogin = { backStack.add(AppRoute.Login) },
                 onRegisterSuccess = { replaceWith(AppRoute.Home) }
             )
         }
@@ -177,4 +178,4 @@ fun AppNavHost() {
             onBack = { if (backStack.size > 1) backStack.removeLastOrNull() }
         )
     }
-}
+

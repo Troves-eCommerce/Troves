@@ -20,6 +20,11 @@ class AppPreferencesDataSourceImpl(
             .catchIOException()
             .map { it[AppPreferencesKeys.IS_ONBOARDING_DONE] ?: false }
 
+    override val isLoggedIn: Flow<Boolean>
+        get() = dataStore.data
+            .catchIOException()
+            .map { it[AppPreferencesKeys.IS_LOGGED_IN] ?: false }
+
     override val selectedLanguage: Flow<String>
         get() = dataStore.data
             .catchIOException()
@@ -44,6 +49,10 @@ class AppPreferencesDataSourceImpl(
 
     override suspend fun setOnboardingDone(done: Boolean) {
         dataStore.edit { it[AppPreferencesKeys.IS_ONBOARDING_DONE] = done }
+    }
+
+    override suspend fun setLoggedIn(loggedIn: Boolean) {
+        dataStore.edit { it[AppPreferencesKeys.IS_LOGGED_IN] = loggedIn }
     }
 
     override suspend fun setSelectedLanguage(language: String) {
