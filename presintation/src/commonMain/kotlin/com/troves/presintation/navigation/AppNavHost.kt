@@ -1,9 +1,14 @@
 package com.troves.presintation.navigation
 
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.Snapshot
+import androidx.compose.ui.Modifier
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
@@ -11,6 +16,9 @@ import androidx.navigation3.runtime.rememberDecoratedNavEntries
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import androidx.savedstate.serialization.SavedStateConfiguration
+import com.troves.designsystem.components.bottomnav.BottomNavItem
+import com.troves.designsystem.components.bottomnav.SPBottomNavigation
+import com.troves.designsystem.theme.Theme
 import com.troves.presintation.ui.MainViewModel
 import com.troves.presintation.ui.StartDestination
 import com.troves.presintation.ui.auth.LoginScreen
@@ -25,6 +33,11 @@ import com.troves.presintation.ui.splash.SplashScreen
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import org.koin.compose.viewmodel.koinViewModel
+import troves.designsystem.generated.resources.Res
+import troves.designsystem.generated.resources.ic_explore
+import troves.designsystem.generated.resources.ic_home
+import troves.designsystem.generated.resources.ic_order
+import troves.designsystem.generated.resources.ic_profile
 
 private val navSavedStateConfiguration = SavedStateConfiguration {
     serializersModule = SerializersModule {
@@ -58,12 +71,34 @@ fun AppNavHost() {
     }
 
     val backStack = rememberNavBackStack(navSavedStateConfiguration, initialRoute)
+    val currentRoute = backStack.lastOrNull()
 
+    val bottomNavRoutes = remember {
+        listOf(
+            AppRoute.Home,
+            AppRoute.Products,
+            AppRoute.Favorites,
+            AppRoute.Profile
+        )
+    }
+
+    val selectedIndex = bottomNavRoutes.indexOf(currentRoute)
+    val shouldShowBottomBar = currentRoute in bottomNavRoutes
 
     fun replaceWith(route: NavKey) {
         Snapshot.withMutableSnapshot {
             backStack.clear()
             backStack.add(route)
+        }
+    }
+
+    fun onBottomNavItemSelected(index: Int) {
+        val targetRoute = bottomNavRoutes[index]
+        if (currentRoute != targetRoute) {
+            Snapshot.withMutableSnapshot {
+                backStack.clear()
+                backStack.add(targetRoute)
+            }
         }
     }
 
@@ -114,11 +149,32 @@ fun AppNavHost() {
         }
     }
 
-    NavDisplay<NavKey>(
-        entries = rememberDecoratedNavEntries(
-            backStack = backStack,
-            entryProvider = entryProvider
-        ),
-        onBack = { if (backStack.size > 1) backStack.removeLastOrNull() }
-    )
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        bottomBar = {
+            if (shouldShowBottomBar) {
+                SPBottomNavigation(
+                    items = listOf(
+                        BottomNavItem("Home", Res.drawable.ic_home),
+                        BottomNavItem("Explore", Res.drawable.ic_explore),
+                        BottomNavItem("Orders", Res.drawable.ic_order),
+                        BottomNavItem("Profile", Res.drawable.ic_profile)
+                    ),
+                    selectedIndex = if (selectedIndex != -1) selectedIndex else 0,
+                    onItemSelected = { index -> onBottomNavItemSelected(index) }
+                )
+            }
+        }
+    ) { paddingValues ->
+        NavDisplay<NavKey>(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues),
+            entries = rememberDecoratedNavEntries(
+                backStack = backStack,
+                entryProvider = entryProvider
+            ),
+            onBack = { if (backStack.size > 1) backStack.removeLastOrNull() }
+        )
+    }
 }
