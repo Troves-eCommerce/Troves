@@ -16,11 +16,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onGloballyPositioned
+import com.troves.designsystem.theme.Theme
 
 fun Modifier.shimmer(
     cornerRadius: Int = 12
 ): Modifier = composed {
-
+    val baseColor = Theme.colors.surfaceVariant
+    val highlightColor = Theme.colors.hint.copy(alpha = 0.25f)
     val transition = rememberInfiniteTransition()
 
     val translate by transition.animateFloat(
@@ -34,13 +37,8 @@ fun Modifier.shimmer(
             repeatMode = RepeatMode.Restart
         )
     )
-
     val brush = Brush.linearGradient(
-        colors = listOf(
-            Color(0xFFE8E8E8),
-            Color(0xFFF6F6F6),
-            Color(0xFFE8E8E8)
-        ),
+        colors = listOf(baseColor, highlightColor, baseColor),
         start = Offset(translate, translate),
         end = Offset(translate + 250f, translate + 250f)
     )

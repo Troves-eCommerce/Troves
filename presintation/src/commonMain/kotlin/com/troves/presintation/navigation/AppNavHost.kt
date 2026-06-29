@@ -18,6 +18,7 @@ import androidx.navigation3.ui.NavDisplay
 import androidx.savedstate.serialization.SavedStateConfiguration
 import com.troves.designsystem.components.bottomnav.BottomNavItem
 import com.troves.designsystem.components.bottomnav.SPBottomNavigation
+import com.troves.designsystem.theme.Theme
 import com.troves.presintation.ui.MainViewModel
 import com.troves.presintation.ui.StartDestination
 import com.troves.presintation.ui.auth.LoginScreen
@@ -177,4 +178,4 @@ fun AppNavHost() {
             onBack = { if (backStack.size > 1) backStack.removeLastOrNull() }
         )
     }
-}
+

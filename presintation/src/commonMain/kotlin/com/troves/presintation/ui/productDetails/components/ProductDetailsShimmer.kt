@@ -17,6 +17,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.troves.designsystem.components.shimmer.shimmerEffect
+import com.troves.designsystem.theme.Theme
 
 @Composable
 fun ProductDetailsShimmer(
@@ -30,7 +32,7 @@ fun ProductDetailsShimmer(
                 onBackClick = {}
             )
         },
-        containerColor = Color.White,
+        containerColor = Theme.colors.backGround,
         modifier = modifier
     ) { padding ->
 

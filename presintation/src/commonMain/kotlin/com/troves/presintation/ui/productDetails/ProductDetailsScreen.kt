@@ -133,9 +133,10 @@ fun ProductDetailsScreenContent(
             ProductDetailTopBar(
                 title = "Details",
                 onBackClick = onBackClick,
+                modifier = Modifier.background(Theme.colors.backGround)
             )
         },
-        containerColor = Color.White,
+        containerColor = Theme.colors.backGround,
         modifier = modifier,
     ) { innerPadding ->
         LazyColumn(
@@ -159,7 +160,7 @@ fun ProductDetailsScreenContent(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(Color.White)
+                        .background(Theme.colors.backGround)
                         .padding(horizontal = Theme.spacing.medium),
                 ) {
                     Spacer(Modifier.height(16.dp))
@@ -168,7 +169,7 @@ fun ProductDetailsScreenContent(
                         text = uiState.title,
                         style = Theme.typography.title,
                         fontWeight = FontWeight.Bold,
-                        color = Theme.colors.primaryVariant,
+                        color = Theme.colors.primaryFont,
                         lineHeight = 30.sp,
                     )
 
