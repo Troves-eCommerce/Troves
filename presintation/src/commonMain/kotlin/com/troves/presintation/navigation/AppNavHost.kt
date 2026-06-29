@@ -54,6 +54,7 @@ fun AppNavHost() {
 
     val initialRoute: NavKey = when (uiState.startDestination) {
         StartDestination.Onboarding -> AppRoute.Onboarding
+        StartDestination.Login -> AppRoute.Login
         StartDestination.Home -> AppRoute.Home
     }
 
@@ -86,7 +87,7 @@ fun AppNavHost() {
         }
         entry<AppRoute.Onboarding> {
             OnboardingScreen(
-                onOnboardingComplete = { replaceWith(AppRoute.Home) }
+                onOnboardingComplete = { replaceWith(AppRoute.Login) }
             )
         }
         entry<AppRoute.Splash> {

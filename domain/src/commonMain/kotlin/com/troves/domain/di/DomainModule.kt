@@ -1,5 +1,6 @@
 package com.troves.domain.di
 
+import com.troves.domain.IsLoggedInUseCase
 import com.troves.domain.LoginUseCase
 import com.troves.domain.RegisterUseCase
 import com.troves.domain.usecase.details.GetProductByIdUseCase
@@ -32,4 +33,5 @@ val domainModule = module {
     // Authentication
     factory { LoginUseCase(get()) }
     factory { RegisterUseCase(get()) }
+    factory { IsLoggedInUseCase(get()) }
 }
