@@ -36,6 +36,7 @@ import com.troves.presintation.ui.productDetails.components.AddToCartButton
 import com.troves.presintation.ui.productDetails.components.ColorSelectorRow
 import com.troves.presintation.ui.productDetails.components.CustomerReviewsSection
 import com.troves.presintation.ui.productDetails.components.ProductDetailTopBar
+import com.troves.presintation.ui.productDetails.components.ProductDetailsShimmer
 import com.troves.presintation.ui.productDetails.components.ProductImageCarousel
 import com.troves.presintation.ui.productDetails.components.SectionHeaderRow
 import com.troves.presintation.ui.productDetails.components.SizeSelectorRow
@@ -75,7 +76,11 @@ fun ProductDetailsScreen(
     ) {
         when {
             uiState.isLoading -> {
-                CircularWavyProgressIndicator()
+                ProductDetailsShimmer(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .statusBarsPadding()
+                )
             }
 
             uiState.hasError -> {
