@@ -1,5 +1,5 @@
 package com.troves.data.repository
 
-import com.troves.domain.PaymentRepository
+import com.troves.domain.repository.PaymentRepository
 
 class PaymentRepositoryImpl : PaymentRepository

@@ -1,35 +1,97 @@
 package com.troves.data.repository
 
+import com.troves.data.mapper.toBrand
+import com.troves.data.mapper.toCategory
+import com.troves.data.mapper.toDomain
 import com.troves.data.source.remote.RemoteDatasource
-import com.troves.domain.Product
 import com.troves.domain.Result
-import com.troves.domain.TrovesRepository
+import com.troves.domain.entity.Ad
+import com.troves.domain.entity.Brand
+import com.troves.domain.entity.Category
+import com.troves.domain.entity.Product
+import com.troves.domain.fold
+import com.troves.domain.map
+import com.troves.domain.repository.TrovesRepository
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
+import kotlinx.coroutines.withContext
 
 class TrovesRepositoryImpl(
-    private val remoteDataSource: RemoteDatasource
+    private val remoteDataSource: RemoteDatasource,
+    private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : TrovesRepository {
 
     override suspend fun getAllProducts(): Result<List<Product>> {
-        return when (val result = remoteDataSource.getAllProducts()) {
-            is Result.Success -> {
-                val response = result.value as com.troves.data.source.remote.dto.ProductResponse
-                val products = response.products
+        return withContext(coroutineDispatcher) {
+            remoteDataSource.getAllProducts().map { response ->
+                response.products
                     ?.filterNotNull()
-                    ?.map { dto ->
-                        Product(
-                            id        = dto.id ?: 0L,
-                            title     = dto.title.orEmpty(),
-                            vendor    = dto.vendor.orEmpty(),
-                            price     = dto.variants?.firstOrNull()?.price.orEmpty(),
-                            imageUrl  = dto.image?.src,
-                            status    = dto.status.orEmpty()
-                        )
-                    }
+                    ?.map { it.toDomain() }
                     .orEmpty()
-                Result.Success(products)
             }
-            is Result.Error   -> Result.Error(result.throwable)
-            is Result.Loading -> Result.Loading
         }
+    }
+
+    override suspend fun getProductById(productId: String): Result<Product> {
+        return withContext(coroutineDispatcher) {
+            remoteDataSource.getProductById(productId = productId).fold(
+                onSuccess = { response ->
+                    response.product
+                        ?.toDomain()
+                        ?.let { Result.Success(it) }
+                        ?: Result.Error(Exception("Product not found: $productId"))
+                },
+                onError = { Result.Error(it) },
+                onLoading = { Result.Loading }
+            )
+        }
+    }
+
+
+    override suspend fun getBrands(): Result<List<Brand>> {
+        return withContext(coroutineDispatcher) {
+            remoteDataSource.getAllBrands().map { collection ->
+                collection.smartCollections
+                    ?.filterNotNull()
+                    ?.map { it.toBrand() }
+                    .orEmpty()
+            }
+        }
+    }
+
+    override suspend fun getCategories(): Result<List<Category>> {
+        return withContext(coroutineDispatcher) {
+            remoteDataSource.getCategory().map { response ->
+                response.customCollections
+                    ?.map { it.toCategory() }
+                    .orEmpty()
+            }
+        }
+    }
+
+    override suspend fun getAds(): Result<List<Ad>> = Result.Success(FAKE_ADS)
+
+    private companion object {
+        val FAKE_ADS = listOf(
+            Ad(
+                id = 1,
+                titleTop = "30% DISCOUNT",
+                titleBottom = "Today special",
+                description = "Get discount for every order, only valid for today.",
+            ),
+            Ad(
+                id = 2,
+                titleTop = "NEW ARRIVALS",
+                titleBottom = "Summer 2026",
+                description = "Fresh styles just landed. Explore the latest collection.",
+            ),
+            Ad(
+                id = 3,
+                titleTop = "FREE SHIPPING",
+                titleBottom = "Orders over \$50",
+                description = "Shop more, save more with free delivery on big orders.",
+            ),
+        )
     }
 }

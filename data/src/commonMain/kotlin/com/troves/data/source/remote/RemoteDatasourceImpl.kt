@@ -2,11 +2,13 @@ package com.troves.data.source.remote
 
 import com.troves.data.source.remote.dto.Collection
 import com.troves.data.source.remote.dto.CollectionImage
+import com.troves.data.source.remote.dto.CustomCollectionResponse
 import com.troves.data.source.remote.dto.MarketingEventsResponse
 import com.troves.data.source.remote.dto.ProductResponse
 import com.troves.data.source.remote.dto.ProductDto
-import com.troves.domain.Result
+import com.troves.data.source.remote.dto.SingleProductResponse
 import com.troves.data.source.remote.service.TrovesApiService
+import com.troves.domain.Result
 
 class RemoteDatasourceImpl(
     private val trovesApiService: TrovesApiService
@@ -14,17 +16,16 @@ class RemoteDatasourceImpl(
     override suspend fun createProduct(productDto: ProductDto): Result<ProductDto> {
         TODO("Not yet implemented")
     }
-
     override suspend fun getAllProducts(): Result<ProductResponse> {
-        TODO("Not yet implemented")
+        return trovesApiService.getAllProducts()
     }
 
     override suspend fun getProductImages(productId: String): Result<List<CollectionImage>> {
-        TODO("Not yet implemented")
+        return trovesApiService.getProductImages(productId = productId)
     }
 
-    override suspend fun getProductById(productId: String): Result<ProductResponse> {
-        TODO("Not yet implemented")
+    override suspend fun getProductById(productId: String): Result<SingleProductResponse> {
+        return trovesApiService.getProductById(productId = productId)
     }
 
     override suspend fun updateProduct(productId: String) {
@@ -36,11 +37,11 @@ class RemoteDatasourceImpl(
     }
 
     override suspend fun getAllBrands(): Result<Collection> {
-        TODO("Not yet implemented")
+        return trovesApiService.getAllBrands()
     }
 
-    override suspend fun getCategory(): Result<Collection> {
-        TODO("Not yet implemented")
+    override suspend fun getCategory(): Result<CustomCollectionResponse> {
+        return trovesApiService.getCategory()
     }
 
     override suspend fun getAllEventsById(eventId: String): MarketingEventsResponse {

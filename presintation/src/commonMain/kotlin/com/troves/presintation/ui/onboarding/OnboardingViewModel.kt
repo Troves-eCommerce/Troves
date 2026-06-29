@@ -2,6 +2,7 @@ package com.troves.presintation.ui.onboarding
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.troves.domain.usecase.onboarding.CompleteOnboardingUseCase
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -10,7 +11,9 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class OnboardingViewModel : ViewModel() {
+class OnboardingViewModel(
+    private val completeOnboarding: CompleteOnboardingUseCase
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(OnboardingState())
     val uiState: StateFlow<OnboardingState> = _uiState.asStateFlow()
@@ -29,6 +32,7 @@ class OnboardingViewModel : ViewModel() {
 
     fun completeOnboarding() {
         viewModelScope.launch {
+            completeOnboarding()
             _uiEvent.send(OnboardingUiEvent.NavigateToLogin)
         }
     }

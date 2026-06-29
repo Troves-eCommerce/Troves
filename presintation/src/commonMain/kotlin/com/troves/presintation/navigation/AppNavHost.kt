@@ -1,25 +1,29 @@
 package com.troves.presintation.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.navigation3.runtime.NavKey
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.navigation3.runtime.NavEntry
+import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
-import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberDecoratedNavEntries
+import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import androidx.savedstate.serialization.SavedStateConfiguration
-import com.troves.presintation.products.ProductsScreen
-import com.troves.presintation.ui.Home.HomeScreen
+import com.troves.presintation.ui.MainViewModel
+import com.troves.presintation.ui.StartDestination
 import com.troves.presintation.ui.auth.LoginScreen
 import com.troves.presintation.ui.auth.RegisterScreen
 import com.troves.presintation.ui.fav.FavoriteScreen
-import com.troves.presintation.ui.home.ProductDetailsScreen
+import com.troves.presintation.ui.home.HomeScreen
 import com.troves.presintation.ui.onboarding.OnboardingScreen
+import com.troves.presintation.ui.productDetails.ProductDetailsScreen
+import com.troves.presintation.ui.products.ProductsScreen
 import com.troves.presintation.ui.profile.ProfileScreen
 import com.troves.presintation.ui.splash.SplashScreen
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
-
+import org.koin.compose.viewmodel.koinViewModel
 
 private val navSavedStateConfiguration = SavedStateConfiguration {
     serializersModule = SerializersModule {
@@ -39,7 +43,22 @@ private val navSavedStateConfiguration = SavedStateConfiguration {
 
 @Composable
 fun AppNavHost() {
-    val backStack = rememberNavBackStack(navSavedStateConfiguration, AppRoute.Splash)
+    val mainViewModel: MainViewModel = koinViewModel()
+    val startDestination by mainViewModel.startDestination.collectAsState()
+
+    // Show splash/blank while determining start destination
+    if (startDestination == null) {
+        SplashScreen(onNavigateToOnboarding = {}) 
+        return
+    }
+
+    val initialRoute = when (startDestination) {
+        StartDestination.Onboarding -> AppRoute.Onboarding
+        StartDestination.Login -> AppRoute.Home // For now home, or Login
+        null -> AppRoute.Splash
+    }
+
+    val backStack = rememberNavBackStack(navSavedStateConfiguration, initialRoute)
 
     val entryProvider: (NavKey) -> NavEntry<NavKey> = entryProvider {
         entry<AppRoute.Home> {
@@ -61,7 +80,8 @@ fun AppNavHost() {
         entry<AppRoute.Onboarding> {
             OnboardingScreen(
                 onNavigateToLogin = {
-                    backStack.removeLastOrNull()
+                    // After onboarding, replace it with Home/Login
+                    backStack.clear()
                     backStack.add(AppRoute.Home)
                 }
             )
@@ -97,9 +117,7 @@ fun AppNavHost() {
             )
         }
         entry<AppRoute.Products> {
-            ProductsScreen(
-
-            )
+            ProductsScreen()
         }
         entry<AppRoute.Profile> {
             ProfileScreen()

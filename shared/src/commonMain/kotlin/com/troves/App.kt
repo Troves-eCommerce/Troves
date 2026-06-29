@@ -1,6 +1,5 @@
 package com.troves
 
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.troves.designsystem.theme.SpTheme
@@ -10,9 +9,7 @@ import org.koin.compose.KoinContext
 @Composable
 @Preview
 fun App() {
-    KoinContext {
         SpTheme {
             AppNavHost()
         }
-    }
 }

@@ -29,4 +29,4 @@ class AuthenticationRepositoryImpl : AuthenticationRepository {
 
     override suspend fun isLoggedIn(): Boolean =
         firebaseAuth.currentUser != null
-}
+}
