@@ -52,7 +52,7 @@ fun ProductDetailsScreen(
 
     val uiState by viewModel.state.collectAsStateWithLifecycle()
     val snackBarHostState = remember { SnackbarHostState() }
-    LaunchedEffect(Unit) {
+    LaunchedEffect(productId) {
         viewModel.onIntent(intent = ProductDetailsIntent.Load(productId = productId))
         viewModel.effect.collect { newEffect ->
             when (newEffect) {

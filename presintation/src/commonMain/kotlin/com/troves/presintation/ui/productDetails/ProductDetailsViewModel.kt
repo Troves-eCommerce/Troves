@@ -80,11 +80,12 @@ class ProductDetailsViewModel(
                         it.copy(isLoading = true)
                     }
                 }
+
                 is Result.Error -> {
                     _state.update {
                         it.copy(
                             isLoading = false,
-                            errorMessage = product.throwable.stackTraceToString()
+                            errorMessage = product.throwable.message ?: "Unknown error"
                         )
                     }
                 }
@@ -97,7 +98,8 @@ class ProductDetailsViewModel(
                             images = currentstate.images,
                             colors = currentstate.colors,
                             title = currentstate.title,
-                            priceFormatted = currentstate.price
+                            priceFormatted = currentstate.price,
+                            errorMessage = null
                         )
                     }
                 }
