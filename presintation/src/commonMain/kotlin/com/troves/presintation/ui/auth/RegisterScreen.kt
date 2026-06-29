@@ -121,7 +121,7 @@ fun RegisterScreen(
                     localError = null
                     viewModel.clearError()
                 },
-                title = "Username",
+                title = "Email",
                 hint = "Enter your email",
                 singleLine = true,
                 containerColor = Theme.colors.surface,
