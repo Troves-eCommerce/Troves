@@ -9,9 +9,7 @@ import org.koin.compose.KoinContext
 @Composable
 @Preview
 fun App() {
-    KoinContext {
         SpTheme {
             AppNavHost()
         }
-    }
 }

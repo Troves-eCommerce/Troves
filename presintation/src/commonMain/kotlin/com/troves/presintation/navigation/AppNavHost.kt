@@ -1,6 +1,9 @@
 package com.troves.presintation.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.snapshots.Snapshot
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
@@ -8,6 +11,8 @@ import androidx.navigation3.runtime.rememberDecoratedNavEntries
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import androidx.savedstate.serialization.SavedStateConfiguration
+import com.troves.presintation.ui.MainViewModel
+import com.troves.presintation.ui.StartDestination
 import com.troves.presintation.ui.auth.LoginScreen
 import com.troves.presintation.ui.auth.RegisterScreen
 import com.troves.presintation.ui.fav.FavoriteScreen
@@ -19,7 +24,7 @@ import com.troves.presintation.ui.profile.ProfileScreen
 import com.troves.presintation.ui.splash.SplashScreen
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
-
+import org.koin.compose.viewmodel.koinViewModel
 
 private val navSavedStateConfiguration = SavedStateConfiguration {
     serializersModule = SerializersModule {
@@ -39,7 +44,28 @@ private val navSavedStateConfiguration = SavedStateConfiguration {
 
 @Composable
 fun AppNavHost() {
-    val backStack = rememberNavBackStack(navSavedStateConfiguration, AppRoute.Splash)
+    val mainViewModel: MainViewModel = koinViewModel()
+    val uiState by mainViewModel.uiState.collectAsState()
+
+    if (uiState.isLoading) {
+        SplashScreen(onNavigateToOnboarding = {})
+        return
+    }
+
+    val initialRoute: NavKey = when (uiState.startDestination) {
+        StartDestination.Onboarding -> AppRoute.Onboarding
+        StartDestination.Home -> AppRoute.Home
+    }
+
+    val backStack = rememberNavBackStack(navSavedStateConfiguration, initialRoute)
+
+
+    fun replaceWith(route: NavKey) {
+        Snapshot.withMutableSnapshot {
+            backStack.clear()
+            backStack.add(route)
+        }
+    }
 
     val entryProvider: (NavKey) -> NavEntry<NavKey> = entryProvider {
         entry<AppRoute.Home> {
@@ -60,46 +86,28 @@ fun AppNavHost() {
         }
         entry<AppRoute.Onboarding> {
             OnboardingScreen(
-                onNavigateToLogin = {
-                    backStack.removeLastOrNull()
-                    backStack.add(AppRoute.Home)
-                }
+                onOnboardingComplete = { replaceWith(AppRoute.Home) }
             )
         }
         entry<AppRoute.Splash> {
             SplashScreen(
-                onNavigateToOnboarding = {
-                    backStack.clear()
-                    backStack.add(AppRoute.Onboarding)
-                }
+                onNavigateToOnboarding = { replaceWith(AppRoute.Onboarding) }
             )
         }
         entry<AppRoute.Login> {
             LoginScreen(
-                onNavigateToRegister = {
-                    backStack.add(AppRoute.Register)
-                },
-                onLoginSuccess = {
-                    backStack.clear()
-                    backStack.add(AppRoute.Home)
-                }
+                onNavigateToRegister = { backStack.add(AppRoute.Register) },
+                onLoginSuccess = { replaceWith(AppRoute.Home) }
             )
         }
         entry<AppRoute.Register> {
             RegisterScreen(
-                onNavigateToLogin = {
-                    backStack.removeLastOrNull()
-                },
-                onRegisterSuccess = {
-                    backStack.clear()
-                    backStack.add(AppRoute.Home)
-                }
+                onNavigateToLogin = { backStack.removeLastOrNull() },
+                onRegisterSuccess = { replaceWith(AppRoute.Home) }
             )
         }
         entry<AppRoute.Products> {
-            ProductsScreen(
-
-            )
+            ProductsScreen()
         }
         entry<AppRoute.Profile> {
             ProfileScreen()
@@ -111,6 +119,6 @@ fun AppNavHost() {
             backStack = backStack,
             entryProvider = entryProvider
         ),
-        onBack = { backStack.removeLastOrNull() }
+        onBack = { if (backStack.size > 1) backStack.removeLastOrNull() }
     )
 }

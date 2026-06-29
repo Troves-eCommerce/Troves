@@ -6,6 +6,8 @@ import com.troves.domain.usecase.home.GetBrandsUseCase
 import com.troves.domain.usecase.home.GetCategoriesUseCase
 import com.troves.domain.usecase.home.GetJustForYouProductsUseCase
 import com.troves.domain.usecase.home.GetTrendingProductsUseCase
+import com.troves.domain.usecase.onboarding.CompleteOnboardingUseCase
+import com.troves.domain.usecase.onboarding.IsOnboardingDoneUseCase
 import com.troves.domain.usecase.shared.GetProductsUseCase
 import org.koin.dsl.module
 
@@ -20,4 +22,8 @@ val domainModule = module {
     factory { GetCategoriesUseCase(get()) }
     factory { GetJustForYouProductsUseCase(get()) }
     factory { GetTrendingProductsUseCase(get()) }
+
+    // Onboarding
+    factory { IsOnboardingDoneUseCase(get()) }
+    factory { CompleteOnboardingUseCase(get()) }
 }

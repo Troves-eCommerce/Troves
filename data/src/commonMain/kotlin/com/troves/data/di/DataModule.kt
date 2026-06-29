@@ -1,5 +1,7 @@
 package com.troves.data.di
 
+import com.troves.data.local.preferenceses.AppPreferencesDataSource
+import com.troves.data.local.preferenceses.AppPreferencesDataSourceImpl
 import com.troves.data.network.provideHttpClient
 import com.troves.data.repository.AuthenticationRepositoryImpl
 import com.troves.data.repository.PaymentRepositoryImpl
@@ -17,16 +19,17 @@ import org.koin.dsl.module
 val dataModule = module {
 
     // ── Network ───────────────────────────────────────────────────────────────
-    // single<T> means one shared instance for the entire app lifetime
     single<HttpClient> { provideHttpClient() }
     single<TrovesApiService> { TrovesApiServiceImpl(get()) }
 
     // ── Remote data source ────────────────────────────────────────────────────
-    // TrovesApiService implements RemoteDatasource; Koin injects HttpClient via get()
     single<RemoteDatasource> { RemoteDatasourceImpl(get()) }
+
+    // ── Local ─────────────────────────────────────────────────────────────────
+    single<AppPreferencesDataSource> { AppPreferencesDataSourceImpl(get()) }
 
     // ── Repositories ──────────────────────────────────────────────────────────
     single<TrovesRepository>          { TrovesRepositoryImpl(get()) }
-    single<AuthenticationRepository>  { AuthenticationRepositoryImpl() }
+    single<AuthenticationRepository>  { AuthenticationRepositoryImpl(get()) }
     single<PaymentRepository>         { PaymentRepositoryImpl() }
 }
