@@ -55,6 +55,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(libs.kotlin.stdlib)
+                implementation(libs.kotlinx.coroutines.core)
                 implementation("io.insert-koin:koin-core:3.5.3")
                 // Add KMP dependencies here
             }

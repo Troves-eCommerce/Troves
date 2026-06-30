@@ -40,6 +40,7 @@ buildKonfig = "0.15.2"
 material3Adaptive = "1.1.0"
 firebase-bom = "34.15.0"
 firebase-kotlin-sdk = "2.4.0"
+kotlinx-coroutines = "1.10.1"
 googleServices = "4.5.0"
 
 [libraries]
@@ -107,6 +108,7 @@ androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "j
 # Firebase (GitLive KMP)
 firebase-auth = { module = "dev.gitlive:firebase-auth", version.ref = "firebase-kotlin-sdk" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

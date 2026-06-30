@@ -69,6 +69,7 @@ import troves.designsystem.generated.resources.img_onboarding1
 fun HomeScreen(
     onNavigateToProduct: (String) -> Unit,
     onNavigateToRegister: () -> Unit,
+    onNavigateToCart: () -> Unit,
     viewModel: HomeViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -79,6 +80,7 @@ fun HomeScreen(
         when (effect) {
             is HomeEffect.NavigateToProduct -> onNavigateToProduct(effect.productId)
             is HomeEffect.NavigateToRegister -> onNavigateToRegister()
+            is HomeEffect.NavigateToCart -> onNavigateToCart()
             is HomeEffect.ShowToast -> scope.launch { snackbarHostState.showSnackbar(effect.message) }
         }
     }
