@@ -63,8 +63,7 @@ fun AdSlider(
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
         }
-        
-        // Pager indicators
+
         Row(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
@@ -98,15 +97,14 @@ private fun AdBannerItem(
             .clip(RoundedCornerShape(8.dp))
             .clickable(onClick = onClick)
     ) {
-        // Background Image
+
         Image(
             painter = ad.imagePainter,
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize()
         )
-        
-        // Overlay Content
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -128,9 +126,9 @@ private fun AdBannerItem(
                     fontWeight = FontWeight.Bold
                 )
             )
-            
+
             Spacer(modifier = Modifier.height(6.dp))
-            
+
             BasicText(
                 text = ad.description,
                 style = Theme.typography.body.small.copy(
@@ -139,10 +137,9 @@ private fun AdBannerItem(
                 ),
                 maxLines = 2
             )
-            
+
             Spacer(modifier = Modifier.height(16.dp))
-            
-            // "Shop now" pill button
+
             Row(
                 modifier = Modifier
                     .clip(RoundedCornerShape(24.dp))

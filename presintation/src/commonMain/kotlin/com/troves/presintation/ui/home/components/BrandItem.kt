@@ -56,9 +56,9 @@ fun BrandItem(
                 modifier = Modifier
             )
         }
-        
+
         Spacer(modifier = Modifier.height(8.dp))
-        
+
         BasicText(
             text = name,
             style = Theme.typography.body.medium.copy(
