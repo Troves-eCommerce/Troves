@@ -109,11 +109,7 @@ fun RegisterScreen(
 
             TextField(
                 text = email,
-                onTextChange = {
-                    email = it
-                    localError = null
-                    viewModel.clearError()
-                },
+                onTextChange = { viewModel.onIntent(AuthIntent.EmailChanged(it)) },
                 title = "Email",
                 hint = "Enter your email",
                 singleLine = true,

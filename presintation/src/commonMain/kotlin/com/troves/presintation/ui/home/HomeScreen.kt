@@ -68,6 +68,7 @@ import troves.designsystem.generated.resources.img_onboarding1
 @Composable
 fun HomeScreen(
     onNavigateToProduct: (String) -> Unit,
+    onNavigateToProducts: () -> Unit,
     onNavigateToRegister: () -> Unit,
     viewModel: HomeViewModel = koinViewModel(),
 ) {
@@ -78,6 +79,7 @@ fun HomeScreen(
     ObserveEffect(viewModel.effect) { effect ->
         when (effect) {
             is HomeEffect.NavigateToProduct -> onNavigateToProduct(effect.productId)
+            is HomeEffect.NavigateToProducts -> onNavigateToProducts()
             is HomeEffect.NavigateToRegister -> onNavigateToRegister()
             is HomeEffect.ShowToast -> scope.launch { snackbarHostState.showSnackbar(effect.message) }
         }
