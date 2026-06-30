@@ -2,10 +2,10 @@ package com.troves.presintation.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.troves.domain.entity.Product
-import com.troves.domain.usecase.auth.IsLoggedInUseCase
 import com.troves.domain.Result
+import com.troves.domain.entity.Product
 import com.troves.domain.getOrElse
+import com.troves.domain.usecase.auth.IsLoggedInUseCase
 import com.troves.domain.usecase.home.GetAdsUseCase
 import com.troves.domain.usecase.home.GetBrandsUseCase
 import com.troves.domain.usecase.home.GetCategoriesUseCase
@@ -13,15 +13,12 @@ import com.troves.domain.usecase.home.GetJustForYouProductsUseCase
 import com.troves.domain.usecase.home.GetTrendingProductsUseCase
 import com.troves.domain.usecase.wishlist.GetWishlistUseCase
 import com.troves.domain.usecase.wishlist.ToggleFavoriteUseCase
+import com.troves.presintation.core.mvi.DefaultEffectPublisher
+import com.troves.presintation.core.mvi.DefaultStateHolder
+import com.troves.presintation.core.mvi.EffectPublisher
+import com.troves.presintation.core.mvi.StateHolder
 import kotlinx.coroutines.async
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-
 
 class HomeViewModel(
     private val getAds: GetAdsUseCase,
@@ -32,16 +29,13 @@ class HomeViewModel(
     private val isLoggedIn: IsLoggedInUseCase,
     private val getWishlist: GetWishlistUseCase,
     private val toggleFavoriteUseCase: ToggleFavoriteUseCase,
-) : ViewModel() {
-
-    private val _state = MutableStateFlow(HomeUiState())
-    val state: StateFlow<HomeUiState> = _state.asStateFlow()
-
-    private val _effect = Channel<HomeEffect>(Channel.BUFFERED)
-    val effect = _effect.receiveAsFlow()
+) : ViewModel(),
+    StateHolder<HomeUiState> by DefaultStateHolder(HomeUiState()),
+    EffectPublisher<HomeEffect> by DefaultEffectPublisher() {
 
     init {
         onIntent(HomeIntent.Load)
+        observeWishlist()
     }
 
     fun onIntent(intent: HomeIntent) {
@@ -50,22 +44,35 @@ class HomeViewModel(
             HomeIntent.SearchClicked -> sendEffect(HomeEffect.ShowToast("Search is coming soon"))
             HomeIntent.CartClicked -> onCartClicked()
             HomeIntent.SignUpPromptConfirmed -> {
-                _state.update { it.copy(showSignUpPrompt = false) }
+                updateState { copy(showSignUpPrompt = false) }
                 sendEffect(HomeEffect.NavigateToRegister)
             }
-            HomeIntent.SignUpPromptDismissed -> _state.update { it.copy(showSignUpPrompt = false) }
-            HomeIntent.SeeAllBrandsClicked -> sendEffect(HomeEffect.ShowToast("All brands coming soon"))
+            HomeIntent.SignUpPromptDismissed -> updateState { copy(showSignUpPrompt = false) }
+            HomeIntent.SeeAllBrandsClicked -> sendEffect(HomeEffect.NavigateToProducts())
             is HomeIntent.AdClicked -> sendEffect(HomeEffect.ShowToast(intent.ad.titleTop))
-            is HomeIntent.BrandClicked -> sendEffect(HomeEffect.ShowToast(intent.brand.name))
-            is HomeIntent.CategoryClicked -> sendEffect(HomeEffect.ShowToast(intent.category.name))
-            is HomeIntent.ProductClicked -> sendEffect(HomeEffect.NavigateToProduct(intent.product.id.toString()))
+            is HomeIntent.BrandClicked -> sendEffect(
+                HomeEffect.NavigateToProducts(
+                    sourceType = "brand",
+                    sourceId = intent.brand.id.toString(),
+                    sourceName = intent.brand.name,
+                ),
+            )
+            is HomeIntent.CategoryClicked -> sendEffect(
+                HomeEffect.NavigateToProducts(
+                    sourceType = "category",
+                    sourceId = intent.category.id.toString(),
+                    sourceName = intent.category.name,
+                ),
+            )
+            is HomeIntent.ProductClicked ->
+                sendEffect(HomeEffect.NavigateToProduct(intent.product.id.toString()))
             is HomeIntent.FavoriteToggled -> toggleFavorite(intent.product)
         }
     }
 
     private fun loadHomeFeed() {
         viewModelScope.launch {
-            _state.update { it.copy(isLoading = true, errorMessage = null) }
+            updateState { copy(isLoading = true, errorMessage = null) }
 
             val adsDeferred = async { getAds() }
             val brandsDeferred = async { getBrands() }
@@ -87,8 +94,8 @@ class HomeViewModel(
                 trendingResult,
             ).firstNotNullOfOrNull { (it as? Result.Error)?.throwable }
 
-            _state.update {
-                it.copy(
+            updateState {
+                copy(
                     isLoading = false,
                     ads = adsResult.getOrElse(emptyList()),
                     brands = brandsResult.getOrElse(emptyList()),
@@ -99,10 +106,17 @@ class HomeViewModel(
                 )
             }
         }
+    }
 
+    /**
+     * Keeps favoriteProductIds in sync with the wishlist source of truth,
+     * independent of loadHomeFeed's request/response cycle, so a favorite
+     * toggled from another screen (e.g. Product Details) reflects here too.
+     */
+    private fun observeWishlist() {
         viewModelScope.launch {
             getWishlist().collect { favorites ->
-                _state.update { it.copy(favoriteProductIds = favorites.map { it.id }.toSet()) }
+                updateState { copy(favoriteProductIds = favorites.map { it.id }.toSet()) }
             }
         }
     }
@@ -115,21 +129,21 @@ class HomeViewModel(
     private fun onCartClicked() {
         viewModelScope.launch {
             if (isLoggedIn()) {
-                sendEffect(HomeEffect.ShowToast("Your cart is empty"))
+                sendEffect(HomeEffect.NavigateToCart)
             } else {
-                _state.update { it.copy(showSignUpPrompt = true) }
+                updateState { copy(showSignUpPrompt = true) }
             }
         }
     }
 
     private fun toggleFavorite(product: Product) {
-        val wasFavorite = product.id in _state.value.favoriteProductIds
+        val wasFavorite = state.value.favoriteProductIds.contains(product.id)
 
-        _state.update { current ->
-            val updated = current.favoriteProductIds.toMutableSet().apply {
+        updateState {
+            val updated = favoriteProductIds.toMutableSet().apply {
                 if (wasFavorite) remove(product.id) else add(product.id)
             }
-            current.copy(favoriteProductIds = updated)
+            copy(favoriteProductIds = updated)
         }
 
         viewModelScope.launch {
@@ -143,18 +157,14 @@ class HomeViewModel(
                     sendEffect(HomeEffect.ShowToast(message))
                 }
                 .onFailure {
-                    _state.update { current ->
-                        val reverted = current.favoriteProductIds.toMutableSet().apply {
+                    updateState {
+                        val reverted = favoriteProductIds.toMutableSet().apply {
                             if (wasFavorite) add(product.id) else remove(product.id)
                         }
-                        current.copy(favoriteProductIds = reverted)
+                        copy(favoriteProductIds = reverted)
                     }
                     sendEffect(HomeEffect.ShowToast("Couldn't update favorites"))
                 }
         }
-    }
-
-    private fun sendEffect(newEffect: HomeEffect) {
-        viewModelScope.launch { _effect.send(newEffect) }
     }
 }

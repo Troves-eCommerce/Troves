@@ -2,9 +2,6 @@ package com.troves.data.local.database
 
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import androidx.sqlite.driver.bundled.BundledSQLiteDriver
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import platform.Foundation.NSHomeDirectory
 
 actual class DatabaseFactory {
@@ -14,7 +11,5 @@ actual class DatabaseFactory {
             name = dbFilePath,
             factory = { TrovesDatabase::class.instantiateImpl() }
         )
-            .setDriver(BundledSQLiteDriver())
-            .setQueryCoroutineContext(Dispatchers.IO)
     }
 }

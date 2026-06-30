@@ -42,7 +42,6 @@ fun ProductDetailsShimmer(
                 .padding(padding)
         ) {
 
-            // Image
             item {
                 Box(
                     Modifier

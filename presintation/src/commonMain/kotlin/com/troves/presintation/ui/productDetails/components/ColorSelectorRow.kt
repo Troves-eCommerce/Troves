@@ -10,7 +10,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.troves.designsystem.theme.Theme
 
-
 @Composable
 fun ColorSelectorRow(
     colors: List<String>,

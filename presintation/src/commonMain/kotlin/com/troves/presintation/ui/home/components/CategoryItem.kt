@@ -24,10 +24,6 @@ import androidx.compose.ui.unit.dp
 import com.troves.designsystem.theme.SpTheme
 import com.troves.designsystem.theme.Theme
 
-/**
- * Category tile: a full-bleed image with a bottom gradient scrim so the
- * category [name] stays legible over any artwork.
- */
 @Composable
 fun CategoryItem(
     name: String,
@@ -47,7 +43,6 @@ fun CategoryItem(
             modifier = Modifier.fillMaxSize(),
         )
 
-        // Bottom-to-top scrim for text legibility
         Box(
             modifier = Modifier
                 .fillMaxSize()

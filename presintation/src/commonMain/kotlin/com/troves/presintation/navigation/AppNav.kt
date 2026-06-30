@@ -22,6 +22,7 @@ import com.troves.presintation.ui.MainViewModel
 import com.troves.presintation.ui.StartDestination
 import com.troves.presintation.ui.auth.LoginScreen
 import com.troves.presintation.ui.auth.RegisterScreen
+import com.troves.presintation.ui.cart.CartScreen
 import com.troves.presintation.ui.fav.WishlistScreen
 import com.troves.presintation.ui.home.HomeScreen
 import com.troves.presintation.ui.onboarding.OnboardingScreen
@@ -33,6 +34,7 @@ import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import org.koin.compose.viewmodel.koinViewModel
 import troves.designsystem.generated.resources.Res
+import troves.designsystem.generated.resources.ic_explore
 import troves.designsystem.generated.resources.ic_home
 import troves.designsystem.generated.resources.ic_order
 import troves.designsystem.generated.resources.ic_profile
@@ -50,6 +52,7 @@ private val navSavedStateConfiguration = SavedStateConfiguration {
             subclass(AppRoute.Favorites::class, AppRoute.Favorites.serializer())
             subclass(AppRoute.Profile::class, AppRoute.Profile.serializer())
             subclass(AppRoute.ProductDetails::class, AppRoute.ProductDetails.serializer())
+            subclass(AppRoute.Cart::class, AppRoute.Cart.serializer())
         }
     }
 }
@@ -75,14 +78,14 @@ fun AppNav() {
     val bottomNavRoutes = remember {
         listOf(
             AppRoute.Home,
-            AppRoute.Products,
+            AppRoute.Profile,
             AppRoute.Favorites,
             AppRoute.Profile
         )
     }
 
     val selectedIndex = bottomNavRoutes.indexOf(currentRoute)
-    val shouldShowBottomBar = currentRoute in bottomNavRoutes
+    val shouldShowBottomBar = currentRoute in bottomNavRoutes && currentRoute != AppRoute.Products
 
     fun replaceWith(route: NavKey) {
         Snapshot.withMutableSnapshot {
@@ -107,7 +110,17 @@ fun AppNav() {
                 onNavigateToProduct = { productId ->
                     backStack.add(AppRoute.ProductDetails(productId))
                 },
-                onNavigateToRegister = { backStack.add(AppRoute.Register) }
+                onNavigateToRegister = { backStack.add(AppRoute.Register) },
+                onNavigateToCart = { backStack.add(AppRoute.Cart) },
+                onNavigateToProducts = { sourceType, sourceId, sourceName ->
+                    backStack.add(
+                        AppRoute.Products(
+                            sourceType = sourceType,
+                            sourceId = sourceId,
+                            sourceName = sourceName,
+                        ),
+                    )
+                },
             )
         }
         entry<AppRoute.Favorites> {
@@ -145,11 +158,27 @@ fun AppNav() {
                 onRegisterSuccess = { replaceWith(AppRoute.Home) }
             )
         }
-        entry<AppRoute.Products> {
-            ProductsScreen()
+        entry<AppRoute.Products> { key ->
+            ProductsScreen(
+                sourceType = key.sourceType,
+                sourceId = key.sourceId,
+                sourceName = key.sourceName,
+                onNavigateToProduct = { productId ->
+                    backStack.add(AppRoute.ProductDetails(productId))
+                },
+                onNavigateBack = { backStack.removeLastOrNull() },
+            )
         }
         entry<AppRoute.Profile> {
-            ProfileScreen()
+            ProfileScreen(
+                onNavigateToLogin = { replaceWith(AppRoute.Login) }
+            )
+        }
+        entry<AppRoute.Cart> {
+            CartScreen(
+                onNavigateBack = { backStack.removeLastOrNull() },
+                onNavigateToCheckout = { backStack.removeLastOrNull() },
+            )
         }
     }
 
@@ -172,8 +201,7 @@ fun AppNav() {
     ) { paddingValues ->
         NavDisplay<NavKey>(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues),
+                .fillMaxSize(),
             entries = rememberDecoratedNavEntries(
                 backStack = backStack,
                 entryProvider = entryProvider
@@ -182,3 +210,4 @@ fun AppNav() {
         )
     }
 }
+

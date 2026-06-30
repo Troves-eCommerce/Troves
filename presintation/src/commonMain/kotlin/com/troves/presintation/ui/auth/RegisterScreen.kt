@@ -21,12 +21,11 @@ import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -45,7 +44,7 @@ import com.troves.designsystem.components.button.PrimaryButton
 import com.troves.designsystem.components.textfield.TextField
 import com.troves.designsystem.components.toast.TrovesToast
 import com.troves.designsystem.theme.Theme
-import kotlinx.coroutines.delay
+import com.troves.presintation.core.mvi.ObserveEffect
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
 import troves.designsystem.generated.resources.Res
@@ -54,37 +53,36 @@ import troves.designsystem.generated.resources.ic_eye
 import troves.designsystem.generated.resources.ic_eye_off
 import troves.designsystem.generated.resources.ic_google
 
+import com.troves.presintation.ui.auth.google.LocalGoogleAuthHandler
+
 @Composable
 fun RegisterScreen(
     onNavigateToLogin: () -> Unit,
     onRegisterSuccess: () -> Unit,
     viewModel: AuthViewModel = koinViewModel(),
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val googleAuthHandler = LocalGoogleAuthHandler.current
+    val state by viewModel.state.collectAsStateWithLifecycle()
 
     var successMessage by remember { mutableStateOf<String?>(null) }
+    var toastError by remember { mutableStateOf<String?>(null) }
 
-    LaunchedEffect(uiState) {
-        if (uiState is AuthUiState.Success) {
-            successMessage = "Account created successfully"
-            delay(1000)
-            onRegisterSuccess()
+    ObserveEffect(viewModel.effect) { effect ->
+        when (effect) {
+            is AuthEffect.ShowMessage -> successMessage = effect.message
+            is AuthEffect.ShowError -> toastError = effect.message
+            AuthEffect.NavigateToHome -> onRegisterSuccess()
         }
     }
 
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var confirmPassword by remember { mutableStateOf("") }
-    var passwordVisible by remember { mutableStateOf(false) }
-    var confirmPasswordVisible by remember { mutableStateOf(false) }
-    var localError by remember { mutableStateOf<String?>(null) }
+    val email = state.email
+    val password = state.password
+    val confirmPassword = state.confirmPassword
+    val passwordVisible = state.passwordVisible
+    val confirmPasswordVisible = state.confirmPasswordVisible
+    val isLoading = state.isLoading
+    val errorMessage = state.errorMessage
 
-    val isLoading = uiState is AuthUiState.Loading
-    val remoteError = (uiState as? AuthUiState.Error)?.message
-    val errorMessage = localError ?: remoteError
-
-    val googleIcon = Res.drawable.ic_google
-    val facebookIcon = Res.drawable.facebook
     val eyeIcon = Res.drawable.ic_eye
     val eyeOffIcon = Res.drawable.ic_eye_off
 
@@ -102,7 +100,6 @@ fun RegisterScreen(
                 .padding(horizontal = 24.dp, vertical = 48.dp),
         ) {
 
-            // ── Title ────────────────────────────────────────────────────────
             BasicText(
                 text = "Sign Up",
                 style = Theme.typography.display.copy(
@@ -113,15 +110,10 @@ fun RegisterScreen(
 
             Spacer(Modifier.height(32.dp))
 
-            // ── Email Field ──────────────────────────────────────────────────
             TextField(
                 text = email,
-                onTextChange = {
-                    email = it
-                    localError = null
-                    viewModel.clearError()
-                },
-                title = "Username",
+                onTextChange = { viewModel.onIntent(AuthIntent.EmailChanged(it)) },
+                title = "Email",
                 hint = "Enter your email",
                 singleLine = true,
                 containerColor = Theme.colors.surface,
@@ -136,14 +128,9 @@ fun RegisterScreen(
 
             Spacer(Modifier.height(20.dp))
 
-            // ── Password Field ───────────────────────────────────────────────
             TextField(
                 text = password,
-                onTextChange = {
-                    password = it
-                    localError = null
-                    viewModel.clearError()
-                },
+                onTextChange = { viewModel.onIntent(AuthIntent.PasswordChanged(it)) },
                 title = "Your Password",
                 hint = "••••••••",
                 singleLine = true,
@@ -160,19 +147,15 @@ fun RegisterScreen(
                 ),
                 trailingIcon = if (passwordVisible) painterResource(eyeIcon) else painterResource(eyeOffIcon),
                 trailingIconColor = Theme.colors.hint,
-                onClickTrailingIcon = { passwordVisible = !passwordVisible },
+                onClickTrailingIcon = { viewModel.onIntent(AuthIntent.TogglePasswordVisibility) },
                 isError = errorMessage != null && password.isBlank(),
             )
 
             Spacer(Modifier.height(20.dp))
 
-            // ── Confirm Password ─────────────────────────────────────────────
             TextField(
                 text = confirmPassword,
-                onTextChange = {
-                    confirmPassword = it
-                    localError = null
-                },
+                onTextChange = { viewModel.onIntent(AuthIntent.ConfirmPasswordChanged(it)) },
                 title = "Confirm Password",
                 hint = "••••••••",
                 singleLine = true,
@@ -187,15 +170,14 @@ fun RegisterScreen(
                     keyboardType = KeyboardType.Password,
                     imeAction = ImeAction.Done
                 ),
-                trailingIcon = if (passwordVisible) painterResource(eyeIcon)  else painterResource(eyeOffIcon),
+                trailingIcon = if (confirmPasswordVisible) painterResource(eyeIcon) else painterResource(eyeOffIcon),
                 trailingIconColor = Theme.colors.hint,
-                onClickTrailingIcon = { confirmPasswordVisible = !confirmPasswordVisible },
+                onClickTrailingIcon = { viewModel.onIntent(AuthIntent.ToggleConfirmPasswordVisibility) },
                 isError = confirmPassword.isNotBlank() && confirmPassword != password,
                 errorMessage = if (confirmPassword.isNotBlank() && confirmPassword != password)
                     "Passwords do not match" else null,
             )
 
-            // ── Error Banner ─────────────────────────────────────────────────
             AnimatedVisibility(visible = errorMessage != null) {
                 Spacer(Modifier.height(8.dp))
                 Box(
@@ -216,16 +198,9 @@ fun RegisterScreen(
 
             Spacer(Modifier.height(28.dp))
 
-            // ── Register Button ──────────────────────────────────────────────
             PrimaryButton(
                 caption = "Sign Up",
-                onClick = {
-                    if (password != confirmPassword) {
-                        localError = "Passwords do not match"
-                        return@PrimaryButton
-                    }
-                    viewModel.register(email, password)
-                },
+                onClick = { viewModel.onIntent(AuthIntent.Register) },
                 modifier = Modifier.fillMaxWidth(),
                 isLoading = isLoading,
                 isDisabled = isLoading,
@@ -233,76 +208,25 @@ fun RegisterScreen(
 
             Spacer(Modifier.height(24.dp))
 
-            // ── OR Divider ───────────────────────────────────────────────────
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                Box(
-                    Modifier
-                        .weight(1f)
-                        .height(1.dp)
-                        .background(Theme.colors.hint.copy(alpha = 0.4f))
-                )
-                BasicText(
-                    text = "or",
-                    style = Theme.typography.body.medium.copy(color = Theme.colors.secondaryFont)
-                )
-                Box(
-                    Modifier
-                        .weight(1f)
-                        .height(1.dp)
-                        .background(Theme.colors.hint.copy(alpha = 0.4f))
-                )
-            }
+            AuthDivider()
 
             Spacer(Modifier.height(24.dp))
 
-            // ── Social Icons ─────────────────────────────────────────────────
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(52.dp)
-                        .clip(CircleShape)
-                        .background(Theme.colors.surface)
-                        .border(1.dp, Theme.colors.hint.copy(alpha = 0.3f), CircleShape)
-                        .clickable { }
-                        .padding(12.dp)
-                ) {
-                    Image(
-                        painter = painterResource(googleIcon),
-                        contentDescription = "Sign up with Google",
-                        modifier = Modifier.fillMaxSize()
-                    )
+            SocialLoginSection(
+                onGoogleClick = {
+                    googleAuthHandler?.signIn(
+                        onSuccess = { idToken, accessToken ->
+                            viewModel.onIntent(AuthIntent.GoogleSignIn(idToken, accessToken))
+                        },
+                        onError = { error ->
+                            toastError = error.message ?: "Google Sign-In failed"
+                        }
+                    ) ?: run { toastError = "Google Sign-In is not supported on this platform" }
                 }
-
-                Spacer(Modifier.size(16.dp))
-
-                Box(
-                    modifier = Modifier
-                        .size(52.dp)
-                        .clip(CircleShape)
-                        .background(Theme.colors.surface)
-                        .border(1.dp, Theme.colors.hint.copy(alpha = 0.3f), CircleShape)
-                        .clickable { }
-                        .padding(12.dp)
-                ) {
-                    Image(
-                        painter = painterResource(facebookIcon),
-                        contentDescription = "Sign up with Facebook",
-                        modifier = Modifier.fillMaxSize()
-                    )
-                }
-            }
+            )
 
             Spacer(Modifier.height(32.dp))
 
-            // ── Sign In Link ─────────────────────────────────────────────────
             BasicText(
                 text = buildAnnotatedString {
                     withStyle(SpanStyle(color = Theme.colors.secondaryFont)) {
@@ -324,10 +248,12 @@ fun RegisterScreen(
             )
         }
 
-        // ── Success Toast ────────────────────────────────────────────────────
         TrovesToast(
-            message = successMessage,
-            onDismiss = { successMessage = null },
+            message = successMessage ?: toastError,
+            onDismiss = {
+                successMessage = null
+                toastError = null
+            },
         )
     }
 }

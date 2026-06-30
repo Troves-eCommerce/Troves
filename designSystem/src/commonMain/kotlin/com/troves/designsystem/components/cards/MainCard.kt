@@ -1,4 +1,5 @@
 package com.troves.designsystem.components.cards
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -31,15 +32,17 @@ fun MainCard(
     onFavoriteClick: () -> Unit,
     modifier: Modifier = Modifier,
     isFavorite: Boolean = false,
+    containerColor: Color = Theme.colors.surface,
 ) {
     Column(
         modifier = modifier
             .fillMaxWidth()
             .clip(Theme.shapes.medium)
-            .background(Theme.colors.surface)
+            .background(containerColor)
             .border(1.dp, Theme.colors.surfaceVariant, Theme.shapes.medium)
             .clickable(onClick = onClick)
     ) {
+        // Top Image Section
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -53,6 +56,7 @@ fun MainCard(
                 contentScale = ContentScale.Crop
             )
 
+            // Favorite Button
             Box(
                 modifier = Modifier
                     .align(Alignment.TopEnd)
@@ -74,10 +78,12 @@ fun MainCard(
             }
         }
 
+        // Bottom Details Section
         Column(
             modifier = Modifier.fillMaxWidth().padding(12.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
+            // Rating
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(4.dp)
@@ -94,6 +100,7 @@ fun MainCard(
                 )
             }
 
+            // Title
             BasicText(
                 text = title,
                 style = Theme.typography.body.medium.copy(
@@ -104,6 +111,7 @@ fun MainCard(
                 overflow = TextOverflow.Ellipsis
             )
 
+            // Price
             BasicText(
                 text = price,
                 style = Theme.typography.body.large.copy(

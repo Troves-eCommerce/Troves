@@ -26,9 +26,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.coroutines.launch
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -49,6 +51,7 @@ import com.troves.domain.entity.Ad
 import com.troves.domain.entity.Brand
 import com.troves.domain.entity.Category
 import com.troves.domain.entity.Product
+import com.troves.presintation.core.mvi.ObserveEffect
 import com.troves.presintation.ui.components.SignUpPromptDialog
 import com.troves.presintation.ui.home.components.AdData
 import com.troves.presintation.ui.home.components.AdSlider
@@ -65,19 +68,26 @@ import troves.designsystem.generated.resources.img_onboarding1
 @Composable
 fun HomeScreen(
     onNavigateToProduct: (String) -> Unit,
+    onNavigateToProducts: (sourceType: String, sourceId: String, sourceName: String) -> Unit,
     onNavigateToRegister: () -> Unit,
+    onNavigateToCart: () -> Unit,
     viewModel: HomeViewModel = koinViewModel(),
 ) {
-    val state by viewModel.state.collectAsState()
+    val state by viewModel.state.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
 
-    androidx.compose.runtime.LaunchedEffect(Unit) {
-        viewModel.effect.collect { effect ->
-            when (effect) {
-                is HomeEffect.NavigateToProduct -> onNavigateToProduct(effect.productId)
-                is HomeEffect.NavigateToRegister -> onNavigateToRegister()
-                is HomeEffect.ShowToast -> snackbarHostState.showSnackbar(effect.message)
-            }
+    ObserveEffect(viewModel.effect) { effect ->
+        when (effect) {
+            is HomeEffect.NavigateToProduct -> onNavigateToProduct(effect.productId)
+            is HomeEffect.NavigateToProducts -> onNavigateToProducts(
+                effect.sourceType,
+                effect.sourceId,
+                effect.sourceName,
+            )
+            is HomeEffect.NavigateToRegister -> onNavigateToRegister()
+            is HomeEffect.NavigateToCart -> onNavigateToCart()
+            is HomeEffect.ShowToast -> scope.launch { snackbarHostState.showSnackbar(effect.message) }
         }
     }
 
@@ -125,7 +135,6 @@ fun HomeScreen(
         )
     }
 }
-
 
 @Composable
 private fun HomeContent(
@@ -223,7 +232,6 @@ private fun HomeContent(
         }
     }
 
-    // Trending Now
     if (state.trending.isNotEmpty()) {
         SectionHeader(title = "Trending Now")
         ProductRow(
@@ -316,7 +324,6 @@ private fun SectionHeader(
         }
     }
 }
-
 
 @Composable
 private fun HomeShimmer() {

@@ -4,114 +4,81 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.troves.domain.Result
 import com.troves.domain.entity.Product
+import com.troves.domain.usecase.cart.AddToCartUseCase
 import com.troves.domain.usecase.details.GetProductByIdUseCase
 import com.troves.domain.usecase.wishlist.IsProductFavoritedUseCase
 import com.troves.domain.usecase.wishlist.ToggleFavoriteUseCase
-import kotlinx.coroutines.channels.BufferOverflow
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.flow.update
+import com.troves.presintation.core.mvi.DefaultEffectPublisher
+import com.troves.presintation.core.mvi.DefaultStateHolder
+import com.troves.presintation.core.mvi.EffectPublisher
+import com.troves.presintation.core.mvi.StateHolder
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 class ProductDetailsViewModel(
     private val getProductByIdUseCase: GetProductByIdUseCase,
+    private val addToCartUseCase: AddToCartUseCase,
     private val isProductFavorite: IsProductFavoritedUseCase,
     private val toggleFavoriteUseCase: ToggleFavoriteUseCase,
-) : ViewModel() {
+) : ViewModel(),
+    StateHolder<ProductDetailUiState> by DefaultStateHolder(ProductDetailUiState()),
+    EffectPublisher<ProductDetailsEffect> by DefaultEffectPublisher() {
 
-    private val _state = MutableStateFlow(ProductDetailUiState())
-    val state = _state.asStateFlow()
-
-    private val _effect = Channel<ProductDetailsEffect>(
-        Channel.BUFFERED,
-        /*onBufferOverflow = BufferOverflow.DROP_OLDEST*/
-    )
-    val effect = _effect.receiveAsFlow()
-    private var currentProduct: Product? = null
-    private var favoriteJob: kotlinx.coroutines.Job? = null
+    private var favoriteJob: Job? = null
 
     fun onIntent(intent: ProductDetailsIntent) {
         when (intent) {
-            ProductDetailsIntent.OnBackClick -> {
+            ProductDetailsIntent.OnBackClick ->
                 sendEffect(ProductDetailsEffect.NavigateBack)
-            }
 
-            ProductDetailsIntent.OnSeeAllReviews -> {
+            ProductDetailsIntent.OnSeeAllReviews ->
                 sendEffect(ProductDetailsEffect.ShowToast("Coming soon..."))
-            }
 
-            ProductDetailsIntent.OnSizeGuide -> {
+            ProductDetailsIntent.OnSizeGuide ->
                 sendEffect(ProductDetailsEffect.NavigateBack)
-            }
 
-            ProductDetailsIntent.OnAddToCart -> {
-                sendEffect(ProductDetailsEffect.ShowToast("Coming soon..."))
-            }
+            ProductDetailsIntent.OnAddToCart -> addCurrentProductToCart()
 
-            is ProductDetailsIntent.OnColorSelectedChange -> {
-                _state.update { state ->
-                    state.copy(selectedColorIndex = intent.colorIndex)
-                }
-            }
+            is ProductDetailsIntent.OnFavoriteClick -> onFavoriteClick()
 
-            is ProductDetailsIntent.OnFavoriteClick -> {
-                onFavoriteClick()
-            }
+            is ProductDetailsIntent.OnColorSelectedChange ->
+                updateState { copy(selectedColorIndex = intent.colorIndex) }
 
-            is ProductDetailsIntent.OnSizeSelectedChange -> {
-                _state.update { state ->
-                    state.copy(selectedSizeLabel = intent.newSize)
-                }
-            }
+            is ProductDetailsIntent.OnSizeSelectedChange ->
+                updateState { copy(selectedSizeLabel = intent.newSize) }
 
-            is ProductDetailsIntent.Retry -> {
-                fetchProduct(intent.productId)
-            }
-
-            is ProductDetailsIntent.Load -> {
-                fetchProduct(intent.productId)
-            }
+            is ProductDetailsIntent.Retry -> fetchProduct(intent.productId)
+            is ProductDetailsIntent.Load -> fetchProduct(intent.productId)
         }
     }
 
     private fun fetchProduct(productId: String) {
         viewModelScope.launch {
-            val product = getProductByIdUseCase(productId)
-            when (product) {
-                Result.Loading -> {
-                    _state.update {
-                        it.copy(isLoading = true)
-                    }
-                }
+            when (val product = getProductByIdUseCase(productId)) {
+                Result.Loading -> updateState { copy(isLoading = true) }
 
-                is Result.Error -> {
-                    _state.update {
-                        it.copy(
-                            isLoading = false,
-                            errorMessage = product.throwable.message ?: "Unknown error"
-                        )
-                    }
+                is Result.Error -> updateState {
+                    copy(
+                        isLoading = false,
+                        errorMessage = product.throwable.message ?: "Unknown error",
+                    )
                 }
 
                 is Result.Success<Product> -> {
-                    val currentstate = product.value
-                    currentProduct = currentstate
-
-                    _state.update {
-                        it.copy(
+                    val value = product.value
+                    updateState {
+                        copy(
                             isLoading = false,
-                            images = currentstate.images,
-                            colors = currentstate.colors,
-                            title = currentstate.title,
-                            priceFormatted = currentstate.price,
+                            product = value,
+                            images = value.images,
+                            colors = value.colors,
+                            title = value.title,
+                            priceFormatted = value.price,
                             errorMessage = null,
-                            description = currentstate.description,
-                            rating = currentstate.rating,
+                            description = value.description,
+                            rating = value.rating,
                         )
                     }
-
                     observeFavoriteStatus(productId)
                 }
             }
@@ -122,19 +89,19 @@ class ProductDetailsViewModel(
         favoriteJob?.cancel()
         favoriteJob = viewModelScope.launch {
             isProductFavorite(productId).collect { favorited ->
-                _state.update { it.copy(isFavorite = favorited) }
+                updateState { copy(isFavorite = favorited) }
             }
         }
     }
 
     private fun onFavoriteClick() {
-        val product = currentProduct ?: run {
+        val product = currentState.product ?: run {
             sendEffect(ProductDetailsEffect.ShowToast("Couldn't update favorites"))
             return
         }
-        val wasFavorite = _state.value.isFavorite
+        val wasFavorite = currentState.isFavorite
 
-        _state.update { it.copy(isFavorite = !wasFavorite) }
+        updateState { copy(isFavorite = !wasFavorite) }
 
         viewModelScope.launch {
             runCatching { toggleFavoriteUseCase(product) }
@@ -147,15 +114,17 @@ class ProductDetailsViewModel(
                     sendEffect(ProductDetailsEffect.ShowToast(message))
                 }
                 .onFailure {
-                    _state.update { it.copy(isFavorite = wasFavorite) }
+                    updateState { copy(isFavorite = wasFavorite) }
                     sendEffect(ProductDetailsEffect.ShowToast("Couldn't update favorites"))
                 }
         }
     }
 
-    private fun sendEffect(effect: ProductDetailsEffect) {
-        viewModelScope.launch { _effect.send(effect) }
+    private fun addCurrentProductToCart() {
+        val product = currentState.product ?: return
+        viewModelScope.launch {
+            addToCartUseCase(product)
+            sendEffect(ProductDetailsEffect.ShowToast("Added to cart"))
+        }
     }
-
-
 }

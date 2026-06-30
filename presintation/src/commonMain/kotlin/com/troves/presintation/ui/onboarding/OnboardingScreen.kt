@@ -22,16 +22,16 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import com.troves.designsystem.components.button.PrimaryButton
 import com.troves.designsystem.components.button.SecondaryButton
 import com.troves.designsystem.theme.Theme
-import kotlinx.coroutines.flow.collectLatest
+import com.troves.presintation.core.mvi.ObserveEffect
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 import troves.designsystem.generated.resources.Res
@@ -61,20 +61,20 @@ fun OnboardingScreen(
     onOnboardingComplete: () -> Unit,
     viewModel: OnboardingViewModel = koinViewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.state.collectAsStateWithLifecycle()
     val pagerState = rememberPagerState(pageCount = { onboardingPages.size })
     val scope = rememberCoroutineScope()
 
-    LaunchedEffect(Unit) {
-        viewModel.uiEvent.collectLatest { event ->
-            when (event) {
-                is OnboardingUiEvent.Finished -> onOnboardingComplete()
-            }
+    ObserveEffect(viewModel.effect) { effect ->
+        when (effect) {
+            is OnboardingEffect.NavigateToHome -> onOnboardingComplete()
         }
     }
 
     LaunchedEffect(pagerState.currentPage) {
-        viewModel.updatePage(pagerState.currentPage, onboardingPages.size)
+        viewModel.onIntent(
+            OnboardingIntent.PageChanged(pagerState.currentPage, onboardingPages.size),
+        )
     }
 
     Box(
@@ -95,7 +95,7 @@ fun OnboardingScreen(
                 .padding(top = Theme.spacing.medium, end = Theme.spacing.large),
             horizontalArrangement = Arrangement.End
         ) {
-            TextButton(onClick = { viewModel.completeOnboarding() }) {
+            TextButton(onClick = { viewModel.onIntent(OnboardingIntent.CompleteOnboarding) }) {
                 Text(
                     text = "Skip",
                     style = Theme.typography.body.medium,
@@ -140,7 +140,7 @@ fun OnboardingScreen(
             if (uiState.isLastPage) {
                 PrimaryButton(
                     caption = "Let's get started",
-                    onClick = { viewModel.completeOnboarding() },
+                    onClick = { viewModel.onIntent(OnboardingIntent.CompleteOnboarding) },
                     modifier = Modifier.fillMaxWidth()
                 )
             } else {

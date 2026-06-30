@@ -1,84 +1,131 @@
-﻿package com.troves.presintation.ui.auth
+package com.troves.presintation.ui.auth
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.troves.domain.Result
 import com.troves.domain.usecase.auth.LoginUseCase
 import com.troves.domain.usecase.auth.RegisterUseCase
-import com.troves.domain.Result
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import com.troves.domain.usecase.auth.SignInWithGoogleUseCase
+import com.troves.presintation.core.mvi.DefaultEffectPublisher
+import com.troves.presintation.core.mvi.DefaultStateHolder
+import com.troves.presintation.core.mvi.EffectPublisher
+import com.troves.presintation.core.mvi.StateHolder
+import com.troves.presintation.ui.auth.validator.AuthValidator
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-
-// ── UI State ─────────────────────────────────────────────────────────────────
-
-sealed interface AuthUiState {
-    data object Idle : AuthUiState
-    data object Loading : AuthUiState
-    data object Success : AuthUiState
-    data class Error(val message: String) : AuthUiState
-}
-
-// ── ViewModel ─────────────────────────────────────────────────────────────────
 
 class AuthViewModel(
     private val loginUseCase: LoginUseCase,
     private val registerUseCase: RegisterUseCase,
-) : ViewModel() {
+    private val signInWithGoogleUseCase: SignInWithGoogleUseCase,
+) : ViewModel(),
+    StateHolder<AuthState> by DefaultStateHolder(AuthState()),
+    EffectPublisher<AuthEffect> by DefaultEffectPublisher() {
 
-    private val _uiState = MutableStateFlow<AuthUiState>(AuthUiState.Idle)
-    val uiState: StateFlow<AuthUiState> = _uiState.asStateFlow()
+    fun onIntent(intent: AuthIntent) {
+        when (intent) {
+            is AuthIntent.EmailChanged ->
+                updateState { copy(email = intent.value, errorMessage = null) }
 
-    fun login(email: String, password: String) {
+            is AuthIntent.PasswordChanged ->
+                updateState { copy(password = intent.value, errorMessage = null) }
+
+            is AuthIntent.ConfirmPasswordChanged ->
+                updateState { copy(confirmPassword = intent.value, errorMessage = null) }
+
+            AuthIntent.TogglePasswordVisibility ->
+                updateState { copy(passwordVisible = !passwordVisible) }
+
+            AuthIntent.ToggleConfirmPasswordVisibility ->
+                updateState { copy(confirmPasswordVisible = !confirmPasswordVisible) }
+
+            AuthIntent.Login -> login()
+            AuthIntent.Register -> register()
+            is AuthIntent.GoogleSignIn -> signInWithGoogle(intent.idToken, intent.accessToken)
+        }
+    }
+
+    private fun login() {
+        val email = currentState.email
+        val password = currentState.password
         if (!validateInputs(email, password)) return
+
         viewModelScope.launch {
-            _uiState.value = AuthUiState.Loading
-            _uiState.value = when (val result = loginUseCase(email, password)) {
-                is Result.Success -> AuthUiState.Success
-                is Result.Error   -> AuthUiState.Error(
-                    result.throwable.message ?: "Login failed. Please try again."
-                )
-                is Result.Loading -> AuthUiState.Loading
+            updateState { copy(isLoading = true, errorMessage = null) }
+            when (val result = loginUseCase(email, password)) {
+                is Result.Success -> onAuthenticated("Logged in successfully")
+                is Result.Error -> updateState {
+                    copy(
+                        isLoading = false,
+                        errorMessage = result.throwable.message
+                            ?: "Login failed. Please try again.",
+                    )
+                }
+                is Result.Loading -> Unit
             }
         }
     }
 
-    fun register(email: String, password: String) {
+    private fun register() {
+        val email = currentState.email
+        val password = currentState.password
+        val confirmPassword = currentState.confirmPassword
         if (!validateInputs(email, password)) return
+        if (password != confirmPassword) {
+            updateState { copy(errorMessage = "Passwords do not match") }
+            return
+        }
+
         viewModelScope.launch {
-            _uiState.value = AuthUiState.Loading
-            _uiState.value = when (val result = registerUseCase(email, password)) {
-                is Result.Success -> AuthUiState.Success
-                is Result.Error   -> AuthUiState.Error(
-                    result.throwable.message ?: "Registration failed. Please try again."
-                )
-                is Result.Loading -> AuthUiState.Loading
+            updateState { copy(isLoading = true, errorMessage = null) }
+            when (val result = registerUseCase(email, password)) {
+                is Result.Success -> onAuthenticated("Account created successfully")
+                is Result.Error -> updateState {
+                    copy(
+                        isLoading = false,
+                        errorMessage = result.throwable.message
+                            ?: "Registration failed. Please try again.",
+                    )
+                }
+                is Result.Loading -> Unit
             }
         }
     }
 
-    fun clearError() {
-        if (_uiState.value is AuthUiState.Error) {
-            _uiState.value = AuthUiState.Idle
+    private fun signInWithGoogle(idToken: String, accessToken: String?) {
+        viewModelScope.launch {
+            updateState { copy(isLoading = true, errorMessage = null) }
+            when (val result = signInWithGoogleUseCase(idToken, accessToken)) {
+                is Result.Success -> onAuthenticated("Signed in with Google successfully")
+                is Result.Error -> updateState {
+                    copy(
+                        isLoading = false,
+                        errorMessage = result.throwable.message
+                            ?: "Google Sign-In failed. Please try again.",
+                    )
+                }
+                is Result.Loading -> Unit
+            }
         }
+    }
+
+    private suspend fun onAuthenticated(message: String) {
+        updateState { copy(isLoading = false) }
+        sendEffect(AuthEffect.ShowMessage(message))
+        delay(SUCCESS_NAV_DELAY_MS)
+        sendEffect(AuthEffect.NavigateToHome)
     }
 
     private fun validateInputs(email: String, password: String): Boolean {
-        if (email.isBlank()) {
-            _uiState.value = AuthUiState.Error("Email cannot be empty")
-            return false
-        }
-        if (!isValidEmail(email)) {
-            _uiState.value = AuthUiState.Error("Please enter a valid email address")
-            return false
-        }
-        if (password.length < 6) {
-            _uiState.value = AuthUiState.Error("Password must be at least 6 characters")
+        val error = AuthValidator.validateEmail(email) ?: AuthValidator.validatePassword(password)
+        if (error != null) {
+            updateState { copy(errorMessage = error) }
             return false
         }
         return true
     }
 
-    private fun isValidEmail(email: String): Boolean =
-        Regex("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}\$").matches(email)
+    private companion object {
+        const val SUCCESS_NAV_DELAY_MS = 1000L
+    }
 }
