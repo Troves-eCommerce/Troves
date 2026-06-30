@@ -1,9 +1,29 @@
 package com.troves.presintation.ui.home
 
-import com.troves.domain.entity.Product
 import com.troves.domain.entity.Ad
 import com.troves.domain.entity.Brand
 import com.troves.domain.entity.Category
+import com.troves.domain.entity.Product
+
+data class HomeUiState(
+    val isLoading: Boolean = true,
+    val ads: List<Ad> = emptyList(),
+    val brands: List<Brand> = emptyList(),
+    val justForYou: List<Product> = emptyList(),
+    val categories: List<Category> = emptyList(),
+    val trending: List<Product> = emptyList(),
+    val favoriteProductIds: Set<Long> = emptySet(),
+    val errorMessage: String? = null,
+    val showSignUpPrompt: Boolean = false,
+) {
+    val hasError: Boolean get() = errorMessage != null
+}
+
+sealed interface HomeEffect {
+    data class NavigateToProduct(val productId: String) : HomeEffect
+    data class ShowToast(val message: String) : HomeEffect
+    data object NavigateToRegister : HomeEffect
+}
 
 sealed interface HomeIntent {
     data object Load : HomeIntent
