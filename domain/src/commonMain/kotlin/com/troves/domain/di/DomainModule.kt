@@ -12,6 +12,9 @@ import com.troves.domain.usecase.home.GetTrendingProductsUseCase
 import com.troves.domain.usecase.onboarding.CompleteOnboardingUseCase
 import com.troves.domain.usecase.onboarding.IsOnboardingDoneUseCase
 import com.troves.domain.usecase.shared.GetProductsUseCase
+import com.troves.domain.usecase.wishlist.GetWishlistUseCase
+import com.troves.domain.usecase.wishlist.IsProductFavoritedUseCase
+import com.troves.domain.usecase.wishlist.ToggleFavoriteUseCase
 import org.koin.dsl.module
 
 val domainModule = module {
@@ -29,6 +32,11 @@ val domainModule = module {
     // Onboarding
     factory { IsOnboardingDoneUseCase(get()) }
     factory { CompleteOnboardingUseCase(get()) }
+
+    // Wishlist
+    factory { GetWishlistUseCase(get()) }
+    factory { IsProductFavoritedUseCase(get()) }
+    factory { ToggleFavoriteUseCase(get()) }
 
     // Authentication
     factory { LoginUseCase(get()) }

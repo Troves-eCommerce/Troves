@@ -1,17 +1,9 @@
 package com.troves.designsystem.components.cards
-
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.Icon
@@ -38,6 +30,7 @@ fun MainCard(
     onClick: () -> Unit,
     onFavoriteClick: () -> Unit,
     modifier: Modifier = Modifier,
+    isFavorite: Boolean = false,
 ) {
     Column(
         modifier = modifier
@@ -47,7 +40,6 @@ fun MainCard(
             .border(1.dp, Theme.colors.surfaceVariant, Theme.shapes.medium)
             .clickable(onClick = onClick)
     ) {
-        // Top Image Section
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -61,33 +53,31 @@ fun MainCard(
                 contentScale = ContentScale.Crop
             )
 
-            // Favorite Button
             Box(
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(8.dp)
                     .size(32.dp)
-                    .background(Color.Black, CircleShape)
+                    .background(
+                        if (isFavorite) Color(0xFFE54848) else Color.Black,
+                        CircleShape,
+                    )
                     .clickable(onClick = onFavoriteClick),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     painter = favoriteIconPainter,
-                    contentDescription = "Favorite",
+                    contentDescription = if (isFavorite) "Remove from favorites" else "Add to favorites",
                     tint = Color.White,
                     modifier = Modifier.size(18.dp)
                 )
             }
         }
 
-        // Bottom Details Section
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(12.dp),
+            modifier = Modifier.fillMaxWidth().padding(12.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            // Rating
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(4.dp)
@@ -100,13 +90,10 @@ fun MainCard(
                 )
                 BasicText(
                     text = rating.toString(),
-                    style = Theme.typography.body.small.copy(
-                        color = Theme.colors.hint
-                    )
+                    style = Theme.typography.body.small.copy(color = Theme.colors.hint)
                 )
             }
 
-            // Title
             BasicText(
                 text = title,
                 style = Theme.typography.body.medium.copy(
@@ -117,7 +104,6 @@ fun MainCard(
                 overflow = TextOverflow.Ellipsis
             )
 
-            // Price
             BasicText(
                 text = price,
                 style = Theme.typography.body.large.copy(

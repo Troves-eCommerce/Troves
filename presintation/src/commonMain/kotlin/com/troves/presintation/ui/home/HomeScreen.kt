@@ -262,6 +262,7 @@ private fun ProductRow(
                 ),
                 ratingIconPainter = starIcon,
                 favoriteIconPainter = heartIcon,
+                isFavorite = product.id in favoriteIds,
                 onClick = { onIntent(HomeIntent.ProductClicked(product)) },
                 onFavoriteClick = { onIntent(HomeIntent.FavoriteToggled(product)) },
                 modifier = Modifier.width(170.dp),

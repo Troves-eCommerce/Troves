@@ -2,6 +2,7 @@ package com.troves.presintation.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.troves.domain.entity.Product
 import com.troves.domain.usecase.auth.IsLoggedInUseCase
 import com.troves.domain.Result
 import com.troves.domain.getOrElse
@@ -10,6 +11,8 @@ import com.troves.domain.usecase.home.GetBrandsUseCase
 import com.troves.domain.usecase.home.GetCategoriesUseCase
 import com.troves.domain.usecase.home.GetJustForYouProductsUseCase
 import com.troves.domain.usecase.home.GetTrendingProductsUseCase
+import com.troves.domain.usecase.wishlist.GetWishlistUseCase
+import com.troves.domain.usecase.wishlist.ToggleFavoriteUseCase
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,6 +30,8 @@ class HomeViewModel(
     private val getJustForYou: GetJustForYouProductsUseCase,
     private val getTrending: GetTrendingProductsUseCase,
     private val isLoggedIn: IsLoggedInUseCase,
+    private val getWishlist: GetWishlistUseCase,
+    private val toggleFavoriteUseCase: ToggleFavoriteUseCase,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(HomeUiState())
@@ -53,9 +58,8 @@ class HomeViewModel(
             is HomeIntent.AdClicked -> sendEffect(HomeEffect.ShowToast(intent.ad.titleTop))
             is HomeIntent.BrandClicked -> sendEffect(HomeEffect.ShowToast(intent.brand.name))
             is HomeIntent.CategoryClicked -> sendEffect(HomeEffect.ShowToast(intent.category.name))
-            is HomeIntent.ProductClicked ->
-                sendEffect(HomeEffect.NavigateToProduct(intent.product.id.toString()))
-            is HomeIntent.FavoriteToggled -> toggleFavorite(intent.product.id)
+            is HomeIntent.ProductClicked -> sendEffect(HomeEffect.NavigateToProduct(intent.product.id.toString()))
+            is HomeIntent.FavoriteToggled -> toggleFavorite(intent.product)
         }
     }
 
@@ -95,6 +99,12 @@ class HomeViewModel(
                 )
             }
         }
+
+        viewModelScope.launch {
+            getWishlist().collect { favorites ->
+                _state.update { it.copy(favoriteProductIds = favorites.map { it.id }.toSet()) }
+            }
+        }
     }
 
     /**
@@ -112,12 +122,35 @@ class HomeViewModel(
         }
     }
 
-    private fun toggleFavorite(productId: Long) {
+    private fun toggleFavorite(product: Product) {
+        val wasFavorite = product.id in _state.value.favoriteProductIds
+
         _state.update { current ->
             val updated = current.favoriteProductIds.toMutableSet().apply {
-                if (!add(productId)) remove(productId)
+                if (wasFavorite) remove(product.id) else add(product.id)
             }
             current.copy(favoriteProductIds = updated)
+        }
+
+        viewModelScope.launch {
+            runCatching { toggleFavoriteUseCase(product) }
+                .onSuccess {
+                    val message = if (wasFavorite) {
+                        "${product.title} removed from favorites"
+                    } else {
+                        "${product.title} added to favorites"
+                    }
+                    sendEffect(HomeEffect.ShowToast(message))
+                }
+                .onFailure {
+                    _state.update { current ->
+                        val reverted = current.favoriteProductIds.toMutableSet().apply {
+                            if (wasFavorite) add(product.id) else remove(product.id)
+                        }
+                        current.copy(favoriteProductIds = reverted)
+                    }
+                    sendEffect(HomeEffect.ShowToast("Couldn't update favorites"))
+                }
         }
     }
 

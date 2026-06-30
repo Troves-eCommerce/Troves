@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.troves.domain.Result
 import com.troves.domain.entity.Product
 import com.troves.domain.usecase.details.GetProductByIdUseCase
+import com.troves.domain.usecase.wishlist.IsProductFavoritedUseCase
+import com.troves.domain.usecase.wishlist.ToggleFavoriteUseCase
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,7 +16,9 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class ProductDetailsViewModel(
-    private val getProductByIdUseCase: GetProductByIdUseCase
+    private val getProductByIdUseCase: GetProductByIdUseCase,
+    private val isProductFavorite: IsProductFavoritedUseCase,
+    private val toggleFavoriteUseCase: ToggleFavoriteUseCase,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(ProductDetailUiState())
@@ -25,7 +29,8 @@ class ProductDetailsViewModel(
         /*onBufferOverflow = BufferOverflow.DROP_OLDEST*/
     )
     val effect = _effect.receiveAsFlow()
-
+    private var currentProduct: Product? = null
+    private var favoriteJob: kotlinx.coroutines.Job? = null
 
     fun onIntent(intent: ProductDetailsIntent) {
         when (intent) {
@@ -52,7 +57,7 @@ class ProductDetailsViewModel(
             }
 
             is ProductDetailsIntent.OnFavoriteClick -> {
-                sendEffect(ProductDetailsEffect.ShowToast("Coming soon..."))
+                onFavoriteClick()
             }
 
             is ProductDetailsIntent.OnSizeSelectedChange -> {
@@ -92,6 +97,8 @@ class ProductDetailsViewModel(
 
                 is Result.Success<Product> -> {
                     val currentstate = product.value
+                    currentProduct = currentstate
+
                     _state.update {
                         it.copy(
                             isLoading = false,
@@ -101,15 +108,49 @@ class ProductDetailsViewModel(
                             priceFormatted = currentstate.price,
                             errorMessage = null,
                             description = currentstate.description,
-                            rating = currentstate.rating
+                            rating = currentstate.rating,
                         )
                     }
+
+                    observeFavoriteStatus(productId)
                 }
             }
-
         }
+    }
 
+    private fun observeFavoriteStatus(productId: String) {
+        favoriteJob?.cancel()
+        favoriteJob = viewModelScope.launch {
+            isProductFavorite(productId).collect { favorited ->
+                _state.update { it.copy(isFavorite = favorited) }
+            }
+        }
+    }
 
+    private fun onFavoriteClick() {
+        val product = currentProduct ?: run {
+            sendEffect(ProductDetailsEffect.ShowToast("Couldn't update favorites"))
+            return
+        }
+        val wasFavorite = _state.value.isFavorite
+
+        _state.update { it.copy(isFavorite = !wasFavorite) }
+
+        viewModelScope.launch {
+            runCatching { toggleFavoriteUseCase(product) }
+                .onSuccess {
+                    val message = if (wasFavorite) {
+                        "${product.title} removed from favorites"
+                    } else {
+                        "${product.title} added to favorites"
+                    }
+                    sendEffect(ProductDetailsEffect.ShowToast(message))
+                }
+                .onFailure {
+                    _state.update { it.copy(isFavorite = wasFavorite) }
+                    sendEffect(ProductDetailsEffect.ShowToast("Couldn't update favorites"))
+                }
+        }
     }
 
     private fun sendEffect(effect: ProductDetailsEffect) {

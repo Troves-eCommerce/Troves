@@ -22,7 +22,7 @@ import com.troves.presintation.ui.MainViewModel
 import com.troves.presintation.ui.StartDestination
 import com.troves.presintation.ui.auth.LoginScreen
 import com.troves.presintation.ui.auth.RegisterScreen
-import com.troves.presintation.ui.fav.FavoriteScreen
+import com.troves.presintation.ui.fav.WishlistScreen
 import com.troves.presintation.ui.home.HomeScreen
 import com.troves.presintation.ui.onboarding.OnboardingScreen
 import com.troves.presintation.ui.productDetails.ProductDetailsScreen
@@ -33,10 +33,10 @@ import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import org.koin.compose.viewmodel.koinViewModel
 import troves.designsystem.generated.resources.Res
-import troves.designsystem.generated.resources.ic_explore
 import troves.designsystem.generated.resources.ic_home
 import troves.designsystem.generated.resources.ic_order
 import troves.designsystem.generated.resources.ic_profile
+import troves.designsystem.generated.resources.ic_wishlist
 
 private val navSavedStateConfiguration = SavedStateConfiguration {
     serializersModule = SerializersModule {
@@ -111,7 +111,11 @@ fun AppNav() {
             )
         }
         entry<AppRoute.Favorites> {
-            FavoriteScreen()
+            WishlistScreen(
+                onNavigateToProduct = { productId ->
+                    backStack.add(AppRoute.ProductDetails(productId))
+                }
+            )
         }
         entry<AppRoute.ProductDetails> { key ->
             ProductDetailsScreen(
@@ -156,8 +160,8 @@ fun AppNav() {
                 SPBottomNavigation(
                     items = listOf(
                         BottomNavItem("Home", Res.drawable.ic_home),
-                        BottomNavItem("Wishlist", Res.drawable.ic_explore),
                         BottomNavItem("Orders", Res.drawable.ic_order),
+                        BottomNavItem("Wishlist", Res.drawable.ic_wishlist),
                         BottomNavItem("Profile", Res.drawable.ic_profile)
                     ),
                     selectedIndex = if (selectedIndex != -1) selectedIndex else 0,
@@ -178,4 +182,3 @@ fun AppNav() {
         )
     }
 }
-
