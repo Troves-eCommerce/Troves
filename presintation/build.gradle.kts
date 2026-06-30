@@ -7,6 +7,10 @@ plugins {
     alias(libs.plugins.composeCompiler)
 }
 
+compose.resources {
+    publicResClass = true
+}
+
 kotlin {
 
     // Target declarations
@@ -14,6 +18,12 @@ kotlin {
         namespace = "com.troves.presintation"
         compileSdk = libs.versions.android.compileSdk.get().toInt()
         minSdk = libs.versions.android.minSdk.get().toInt()
+
+        // Required so the module's Compose Multiplatform resources (strings.xml)
+        // are packaged into the consuming app's assets.
+        androidResources {
+            enable = true
+        }
 
         withHostTestBuilder {
         }
@@ -60,6 +70,7 @@ kotlin {
                 implementation(libs.compose.material3)
                 implementation(libs.compose.runtime)
                 implementation(libs.compose.uiToolingPreview)
+                implementation(libs.compose.components.resources)
 
                 // ViewModel
                 implementation(libs.androidx.lifecycle.viewmodelCompose)

@@ -21,6 +21,7 @@ data class HomeUiState(
 
 sealed interface HomeEffect {
     data class NavigateToProduct(val productId: String) : HomeEffect
+    data object NavigateToProducts : HomeEffect
     data class ShowToast(val message: String) : HomeEffect
     data object NavigateToRegister : HomeEffect
 }
