@@ -111,7 +111,7 @@ fun LoginScreen(
             TextField(
                 text = email,
                 onTextChange = { viewModel.onIntent(AuthIntent.EmailChanged(it)) },
-                title = "Username",
+                title = "Email",
                 hint = "Enter your email",
                 singleLine = true,
                 containerColor = Theme.colors.surface,

@@ -77,14 +77,14 @@ fun AppNav() {
     val bottomNavRoutes = remember {
         listOf(
             AppRoute.Home,
-            AppRoute.Products,
+            AppRoute.Profile,
             AppRoute.Favorites,
             AppRoute.Profile
         )
     }
 
     val selectedIndex = bottomNavRoutes.indexOf(currentRoute)
-    val shouldShowBottomBar = currentRoute in bottomNavRoutes
+    val shouldShowBottomBar = currentRoute in bottomNavRoutes && currentRoute != AppRoute.Products
 
     fun replaceWith(route: NavKey) {
         Snapshot.withMutableSnapshot {
@@ -111,6 +111,7 @@ fun AppNav() {
                 },
                 onNavigateToRegister = { backStack.add(AppRoute.Register) },
                 onNavigateToCart = { backStack.add(AppRoute.Cart) },
+                onNavigateToProducts = { backStack.add(AppRoute.Products) }
             )
         }
         entry<AppRoute.Favorites> {
@@ -145,7 +146,12 @@ fun AppNav() {
             )
         }
         entry<AppRoute.Products> {
-            ProductsScreen()
+            ProductsScreen(
+                onNavigateToProduct = { productId ->
+                    backStack.add(AppRoute.ProductDetails(productId))
+                },
+                onNavigateBack = { backStack.removeLastOrNull() },
+            )
         }
         entry<AppRoute.Profile> {
             ProfileScreen(
@@ -179,8 +185,7 @@ fun AppNav() {
     ) { paddingValues ->
         NavDisplay<NavKey>(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues),
+                .fillMaxSize(),
             entries = rememberDecoratedNavEntries(
                 backStack = backStack,
                 entryProvider = entryProvider
