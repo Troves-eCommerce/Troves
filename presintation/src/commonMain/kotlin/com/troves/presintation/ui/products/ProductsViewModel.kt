@@ -13,6 +13,7 @@ import com.troves.presintation.core.mvi.DefaultStateHolder
 import com.troves.presintation.core.mvi.EffectPublisher
 import com.troves.presintation.core.mvi.StateHolder
 import com.troves.presintation.ui.components.FilterOption
+import com.troves.presintation.ui.components.SortOption
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
@@ -36,11 +37,12 @@ class ProductsViewModel(
             ProductsIntent.OnBackClick -> {
                 updateState {
                     copy(
-                        draftCategoryIds = emptySet(),
-                        draftSubCategoryIds = emptySet(),
-                        draftBrandIds = emptySet(),
+                        selectedCategoryIds = emptySet(),
+                        selectedSubCategoryIds = emptySet(),
+                        selectedBrandIds = emptySet(),
+                        selectedSort =SortOption.DEFAULT
 
-                    )
+                    ).withDisplayedProducts()
                 }
                 sendEffect(ProductsEffect.NavigateBack)
 
