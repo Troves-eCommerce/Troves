@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8F15B5EB2FF442DE003370E3 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 8F15B5EA2FF442DE003370E3 /* GoogleSignIn */; };
 		A1B2C3D4E5F600000000FB04 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = A1B2C3D4E5F600000000FB02 /* FirebaseCore */; };
 		A1B2C3D4E5F600000000FB05 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = A1B2C3D4E5F600000000FB03 /* FirebaseAuth */; };
 /* End PBXBuildFile section */
@@ -48,6 +49,7 @@
 			files = (
 				A1B2C3D4E5F600000000FB04 /* FirebaseCore in Frameworks */,
 				A1B2C3D4E5F600000000FB05 /* FirebaseAuth in Frameworks */,
+				8F15B5EB2FF442DE003370E3 /* GoogleSignIn in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -67,8 +69,16 @@
 			children = (
 				EE1631766CF9A2D700FA7A11 /* Configuration */,
 				82503C5625A7276763DCC40D /* iosApp */,
+				8F15B5E92FF442DE003370E3 /* Frameworks */,
 				17F62922834373791CF4E3A6 /* Products */,
 			);
+			sourceTree = "<group>";
+		};
+		8F15B5E92FF442DE003370E3 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -94,6 +104,7 @@
 			packageProductDependencies = (
 				A1B2C3D4E5F600000000FB02 /* FirebaseCore */,
 				A1B2C3D4E5F600000000FB03 /* FirebaseAuth */,
+				8F15B5EA2FF442DE003370E3 /* GoogleSignIn */,
 			);
 			productName = iosApp;
 			productReference = 39C6066C41D1F01C81012DF5 /* Troves.app */;
@@ -404,6 +415,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		8F15B5EA2FF442DE003370E3 /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 077A6B3E2FF42251000BA1E0 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
+		};
 		A1B2C3D4E5F600000000FB02 /* FirebaseCore */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = A1B2C3D4E5F600000000FB01 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;

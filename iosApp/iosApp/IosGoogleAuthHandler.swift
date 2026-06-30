@@ -1,9 +1,10 @@
 import Foundation
+import UIKit
 import Shared
 import GoogleSignIn
 import FirebaseAuth
 
-class IosGoogleAuthHandler: NSObject, GoogleAuthHandler {
+class IosGoogleAuthHandler: NSObject, PresintationGoogleAuthHandler {
     func signIn(
         onSuccess: @escaping (String, String?) -> Void,
         onError: @escaping (KotlinException) -> Void
