@@ -95,7 +95,6 @@ fun ProductImageCarousel(
             }
         }
 
-
         Row(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
