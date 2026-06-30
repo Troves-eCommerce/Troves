@@ -148,7 +148,9 @@ fun AppNav() {
             ProductsScreen()
         }
         entry<AppRoute.Profile> {
-            ProfileScreen()
+            ProfileScreen(
+                onNavigateToLogin = { replaceWith(AppRoute.Login) }
+            )
         }
         entry<AppRoute.Cart> {
             CartScreen(

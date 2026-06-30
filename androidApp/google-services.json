@@ -12,7 +12,20 @@
           "package_name": "com.troves"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "339149506183-10d4b5e9a7jn3655hhldnmp8sc73r07u.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.troves",
+            "certificate_hash": "592584225b47ee8c829e02fe58651cc1ed76a355"
+          }
+        },
+        {
+          "client_id": "339149506183-ahop6ekj4n38pookan3dkqpt0a132hpi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDjGrOJc4z53oaSgOvvOwKlCINkr_MvLGQ"
@@ -20,26 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:339149506183:android:6fc3729f24320a2f145a22",
-        "android_client_info": {
-          "package_name": "com.troves.android"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyDjGrOJc4z53oaSgOvvOwKlCINkr_MvLGQ"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "339149506183-ahop6ekj4n38pookan3dkqpt0a132hpi.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "339149506183-27j1hifg77qpn4283stjsmfeei24mc8g.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.troves.ios"
+              }
+            }
+          ]
         }
       }
     }

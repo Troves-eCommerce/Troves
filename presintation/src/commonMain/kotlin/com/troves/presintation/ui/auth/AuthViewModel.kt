@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.troves.domain.Result
 import com.troves.domain.usecase.auth.LoginUseCase
 import com.troves.domain.usecase.auth.RegisterUseCase
+import com.troves.domain.usecase.auth.SignInWithGoogleUseCase
 import com.troves.presintation.core.mvi.DefaultEffectPublisher
 import com.troves.presintation.core.mvi.DefaultStateHolder
 import com.troves.presintation.core.mvi.EffectPublisher
@@ -16,6 +17,7 @@ import kotlinx.coroutines.launch
 class AuthViewModel(
     private val loginUseCase: LoginUseCase,
     private val registerUseCase: RegisterUseCase,
+    private val signInWithGoogleUseCase: SignInWithGoogleUseCase,
 ) : ViewModel(),
     StateHolder<AuthState> by DefaultStateHolder(AuthState()),
     EffectPublisher<AuthEffect> by DefaultEffectPublisher() {
@@ -39,6 +41,7 @@ class AuthViewModel(
 
             AuthIntent.Login -> login()
             AuthIntent.Register -> register()
+            is AuthIntent.GoogleSignIn -> signInWithGoogle(intent.idToken, intent.accessToken)
         }
     }
 
@@ -82,6 +85,23 @@ class AuthViewModel(
                         isLoading = false,
                         errorMessage = result.throwable.message
                             ?: "Registration failed. Please try again.",
+                    )
+                }
+                is Result.Loading -> Unit
+            }
+        }
+    }
+
+    private fun signInWithGoogle(idToken: String, accessToken: String?) {
+        viewModelScope.launch {
+            updateState { copy(isLoading = true, errorMessage = null) }
+            when (val result = signInWithGoogleUseCase(idToken, accessToken)) {
+                is Result.Success -> onAuthenticated("Signed in with Google successfully")
+                is Result.Error -> updateState {
+                    copy(
+                        isLoading = false,
+                        errorMessage = result.throwable.message
+                            ?: "Google Sign-In failed. Please try again.",
                     )
                 }
                 is Result.Loading -> Unit

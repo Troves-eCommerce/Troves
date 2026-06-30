@@ -53,19 +53,24 @@ import troves.designsystem.generated.resources.ic_eye
 import troves.designsystem.generated.resources.ic_eye_off
 import troves.designsystem.generated.resources.ic_google
 
+import com.troves.presintation.ui.auth.google.LocalGoogleAuthHandler
+
 @Composable
 fun RegisterScreen(
     onNavigateToLogin: () -> Unit,
     onRegisterSuccess: () -> Unit,
     viewModel: AuthViewModel = koinViewModel(),
 ) {
+    val googleAuthHandler = LocalGoogleAuthHandler.current
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     var successMessage by remember { mutableStateOf<String?>(null) }
+    var toastError by remember { mutableStateOf<String?>(null) }
 
     ObserveEffect(viewModel.effect) { effect ->
         when (effect) {
             is AuthEffect.ShowMessage -> successMessage = effect.message
+            is AuthEffect.ShowError -> toastError = effect.message
             AuthEffect.NavigateToHome -> onRegisterSuccess()
         }
     }
@@ -207,7 +212,18 @@ fun RegisterScreen(
 
             Spacer(Modifier.height(24.dp))
 
-            SocialLoginSection()
+            SocialLoginSection(
+                onGoogleClick = {
+                    googleAuthHandler?.signIn(
+                        onSuccess = { idToken, accessToken ->
+                            viewModel.onIntent(AuthIntent.GoogleSignIn(idToken, accessToken))
+                        },
+                        onError = { error ->
+                            toastError = error.message ?: "Google Sign-In failed"
+                        }
+                    ) ?: run { toastError = "Google Sign-In is not supported on this platform" }
+                }
+            )
 
             Spacer(Modifier.height(32.dp))
 
@@ -233,8 +249,11 @@ fun RegisterScreen(
         }
 
         TrovesToast(
-            message = successMessage,
-            onDismiss = { successMessage = null },
+            message = successMessage ?: toastError,
+            onDismiss = {
+                successMessage = null
+                toastError = null
+            },
         )
     }
 }
