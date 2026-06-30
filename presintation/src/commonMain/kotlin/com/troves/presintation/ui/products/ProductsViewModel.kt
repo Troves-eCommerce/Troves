@@ -10,15 +10,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-// ── UI State ─────────────────────────────────────────────────────────────────
-
 sealed interface ProductsUiState {
     data object Loading : ProductsUiState
     data class Success(val products: List<Product>) : ProductsUiState
     data class Error(val message: String) : ProductsUiState
 }
-
-// ── ViewModel ─────────────────────────────────────────────────────────────────
 
 class ProductsViewModel(
     private val getProductsUseCase: GetProductsUseCase
@@ -34,7 +30,7 @@ class ProductsViewModel(
     fun loadProducts() {
         viewModelScope.launch {
             _uiState.value = ProductsUiState.Loading
-            
+
             when (val result = getProductsUseCase()) {
                 is Result.Success -> {
                     _uiState.value = ProductsUiState.Success(result.value)
