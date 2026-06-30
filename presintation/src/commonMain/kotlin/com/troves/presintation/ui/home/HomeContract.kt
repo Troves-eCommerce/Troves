@@ -21,7 +21,11 @@ data class HomeUiState(
 
 sealed interface HomeEffect {
     data class NavigateToProduct(val productId: String) : HomeEffect
-    data object NavigateToProducts : HomeEffect
+    data class NavigateToProducts(
+        val sourceType: String = "",
+        val sourceId: String = "",
+        val sourceName: String = "",
+    ) : HomeEffect
     data class ShowToast(val message: String) : HomeEffect
     data object NavigateToRegister : HomeEffect
     data object NavigateToCart : HomeEffect

@@ -20,7 +20,11 @@ sealed interface AppRoute : NavKey {
     data object Home : AppRoute
 
     @Serializable
-    data object Products : AppRoute
+    data class Products(
+        val sourceType: String = "",
+        val sourceId: String = "",
+        val sourceName: String = "",
+    ) : AppRoute
 
     @Serializable
     data object Favorites : AppRoute

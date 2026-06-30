@@ -42,10 +42,22 @@ class HomeViewModel(
                 sendEffect(HomeEffect.NavigateToRegister)
             }
             HomeIntent.SignUpPromptDismissed -> updateState { copy(showSignUpPrompt = false) }
-            HomeIntent.SeeAllBrandsClicked -> sendEffect(HomeEffect.NavigateToProducts)
+            HomeIntent.SeeAllBrandsClicked -> sendEffect(HomeEffect.NavigateToProducts())
             is HomeIntent.AdClicked -> sendEffect(HomeEffect.ShowToast(intent.ad.titleTop))
-            is HomeIntent.BrandClicked -> sendEffect(HomeEffect.NavigateToProducts)
-            is HomeIntent.CategoryClicked -> sendEffect(HomeEffect.NavigateToProducts)
+            is HomeIntent.BrandClicked -> sendEffect(
+                HomeEffect.NavigateToProducts(
+                    sourceType = "brand",
+                    sourceId = intent.brand.id.toString(),
+                    sourceName = intent.brand.name,
+                ),
+            )
+            is HomeIntent.CategoryClicked -> sendEffect(
+                HomeEffect.NavigateToProducts(
+                    sourceType = "category",
+                    sourceId = intent.category.id.toString(),
+                    sourceName = intent.category.name,
+                ),
+            )
             is HomeIntent.ProductClicked ->
                 sendEffect(HomeEffect.NavigateToProduct(intent.product.id.toString()))
             is HomeIntent.FavoriteToggled -> toggleFavorite(intent.product.id)
