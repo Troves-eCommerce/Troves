@@ -58,7 +58,7 @@ private val onboardingPages = listOf(
 
 @Composable
 fun OnboardingScreen(
-    onNavigateToLogin: () -> Unit,
+    onOnboardingComplete: () -> Unit,
     viewModel: OnboardingViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -68,7 +68,7 @@ fun OnboardingScreen(
     LaunchedEffect(Unit) {
         viewModel.uiEvent.collectLatest { event ->
             when (event) {
-                is OnboardingUiEvent.NavigateToLogin -> onNavigateToLogin()
+                is OnboardingUiEvent.Finished -> onOnboardingComplete()
             }
         }
     }

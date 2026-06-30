@@ -126,12 +126,8 @@ buildkonfig {
             localProperties.getProperty("SHOPIFY_API_KEY") ?: error("SHOPIFY_API_KEY not set in local.properties")
         )
         buildConfigField(
-            STRING, "SHOPIFY_PASSWORD",
-            localProperties.getProperty("SHOPIFY_PASSWORD") ?: error("SHOPIFY_PASSWORD not set in local.properties")
-        )
-        buildConfigField(
-            STRING, "SHOPIFY_HOSTNAME",
-            localProperties.getProperty("SHOPIFY_HOSTNAME") ?: error("SHOPIFY_HOSTNAME not set in local.properties")
+            STRING, "SHOPIFY_REST_URL",
+            localProperties.getProperty("SHOPIFY_REST_URL") ?: error("SHOPIFY_HOSTNAME not set in local.properties")
         )
     }
 }

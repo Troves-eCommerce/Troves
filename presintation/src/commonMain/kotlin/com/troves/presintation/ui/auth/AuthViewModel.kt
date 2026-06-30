@@ -2,8 +2,8 @@
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.troves.domain.LoginUseCase
-import com.troves.domain.RegisterUseCase
+import com.troves.domain.usecase.auth.LoginUseCase
+import com.troves.domain.usecase.auth.RegisterUseCase
 import com.troves.domain.Result
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
