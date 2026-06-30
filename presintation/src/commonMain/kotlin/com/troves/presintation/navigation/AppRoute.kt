@@ -30,4 +30,7 @@ sealed interface AppRoute : NavKey {
 
     @Serializable
     data class ProductDetails(val productId: String) : AppRoute
+
+    @Serializable
+    data object Cart : AppRoute
 }

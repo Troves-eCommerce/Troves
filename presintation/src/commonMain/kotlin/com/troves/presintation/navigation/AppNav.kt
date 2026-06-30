@@ -22,6 +22,7 @@ import com.troves.presintation.ui.MainViewModel
 import com.troves.presintation.ui.StartDestination
 import com.troves.presintation.ui.auth.LoginScreen
 import com.troves.presintation.ui.auth.RegisterScreen
+import com.troves.presintation.ui.cart.CartScreen
 import com.troves.presintation.ui.fav.FavoriteScreen
 import com.troves.presintation.ui.home.HomeScreen
 import com.troves.presintation.ui.onboarding.OnboardingScreen
@@ -50,6 +51,7 @@ private val navSavedStateConfiguration = SavedStateConfiguration {
             subclass(AppRoute.Favorites::class, AppRoute.Favorites.serializer())
             subclass(AppRoute.Profile::class, AppRoute.Profile.serializer())
             subclass(AppRoute.ProductDetails::class, AppRoute.ProductDetails.serializer())
+            subclass(AppRoute.Cart::class, AppRoute.Cart.serializer())
         }
     }
 }
@@ -107,8 +109,9 @@ fun AppNav() {
                 onNavigateToProduct = { productId ->
                     backStack.add(AppRoute.ProductDetails(productId))
                 },
-                onNavigateToProducts = { backStack.add(AppRoute.Products) },
-                onNavigateToRegister = { backStack.add(AppRoute.Register) }
+                onNavigateToRegister = { backStack.add(AppRoute.Register) },
+                onNavigateToCart = { backStack.add(AppRoute.Cart) },
+                onNavigateToProducts = { backStack.add(AppRoute.Products) }
             )
         }
         entry<AppRoute.Favorites> {
@@ -151,7 +154,15 @@ fun AppNav() {
             )
         }
         entry<AppRoute.Profile> {
-            ProfileScreen()
+            ProfileScreen(
+                onNavigateToLogin = { replaceWith(AppRoute.Login) }
+            )
+        }
+        entry<AppRoute.Cart> {
+            CartScreen(
+                onNavigateBack = { backStack.removeLastOrNull() },
+                onNavigateToCheckout = { backStack.removeLastOrNull() },
+            )
         }
     }
 

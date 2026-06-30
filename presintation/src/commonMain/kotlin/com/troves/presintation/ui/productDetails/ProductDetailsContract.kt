@@ -1,5 +1,6 @@
 package com.troves.presintation.ui.productDetails
 
+import com.troves.domain.entity.Product
 import com.troves.presintation.ui.productDetails.models.ReviewUi
 
 data class ProductDetailUiState(
@@ -18,6 +19,7 @@ data class ProductDetailUiState(
     val isFavorite: Boolean = false,
     val isLoading: Boolean = true,
     val errorMessage: String? = null,
+    val product: Product? = null,
 ) {
     val hasError = errorMessage != null
 }

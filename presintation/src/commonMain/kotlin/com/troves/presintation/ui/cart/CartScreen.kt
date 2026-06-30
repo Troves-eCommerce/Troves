@@ -1,0 +1,160 @@
+package com.troves.presintation.ui.cart
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.BasicText
+import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.troves.designsystem.components.button.PrimaryButton
+import com.troves.designsystem.components.topbar.BaseTopAppBar
+import com.troves.designsystem.theme.Theme
+import com.troves.presintation.core.mvi.ObserveEffect
+import com.troves.presintation.ui.cart.components.CartItemCard
+import org.jetbrains.compose.resources.painterResource
+import org.koin.compose.viewmodel.koinViewModel
+import troves.designsystem.generated.resources.Res
+import troves.designsystem.generated.resources.ic_arrow_back
+
+@Composable
+fun CartScreen(
+    onNavigateBack: () -> Unit,
+    onNavigateToCheckout: () -> Unit,
+    viewModel: CartViewModel = koinViewModel(),
+) {
+    val state by viewModel.state.collectAsStateWithLifecycle()
+
+    ObserveEffect(viewModel.effect) { effect ->
+        when (effect) {
+            CartEffect.NavigateBack -> onNavigateBack()
+            CartEffect.NavigateToCheckout -> onNavigateToCheckout()
+        }
+    }
+
+    CartScreenContent(
+        state = state,
+        onIntent = viewModel::onIntent,
+        modifier = Modifier
+            .fillMaxSize()
+            .statusBarsPadding(),
+    )
+}
+
+@Composable
+private fun CartScreenContent(
+    state: CartUiState,
+    onIntent: (CartIntent) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Scaffold(
+        modifier = modifier,
+        containerColor = Theme.colors.backGround,
+        topBar = {
+            BaseTopAppBar(
+                title = "Cart",
+                leadingIcon = painterResource(Res.drawable.ic_arrow_back),
+                onLeadingClick = { onIntent(CartIntent.OnBackClick) },
+                modifier = Modifier.background(Theme.colors.backGround),
+            )
+        },
+        bottomBar = {
+            CartBottomBar(
+                totalFormatted = state.totalFormatted,
+                onCheckout = { onIntent(CartIntent.OnCheckout) },
+                isLoading = state.isLoading,
+            )
+        },
+    ) { innerPadding ->
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding),
+            contentPadding = PaddingValues(Theme.spacing.medium),
+            verticalArrangement = Arrangement.spacedBy(Theme.spacing.medium),
+        ) {
+            items(state.items, key = { it.productId }) { item ->
+                CartItemCard(
+                    item = item,
+                    onIncrement = { onIntent(CartIntent.OnIncrement(item.productId)) },
+                    onDecrement = { onIntent(CartIntent.OnDecrement(item.productId)) },
+                )
+            }
+
+            if (state.isEmpty) {
+                item {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = Theme.spacing.extraLarge),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        BasicText(
+                            text = "Your cart is empty",
+                            style = Theme.typography.body.large.copy(
+                                color = Theme.colors.secondaryFont,
+                            ),
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun CartBottomBar(
+    totalFormatted: String,
+    onCheckout: () -> Unit,
+    isLoading: Boolean,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Theme.colors.backGround)
+            .navigationBarsPadding()
+            .padding(
+                horizontal = Theme.spacing.medium,
+                vertical = Theme.spacing.medium,
+            ),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Column(verticalArrangement = Arrangement.spacedBy(Theme.spacing.extraSmall)) {
+            BasicText(
+                text = "Total Price",
+                style = Theme.typography.body.small.copy(color = Theme.colors.secondaryFont),
+            )
+            BasicText(
+                text = totalFormatted,
+                style = Theme.typography.body.large.copy(
+                    color = Theme.colors.primaryFont,
+                    fontWeight = FontWeight.Bold,
+                ),
+            )
+        }
+
+        PrimaryButton(
+            caption = "Checkout",
+            onClick = onCheckout,
+            isDisabled = isLoading,
+            modifier = Modifier
+                .weight(1f)
+                .padding(start = Theme.spacing.medium),
+        )
+    }
+}

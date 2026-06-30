@@ -93,7 +93,7 @@ class HomeViewModel(
     private fun onCartClicked() {
         viewModelScope.launch {
             if (isLoggedIn()) {
-                sendEffect(HomeEffect.ShowToast("Your cart is empty"))
+                sendEffect(HomeEffect.NavigateToCart)
             } else {
                 updateState { copy(showSignUpPrompt = true) }
             }

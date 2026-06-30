@@ -3,6 +3,7 @@ package com.troves.data.di
 import com.troves.data.local.preferenceses.AppPreferencesDataSource
 import com.troves.data.local.preferenceses.AppPreferencesDataSourceImpl
 import com.troves.data.network.provideHttpClient
+import com.troves.data.repository.CartRepositoryImpl
 import com.troves.data.repository.PaymentRepositoryImpl
 import com.troves.data.repository.TrovesRepositoryImpl
 import com.troves.data.repository.createAuthenticationRepository
@@ -11,6 +12,7 @@ import com.troves.data.source.remote.RemoteDatasourceImpl
 import com.troves.data.source.remote.service.TrovesApiService
 import com.troves.data.source.remote.service.TrovesApiServiceImpl
 import com.troves.domain.AuthenticationRepository
+import com.troves.domain.repository.CartRepository
 import com.troves.domain.repository.PaymentRepository
 import com.troves.domain.repository.TrovesRepository
 import io.ktor.client.HttpClient
@@ -32,4 +34,5 @@ val dataModule = module {
     single<TrovesRepository>          { TrovesRepositoryImpl(get()) }
     single<AuthenticationRepository>  { createAuthenticationRepository(get()) }
     single<PaymentRepository>         { PaymentRepositoryImpl() }
+    single<CartRepository>            { CartRepositoryImpl() }
 }

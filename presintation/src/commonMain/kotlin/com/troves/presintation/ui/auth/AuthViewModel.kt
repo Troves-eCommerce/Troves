@@ -5,16 +5,19 @@ import androidx.lifecycle.viewModelScope
 import com.troves.domain.Result
 import com.troves.domain.usecase.auth.LoginUseCase
 import com.troves.domain.usecase.auth.RegisterUseCase
+import com.troves.domain.usecase.auth.SignInWithGoogleUseCase
 import com.troves.presintation.core.mvi.DefaultEffectPublisher
 import com.troves.presintation.core.mvi.DefaultStateHolder
 import com.troves.presintation.core.mvi.EffectPublisher
 import com.troves.presintation.core.mvi.StateHolder
+import com.troves.presintation.ui.auth.validator.AuthValidator
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class AuthViewModel(
     private val loginUseCase: LoginUseCase,
     private val registerUseCase: RegisterUseCase,
+    private val signInWithGoogleUseCase: SignInWithGoogleUseCase,
 ) : ViewModel(),
     StateHolder<AuthState> by DefaultStateHolder(AuthState()),
     EffectPublisher<AuthEffect> by DefaultEffectPublisher() {
@@ -38,6 +41,7 @@ class AuthViewModel(
 
             AuthIntent.Login -> login()
             AuthIntent.Register -> register()
+            is AuthIntent.GoogleSignIn -> signInWithGoogle(intent.idToken, intent.accessToken)
         }
     }
 
@@ -88,6 +92,23 @@ class AuthViewModel(
         }
     }
 
+    private fun signInWithGoogle(idToken: String, accessToken: String?) {
+        viewModelScope.launch {
+            updateState { copy(isLoading = true, errorMessage = null) }
+            when (val result = signInWithGoogleUseCase(idToken, accessToken)) {
+                is Result.Success -> onAuthenticated("Signed in with Google successfully")
+                is Result.Error -> updateState {
+                    copy(
+                        isLoading = false,
+                        errorMessage = result.throwable.message
+                            ?: "Google Sign-In failed. Please try again.",
+                    )
+                }
+                is Result.Loading -> Unit
+            }
+        }
+    }
+
     private suspend fun onAuthenticated(message: String) {
         updateState { copy(isLoading = false) }
         sendEffect(AuthEffect.ShowMessage(message))
@@ -96,21 +117,13 @@ class AuthViewModel(
     }
 
     private fun validateInputs(email: String, password: String): Boolean {
-        val error = when {
-            email.isBlank() -> "Email cannot be empty"
-            !isValidEmail(email) -> "Please enter a valid email address"
-            password.length < 6 -> "Password must be at least 6 characters"
-            else -> null
-        }
+        val error = AuthValidator.validateEmail(email) ?: AuthValidator.validatePassword(password)
         if (error != null) {
             updateState { copy(errorMessage = error) }
             return false
         }
         return true
     }
-
-    private fun isValidEmail(email: String): Boolean =
-        Regex("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}\$").matches(email)
 
     private companion object {
         const val SUCCESS_NAV_DELAY_MS = 1000L

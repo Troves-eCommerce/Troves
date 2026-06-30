@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.troves.domain.Result
 import com.troves.domain.entity.Product
+import com.troves.domain.usecase.cart.AddToCartUseCase
 import com.troves.domain.usecase.details.GetProductByIdUseCase
 import com.troves.presintation.core.mvi.DefaultEffectPublisher
 import com.troves.presintation.core.mvi.DefaultStateHolder
@@ -13,6 +14,7 @@ import kotlinx.coroutines.launch
 
 class ProductDetailsViewModel(
     private val getProductByIdUseCase: GetProductByIdUseCase,
+    private val addToCartUseCase: AddToCartUseCase,
 ) : ViewModel(),
     StateHolder<ProductDetailUiState> by DefaultStateHolder(ProductDetailUiState()),
     EffectPublisher<ProductDetailsEffect> by DefaultEffectPublisher() {
@@ -28,8 +30,7 @@ class ProductDetailsViewModel(
             ProductDetailsIntent.OnSizeGuide ->
                 sendEffect(ProductDetailsEffect.NavigateBack)
 
-            ProductDetailsIntent.OnAddToCart ->
-                sendEffect(ProductDetailsEffect.ShowToast("Coming soon..."))
+            ProductDetailsIntent.OnAddToCart -> addCurrentProductToCart()
 
             is ProductDetailsIntent.OnFavoriteClick ->
                 sendEffect(ProductDetailsEffect.ShowToast("Coming soon..."))
@@ -62,6 +63,7 @@ class ProductDetailsViewModel(
                     updateState {
                         copy(
                             isLoading = false,
+                            product = value,
                             images = value.images,
                             colors = value.colors,
                             title = value.title,
@@ -73,6 +75,14 @@ class ProductDetailsViewModel(
                     }
                 }
             }
+        }
+    }
+
+    private fun addCurrentProductToCart() {
+        val product = currentState.product ?: return
+        viewModelScope.launch {
+            addToCartUseCase(product)
+            sendEffect(ProductDetailsEffect.ShowToast("Added to cart"))
         }
     }
 }

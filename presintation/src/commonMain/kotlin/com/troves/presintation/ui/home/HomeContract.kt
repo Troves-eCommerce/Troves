@@ -24,6 +24,7 @@ sealed interface HomeEffect {
     data object NavigateToProducts : HomeEffect
     data class ShowToast(val message: String) : HomeEffect
     data object NavigateToRegister : HomeEffect
+    data object NavigateToCart : HomeEffect
 }
 
 sealed interface HomeIntent {
