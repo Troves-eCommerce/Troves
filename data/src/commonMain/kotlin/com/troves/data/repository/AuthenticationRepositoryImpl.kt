@@ -23,7 +23,9 @@ class AuthenticationRepositoryFirebaseImpl(
     private val firebaseAuth by lazy { Firebase.auth }
 
     override suspend fun login(email: String, password: String): Result<Unit> = try {
-        firebaseAuth.signInWithEmailAndPassword(email, password)
+        val result = firebaseAuth.signInWithEmailAndPassword(email, password)
+        val token = result.user?.getIdToken(forceRefresh = false) ?: ""
+        preferences.saveAuthToken(token)
         preferences.setLoggedIn(true)
         Result.Success(Unit)
     } catch (e: Exception) {
@@ -31,7 +33,9 @@ class AuthenticationRepositoryFirebaseImpl(
     }
 
     override suspend fun register(email: String, password: String): Result<Unit> = try {
-        firebaseAuth.createUserWithEmailAndPassword(email, password)
+        val result = firebaseAuth.createUserWithEmailAndPassword(email, password)
+        val token = result.user?.getIdToken(forceRefresh = false) ?: ""
+        preferences.saveAuthToken(token)
         preferences.setLoggedIn(true)
         Result.Success(Unit)
     } catch (e: Exception) {
