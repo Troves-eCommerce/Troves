@@ -5,114 +5,74 @@ import androidx.lifecycle.viewModelScope
 import com.troves.domain.Result
 import com.troves.domain.entity.Product
 import com.troves.domain.usecase.details.GetProductByIdUseCase
-import kotlinx.coroutines.channels.BufferOverflow
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.flow.update
+import com.troves.presintation.core.mvi.DefaultEffectPublisher
+import com.troves.presintation.core.mvi.DefaultStateHolder
+import com.troves.presintation.core.mvi.EffectPublisher
+import com.troves.presintation.core.mvi.StateHolder
 import kotlinx.coroutines.launch
 
 class ProductDetailsViewModel(
-    private val getProductByIdUseCase: GetProductByIdUseCase
-) : ViewModel() {
-
-    private val _state = MutableStateFlow(ProductDetailUiState())
-    val state = _state.asStateFlow()
-
-    private val _effect = Channel<ProductDetailsEffect>(
-        Channel.BUFFERED,
-        /*onBufferOverflow = BufferOverflow.DROP_OLDEST*/
-    )
-    val effect = _effect.receiveAsFlow()
-
+    private val getProductByIdUseCase: GetProductByIdUseCase,
+) : ViewModel(),
+    StateHolder<ProductDetailUiState> by DefaultStateHolder(ProductDetailUiState()),
+    EffectPublisher<ProductDetailsEffect> by DefaultEffectPublisher() {
 
     fun onIntent(intent: ProductDetailsIntent) {
         when (intent) {
-            ProductDetailsIntent.OnBackClick -> {
+            ProductDetailsIntent.OnBackClick ->
                 sendEffect(ProductDetailsEffect.NavigateBack)
-            }
 
-            ProductDetailsIntent.OnSeeAllReviews -> {
+            ProductDetailsIntent.OnSeeAllReviews ->
                 sendEffect(ProductDetailsEffect.ShowToast("Coming soon..."))
-            }
 
-            ProductDetailsIntent.OnSizeGuide -> {
+            ProductDetailsIntent.OnSizeGuide ->
                 sendEffect(ProductDetailsEffect.NavigateBack)
-            }
 
-            ProductDetailsIntent.OnAddToCart -> {
+            ProductDetailsIntent.OnAddToCart ->
                 sendEffect(ProductDetailsEffect.ShowToast("Coming soon..."))
-            }
 
-            is ProductDetailsIntent.OnColorSelectedChange -> {
-                _state.update { state ->
-                    state.copy(selectedColorIndex = intent.colorIndex)
-                }
-            }
-
-            is ProductDetailsIntent.OnFavoriteClick -> {
+            is ProductDetailsIntent.OnFavoriteClick ->
                 sendEffect(ProductDetailsEffect.ShowToast("Coming soon..."))
-            }
 
-            is ProductDetailsIntent.OnSizeSelectedChange -> {
-                _state.update { state ->
-                    state.copy(selectedSizeLabel = intent.newSize)
-                }
-            }
+            is ProductDetailsIntent.OnColorSelectedChange ->
+                updateState { copy(selectedColorIndex = intent.colorIndex) }
 
-            is ProductDetailsIntent.Retry -> {
-                fetchProduct(intent.productId)
-            }
+            is ProductDetailsIntent.OnSizeSelectedChange ->
+                updateState { copy(selectedSizeLabel = intent.newSize) }
 
-            is ProductDetailsIntent.Load -> {
-                fetchProduct(intent.productId)
-            }
+            is ProductDetailsIntent.Retry -> fetchProduct(intent.productId)
+            is ProductDetailsIntent.Load -> fetchProduct(intent.productId)
         }
     }
 
     private fun fetchProduct(productId: String) {
         viewModelScope.launch {
-            val product = getProductByIdUseCase(productId)
-            when (product) {
-                Result.Loading -> {
-                    _state.update {
-                        it.copy(isLoading = true)
-                    }
-                }
+            when (val product = getProductByIdUseCase(productId)) {
+                Result.Loading -> updateState { copy(isLoading = true) }
 
-                is Result.Error -> {
-                    _state.update {
-                        it.copy(
-                            isLoading = false,
-                            errorMessage = product.throwable.message ?: "Unknown error"
-                        )
-                    }
+                is Result.Error -> updateState {
+                    copy(
+                        isLoading = false,
+                        errorMessage = product.throwable.message ?: "Unknown error",
+                    )
                 }
 
                 is Result.Success<Product> -> {
-                    val currentstate = product.value
-                    _state.update {
-                        it.copy(
+                    val value = product.value
+                    updateState {
+                        copy(
                             isLoading = false,
-                            images = currentstate.images,
-                            colors = currentstate.colors,
-                            title = currentstate.title,
-                            priceFormatted = currentstate.price,
-                            errorMessage = null
+                            images = value.images,
+                            colors = value.colors,
+                            title = value.title,
+                            priceFormatted = value.price,
+                            errorMessage = null,
+                            description = value.description,
+                            rating = value.rating,
                         )
                     }
                 }
             }
-
         }
-
-
     }
-
-    private fun sendEffect(effect: ProductDetailsEffect) {
-        viewModelScope.launch { _effect.send(effect) }
-    }
-
-
 }

@@ -6,11 +6,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import com.troves.designsystem.theme.Theme
 
-/**
- * Prompt shown when an unauthenticated user triggers a gated action (e.g. the
- * cart). Confirming routes to account creation; dismissing keeps the user where
- * they were so browsing stays open.
- */
 @Composable
 fun SignUpPromptDialog(
     onConfirm: () -> Unit,

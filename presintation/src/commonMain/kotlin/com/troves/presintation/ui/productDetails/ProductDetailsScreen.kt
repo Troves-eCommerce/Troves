@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.troves.designsystem.theme.Theme
+import com.troves.presintation.core.mvi.ObserveEffect
 import com.troves.presintation.ui.productDetails.components.AddToCartButton
 import com.troves.presintation.ui.productDetails.components.ColorSelectorRow
 import com.troves.presintation.ui.productDetails.components.CustomerReviewsSection
@@ -43,6 +45,7 @@ import com.troves.presintation.ui.productDetails.components.SizeSelectorRow
 import com.troves.presintation.ui.productDetails.components.StarRatingRow
 import com.troves.presintation.utils.Currency
 import com.troves.presintation.utils.priceFormat
+import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -55,20 +58,18 @@ fun ProductDetailsScreen(
 
     val uiState by viewModel.state.collectAsStateWithLifecycle()
     val snackBarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+
     LaunchedEffect(productId) {
-        viewModel.onIntent(intent = ProductDetailsIntent.Load(productId = productId))
-        viewModel.effect.collect { newEffect ->
-            when (newEffect) {
-                ProductDetailsEffect.NavigateBack -> {
-                    onNavigateBack()
-                }
+        viewModel.onIntent(ProductDetailsIntent.Load(productId = productId))
+    }
 
-                is ProductDetailsEffect.ShowToast -> {
-                    snackBarHostState.showSnackbar(newEffect.message)
-                }
-            }
+    ObserveEffect(viewModel.effect) { newEffect ->
+        when (newEffect) {
+            ProductDetailsEffect.NavigateBack -> onNavigateBack()
+            is ProductDetailsEffect.ShowToast ->
+                scope.launch { snackBarHostState.showSnackbar(newEffect.message) }
         }
-
     }
     Box(
         modifier = Modifier
@@ -100,7 +101,8 @@ fun ProductDetailsScreen(
                     onFavoriteClick = { intent(ProductDetailsIntent.OnFavoriteClick) },
                     onSeeAllReviews = { intent(ProductDetailsIntent.OnSeeAllReviews) },
                     onSizeGuide = { intent(ProductDetailsIntent.OnSizeGuide) },
-                    modifier = Modifier.fillMaxSize().statusBarsPadding()
+                    modifier = Modifier.fillMaxSize().statusBarsPadding(),
+                    backEnabled = true
                 )
             }
         }
@@ -112,7 +114,6 @@ fun ProductDetailsScreen(
                 .padding(16.dp),
         )
     }
-
 
 }
 
@@ -126,6 +127,7 @@ fun ProductDetailsScreenContent(
     onFavoriteClick: () -> Unit,
     onSeeAllReviews: () -> Unit,
     onSizeGuide: () -> Unit,
+    backEnabled: Boolean = true,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
@@ -133,7 +135,8 @@ fun ProductDetailsScreenContent(
             ProductDetailTopBar(
                 title = "Details",
                 onBackClick = onBackClick,
-                modifier = Modifier.background(Theme.colors.backGround)
+                modifier = Modifier.background(Theme.colors.backGround),
+                enabled = backEnabled
             )
         },
         containerColor = Theme.colors.backGround,
@@ -186,7 +189,7 @@ fun ProductDetailsScreenContent(
                             color = Theme.colors.primary,
                         )
                         StarRatingRow(
-                            rating = uiState.rating,
+                            rating = uiState.rating.toFloat(),
                             reviewCount = uiState.reviewCount,
                         )
                     }
@@ -229,12 +232,11 @@ fun ProductDetailsScreenContent(
                     Text(
                         text = uiState.description,
                         style = MaterialTheme.typography.bodyMedium,
-                        color = Theme.colors.primaryVariant,
+                        color = Theme.colors.primary,
                         lineHeight = Theme.typography.body.small.fontSize,
                     )
 
                     Spacer(Modifier.height(Theme.spacing.large))
-
 
                     AddToCartButton(
                         onAddToCart = onAddToCart,
@@ -243,12 +245,10 @@ fun ProductDetailsScreenContent(
 
                     Spacer(Modifier.height(Theme.spacing.large))
 
-
                     CustomerReviewsSection(
                         reviews = uiState.reviews,
                         onSeeAllClick = onSeeAllReviews,
                     )
-
 
                     Spacer(Modifier.height(Theme.spacing.extraLarge))
                 }

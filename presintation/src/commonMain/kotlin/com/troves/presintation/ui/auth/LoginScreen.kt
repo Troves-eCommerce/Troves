@@ -21,12 +21,11 @@ import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -45,7 +44,7 @@ import com.troves.designsystem.components.button.PrimaryButton
 import com.troves.designsystem.components.textfield.TextField
 import com.troves.designsystem.components.toast.TrovesToast
 import com.troves.designsystem.theme.Theme
-import kotlinx.coroutines.delay
+import com.troves.presintation.core.mvi.ObserveEffect
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
 import troves.designsystem.generated.resources.Res
@@ -60,24 +59,22 @@ fun LoginScreen(
     onLoginSuccess: () -> Unit,
     viewModel: AuthViewModel = koinViewModel(),
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val state by viewModel.state.collectAsStateWithLifecycle()
 
     var successMessage by remember { mutableStateOf<String?>(null) }
 
-    LaunchedEffect(uiState) {
-        if (uiState is AuthUiState.Success) {
-            successMessage = "Logged in successfully"
-            delay(1000)
-            onLoginSuccess()
+    ObserveEffect(viewModel.effect) { effect ->
+        when (effect) {
+            is AuthEffect.ShowMessage -> successMessage = effect.message
+            AuthEffect.NavigateToHome -> onLoginSuccess()
         }
     }
 
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var passwordVisible by remember { mutableStateOf(false) }
-
-    val isLoading = uiState is AuthUiState.Loading
-    val errorMessage = (uiState as? AuthUiState.Error)?.message
+    val email = state.email
+    val password = state.password
+    val passwordVisible = state.passwordVisible
+    val isLoading = state.isLoading
+    val errorMessage = state.errorMessage
 
     val googleIcon = Res.drawable.ic_google
     val facebookIcon = Res.drawable.facebook
@@ -98,7 +95,6 @@ fun LoginScreen(
                 .padding(horizontal = 24.dp, vertical = 48.dp),
         ) {
 
-            // ── Title ────────────────────────────────────────────────────────
             BasicText(
                 text = "Log In",
                 style = Theme.typography.display.copy(
@@ -109,13 +105,9 @@ fun LoginScreen(
 
             Spacer(Modifier.height(32.dp))
 
-            // ── Username Field ───────────────────────────────────────────────
             TextField(
                 text = email,
-                onTextChange = {
-                    email = it
-                    viewModel.clearError()
-                },
+                onTextChange = { viewModel.onIntent(AuthIntent.EmailChanged(it)) },
                 title = "Email",
                 hint = "Enter your email",
                 singleLine = true,
@@ -131,13 +123,9 @@ fun LoginScreen(
 
             Spacer(Modifier.height(20.dp))
 
-            // ── Password Field ───────────────────────────────────────────────
             TextField(
                 text = password,
-                onTextChange = {
-                    password = it
-                    viewModel.clearError()
-                },
+                onTextChange = { viewModel.onIntent(AuthIntent.PasswordChanged(it)) },
                 title = "Your Password",
                 hint = "••••••••",
                 singleLine = true,
@@ -154,11 +142,10 @@ fun LoginScreen(
                 ),
                 trailingIcon = if (passwordVisible) painterResource(eyeIcon)  else painterResource(eyeOffIcon),
                 trailingIconColor = Theme.colors.hint,
-                onClickTrailingIcon = { passwordVisible = !passwordVisible },
+                onClickTrailingIcon = { viewModel.onIntent(AuthIntent.TogglePasswordVisibility) },
                 isError = errorMessage != null && password.isBlank(),
             )
 
-            // ── Error Banner ─────────────────────────────────────────────────
             AnimatedVisibility(visible = errorMessage != null) {
                 Spacer(Modifier.height(8.dp))
                 Box(
@@ -179,10 +166,9 @@ fun LoginScreen(
 
             Spacer(Modifier.height(28.dp))
 
-            // ── Login Button ─────────────────────────────────────────────────
             PrimaryButton(
                 caption = "Login",
-                onClick = { viewModel.login(email, password) },
+                onClick = { viewModel.onIntent(AuthIntent.Login) },
                 modifier = Modifier.fillMaxWidth(),
                 isLoading = isLoading,
                 isDisabled = isLoading,
@@ -190,7 +176,6 @@ fun LoginScreen(
 
             Spacer(Modifier.height(24.dp))
 
-            // ── OR Divider ───────────────────────────────────────────────────
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -218,7 +203,6 @@ fun LoginScreen(
 
             Spacer(Modifier.height(24.dp))
 
-            // ── Social Icons ─────────────────────────────────────────────────
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center,
@@ -261,7 +245,6 @@ fun LoginScreen(
 
             Spacer(Modifier.height(32.dp))
 
-            // ── Sign Up Link ─────────────────────────────────────────────────
             BasicText(
                 text = buildAnnotatedString {
                     withStyle(SpanStyle(color = Theme.colors.secondaryFont)) {
@@ -283,7 +266,6 @@ fun LoginScreen(
             )
         }
 
-        // ── Success Toast ────────────────────────────────────────────────────
         TrovesToast(
             message = successMessage,
             onDismiss = { successMessage = null },

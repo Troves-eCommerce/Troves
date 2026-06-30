@@ -7,22 +7,12 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.unit.LayoutDirection
-import com.troves.designsystem.theme.color.ColorScheme
-import com.troves.designsystem.theme.color.lightColors
-import com.troves.designsystem.theme.color.localSPColorScheme
 import com.troves.designsystem.dimensions.LocalSPShapes
 import com.troves.designsystem.dimensions.LocalSPSize
 import com.troves.designsystem.dimensions.LocalSPSpacing
 import com.troves.designsystem.dimensions.SPShapes
 import com.troves.designsystem.dimensions.SPSize
 import com.troves.designsystem.dimensions.SPSpacing
-import com.troves.designsystem.theme.color.darkColors
-import com.troves.designsystem.theme.typo.LocalSPFontFamily
-import com.troves.designsystem.theme.typo.LocalSPTypography
-import com.troves.designsystem.theme.typo.SPTextStyle
-import com.troves.designsystem.theme.typo.arabicFontFamily
-import com.troves.designsystem.theme.typo.defaultSPTypographyForLanguage
-import com.troves.designsystem.theme.typo.spTypographyOf
 
 @Composable
 fun SpTheme(

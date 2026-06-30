@@ -6,6 +6,7 @@ import com.troves.data.source.remote.dto.SmartCollection
 import com.troves.domain.entity.Product
 import com.troves.domain.entity.Brand
 import com.troves.domain.entity.Category
+import kotlin.random.Random
 
 
 fun ProductDto.toDomain(): Product = Product(
@@ -13,19 +14,20 @@ fun ProductDto.toDomain(): Product = Product(
     title = title.orEmpty(),
     vendor = vendor.orEmpty(),
     price = variants?.firstOrNull()?.price.orEmpty(),
-    imageUrl = image?.src,
+    imageUrl = image?.src?: "",
     status = status.orEmpty(),
     images = images?.map { it?.src ?: "" }.orEmpty(),
-    sizes = options
-        ?.firstOrNull { it?.name?.lowercase() == "size" }
+    sizes = options?.firstOrNull { it?.name.equals("Size", ignoreCase = true) }
         ?.values
         ?.filterNotNull()
         ?: emptyList(),
     colors = options
-        ?.firstOrNull { it?.name?.lowercase() == "color" }
+        ?.firstOrNull { it?.name.equals("Color", ignoreCase = true) }
         ?.values
         ?.filterNotNull()
-        ?: emptyList()
+        ?: emptyList(),
+    description = bodyHtml ?: "",
+    rating = Random.nextInt(0,5)
 )
 
 fun SmartCollection.toBrand(): Brand = Brand(
