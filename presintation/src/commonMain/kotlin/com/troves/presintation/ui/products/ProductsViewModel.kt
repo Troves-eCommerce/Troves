@@ -33,7 +33,18 @@ class ProductsViewModel(
         when (intent) {
             ProductsIntent.Load, ProductsIntent.Retry -> loadProducts()
 
-            ProductsIntent.OnBackClick -> sendEffect(ProductsEffect.NavigateBack)
+            ProductsIntent.OnBackClick -> {
+                updateState {
+                    copy(
+                        draftCategoryIds = emptySet(),
+                        draftSubCategoryIds = emptySet(),
+                        draftBrandIds = emptySet(),
+
+                    )
+                }
+                sendEffect(ProductsEffect.NavigateBack)
+
+            }
 
             ProductsIntent.OpenFilter -> updateState {
                 copy(
