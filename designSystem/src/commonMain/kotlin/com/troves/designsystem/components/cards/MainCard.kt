@@ -38,12 +38,13 @@ fun MainCard(
     onClick: () -> Unit,
     onFavoriteClick: () -> Unit,
     modifier: Modifier = Modifier,
+    containerColor: Color = Theme.colors.surface,
 ) {
     Column(
         modifier = modifier
             .fillMaxWidth()
             .clip(Theme.shapes.medium)
-            .background(Theme.colors.surface)
+            .background(containerColor)
             .border(1.dp, Theme.colors.surfaceVariant, Theme.shapes.medium)
             .clickable(onClick = onClick)
     ) {
