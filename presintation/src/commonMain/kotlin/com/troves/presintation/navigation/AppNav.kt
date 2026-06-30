@@ -111,7 +111,15 @@ fun AppNav() {
                 },
                 onNavigateToRegister = { backStack.add(AppRoute.Register) },
                 onNavigateToCart = { backStack.add(AppRoute.Cart) },
-                onNavigateToProducts = { backStack.add(AppRoute.Products) }
+                onNavigateToProducts = { sourceType, sourceId, sourceName ->
+                    backStack.add(
+                        AppRoute.Products(
+                            sourceType = sourceType,
+                            sourceId = sourceId,
+                            sourceName = sourceName,
+                        ),
+                    )
+                },
             )
         }
         entry<AppRoute.Favorites> {
@@ -145,8 +153,11 @@ fun AppNav() {
                 onRegisterSuccess = { replaceWith(AppRoute.Home) }
             )
         }
-        entry<AppRoute.Products> {
+        entry<AppRoute.Products> { key ->
             ProductsScreen(
+                sourceType = key.sourceType,
+                sourceId = key.sourceId,
+                sourceName = key.sourceName,
                 onNavigateToProduct = { productId ->
                     backStack.add(AppRoute.ProductDetails(productId))
                 },

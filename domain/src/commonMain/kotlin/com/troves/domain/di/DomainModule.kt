@@ -18,6 +18,8 @@ import com.troves.domain.usecase.home.GetTrendingProductsUseCase
 import com.troves.domain.usecase.onboarding.CompleteOnboardingUseCase
 import com.troves.domain.usecase.onboarding.IsOnboardingDoneUseCase
 import com.troves.domain.usecase.products.FilterProductsUseCase
+import com.troves.domain.usecase.products.GetProductsByBrandUseCase
+import com.troves.domain.usecase.products.GetProductsByCategoryUseCase
 import com.troves.domain.usecase.products.SortProductsUseCase
 import com.troves.domain.usecase.shared.GetProductsUseCase
 import org.koin.dsl.module
@@ -27,9 +29,11 @@ val domainModule = module {
     factory { GetProductsUseCase(get()) }
     factory { GetProductByIdUseCase(get()) }
 
-    // Products listing — filter & sort
+    // Products listing — filter, sort & source-scoped fetch
     factory { FilterProductsUseCase() }
     factory { SortProductsUseCase() }
+    factory { GetProductsByBrandUseCase(get()) }
+    factory { GetProductsByCategoryUseCase(get()) }
 
     // Home feed use cases
     factory { GetAdsUseCase(get()) }

@@ -9,6 +9,7 @@ data class ProductsUiState(
     val errorMessage: String? = null,
     val allProducts: List<Product> = emptyList(),
     val displayedProducts: List<Product> = emptyList(),
+    val screenTitle: String = "Products",
 
     val categoryOptions: List<FilterOption> = emptyList(),
     val subCategoryOptions: List<FilterOption> = emptyList(),
@@ -44,7 +45,11 @@ sealed interface ProductsEffect {
 }
 
 sealed interface ProductsIntent {
-    data object Load : ProductsIntent
+    data class Init(
+        val sourceType: String,
+        val sourceId: String,
+        val sourceName: String,
+    ) : ProductsIntent
     data object Retry : ProductsIntent
     data object OnBackClick : ProductsIntent
 
