@@ -57,12 +57,10 @@ import com.troves.presintation.ui.home.components.CategoryItem
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
 import troves.designsystem.generated.resources.Res
-import troves.designsystem.generated.resources.brand_iteam
 import troves.designsystem.generated.resources.ic_chevron_right
 import troves.designsystem.generated.resources.ic_heart
 import troves.designsystem.generated.resources.ic_star
 import troves.designsystem.generated.resources.img_onboarding1
-import troves.designsystem.generated.resources.product_card
 
 @Composable
 fun HomeScreen(
