@@ -1,0 +1,26 @@
+<resources>
+    <!-- Common bottom sheet actions -->
+    <string name="apply">تطبيق</string>
+    <string name="reset">إعادة تعيين</string>
+    <string name="clear_all">مسح الكل</string>
+
+    <!-- Filter bottom sheet -->
+    <string name="filter_title">تصفية</string>
+    <string name="filter_categories">الفئات الرئيسية</string>
+    <string name="filter_sub_categories">الفئات الفرعية</string>
+    <string name="filter_brands">العلامات التجارية</string>
+    <string name="filter_empty_section">لا يوجد شيء لعرضه هنا بعد</string>
+
+    <!-- Products screen -->
+    <string name="products_title">المنتجات</string>
+    <string name="products_empty">لا توجد منتجات</string>
+    <string name="products_retry">إعادة المحاولة</string>
+
+    <!-- Sort bottom sheet -->
+    <string name="sort_title">ترتيب</string>
+    <string name="sort_default">افتراضي</string>
+    <string name="sort_price_low_to_high">السعر: من الأقل إلى الأعلى</string>
+    <string name="sort_price_high_to_low">السعر: من الأعلى إلى الأقل</string>
+    <string name="sort_best_seller">الأكثر مبيعًا</string>
+    <string name="sort_group_by_sub_category">تجميع حسب الفئة الفرعية</string>
+</resources>

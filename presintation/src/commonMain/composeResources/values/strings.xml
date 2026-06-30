@@ -1,0 +1,26 @@
+<resources>
+    <!-- Common bottom sheet actions -->
+    <string name="apply">Apply</string>
+    <string name="reset">Reset</string>
+    <string name="clear_all">Clear all</string>
+
+    <!-- Filter bottom sheet -->
+    <string name="filter_title">Filter</string>
+    <string name="filter_categories">Categories</string>
+    <string name="filter_sub_categories">Sub-Categories</string>
+    <string name="filter_brands">Brands</string>
+    <string name="filter_empty_section">Nothing to show here yet</string>
+
+    <!-- Products screen -->
+    <string name="products_title">Products</string>
+    <string name="products_empty">No products found</string>
+    <string name="products_retry">Retry</string>
+
+    <!-- Sort bottom sheet -->
+    <string name="sort_title">Sort</string>
+    <string name="sort_default">Default</string>
+    <string name="sort_price_low_to_high">Price: Low to High</string>
+    <string name="sort_price_high_to_low">Price: High to Low</string>
+    <string name="sort_best_seller">Best Seller</string>
+    <string name="sort_group_by_sub_category">Group by Sub-Category</string>
+</resources>
