@@ -76,8 +76,6 @@ fun LoginScreen(
     val isLoading = state.isLoading
     val errorMessage = state.errorMessage
 
-    val googleIcon = Res.drawable.ic_google
-    val facebookIcon = Res.drawable.facebook
     val eyeIcon = Res.drawable.ic_eye
     val eyeOffIcon = Res.drawable.ic_eye_off
 
@@ -176,72 +174,11 @@ fun LoginScreen(
 
             Spacer(Modifier.height(24.dp))
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                Box(
-                    Modifier
-                        .weight(1f)
-                        .height(1.dp)
-                        .background(Theme.colors.hint.copy(alpha = 0.4f))
-                )
-                BasicText(
-                    text = "or",
-                    style = Theme.typography.body.medium.copy(
-                        color = Theme.colors.secondaryFont
-                    )
-                )
-                Box(
-                    Modifier
-                        .weight(1f)
-                        .height(1.dp)
-                        .background(Theme.colors.hint.copy(alpha = 0.4f))
-                )
-            }
+            AuthDivider()
 
             Spacer(Modifier.height(24.dp))
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(52.dp)
-                        .clip(CircleShape)
-                        .background(Theme.colors.surface)
-                        .border(1.dp, Theme.colors.hint.copy(alpha = 0.3f), CircleShape)
-                        .clickable { }
-                        .padding(12.dp)
-                ) {
-                    Image(
-                        painter = painterResource(googleIcon),
-                        contentDescription = "Sign in with Google",
-                        modifier = Modifier.fillMaxSize()
-                    )
-                }
-
-                Spacer(Modifier.size(16.dp))
-
-                Box(
-                    modifier = Modifier
-                        .size(52.dp)
-                        .clip(CircleShape)
-                        .background(Theme.colors.surface)
-                        .border(1.dp, Theme.colors.hint.copy(alpha = 0.3f), CircleShape)
-                        .clickable { }
-                        .padding(12.dp)
-                ) {
-                    Image(
-                        painter = painterResource(facebookIcon),
-                        contentDescription = "Sign in with Facebook",
-                        modifier = Modifier.fillMaxSize()
-                    )
-                }
-            }
+            SocialLoginSection()
 
             Spacer(Modifier.height(32.dp))
 

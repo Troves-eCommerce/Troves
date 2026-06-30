@@ -9,6 +9,7 @@ import com.troves.presintation.core.mvi.DefaultEffectPublisher
 import com.troves.presintation.core.mvi.DefaultStateHolder
 import com.troves.presintation.core.mvi.EffectPublisher
 import com.troves.presintation.core.mvi.StateHolder
+import com.troves.presintation.ui.auth.validator.AuthValidator
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -96,21 +97,13 @@ class AuthViewModel(
     }
 
     private fun validateInputs(email: String, password: String): Boolean {
-        val error = when {
-            email.isBlank() -> "Email cannot be empty"
-            !isValidEmail(email) -> "Please enter a valid email address"
-            password.length < 6 -> "Password must be at least 6 characters"
-            else -> null
-        }
+        val error = AuthValidator.validateEmail(email) ?: AuthValidator.validatePassword(password)
         if (error != null) {
             updateState { copy(errorMessage = error) }
             return false
         }
         return true
     }
-
-    private fun isValidEmail(email: String): Boolean =
-        Regex("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}\$").matches(email)
 
     private companion object {
         const val SUCCESS_NAV_DELAY_MS = 1000L
