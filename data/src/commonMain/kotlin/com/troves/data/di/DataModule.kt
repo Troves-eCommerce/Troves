@@ -1,7 +1,9 @@
 package com.troves.data.di
 
+import com.apollographql.apollo.ApolloClient
 import com.troves.data.local.database.DatabaseFactory
 import com.troves.data.local.database.TrovesDatabase
+import com.troves.data.network.provideApolloClient
 import com.troves.data.network.provideHttpClient
 import com.troves.data.repository.CartRepositoryImpl
 import com.troves.data.repository.PaymentRepositoryImpl
@@ -13,6 +15,7 @@ import com.troves.data.source.local.preferenceses.AppPreferencesDataSourceImpl
 import com.troves.data.source.remote.RemoteDatasource
 import com.troves.data.source.remote.RemoteDatasourceImpl
 import com.troves.data.source.remote.service.TrovesApiService
+import com.troves.data.source.remote.service.apollo.ApolloTrovesApiServiceImpl
 import com.troves.data.source.remote.service.ktor.KtorTrovesApiServiceImpl
 import com.troves.domain.repository.AuthenticationRepository
 import com.troves.domain.repository.CartRepository
@@ -30,6 +33,12 @@ val dataModule = module {
     // ── Network ───────────────────────────────────────────────────────────────
     single<HttpClient> { provideHttpClient() }
     single<TrovesApiService> { KtorTrovesApiServiceImpl(get()) }
+    single<ApolloClient> {
+        provideApolloClient()
+    }
+    single {
+        ApolloTrovesApiServiceImpl(get())
+    }
 
     // ── Remote data source ────────────────────────────────────────────────────
     single<RemoteDatasource> { RemoteDatasourceImpl(get(), get()) }

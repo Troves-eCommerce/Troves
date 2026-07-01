@@ -3,7 +3,7 @@ package com.troves.data.repository
 import com.troves.data.local.database.WishlistDao
 import com.troves.data.local.database.WishlistEntity
 import com.troves.data.source.remote.RemoteDatasource
-import com.troves.data.source.remote.dto.WishlistDto
+import com.troves.data.source.remote.service.ktor.dto.WishlistDto
 import com.troves.domain.utils.Result
 import com.troves.domain.entity.Product
 import com.troves.domain.repository.WishlistRepository

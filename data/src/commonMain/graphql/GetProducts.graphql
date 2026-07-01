@@ -1,0 +1,37 @@
+query GetProducts($first: Int!, $after: String, $sortKey: ProductSortKeys, $reverse: Boolean) {
+    products(first: $first, after: $after, sortKey: $sortKey, reverse: $reverse) {
+        edges {
+            cursor
+            node {
+                id
+                title
+                handle
+                vendor
+                productType
+                createdAt
+                updatedAt
+                tags
+                priceRange {
+                    minVariantPrice {
+                        amount
+                        currencyCode
+                    }
+                    maxVariantPrice {
+                        amount
+                        currencyCode
+                    }
+                }
+                featuredImage {
+                    url
+                    altText
+                }
+            }
+        }
+        pageInfo {
+            hasNextPage
+            hasPreviousPage
+            startCursor
+            endCursor
+        }
+    }
+}

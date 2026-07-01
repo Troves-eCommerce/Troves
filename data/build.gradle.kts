@@ -1,3 +1,6 @@
+@file:OptIn(ApolloExperimental::class)
+
+import com.apollographql.apollo.annotations.ApolloExperimental
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
 import java.util.Properties
 
@@ -15,6 +18,8 @@ plugins {
     alias(libs.plugins.kotlinx.serialization)
     alias(libs.plugins.ksp)
     alias(libs.plugins.androidx.room)
+    alias(libs.plugins.apollo)
+
 }
 
 room {
@@ -92,6 +97,11 @@ kotlin {
                 // Firebase (GitLive KMP SDK — works on both Android & iOS)
                 implementation(libs.firebase.auth)
                 implementation(libs.firebase.firestore)
+
+                // Apollo
+                implementation(libs.apollo.runtime)
+                // Memory Cache
+                implementation(libs.apollo.normalized.cache)
             }
         }
 

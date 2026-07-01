@@ -1,12 +1,12 @@
 package com.troves.data.source.remote.service.ktor
 
-import com.troves.data.source.remote.dto.Collection
-import com.troves.data.source.remote.dto.CollectionImage
-import com.troves.data.source.remote.dto.CustomCollectionResponse
-import com.troves.data.source.remote.dto.MarketingEventsResponse
-import com.troves.data.source.remote.dto.ProductDto
-import com.troves.data.source.remote.dto.ProductResponse
-import com.troves.data.source.remote.dto.SingleProductResponse
+import com.troves.data.source.remote.service.ktor.dto.Collection
+import com.troves.data.source.remote.service.ktor.dto.CollectionImage
+import com.troves.data.source.remote.service.ktor.dto.CustomCollectionResponse
+import com.troves.data.source.remote.service.ktor.dto.MarketingEventsResponse
+import com.troves.data.source.remote.service.ktor.dto.ProductDto
+import com.troves.data.source.remote.service.ktor.dto.ProductResponse
+import com.troves.data.source.remote.service.ktor.dto.SingleProductResponse
 import com.troves.data.source.remote.service.TrovesApiService
 import com.troves.domain.entity.Product
 import com.troves.domain.entity.ProductSearchParams
