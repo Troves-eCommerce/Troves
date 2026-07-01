@@ -1,7 +1,9 @@
 package com.troves.presintation.navigation
 
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -23,7 +25,7 @@ import com.troves.presintation.ui.StartDestination
 import com.troves.presintation.ui.auth.LoginScreen
 import com.troves.presintation.ui.auth.RegisterScreen
 import com.troves.presintation.ui.cart.CartScreen
-import com.troves.presintation.ui.fav.FavoriteScreen
+import com.troves.presintation.ui.fav.WishlistScreen
 import com.troves.presintation.ui.home.HomeScreen
 import com.troves.presintation.ui.onboarding.OnboardingScreen
 import com.troves.presintation.ui.productDetails.ProductDetailsScreen
@@ -38,6 +40,7 @@ import troves.designsystem.generated.resources.ic_explore
 import troves.designsystem.generated.resources.ic_home
 import troves.designsystem.generated.resources.ic_order
 import troves.designsystem.generated.resources.ic_profile
+import troves.designsystem.generated.resources.ic_wishlist
 
 private val navSavedStateConfiguration = SavedStateConfiguration {
     serializersModule = SerializersModule {
@@ -77,7 +80,7 @@ fun AppNav() {
     val bottomNavRoutes = remember {
         listOf(
             AppRoute.Home,
-            AppRoute.Profile,
+            AppRoute.Cart,
             AppRoute.Favorites,
             AppRoute.Profile
         )
@@ -123,12 +126,18 @@ fun AppNav() {
             )
         }
         entry<AppRoute.Favorites> {
-            FavoriteScreen()
+            WishlistScreen(
+                onNavigateToProduct = { productId ->
+                    backStack.add(AppRoute.ProductDetails(productId))
+                },
+                onNavigateToRegister = { backStack.add(AppRoute.Register) },
+            )
         }
         entry<AppRoute.ProductDetails> { key ->
             ProductDetailsScreen(
                 productId = key.productId,
-                onNavigateBack = { backStack.removeLastOrNull() }
+                onNavigateBack = { backStack.removeLastOrNull() },
+                onNavigateToLogin = { backStack.add(AppRoute.Login) },
             )
         }
         entry<AppRoute.Onboarding> {
@@ -184,8 +193,8 @@ fun AppNav() {
                 SPBottomNavigation(
                     items = listOf(
                         BottomNavItem("Home", Res.drawable.ic_home),
-                        BottomNavItem("Wishlist", Res.drawable.ic_explore),
                         BottomNavItem("Orders", Res.drawable.ic_order),
+                        BottomNavItem("Wishlist", Res.drawable.ic_wishlist),
                         BottomNavItem("Profile", Res.drawable.ic_profile)
                     ),
                     selectedIndex = if (selectedIndex != -1) selectedIndex else 0,
@@ -196,7 +205,8 @@ fun AppNav() {
     ) { paddingValues ->
         NavDisplay<NavKey>(
             modifier = Modifier
-                .fillMaxSize(),
+                .fillMaxSize()
+                .windowInsetsPadding(WindowInsets(bottom = paddingValues.calculateBottomPadding())),
             entries = rememberDecoratedNavEntries(
                 backStack = backStack,
                 entryProvider = entryProvider

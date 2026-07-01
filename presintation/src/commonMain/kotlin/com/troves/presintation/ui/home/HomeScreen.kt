@@ -88,6 +88,9 @@ fun HomeScreen(
             is HomeEffect.NavigateToRegister -> onNavigateToRegister()
             is HomeEffect.NavigateToCart -> onNavigateToCart()
             is HomeEffect.ShowToast -> scope.launch { snackbarHostState.showSnackbar(effect.message) }
+            is HomeEffect.ShowLoginRequiredDialog -> scope.launch {
+                snackbarHostState.showSnackbar("Please login to continue")
+            }
         }
     }
 
@@ -270,6 +273,7 @@ private fun ProductRow(
                 ),
                 ratingIconPainter = starIcon,
                 favoriteIconPainter = heartIcon,
+                isFavorite = product.id in favoriteIds,
                 onClick = { onIntent(HomeIntent.ProductClicked(product)) },
                 onFavoriteClick = { onIntent(HomeIntent.FavoriteToggled(product)) },
                 modifier = Modifier.width(170.dp),

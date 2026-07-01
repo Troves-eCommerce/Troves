@@ -6,6 +6,7 @@ import com.troves.domain.Result
 import com.troves.domain.usecase.auth.LoginUseCase
 import com.troves.domain.usecase.auth.RegisterUseCase
 import com.troves.domain.usecase.auth.SignInWithGoogleUseCase
+import com.troves.domain.usecase.wishlist.SyncWishlistUseCase
 import com.troves.presintation.core.mvi.DefaultEffectPublisher
 import com.troves.presintation.core.mvi.DefaultStateHolder
 import com.troves.presintation.core.mvi.EffectPublisher
@@ -18,6 +19,7 @@ class AuthViewModel(
     private val loginUseCase: LoginUseCase,
     private val registerUseCase: RegisterUseCase,
     private val signInWithGoogleUseCase: SignInWithGoogleUseCase,
+    private val syncWishlistUseCase: SyncWishlistUseCase
 ) : ViewModel(),
     StateHolder<AuthState> by DefaultStateHolder(AuthState()),
     EffectPublisher<AuthEffect> by DefaultEffectPublisher() {
@@ -110,6 +112,7 @@ class AuthViewModel(
     }
 
     private suspend fun onAuthenticated(message: String) {
+        runCatching { syncWishlistUseCase() }
         updateState { copy(isLoading = false) }
         sendEffect(AuthEffect.ShowMessage(message))
         delay(SUCCESS_NAV_DELAY_MS)
