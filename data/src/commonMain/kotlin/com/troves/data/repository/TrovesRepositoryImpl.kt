@@ -4,18 +4,21 @@ import com.troves.data.mapper.toBrand
 import com.troves.data.mapper.toCategory
 import com.troves.data.mapper.toDomain
 import com.troves.data.source.remote.RemoteDatasource
-import com.troves.domain.Result
 import com.troves.domain.entity.Ad
 import com.troves.domain.entity.Brand
 import com.troves.domain.entity.Category
 import com.troves.domain.entity.Product
-import com.troves.domain.fold
-import com.troves.domain.map
+import com.troves.domain.entity.ProductSearchParams
 import com.troves.domain.repository.TrovesRepository
+import com.troves.domain.utils.Result
+import com.troves.domain.utils.fold
+import com.troves.domain.utils.getOrElse
+import com.troves.domain.utils.map
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.withContext
+import kotlinx.io.IOException
 
 class TrovesRepositoryImpl(
     private val remoteDataSource: RemoteDatasource,
@@ -26,10 +29,34 @@ class TrovesRepositoryImpl(
         return withContext(coroutineDispatcher) {
             remoteDataSource.getAllProducts().map { response ->
                 response.products
-                    ?.filterNotNull()
                     ?.map { it.toDomain() }
                     .orEmpty()
             }
+        }
+    }
+
+    override suspend fun getProductsByQuery(queryMap: Map<String, String>): Result<List<Product>> {
+        return withContext(coroutineDispatcher) {
+            remoteDataSource.getProductsByQuery(queryMap = queryMap).map { response ->
+                response.products?.map { it.toDomain() }.orEmpty()
+            }
+        }
+    }
+
+    override suspend fun searchProducts(params: ProductSearchParams): Result<List<Product>> {
+        return try {
+            withContext(coroutineDispatcher) {
+                var products =
+                    remoteDataSource.searchProducts(params = params).getOrElse { emptyList() }
+                if (!params.query.isNullOrBlank()) {
+                    products = products.filter {
+                        it.title.contains(params.query ?: "", ignoreCase = true)
+                    }
+                }
+                Result.Success(products)
+            }
+        } catch (e: IOException) {
+            Result.Error(e)
         }
     }
 
