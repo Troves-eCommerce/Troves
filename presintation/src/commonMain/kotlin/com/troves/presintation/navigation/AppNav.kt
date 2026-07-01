@@ -119,7 +119,6 @@ fun AppNav() {
                 onNavigateToProduct = { productId ->
                     backStack.add(AppRoute.ProductDetails(productId))
                 },
-                onNavigateToProducts = { backStack.add(AppRoute.Products) },
                 onNavigateToRegister = { backStack.add(AppRoute.Register) },
                 onNavigateToSearch = {backStack.add(AppRoute.Search)},
                 onNavigateToCart = { backStack.add(AppRoute.Cart) },

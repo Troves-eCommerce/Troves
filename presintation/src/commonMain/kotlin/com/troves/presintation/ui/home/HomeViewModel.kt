@@ -2,9 +2,7 @@ package com.troves.presintation.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.troves.domain.Result
 import com.troves.domain.entity.Product
-import com.troves.domain.getOrElse
 import com.troves.domain.usecase.auth.IsLoggedInUseCase
 import com.troves.domain.usecase.home.GetAdsUseCase
 import com.troves.domain.usecase.home.GetBrandsUseCase
@@ -14,15 +12,14 @@ import com.troves.domain.usecase.home.GetTrendingProductsUseCase
 import com.troves.domain.usecase.wishlist.GetWishlistUseCase
 import com.troves.domain.usecase.wishlist.ToggleFavoriteResult
 import com.troves.domain.usecase.wishlist.ToggleFavoriteUseCase
+import com.troves.domain.utils.Result
+import com.troves.domain.utils.getOrElse
 import com.troves.presintation.core.mvi.DefaultEffectPublisher
 import com.troves.presintation.core.mvi.DefaultStateHolder
 import com.troves.presintation.core.mvi.EffectPublisher
 import com.troves.presintation.core.mvi.StateHolder
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import com.troves.domain.utils.Result
-import kotlin.collections.emptyList
-import com.troves.domain.utils.getOrElse
 
 
 class HomeViewModel(

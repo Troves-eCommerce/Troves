@@ -29,6 +29,7 @@ import com.troves.domain.usecase.wishlist.IsProductFavoritedUseCase
 import com.troves.domain.usecase.wishlist.SyncWishlistUseCase
 import com.troves.domain.usecase.wishlist.ToggleFavoriteUseCase
 import org.koin.dsl.module
+import kotlin.coroutines.EmptyCoroutineContext.get
 
 val domainModule = module {
     // Use cases — factory creates a new instance per injection site

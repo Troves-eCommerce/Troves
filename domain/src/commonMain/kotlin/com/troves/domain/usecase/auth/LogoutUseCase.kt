@@ -1,6 +1,7 @@
 package com.troves.domain.usecase.auth
 
 import com.troves.domain.repository.AuthenticationRepository
+import com.troves.domain.repository.WishlistRepository
 
 class LogoutUseCase(
     private val authenticationRepository: AuthenticationRepository,
