@@ -22,6 +22,10 @@ import com.troves.domain.usecase.products.GetProductsByBrandUseCase
 import com.troves.domain.usecase.products.GetProductsByCategoryUseCase
 import com.troves.domain.usecase.products.SortProductsUseCase
 import com.troves.domain.usecase.shared.GetProductsUseCase
+import com.troves.domain.usecase.wishlist.GetWishlistUseCase
+import com.troves.domain.usecase.wishlist.IsProductFavoritedUseCase
+import com.troves.domain.usecase.wishlist.SyncWishlistUseCase
+import com.troves.domain.usecase.wishlist.ToggleFavoriteUseCase
 import org.koin.dsl.module
 
 val domainModule = module {
@@ -46,15 +50,21 @@ val domainModule = module {
     factory { IsOnboardingDoneUseCase(get()) }
     factory { CompleteOnboardingUseCase(get()) }
 
+    // Wishlist
+    factory { GetWishlistUseCase(get()) }
+    factory { IsProductFavoritedUseCase(get()) }
+    factory { ToggleFavoriteUseCase(get(),get()) }
+
     // Authentication
     factory { LoginUseCase(get()) }
     factory { RegisterUseCase(get()) }
     factory { SignInWithGoogleUseCase(get()) }
     factory { IsLoggedInUseCase(get()) }
-    factory { LogoutUseCase(get()) }
+    factory { LogoutUseCase(get(), get()) }
 
     factory { GetCartStreamUseCase(get()) }
     factory { AddToCartUseCase(get()) }
     factory { RemoveFromCartUseCase(get()) }
     factory { UpdateCartQuantityUseCase(get()) }
+    single { SyncWishlistUseCase(get(),get()) }
 }

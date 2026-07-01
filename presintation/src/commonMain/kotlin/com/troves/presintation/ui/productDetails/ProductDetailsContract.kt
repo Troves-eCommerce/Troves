@@ -27,6 +27,7 @@ data class ProductDetailUiState(
 sealed interface ProductDetailsEffect {
     data object NavigateBack : ProductDetailsEffect
     data class ShowToast(val message: String) : ProductDetailsEffect
+    data object ShowLoginRequiredDialog : ProductDetailsEffect
 }
 
 sealed interface ProductDetailsIntent {

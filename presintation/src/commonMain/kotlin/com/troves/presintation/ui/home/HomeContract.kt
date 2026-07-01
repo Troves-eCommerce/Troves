@@ -30,6 +30,7 @@ sealed interface HomeEffect {
     data object NavigateToAllBrands : HomeEffect
     data object NavigateToRegister : HomeEffect
     data object NavigateToCart : HomeEffect
+    data object ShowLoginRequiredDialog : HomeEffect
 }
 
 sealed interface HomeIntent {
