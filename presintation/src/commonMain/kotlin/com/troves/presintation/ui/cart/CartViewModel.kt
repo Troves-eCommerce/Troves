@@ -13,6 +13,8 @@ import com.troves.presintation.core.mvi.StateHolder
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import kotlin.math.abs
+import kotlin.math.roundToLong
 
 class CartViewModel(
     private val getCartStream: GetCartStreamUseCase,
@@ -56,10 +58,20 @@ class CartViewModel(
         }
         return CartUiState(
             items = uiItems,
-            totalFormatted = "$%.2f".format(total),
+            totalFormatted = formatUsd(total),
             isLoading = false,
         )
     }
+}
+
+
+private fun formatUsd(value: Double): String {
+    val totalCents = (value * 100).roundToLong()
+    val sign = if (totalCents < 0) "-" else ""
+    val absCents = abs(totalCents)
+    val whole = absCents / 100
+    val fraction = (absCents % 100).toString().padStart(2, '0')
+    return "$sign\$$whole.$fraction"
 }
 
 private fun CartItem.toUi() = CartItemUi(
