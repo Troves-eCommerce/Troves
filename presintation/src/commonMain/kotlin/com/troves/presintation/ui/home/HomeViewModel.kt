@@ -42,7 +42,7 @@ class HomeViewModel(
                 sendEffect(HomeEffect.NavigateToRegister)
             }
             HomeIntent.SignUpPromptDismissed -> updateState { copy(showSignUpPrompt = false) }
-            HomeIntent.SeeAllBrandsClicked -> sendEffect(HomeEffect.NavigateToProducts())
+            HomeIntent.SeeAllBrandsClicked -> sendEffect(HomeEffect.NavigateToAllBrands)
             is HomeIntent.AdClicked -> sendEffect(HomeEffect.ShowToast(intent.ad.titleTop))
             is HomeIntent.BrandClicked -> sendEffect(
                 HomeEffect.NavigateToProducts(

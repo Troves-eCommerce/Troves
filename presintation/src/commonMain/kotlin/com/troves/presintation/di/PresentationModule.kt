@@ -1,6 +1,7 @@
 package com.troves.presintation.di
 
 import com.troves.presintation.ui.MainViewModel
+import com.troves.presintation.ui.allbrands.AllBrandsViewModel
 import com.troves.presintation.ui.auth.AuthViewModel
 import com.troves.presintation.ui.cart.CartViewModel
 import com.troves.presintation.ui.products.ProductsViewModel
@@ -18,6 +19,7 @@ val presentationModule = module {
     viewModelOf(::HomeViewModel)
     viewModelOf(::ProductDetailsViewModel)
     viewModelOf(::ProductsViewModel)
+    viewModelOf(::AllBrandsViewModel)
     viewModelOf(::CartViewModel)
     viewModelOf(::ProfileViewModel)
 }

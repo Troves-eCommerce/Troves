@@ -20,6 +20,7 @@ import com.troves.designsystem.components.bottomnav.BottomNavItem
 import com.troves.designsystem.components.bottomnav.SPBottomNavigation
 import com.troves.presintation.ui.MainViewModel
 import com.troves.presintation.ui.StartDestination
+import com.troves.presintation.ui.allbrands.AllBrandsScreen
 import com.troves.presintation.ui.auth.LoginScreen
 import com.troves.presintation.ui.auth.RegisterScreen
 import com.troves.presintation.ui.cart.CartScreen
@@ -48,6 +49,7 @@ private val navSavedStateConfiguration = SavedStateConfiguration {
             subclass(AppRoute.Register::class, AppRoute.Register.serializer())
             subclass(AppRoute.Home::class, AppRoute.Home.serializer())
             subclass(AppRoute.Products::class, AppRoute.Products.serializer())
+            subclass(AppRoute.AllBrands::class, AppRoute.AllBrands.serializer())
             subclass(AppRoute.Favorites::class, AppRoute.Favorites.serializer())
             subclass(AppRoute.Profile::class, AppRoute.Profile.serializer())
             subclass(AppRoute.ProductDetails::class, AppRoute.ProductDetails.serializer())
@@ -111,6 +113,7 @@ fun AppNav() {
                 },
                 onNavigateToRegister = { backStack.add(AppRoute.Register) },
                 onNavigateToCart = { backStack.add(AppRoute.Cart) },
+                onNavigateToAllBrands = { backStack.add(AppRoute.AllBrands) },
                 onNavigateToProducts = { sourceType, sourceId, sourceName ->
                     backStack.add(
                         AppRoute.Products(
@@ -164,6 +167,20 @@ fun AppNav() {
                 onNavigateBack = { backStack.removeLastOrNull() },
             )
         }
+        entry<AppRoute.AllBrands> {
+            AllBrandsScreen(
+                onNavigateToProducts = { sourceType, sourceId, sourceName ->
+                    backStack.add(
+                        AppRoute.Products(
+                            sourceType = sourceType,
+                            sourceId = sourceId,
+                            sourceName = sourceName,
+                        ),
+                    )
+                },
+                onNavigateBack = { backStack.removeLastOrNull() },
+            )
+        }
         entry<AppRoute.Profile> {
             ProfileScreen(
                 onNavigateToLogin = { replaceWith(AppRoute.Login) }
@@ -196,7 +213,9 @@ fun AppNav() {
     ) { paddingValues ->
         NavDisplay<NavKey>(
             modifier = Modifier
-                .fillMaxSize(),
+                .fillMaxSize()
+                .padding(bottom = paddingValues.calculateBottomPadding())
+            ,
             entries = rememberDecoratedNavEntries(
                 backStack = backStack,
                 entryProvider = entryProvider
