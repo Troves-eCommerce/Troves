@@ -6,6 +6,7 @@ import com.troves.presintation.ui.products.ProductsViewModel
 import com.troves.presintation.ui.home.HomeViewModel
 import com.troves.presintation.ui.onboarding.OnboardingViewModel
 import com.troves.presintation.ui.productDetails.ProductDetailsViewModel
+import com.troves.presintation.ui.search.SearchScreenViewModel
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
@@ -16,4 +17,5 @@ val presentationModule = module {
     viewModelOf(::HomeViewModel)
     viewModelOf(::ProductDetailsViewModel)
     viewModelOf(::ProductsViewModel)
+    viewModelOf(::SearchScreenViewModel)
 }

@@ -70,6 +70,7 @@ fun HomeScreen(
     onNavigateToProduct: (String) -> Unit,
     onNavigateToProducts: () -> Unit,
     onNavigateToRegister: () -> Unit,
+    onNavigateToSearch: () -> Unit,
     viewModel: HomeViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -82,6 +83,7 @@ fun HomeScreen(
             is HomeEffect.NavigateToProducts -> onNavigateToProducts()
             is HomeEffect.NavigateToRegister -> onNavigateToRegister()
             is HomeEffect.ShowToast -> scope.launch { snackbarHostState.showSnackbar(effect.message) }
+            is HomeEffect.NavigateToSearch -> onNavigateToSearch()
         }
     }
 

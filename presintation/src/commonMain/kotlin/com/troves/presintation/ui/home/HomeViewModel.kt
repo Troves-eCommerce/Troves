@@ -2,8 +2,6 @@ package com.troves.presintation.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.troves.domain.Result
-import com.troves.domain.getOrElse
 import com.troves.domain.usecase.auth.IsLoggedInUseCase
 import com.troves.domain.usecase.home.GetAdsUseCase
 import com.troves.domain.usecase.home.GetBrandsUseCase
@@ -16,6 +14,10 @@ import com.troves.presintation.core.mvi.EffectPublisher
 import com.troves.presintation.core.mvi.StateHolder
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import com.troves.domain.utils.Result
+import kotlin.collections.emptyList
+import com.troves.domain.utils.getOrElse
+
 
 class HomeViewModel(
     private val getAds: GetAdsUseCase,
@@ -35,7 +37,7 @@ class HomeViewModel(
     fun onIntent(intent: HomeIntent) {
         when (intent) {
             HomeIntent.Load, HomeIntent.Retry -> loadHomeFeed()
-            HomeIntent.SearchClicked -> sendEffect(HomeEffect.ShowToast("Search is coming soon"))
+            HomeIntent.SearchClicked -> sendEffect(HomeEffect.NavigateToSearch)
             HomeIntent.CartClicked -> onCartClicked()
             HomeIntent.SignUpPromptConfirmed -> {
                 updateState { copy(showSignUpPrompt = false) }
@@ -84,7 +86,7 @@ class HomeViewModel(
                     categories = categoriesResult.getOrElse(emptyList()),
                     justForYou = justForYouResult.getOrElse(emptyList()),
                     trending = trendingResult.getOrElse(emptyList()),
-                    errorMessage = firstError?.message ?: firstError?.let { "Something went wrong" },
+                    errorMessage = firstError?.message,
                 )
             }
         }
