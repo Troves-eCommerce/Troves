@@ -1,7 +1,9 @@
 package com.troves.presintation.navigation
 
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -78,7 +80,7 @@ fun AppNav() {
     val bottomNavRoutes = remember {
         listOf(
             AppRoute.Home,
-            AppRoute.Profile,
+            AppRoute.Cart,
             AppRoute.Favorites,
             AppRoute.Profile
         )
@@ -203,7 +205,8 @@ fun AppNav() {
     ) { paddingValues ->
         NavDisplay<NavKey>(
             modifier = Modifier
-                .fillMaxSize(),
+                .fillMaxSize()
+                .windowInsetsPadding(WindowInsets(bottom = paddingValues.calculateBottomPadding())),
             entries = rememberDecoratedNavEntries(
                 backStack = backStack,
                 entryProvider = entryProvider
