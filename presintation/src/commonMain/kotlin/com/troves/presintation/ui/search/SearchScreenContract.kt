@@ -4,7 +4,6 @@ import androidx.compose.runtime.Immutable
 import com.troves.domain.entity.Brand
 import com.troves.domain.entity.Category
 import com.troves.domain.entity.Product
-import com.troves.presintation.ui.components.FilterOption
 
 /**
  * Copyright (c) 2026 Wahid Ali Wahid Hussien.

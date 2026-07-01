@@ -43,6 +43,7 @@ class TrovesApiServiceImpl(
     override suspend fun searchProducts(params: ProductSearchParams): Result<List<Product>> {
        return ktorClient.getResults {
             method = HttpMethod.Get
+            url {path("products.json")}
             params.vendor?.let { parameter("vendor", it) }
             params.productType?.let { parameter("product_type", it) }
             params.collectionId?.let { parameter("collection_id", it) }
