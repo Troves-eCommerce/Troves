@@ -9,5 +9,4 @@ import org.koin.dsl.module
 actual fun platformModule(): Module = module {
     single { createDataStore(androidContext()) }
     single { DatabaseFactory(androidContext()) }
-    single { createDataStore(androidContext()) }
 }
