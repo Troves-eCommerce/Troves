@@ -49,7 +49,7 @@ class HomeViewModel(
                 sendEffect(HomeEffect.NavigateToRegister)
             }
             HomeIntent.SignUpPromptDismissed -> updateState { copy(showSignUpPrompt = false) }
-            HomeIntent.SeeAllBrandsClicked -> sendEffect(HomeEffect.NavigateToProducts())
+            HomeIntent.SeeAllBrandsClicked -> sendEffect(HomeEffect.NavigateToAllBrands)
             is HomeIntent.AdClicked -> sendEffect(HomeEffect.ShowToast(intent.ad.titleTop))
             is HomeIntent.BrandClicked -> sendEffect(
                 HomeEffect.NavigateToProducts(
@@ -99,7 +99,7 @@ class HomeViewModel(
                 copy(
                     isLoading = false,
                     ads = adsResult.getOrElse(emptyList()),
-                    brands = brandsResult.getOrElse(emptyList()),
+                    brands = brandsResult.getOrElse(emptyList()).take(5),
                     categories = categoriesResult.getOrElse(emptyList()),
                     justForYou = justForYouResult.getOrElse(emptyList()),
                     trending = trendingResult.getOrElse(emptyList()),
