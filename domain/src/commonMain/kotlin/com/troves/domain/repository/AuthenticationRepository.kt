@@ -1,15 +1,17 @@
-package com.troves.domain
+package com.troves.domain.repository
+import com.troves.domain.utils.Result
+
 
 interface AuthenticationRepository {
     /**
      * Sign in with email and password.
-     * @return [Result.Success] with Unit on success, [Result.Error] on failure.
+     * @return [com.troves.data.source.remote.Result.Success] with Unit on success, [com.troves.data.source.remote.Result.Error] on failure.
      */
     suspend fun login(email: String, password: String): Result<Unit>
 
     /**
      * Create a new account with email and password.
-     * @return [Result.Success] with Unit on success, [Result.Error] on failure.
+     * @return [com.troves.data.source.remote.Result.Success] with Unit on success, [com.troves.data.source.remote.Result.Error] on failure.
      */
     suspend fun register(email: String, password: String): Result<Unit>
 
