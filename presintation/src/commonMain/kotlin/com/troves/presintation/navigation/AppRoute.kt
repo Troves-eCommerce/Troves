@@ -27,6 +27,9 @@ sealed interface AppRoute : NavKey {
     ) : AppRoute
 
     @Serializable
+    data object AllBrands : AppRoute
+
+    @Serializable
     data object Favorites : AppRoute
 
     @Serializable
