@@ -1,11 +1,10 @@
-package com.troves.data.source.local.preferenceses
+package com.troves.data.local.preferenceses
 
 import kotlinx.io.IOException
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.emptyPreferences
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
@@ -81,7 +80,7 @@ class AppPreferencesDataSourceImpl(
     }
     private fun Flow<Preferences>.catchIOException() =
         catch { e ->
-            if (e is IOException) emit(emptyPreferences())
+            if (e is IOException) emit(androidx.datastore.preferences.core.emptyPreferences())
             else throw e
         }
 }

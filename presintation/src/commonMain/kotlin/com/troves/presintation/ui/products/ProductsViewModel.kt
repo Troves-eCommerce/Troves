@@ -2,7 +2,8 @@ package com.troves.presintation.ui.products
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.troves.domain.utils.getOrElse
+import com.troves.domain.Result
+import com.troves.domain.getOrElse
 import com.troves.domain.usecase.home.GetCategoriesUseCase
 import com.troves.domain.usecase.products.FilterProductsUseCase
 import com.troves.domain.usecase.products.GetProductsByBrandUseCase
@@ -17,7 +18,6 @@ import com.troves.presintation.ui.components.FilterOption
 import com.troves.presintation.ui.components.SortOption
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import com.troves.domain.utils.Result
 
 class ProductsViewModel(
     private val getProducts: GetProductsUseCase,

@@ -1,6 +1,6 @@
 package com.troves.domain.usecase.auth
 
-import com.troves.domain.repository.AuthenticationRepository
+import com.troves.domain.AuthenticationRepository
 
 class IsLoggedInUseCase(
     private val authenticationRepository: AuthenticationRepository

@@ -1,6 +1,6 @@
 package com.troves.domain.usecase.onboarding
 
-import com.troves.domain.repository.AuthenticationRepository
+import com.troves.domain.AuthenticationRepository
 
 class CompleteOnboardingUseCase(
     private val repository: AuthenticationRepository

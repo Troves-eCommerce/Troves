@@ -2,7 +2,7 @@ package com.troves.presintation.ui.allbrands
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.troves.domain.utils.Result
+import com.troves.domain.Result
 import com.troves.domain.usecase.home.GetBrandsUseCase
 import com.troves.presintation.core.mvi.DefaultEffectPublisher
 import com.troves.presintation.core.mvi.DefaultStateHolder
