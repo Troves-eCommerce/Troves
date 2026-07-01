@@ -4,11 +4,13 @@ import com.troves.data.source.remote.dto.Collection
 import com.troves.data.source.remote.dto.CollectionImage
 import com.troves.data.source.remote.dto.CustomCollectionResponse
 import com.troves.data.source.remote.dto.MarketingEventsResponse
-import com.troves.data.source.remote.dto.ProductResponse
 import com.troves.data.source.remote.dto.ProductDto
+import com.troves.data.source.remote.dto.ProductResponse
 import com.troves.data.source.remote.dto.SingleProductResponse
 import com.troves.data.source.remote.service.TrovesApiService
-import com.troves.domain.Result
+import com.troves.domain.entity.Product
+import com.troves.domain.entity.ProductSearchParams
+import com.troves.domain.utils.Result
 
 class RemoteDatasourceImpl(
     private val trovesApiService: TrovesApiService
@@ -18,6 +20,14 @@ class RemoteDatasourceImpl(
     }
     override suspend fun getAllProducts(): Result<ProductResponse> {
         return trovesApiService.getAllProducts()
+    }
+
+    override suspend fun getProductsByQuery(queryMap: Map<String, String>): Result<ProductResponse> {
+        return trovesApiService.getProductsByQuery(queryMap = queryMap)
+    }
+
+    override suspend fun searchProducts(params: ProductSearchParams): Result<List<Product>> {
+      return  trovesApiService.searchProducts(params = params)
     }
 
     override suspend fun getProductImages(productId: String): Result<List<CollectionImage>> {
