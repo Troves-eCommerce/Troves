@@ -9,6 +9,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.Snapshot
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
@@ -28,6 +29,8 @@ import com.troves.presintation.ui.onboarding.OnboardingScreen
 import com.troves.presintation.ui.productDetails.ProductDetailsScreen
 import com.troves.presintation.ui.products.ProductsScreen
 import com.troves.presintation.ui.profile.ProfileScreen
+import com.troves.presintation.ui.search.SearchScreen
+import com.troves.presintation.ui.search.SearchScreenViewModel
 import com.troves.presintation.ui.splash.SplashScreen
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
@@ -50,6 +53,7 @@ private val navSavedStateConfiguration = SavedStateConfiguration {
             subclass(AppRoute.Favorites::class, AppRoute.Favorites.serializer())
             subclass(AppRoute.Profile::class, AppRoute.Profile.serializer())
             subclass(AppRoute.ProductDetails::class, AppRoute.ProductDetails.serializer())
+            subclass(AppRoute.Search::class, AppRoute.Search.serializer())
         }
     }
 }
@@ -108,7 +112,8 @@ fun AppNav() {
                     backStack.add(AppRoute.ProductDetails(productId))
                 },
                 onNavigateToProducts = { backStack.add(AppRoute.Products) },
-                onNavigateToRegister = { backStack.add(AppRoute.Register) }
+                onNavigateToRegister = { backStack.add(AppRoute.Register) },
+                onNavigateToSearch = {backStack.add(AppRoute.Search)}
             )
         }
         entry<AppRoute.Favorites> {
@@ -152,6 +157,22 @@ fun AppNav() {
         }
         entry<AppRoute.Profile> {
             ProfileScreen()
+        }
+        entry<AppRoute.Search> {
+            val viewModel: SearchScreenViewModel = koinViewModel()
+            val state by viewModel.state.collectAsStateWithLifecycle()
+            val onIntent = viewModel::onIntent
+            SearchScreen(
+                state = state,
+                onIntent = onIntent,
+                effect = viewModel.effect,
+                onNavigateToDetails = {
+                    backStack.add(AppRoute.ProductDetails(it))
+                },
+                onNavigateBack = {
+                    backStack.removeLastOrNull()
+                }
+            )
         }
     }
 

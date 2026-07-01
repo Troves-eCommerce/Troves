@@ -1,9 +1,9 @@
 package com.troves.domain.usecase.home
 
-import com.troves.domain.Result
 import com.troves.domain.entity.Product
-import com.troves.domain.map
 import com.troves.domain.usecase.shared.GetProductsUseCase
+import com.troves.domain.utils.Result
+import com.troves.domain.utils.map
 
 /**
  * "Trending Now" has no dedicated endpoint — it's pure business logic over the
