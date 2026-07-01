@@ -10,8 +10,12 @@ class ToggleFavoriteUseCase(
     private val authenticationRepository: AuthenticationRepository,
 ) {
     suspend operator fun invoke(product: Product): ToggleFavoriteResult {
-        val userId = authenticationRepository.getCurrentUserId()
 
+        if (!authenticationRepository.isLoggedIn()) {
+            return ToggleFavoriteResult.RequiresLogin
+        }
+        val userId = authenticationRepository.getCurrentUserId()
+            ?: return ToggleFavoriteResult.RequiresLogin
         return try {
             val isFav = wishlistRepository.isFavorite(product.id.toString()).first()
             if (isFav) {

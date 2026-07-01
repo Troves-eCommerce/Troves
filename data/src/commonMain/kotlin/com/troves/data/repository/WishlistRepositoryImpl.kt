@@ -17,31 +17,42 @@ class WishlistRepositoryImpl(
 ) : WishlistRepository {
 
     override fun getAllFavorites(): Flow<List<Product>> =
-        wishlistDao.getAllFavorites().map { list -> list.map { it.toDomain() } }
+        wishlistDao.getAllFavorites().map { list ->
+            list.map { it.toDomain() }
+        }
 
     override fun isFavorite(productId: String): Flow<Boolean> =
         wishlistDao.isFavorite(productId.toLongOrNull() ?: -1)
 
-    override suspend fun addFavorite(product: Product, userId: String?) {
-        if (userId == null) return // never persist locally without an authenticated user
+    override suspend fun addFavorite(
+        product: Product,
+        userId: String,
+    ) {
         wishlistDao.addFavorite(product.toEntity())
         remoteDatasource.addToWishlist(userId, product.toDto())
-        // if the remote call fails, local data still stands; consider a retry queue later
     }
 
-    override suspend fun deleteFavorite(productId: String, userId: String?) {
+    override suspend fun deleteFavorite(
+        productId: String,
+        userId: String,
+    ) {
         val id = productId.toLongOrNull() ?: return
-        if (userId == null) return
+
         wishlistDao.deleteFavorite(id)
         remoteDatasource.removeFromWishlist(userId, id)
     }
 
     override suspend fun syncFromRemote(userId: String) {
         when (val result = remoteDatasource.getWishlist(userId)) {
-            is Result.Success -> result.value.forEach { dto ->
-                wishlistDao.addFavorite(dto.toEntity())
+
+            is Result.Success -> {
+                result.value.forEach { dto ->
+                    wishlistDao.addFavorite(dto.toEntity())
+                }
             }
-            is Result.Error -> Unit // consider logging result.throwable here
+
+            is Result.Error -> Unit
+
             Result.Loading -> Unit
         }
     }
@@ -49,11 +60,15 @@ class WishlistRepositoryImpl(
     override suspend fun syncLocalOfflineFavorites(userId: String) {
         try {
             val allLocalFavorites = wishlistDao.getAllFavorites().first()
+
             allLocalFavorites.forEach { entity ->
-                remoteDatasource.addToWishlist(userId, entity.toDto())
+                remoteDatasource.addToWishlist(
+                    userId,
+                    entity.toDto(),
+                )
             }
-        } catch (e: Exception) {
-            // silently fail - favorites are still stored locally
+
+        } catch (_: Exception) {
         }
     }
 
@@ -62,28 +77,47 @@ class WishlistRepositoryImpl(
     }
 
     private fun WishlistEntity.toDomain() = Product(
-        id = id, title = title, vendor = vendor, price = price,
-        imageUrl = imageUrl, status = status,
+        id = id,
+        title = title,
+        vendor = vendor,
+        price = price,
+        imageUrl = imageUrl,
+        status = status,
     )
 
     private fun Product.toEntity() = WishlistEntity(
-        id = id, title = title, vendor = vendor, price = price,
-        imageUrl = imageUrl, status = status,
+        id = id,
+        title = title,
+        vendor = vendor,
+        price = price,
+        imageUrl = imageUrl,
+        status = status,
     )
 
     private fun Product.toDto() = WishlistDto(
-        id = id, title = title, vendor = vendor, price = price,
-        imageUrl = imageUrl, status = status,
+        id = id,
+        title = title,
+        vendor = vendor,
+        price = price,
+        imageUrl = imageUrl,
+        status = status,
     )
 
     private fun WishlistDto.toEntity() = WishlistEntity(
-        id = id, title = title, vendor = vendor, price = price,
-        imageUrl = imageUrl, status = status,
+        id = id,
+        title = title,
+        vendor = vendor,
+        price = price,
+        imageUrl = imageUrl,
+        status = status,
     )
 
-    // added: WishlistEntity -> WishlistDto, needed by syncLocalOfflineFavorites
     private fun WishlistEntity.toDto() = WishlistDto(
-        id = id, title = title, vendor = vendor, price = price,
-        imageUrl = imageUrl, status = status,
+        id = id,
+        title = title,
+        vendor = vendor,
+        price = price,
+        imageUrl = imageUrl,
+        status = status,
     )
 }
