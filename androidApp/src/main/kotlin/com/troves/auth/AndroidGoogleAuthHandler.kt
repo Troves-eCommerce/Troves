@@ -5,7 +5,9 @@ import androidx.credentials.CredentialManager
 import androidx.credentials.CustomCredential
 import androidx.credentials.GetCredentialRequest
 import androidx.credentials.exceptions.GetCredentialException
+import androidx.credentials.exceptions.NoCredentialException
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
+import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.troves.presintation.ui.auth.google.GoogleAuthHandler
 import kotlinx.coroutines.CoroutineScope
@@ -45,19 +47,52 @@ class AndroidGoogleAuthHandler(
         scope.launch {
             try {
                 val result = credentialManager.getCredential(activity, request)
-                val credential = result.credential
-                
-                if (credential is CustomCredential && credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
-                    val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
-                    onSuccess(googleIdTokenCredential.idToken, null)
-                } else {
-                    onError(IllegalStateException("Unexpected credential type"))
-                }
+                handleCredential(result.credential, onSuccess, onError)
+            } catch (e: NoCredentialException) {
+                signInWithButtonFlow(hashedNonce, onSuccess, onError)
             } catch (e: GetCredentialException) {
                 onError(e)
             } catch (e: Exception) {
                 onError(e)
             }
+        }
+    }
+
+    private suspend fun signInWithButtonFlow(
+        hashedNonce: String,
+        onSuccess: (idToken: String, accessToken: String?) -> Unit,
+        onError: (Exception) -> Unit
+    ) {
+        val signInOption = GetSignInWithGoogleOption.Builder(webClientId)
+            .setNonce(hashedNonce)
+            .build()
+
+        val request = GetCredentialRequest.Builder()
+            .addCredentialOption(signInOption)
+            .build()
+
+        try {
+            val result = credentialManager.getCredential(activity, request)
+            handleCredential(result.credential, onSuccess, onError)
+        } catch (e: GetCredentialException) {
+            onError(e)
+        } catch (e: Exception) {
+            onError(e)
+        }
+    }
+
+    private fun handleCredential(
+        credential: androidx.credentials.Credential,
+        onSuccess: (idToken: String, accessToken: String?) -> Unit,
+        onError: (Exception) -> Unit
+    ) {
+        if (credential is CustomCredential &&
+            credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
+        ) {
+            val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
+            onSuccess(googleIdTokenCredential.idToken, null)
+        } else {
+            onError(IllegalStateException("Unexpected credential type"))
         }
     }
 }
