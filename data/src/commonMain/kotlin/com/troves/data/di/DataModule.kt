@@ -13,7 +13,7 @@ import com.troves.data.source.local.preferenceses.AppPreferencesDataSourceImpl
 import com.troves.data.source.remote.RemoteDatasource
 import com.troves.data.source.remote.RemoteDatasourceImpl
 import com.troves.data.source.remote.service.TrovesApiService
-import com.troves.data.source.remote.service.TrovesApiServiceImpl
+import com.troves.data.source.remote.service.ktor.KtorTrovesApiServiceImpl
 import com.troves.domain.repository.AuthenticationRepository
 import com.troves.domain.repository.CartRepository
 import com.troves.domain.repository.PaymentRepository
@@ -29,7 +29,7 @@ val dataModule = module {
 
     // ── Network ───────────────────────────────────────────────────────────────
     single<HttpClient> { provideHttpClient() }
-    single<TrovesApiService> { TrovesApiServiceImpl(get()) }
+    single<TrovesApiService> { KtorTrovesApiServiceImpl(get()) }
 
     // ── Remote data source ────────────────────────────────────────────────────
     single<RemoteDatasource> { RemoteDatasourceImpl(get(), get()) }

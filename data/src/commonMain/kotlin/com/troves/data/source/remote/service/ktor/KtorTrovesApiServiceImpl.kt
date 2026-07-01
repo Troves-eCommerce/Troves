@@ -1,4 +1,4 @@
-package com.troves.data.source.remote.service
+package com.troves.data.source.remote.service.ktor
 
 import com.troves.data.source.remote.dto.Collection
 import com.troves.data.source.remote.dto.CollectionImage
@@ -7,16 +7,16 @@ import com.troves.data.source.remote.dto.MarketingEventsResponse
 import com.troves.data.source.remote.dto.ProductDto
 import com.troves.data.source.remote.dto.ProductResponse
 import com.troves.data.source.remote.dto.SingleProductResponse
+import com.troves.data.source.remote.service.TrovesApiService
 import com.troves.domain.entity.Product
 import com.troves.domain.entity.ProductSearchParams
 import io.ktor.client.HttpClient
 import io.ktor.http.HttpMethod
-import io.ktor.http.parameters
 import io.ktor.http.path
 import com.troves.domain.utils.Result
 import io.ktor.client.request.parameter
 
-class TrovesApiServiceImpl(
+class KtorTrovesApiServiceImpl(
     private val ktorClient: HttpClient
 ) : TrovesApiService {
     override suspend fun createProduct(productDto: ProductDto): Result<ProductDto> {

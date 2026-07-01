@@ -1,4 +1,4 @@
-package com.troves.data.source.remote.service
+package com.troves.data.source.remote.service.ktor
 
 import com.troves.data.config.ShopifyConfig
 import io.ktor.client.plugins.api.createClientPlugin
