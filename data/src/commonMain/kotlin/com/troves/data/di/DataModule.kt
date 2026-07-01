@@ -17,7 +17,6 @@ import com.troves.domain.AuthenticationRepository
 import com.troves.domain.repository.CartRepository
 import com.troves.domain.repository.PaymentRepository
 import com.troves.domain.repository.TrovesRepository
-import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import com.troves.data.repository.WishlistRepositoryImpl
 import com.troves.domain.repository.WishlistRepository
 import dev.gitlive.firebase.Firebase
@@ -41,7 +40,7 @@ val dataModule = module {
     // ── Database ──────────────────────────────────────────────────────────────
     single<TrovesDatabase> {
         get<DatabaseFactory>().createBuilder()
-            .setDriver(BundledSQLiteDriver())
+            .fallbackToDestructiveMigration(dropAllTables = true)
             .build()
     }
     single { get<TrovesDatabase>().wishlistDao() }
