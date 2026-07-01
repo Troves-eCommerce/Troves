@@ -1,4 +1,4 @@
-package com.troves.data.source.local.preferenceses
+package com.troves.data.local.preferenceses
 
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey

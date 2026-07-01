@@ -2,6 +2,7 @@ package com.troves.presintation.ui.productDetails
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.troves.domain.Result
 import com.troves.domain.entity.Product
 import com.troves.domain.usecase.cart.AddToCartUseCase
 import com.troves.domain.usecase.details.GetProductByIdUseCase
@@ -14,7 +15,6 @@ import com.troves.presintation.core.mvi.EffectPublisher
 import com.troves.presintation.core.mvi.StateHolder
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import com.troves.domain.utils.Result
 
 class ProductDetailsViewModel(
     private val getProductByIdUseCase: GetProductByIdUseCase,

@@ -1,7 +1,7 @@
 package com.troves.domain.usecase.wishlist
 
+import com.troves.domain.AuthenticationRepository
 import com.troves.domain.entity.Product
-import com.troves.domain.repository.AuthenticationRepository
 import com.troves.domain.repository.WishlistRepository
 import kotlinx.coroutines.flow.first
 

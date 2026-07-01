@@ -1,7 +1,7 @@
 package com.troves.domain.usecase.auth
 
-import com.troves.domain.repository.AuthenticationRepository
-import com.troves.domain.utils.Result
+import com.troves.domain.AuthenticationRepository
+import com.troves.domain.Result
 
 class SignInWithGoogleUseCase(private val repository: AuthenticationRepository) {
     suspend operator fun invoke(idToken: String, accessToken: String? = null): Result<Unit> {

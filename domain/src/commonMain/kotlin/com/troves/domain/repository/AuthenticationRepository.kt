@@ -1,6 +1,4 @@
-package com.troves.domain.repository
-import com.troves.domain.utils.Result
-
+package com.troves.domain
 
 interface AuthenticationRepository {
     suspend fun login(email: String, password: String): Result<Unit>
