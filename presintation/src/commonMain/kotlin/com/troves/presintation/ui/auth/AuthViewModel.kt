@@ -2,9 +2,9 @@ package com.troves.presintation.ui.auth
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.troves.domain.Result
 import com.troves.domain.usecase.auth.LoginUseCase
 import com.troves.domain.usecase.auth.RegisterUseCase
+import com.troves.domain.utils.Result
 import com.troves.domain.usecase.auth.SignInWithGoogleUseCase
 import com.troves.domain.usecase.wishlist.SyncWishlistUseCase
 import com.troves.presintation.core.mvi.DefaultEffectPublisher

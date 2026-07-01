@@ -11,6 +11,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.Snapshot
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
@@ -32,6 +33,8 @@ import com.troves.presintation.ui.onboarding.OnboardingScreen
 import com.troves.presintation.ui.productDetails.ProductDetailsScreen
 import com.troves.presintation.ui.products.ProductsScreen
 import com.troves.presintation.ui.profile.ProfileScreen
+import com.troves.presintation.ui.search.SearchScreen
+import com.troves.presintation.ui.search.SearchScreenViewModel
 import com.troves.presintation.ui.splash.SplashScreen
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
@@ -57,6 +60,7 @@ private val navSavedStateConfiguration = SavedStateConfiguration {
             subclass(AppRoute.Profile::class, AppRoute.Profile.serializer())
             subclass(AppRoute.ProductDetails::class, AppRoute.ProductDetails.serializer())
             subclass(AppRoute.Cart::class, AppRoute.Cart.serializer())
+            subclass(AppRoute.Search::class, AppRoute.Search.serializer())
         }
     }
 }
@@ -82,6 +86,7 @@ fun AppNav() {
     val bottomNavRoutes = remember {
         listOf(
             AppRoute.Home,
+            AppRoute.Profile,
             AppRoute.Favorites,
             AppRoute.Cart,
             AppRoute.Profile
@@ -115,6 +120,7 @@ fun AppNav() {
                     backStack.add(AppRoute.ProductDetails(productId))
                 },
                 onNavigateToRegister = { backStack.add(AppRoute.Register) },
+                onNavigateToSearch = {backStack.add(AppRoute.Search)},
                 onNavigateToCart = { backStack.add(AppRoute.Cart) },
                 onNavigateToAllBrands = { backStack.add(AppRoute.AllBrands) },
                 onNavigateToProducts = { sourceType, sourceId, sourceName ->
@@ -199,6 +205,22 @@ fun AppNav() {
             CartScreen(
                 onNavigateBack = { backStack.removeLastOrNull() },
                 onNavigateToCheckout = { backStack.removeLastOrNull() },
+            )
+        }
+        entry<AppRoute.Search> {
+            val viewModel: SearchScreenViewModel = koinViewModel()
+            val state by viewModel.state.collectAsStateWithLifecycle()
+            val onIntent = viewModel::onIntent
+            SearchScreen(
+                state = state,
+                onIntent = onIntent,
+                effect = viewModel.effect,
+                onNavigateToDetails = {
+                    backStack.add(AppRoute.ProductDetails(it))
+                },
+                onNavigateBack = {
+                    backStack.removeLastOrNull()
+                }
             )
         }
     }

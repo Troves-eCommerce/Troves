@@ -1,4 +1,5 @@
 package com.troves.data.source.remote.service
+
 import com.troves.data.source.remote.dto.Collection
 import com.troves.data.source.remote.dto.CollectionImage
 import com.troves.data.source.remote.dto.CustomCollectionResponse
@@ -6,13 +7,19 @@ import com.troves.data.source.remote.dto.MarketingEventsResponse
 import com.troves.data.source.remote.dto.ProductDto
 import com.troves.data.source.remote.dto.ProductResponse
 import com.troves.data.source.remote.dto.SingleProductResponse
+import com.troves.domain.entity.Product
+import com.troves.domain.entity.ProductSearchParams
+import com.troves.domain.utils.Result
 
 interface TrovesApiService {
     //region products
-    suspend fun createProduct(productDto: ProductDto): com.troves.domain.Result<ProductDto>
-    suspend fun getAllProducts(): com.troves.domain.Result<ProductResponse>
-    suspend fun getProductImages(productId: String): com.troves.domain.Result<List<CollectionImage>>
-    suspend fun getProductById(productId: String): com.troves.domain.Result<SingleProductResponse>
+    suspend fun createProduct(productDto: ProductDto): Result<ProductDto>
+    suspend fun getAllProducts(): Result<ProductResponse>
+    suspend fun getProductsByQuery(queryMap: Map<String, String>): Result<ProductResponse>
+    suspend fun searchProducts(params: ProductSearchParams): Result<List<Product>>
+
+    suspend fun getProductImages(productId: String): Result<List<CollectionImage>>
+    suspend fun getProductById(productId: String): Result<SingleProductResponse>
     suspend fun updateProduct(productId: String)
     suspend fun deleteProduct(productDto: ProductDto)
     // endregion
@@ -20,8 +27,8 @@ interface TrovesApiService {
 
     //region brands
 
-    suspend fun getAllBrands(): com.troves.domain.Result<Collection>
-    suspend fun getCategory(): com.troves.domain.Result<CustomCollectionResponse>
+    suspend fun getAllBrands(): Result<Collection>
+    suspend fun getCategory(): Result<CustomCollectionResponse>
 
     //endregion
 

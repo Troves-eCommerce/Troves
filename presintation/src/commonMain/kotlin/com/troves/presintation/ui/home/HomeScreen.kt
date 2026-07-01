@@ -71,6 +71,7 @@ fun HomeScreen(
     onNavigateToProducts: (sourceType: String, sourceId: String, sourceName: String) -> Unit,
     onNavigateToAllBrands: () -> Unit,
     onNavigateToRegister: () -> Unit,
+    onNavigateToSearch: () -> Unit,
     onNavigateToCart: () -> Unit,
     viewModel: HomeViewModel = koinViewModel(),
 ) {
@@ -90,6 +91,7 @@ fun HomeScreen(
             is HomeEffect.NavigateToRegister -> onNavigateToRegister()
             is HomeEffect.NavigateToCart -> onNavigateToCart()
             is HomeEffect.ShowToast -> scope.launch { snackbarHostState.showSnackbar(effect.message) }
+            is HomeEffect.NavigateToSearch -> onNavigateToSearch()
             is HomeEffect.ShowLoginRequiredDialog -> scope.launch {
                 snackbarHostState.showSnackbar("Please login to continue")
             }

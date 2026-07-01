@@ -1,4 +1,4 @@
-package com.troves.data.local.preferenceses
+package com.troves.data.source.local.preferenceses
 
 import kotlinx.coroutines.flow.Flow
 

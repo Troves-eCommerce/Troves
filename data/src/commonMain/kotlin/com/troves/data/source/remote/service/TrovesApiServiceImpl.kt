@@ -1,6 +1,5 @@
 package com.troves.data.source.remote.service
 
-import com.troves.data.source.remote.RemoteDatasource
 import com.troves.data.source.remote.dto.Collection
 import com.troves.data.source.remote.dto.CollectionImage
 import com.troves.data.source.remote.dto.CustomCollectionResponse
@@ -8,10 +7,14 @@ import com.troves.data.source.remote.dto.MarketingEventsResponse
 import com.troves.data.source.remote.dto.ProductDto
 import com.troves.data.source.remote.dto.ProductResponse
 import com.troves.data.source.remote.dto.SingleProductResponse
-import com.troves.domain.Result
+import com.troves.domain.entity.Product
+import com.troves.domain.entity.ProductSearchParams
 import io.ktor.client.HttpClient
 import io.ktor.http.HttpMethod
+import io.ktor.http.parameters
 import io.ktor.http.path
+import com.troves.domain.utils.Result
+import io.ktor.client.request.parameter
 
 class TrovesApiServiceImpl(
     private val ktorClient: HttpClient
@@ -26,10 +29,32 @@ class TrovesApiServiceImpl(
             url { path("products.json") }
         }
 
+    override suspend fun getProductsByQuery(queryMap: Map<String, String>): Result<ProductResponse> =
+        ktorClient.getResults {
+            method = HttpMethod.Get
+            url {
+                path("products.json")
+                queryMap.entries.forEach {
+                    parameter(it.key, it.value)
+                }
+            }
+        }
+
+    override suspend fun searchProducts(params: ProductSearchParams): Result<List<Product>> {
+       return ktorClient.getResults {
+            method = HttpMethod.Get
+            params.vendor?.let { parameter("vendor", it) }
+            params.productType?.let { parameter("product_type", it) }
+            params.collectionId?.let { parameter("collection_id", it) }
+            params.status?.let { parameter("status", it.restValue) }
+            parameter("limit", params.limit)
+        }
+    }
+
     override suspend fun getProductImages(productId: String): Result<List<CollectionImage>> {
         return ktorClient.getResults {
             method = HttpMethod.Get
-            url{
+            url {
                 path("products/$productId/images.json")
             }
         }
@@ -38,7 +63,7 @@ class TrovesApiServiceImpl(
     override suspend fun getProductById(productId: String): Result<SingleProductResponse> {
         return ktorClient.getResults {
             method = HttpMethod.Get
-            url{
+            url {
                 path("products/$productId.json")
             }
         }

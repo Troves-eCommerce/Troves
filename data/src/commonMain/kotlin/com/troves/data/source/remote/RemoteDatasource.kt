@@ -7,13 +7,19 @@ import com.troves.data.source.remote.dto.MarketingEventsResponse
 import com.troves.data.source.remote.dto.ProductResponse
 import com.troves.data.source.remote.dto.ProductDto
 import com.troves.data.source.remote.dto.SingleProductResponse
+import com.troves.domain.entity.Product
+import com.troves.domain.entity.ProductSearchParams
+import com.troves.domain.utils.Result
 import com.troves.data.source.remote.dto.WishlistDto
-import com.troves.domain.Result
 
 interface RemoteDatasource {
     //region product
     suspend fun createProduct(productDto: ProductDto): Result<ProductDto>
     suspend fun getAllProducts(): Result<ProductResponse>
+    suspend fun getProductsByQuery(queryMap: Map<String, String>): Result<ProductResponse>
+    suspend fun searchProducts(params: ProductSearchParams): Result<List<Product>>
+
+
     suspend fun getProductImages(productId: String):Result<List<CollectionImage>>
     suspend fun getProductById(productId: String): Result<SingleProductResponse>
     suspend fun updateProduct(productId: String)
