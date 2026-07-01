@@ -1,7 +1,9 @@
 package com.troves.presintation.navigation
 
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -21,9 +23,11 @@ import com.troves.designsystem.components.bottomnav.BottomNavItem
 import com.troves.designsystem.components.bottomnav.SPBottomNavigation
 import com.troves.presintation.ui.MainViewModel
 import com.troves.presintation.ui.StartDestination
+import com.troves.presintation.ui.allbrands.AllBrandsScreen
 import com.troves.presintation.ui.auth.LoginScreen
 import com.troves.presintation.ui.auth.RegisterScreen
-import com.troves.presintation.ui.fav.FavoriteScreen
+import com.troves.presintation.ui.cart.CartScreen
+import com.troves.presintation.ui.fav.WishlistScreen
 import com.troves.presintation.ui.home.HomeScreen
 import com.troves.presintation.ui.onboarding.OnboardingScreen
 import com.troves.presintation.ui.productDetails.ProductDetailsScreen
@@ -40,6 +44,7 @@ import troves.designsystem.generated.resources.ic_explore
 import troves.designsystem.generated.resources.ic_home
 import troves.designsystem.generated.resources.ic_order
 import troves.designsystem.generated.resources.ic_profile
+import troves.designsystem.generated.resources.ic_wishlist
 
 private val navSavedStateConfiguration = SavedStateConfiguration {
     serializersModule = SerializersModule {
@@ -50,9 +55,11 @@ private val navSavedStateConfiguration = SavedStateConfiguration {
             subclass(AppRoute.Register::class, AppRoute.Register.serializer())
             subclass(AppRoute.Home::class, AppRoute.Home.serializer())
             subclass(AppRoute.Products::class, AppRoute.Products.serializer())
+            subclass(AppRoute.AllBrands::class, AppRoute.AllBrands.serializer())
             subclass(AppRoute.Favorites::class, AppRoute.Favorites.serializer())
             subclass(AppRoute.Profile::class, AppRoute.Profile.serializer())
             subclass(AppRoute.ProductDetails::class, AppRoute.ProductDetails.serializer())
+            subclass(AppRoute.Cart::class, AppRoute.Cart.serializer())
             subclass(AppRoute.Search::class, AppRoute.Search.serializer())
         }
     }
@@ -81,6 +88,7 @@ fun AppNav() {
             AppRoute.Home,
             AppRoute.Profile,
             AppRoute.Favorites,
+            AppRoute.Cart,
             AppRoute.Profile
         )
     }
@@ -113,16 +121,33 @@ fun AppNav() {
                 },
                 onNavigateToProducts = { backStack.add(AppRoute.Products) },
                 onNavigateToRegister = { backStack.add(AppRoute.Register) },
-                onNavigateToSearch = {backStack.add(AppRoute.Search)}
+                onNavigateToSearch = {backStack.add(AppRoute.Search)},
+                onNavigateToCart = { backStack.add(AppRoute.Cart) },
+                onNavigateToAllBrands = { backStack.add(AppRoute.AllBrands) },
+                onNavigateToProducts = { sourceType, sourceId, sourceName ->
+                    backStack.add(
+                        AppRoute.Products(
+                            sourceType = sourceType,
+                            sourceId = sourceId,
+                            sourceName = sourceName,
+                        ),
+                    )
+                },
             )
         }
         entry<AppRoute.Favorites> {
-            FavoriteScreen()
+            WishlistScreen(
+                onNavigateToProduct = { productId ->
+                    backStack.add(AppRoute.ProductDetails(productId))
+                },
+                onNavigateToRegister = { backStack.add(AppRoute.Register) },
+            )
         }
         entry<AppRoute.ProductDetails> { key ->
             ProductDetailsScreen(
                 productId = key.productId,
-                onNavigateBack = { backStack.removeLastOrNull() }
+                onNavigateBack = { backStack.removeLastOrNull() },
+                onNavigateToLogin = { backStack.add(AppRoute.Login) },
             )
         }
         entry<AppRoute.Onboarding> {
@@ -147,16 +172,41 @@ fun AppNav() {
                 onRegisterSuccess = { replaceWith(AppRoute.Home) }
             )
         }
-        entry<AppRoute.Products> {
+        entry<AppRoute.Products> { key ->
             ProductsScreen(
+                sourceType = key.sourceType,
+                sourceId = key.sourceId,
+                sourceName = key.sourceName,
                 onNavigateToProduct = { productId ->
                     backStack.add(AppRoute.ProductDetails(productId))
                 },
                 onNavigateBack = { backStack.removeLastOrNull() },
             )
         }
+        entry<AppRoute.AllBrands> {
+            AllBrandsScreen(
+                onNavigateToProducts = { sourceType, sourceId, sourceName ->
+                    backStack.add(
+                        AppRoute.Products(
+                            sourceType = sourceType,
+                            sourceId = sourceId,
+                            sourceName = sourceName,
+                        ),
+                    )
+                },
+                onNavigateBack = { backStack.removeLastOrNull() },
+            )
+        }
         entry<AppRoute.Profile> {
-            ProfileScreen()
+            ProfileScreen(
+                onNavigateToLogin = { replaceWith(AppRoute.Login) }
+            )
+        }
+        entry<AppRoute.Cart> {
+            CartScreen(
+                onNavigateBack = { backStack.removeLastOrNull() },
+                onNavigateToCheckout = { backStack.removeLastOrNull() },
+            )
         }
         entry<AppRoute.Search> {
             val viewModel: SearchScreenViewModel = koinViewModel()
@@ -195,7 +245,9 @@ fun AppNav() {
     ) { paddingValues ->
         NavDisplay<NavKey>(
             modifier = Modifier
-                .fillMaxSize(),
+                .fillMaxSize()
+                .padding(bottom = paddingValues.calculateBottomPadding())
+            ,
             entries = rememberDecoratedNavEntries(
                 backStack = backStack,
                 entryProvider = entryProvider

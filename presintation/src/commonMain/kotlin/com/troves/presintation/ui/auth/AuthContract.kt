@@ -13,6 +13,7 @@ data class AuthState(
 sealed interface AuthEffect {
 
     data class ShowMessage(val message: String) : AuthEffect
+    data class ShowError(val message: String) : AuthEffect
 
     data object NavigateToHome : AuthEffect
 }
@@ -25,4 +26,5 @@ sealed interface AuthIntent {
     data object ToggleConfirmPasswordVisibility : AuthIntent
     data object Login : AuthIntent
     data object Register : AuthIntent
+    data class GoogleSignIn(val idToken: String, val accessToken: String?) : AuthIntent
 }

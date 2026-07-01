@@ -3,19 +3,29 @@ package com.troves.presintation.ui.productDetails
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.troves.domain.entity.Product
+import com.troves.domain.usecase.cart.AddToCartUseCase
 import com.troves.domain.usecase.details.GetProductByIdUseCase
+import com.troves.domain.usecase.wishlist.IsProductFavoritedUseCase
+import com.troves.domain.usecase.wishlist.ToggleFavoriteResult
+import com.troves.domain.usecase.wishlist.ToggleFavoriteUseCase
 import com.troves.presintation.core.mvi.DefaultEffectPublisher
 import com.troves.presintation.core.mvi.DefaultStateHolder
 import com.troves.presintation.core.mvi.EffectPublisher
 import com.troves.presintation.core.mvi.StateHolder
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import com.troves.domain.utils.Result
 
 class ProductDetailsViewModel(
     private val getProductByIdUseCase: GetProductByIdUseCase,
+    private val addToCartUseCase: AddToCartUseCase,
+    private val isProductFavorite: IsProductFavoritedUseCase,
+    private val toggleFavoriteUseCase: ToggleFavoriteUseCase,
 ) : ViewModel(),
     StateHolder<ProductDetailUiState> by DefaultStateHolder(ProductDetailUiState()),
     EffectPublisher<ProductDetailsEffect> by DefaultEffectPublisher() {
+
+    private var favoriteJob: Job? = null
 
     fun onIntent(intent: ProductDetailsIntent) {
         when (intent) {
@@ -28,11 +38,9 @@ class ProductDetailsViewModel(
             ProductDetailsIntent.OnSizeGuide ->
                 sendEffect(ProductDetailsEffect.NavigateBack)
 
-            ProductDetailsIntent.OnAddToCart ->
-                sendEffect(ProductDetailsEffect.ShowToast("Coming soon..."))
+            ProductDetailsIntent.OnAddToCart -> addCurrentProductToCart()
 
-            is ProductDetailsIntent.OnFavoriteClick ->
-                sendEffect(ProductDetailsEffect.ShowToast("Coming soon..."))
+            is ProductDetailsIntent.OnFavoriteClick -> onFavoriteClick()
 
             is ProductDetailsIntent.OnColorSelectedChange ->
                 updateState { copy(selectedColorIndex = intent.colorIndex) }
@@ -62,6 +70,7 @@ class ProductDetailsViewModel(
                     updateState {
                         copy(
                             isLoading = false,
+                            product = value,
                             images = value.images,
                             colors = value.colors,
                             title = value.title,
@@ -71,8 +80,56 @@ class ProductDetailsViewModel(
                             rating = value.rating,
                         )
                     }
+                    observeFavoriteStatus(productId)
                 }
             }
+        }
+    }
+
+    private fun observeFavoriteStatus(productId: String) {
+        favoriteJob?.cancel()
+        favoriteJob = viewModelScope.launch {
+            isProductFavorite(productId).collect { favorited ->
+                updateState { copy(isFavorite = favorited) }
+            }
+        }
+    }
+
+    private fun onFavoriteClick() {
+        val product = currentState.product ?: run {
+            sendEffect(ProductDetailsEffect.ShowToast("Couldn't update favorites"))
+            return
+        }
+        val wasFavorite = currentState.isFavorite
+
+        updateState { copy(isFavorite = !wasFavorite) }
+
+        viewModelScope.launch {
+            when (toggleFavoriteUseCase(product)) {
+                ToggleFavoriteResult.Added ->
+                    sendEffect(ProductDetailsEffect.ShowToast("${product.title} added to favorites"))
+
+                ToggleFavoriteResult.Removed ->
+                    sendEffect(ProductDetailsEffect.ShowToast("${product.title} removed from favorites"))
+
+                ToggleFavoriteResult.RequiresLogin -> {
+                    updateState { copy(isFavorite = wasFavorite) }
+                    sendEffect(ProductDetailsEffect.ShowLoginRequiredDialog)
+                }
+
+                is ToggleFavoriteResult.Error -> {
+                    updateState { copy(isFavorite = wasFavorite) }
+                    sendEffect(ProductDetailsEffect.ShowToast("Couldn't update favorites"))
+                }
+            }
+        }
+    }
+
+    private fun addCurrentProductToCart() {
+        val product = currentState.product ?: return
+        viewModelScope.launch {
+            addToCartUseCase(product)
+            sendEffect(ProductDetailsEffect.ShowToast("Added to cart"))
         }
     }
 }

@@ -21,6 +21,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -28,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.rememberAsyncImagePainter
@@ -54,12 +56,14 @@ import troves.presintation.generated.resources.Res
 import troves.presintation.generated.resources.filter_title
 import troves.presintation.generated.resources.products_empty
 import troves.presintation.generated.resources.products_retry
-import troves.presintation.generated.resources.products_title
 import troves.presintation.generated.resources.sort_title
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProductsScreen(
+    sourceType: String = "",
+    sourceId: String = "",
+    sourceName: String = "",
     onNavigateToProduct: (String) -> Unit = {},
     onNavigateBack: () -> Unit = {},
     viewModel: ProductsViewModel = koinViewModel(),
@@ -67,6 +71,16 @@ fun ProductsScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+
+    LaunchedEffect(sourceType, sourceId, sourceName) {
+        viewModel.onIntent(
+            ProductsIntent.Init(
+                sourceType = sourceType,
+                sourceId = sourceId,
+                sourceName = sourceName,
+            ),
+        )
+    }
 
     ObserveEffect(viewModel.effect) { effect ->
         when (effect) {
@@ -88,6 +102,7 @@ fun ProductsScreen(
                 .statusBarsPadding(),
         ) {
             ProductsToolbar(
+                title = state.screenTitle,
                 filterActive = state.hasActiveFilters,
                 sortActive = state.isSorted,
                 onBackClick = { viewModel.onIntent(ProductsIntent.OnBackClick) },
@@ -148,6 +163,7 @@ fun ProductsScreen(
 
 @Composable
 private fun ProductsToolbar(
+    title: String,
     filterActive: Boolean,
     sortActive: Boolean,
     onBackClick: () -> Unit,
@@ -167,13 +183,15 @@ private fun ProductsToolbar(
             onClick = onBackClick,
         )
         BasicText(
-            text = stringResource(Res.string.products_title),
+            text = title,
+            modifier = Modifier.weight(1f),
             style = Theme.typography.title.copy(
                 color = Theme.colors.primaryFont,
                 fontWeight = FontWeight.Bold,
             ),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
         )
-        Box(Modifier.weight(1f))
         Row(horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small)) {
             AppChip(
                 label = stringResource(Res.string.filter_title),

@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.troves.domain.utils.getOrElse
 import com.troves.domain.usecase.home.GetCategoriesUseCase
 import com.troves.domain.usecase.products.FilterProductsUseCase
+import com.troves.domain.usecase.products.GetProductsByBrandUseCase
+import com.troves.domain.usecase.products.GetProductsByCategoryUseCase
 import com.troves.domain.usecase.products.SortProductsUseCase
 import com.troves.domain.usecase.shared.GetProductsUseCase
 import com.troves.presintation.core.mvi.DefaultEffectPublisher
@@ -19,6 +21,8 @@ import com.troves.domain.utils.Result
 
 class ProductsViewModel(
     private val getProducts: GetProductsUseCase,
+    private val getProductsByBrand: GetProductsByBrandUseCase,
+    private val getProductsByCategory: GetProductsByCategoryUseCase,
     private val getCategories: GetCategoriesUseCase,
     private val filterProducts: FilterProductsUseCase,
     private val sortProducts: SortProductsUseCase,
@@ -26,13 +30,19 @@ class ProductsViewModel(
     StateHolder<ProductsUiState> by DefaultStateHolder(ProductsUiState()),
     EffectPublisher<ProductsEffect> by DefaultEffectPublisher() {
 
-    init {
-        onIntent(ProductsIntent.Load)
-    }
+    private var pendingInit: ProductsIntent.Init? = null
 
     fun onIntent(intent: ProductsIntent) {
         when (intent) {
-            ProductsIntent.Load, ProductsIntent.Retry -> loadProducts()
+            is ProductsIntent.Init -> {
+                pendingInit = intent
+                loadProducts(intent)
+            }
+
+            ProductsIntent.Retry -> {
+                val init = pendingInit ?: ProductsIntent.Init("", "", "")
+                loadProducts(init)
+            }
 
             ProductsIntent.OnBackClick -> {
                 updateState {
@@ -40,12 +50,10 @@ class ProductsViewModel(
                         selectedCategoryIds = emptySet(),
                         selectedSubCategoryIds = emptySet(),
                         selectedBrandIds = emptySet(),
-                        selectedSort =SortOption.DEFAULT
-
+                        selectedSort = SortOption.DEFAULT,
                     ).withDisplayedProducts()
                 }
                 sendEffect(ProductsEffect.NavigateBack)
-
             }
 
             ProductsIntent.OpenFilter -> updateState {
@@ -99,14 +107,19 @@ class ProductsViewModel(
         }
     }
 
-    private fun loadProducts() {
+    private fun loadProducts(init: ProductsIntent.Init) {
+        val title = init.sourceName.ifBlank { "Products" }
         viewModelScope.launch {
-            updateState { copy(isLoading = true, errorMessage = null) }
+            updateState { copy(isLoading = true, errorMessage = null, screenTitle = title) }
 
-            val productsDeferred = async { getProducts() }
             val categoriesDeferred = async { getCategories() }
 
-            val productsResult = productsDeferred.await()
+            val productsResult = when (init.sourceType) {
+                "brand" -> getProductsByBrand(init.sourceName)
+                "category" -> getProductsByCategory(init.sourceName)
+                else -> getProducts()
+            }
+
             val categories = categoriesDeferred.await().getOrElse(emptyList())
 
             when (productsResult) {
@@ -116,6 +129,7 @@ class ProductsViewModel(
                         copy(
                             isLoading = false,
                             errorMessage = null,
+                            screenTitle = title,
                             allProducts = products,
                             categoryOptions = categories.map {
                                 FilterOption(id = it.id.toString(), label = it.name)
@@ -132,6 +146,7 @@ class ProductsViewModel(
                 is Result.Error -> updateState {
                     copy(
                         isLoading = false,
+                        screenTitle = title,
                         errorMessage = productsResult.throwable.message ?: "Something went wrong",
                     )
                 }

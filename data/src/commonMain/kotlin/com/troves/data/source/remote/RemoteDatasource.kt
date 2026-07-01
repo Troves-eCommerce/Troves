@@ -10,6 +10,8 @@ import com.troves.data.source.remote.dto.SingleProductResponse
 import com.troves.domain.entity.Product
 import com.troves.domain.entity.ProductSearchParams
 import com.troves.domain.utils.Result
+import com.troves.data.source.remote.dto.WishlistDto
+import com.troves.domain.Result
 
 interface RemoteDatasource {
     //region product
@@ -37,7 +39,11 @@ interface RemoteDatasource {
     suspend fun getAllEventsById(eventId: String): MarketingEventsResponse
     //endregion
 
-
+    //region wishlist
+    suspend fun getWishlist(userId: String): Result<List<WishlistDto>>
+    suspend fun addToWishlist(userId: String, item: WishlistDto): Result<Unit>
+    suspend fun removeFromWishlist(userId: String, productId: Long): Result<Unit>
+    //endregion
 
 
 

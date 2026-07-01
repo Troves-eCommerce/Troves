@@ -13,6 +13,12 @@ plugins {
     alias(libs.plugins.android.lint)
     alias(libs.plugins.buildKonfig)
     alias(libs.plugins.kotlinx.serialization)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.androidx.room)
+}
+
+room {
+    schemaDirectory("$projectDir/schemas")
 }
 
 kotlin {
@@ -71,6 +77,8 @@ kotlin {
                 implementation(libs.ktor.logging)
                 implementation(libs.ktor.client.content.negotiation)
                 implementation(libs.kotlinx.serialization)
+                implementation(libs.androidx.sqlite.bundled)
+                implementation(libs.androidx.room.runtime)
                 implementation(project(":domain"))
 
                 // Add KMP dependencies here
@@ -83,6 +91,7 @@ kotlin {
 
                 // Firebase (GitLive KMP SDK — works on both Android & iOS)
                 implementation(libs.firebase.auth)
+                implementation(libs.firebase.firestore)
             }
         }
 
@@ -96,6 +105,8 @@ kotlin {
             dependencies {
                 implementation(libs.ktor.client.android)
                 implementation(project.dependencies.platform(libs.firebase.bom))
+                implementation(libs.androidx.sqlite.bundled)
+                implementation(libs.androidx.room.runtime)
             }
         }
 
@@ -110,13 +121,20 @@ kotlin {
         iosMain {
             dependencies {
                 implementation(libs.ktor.client.darwin)
+                implementation(libs.androidx.sqlite.bundled)
+                implementation(libs.androidx.room.runtime)
             }
         }
     }
 
 }
 
-// ── BuildKonfig: inject local.properties secrets as compile-time constants ───
+dependencies {
+    add("kspAndroid", libs.androidx.room.compiler)
+    add("kspIosArm64", libs.androidx.room.compiler)
+    add("kspIosSimulatorArm64", libs.androidx.room.compiler)
+}
+
 buildkonfig {
     packageName = "com.troves.data"
 
