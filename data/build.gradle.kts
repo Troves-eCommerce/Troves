@@ -91,6 +91,7 @@ kotlin {
 
                 // Firebase (GitLive KMP SDK — works on both Android & iOS)
                 implementation(libs.firebase.auth)
+                implementation(libs.firebase.firestore)
             }
         }
 

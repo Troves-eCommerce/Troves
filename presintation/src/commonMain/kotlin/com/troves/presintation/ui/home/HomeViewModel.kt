@@ -12,6 +12,7 @@ import com.troves.domain.usecase.home.GetCategoriesUseCase
 import com.troves.domain.usecase.home.GetJustForYouProductsUseCase
 import com.troves.domain.usecase.home.GetTrendingProductsUseCase
 import com.troves.domain.usecase.wishlist.GetWishlistUseCase
+import com.troves.domain.usecase.wishlist.ToggleFavoriteResult
 import com.troves.domain.usecase.wishlist.ToggleFavoriteUseCase
 import com.troves.presintation.core.mvi.DefaultEffectPublisher
 import com.troves.presintation.core.mvi.DefaultStateHolder
@@ -147,16 +148,24 @@ class HomeViewModel(
         }
 
         viewModelScope.launch {
-            runCatching { toggleFavoriteUseCase(product) }
-                .onSuccess {
-                    val message = if (wasFavorite) {
-                        "${product.title} removed from favorites"
-                    } else {
-                        "${product.title} added to favorites"
+            when (toggleFavoriteUseCase(product)) {
+                ToggleFavoriteResult.Added ->
+                    sendEffect(HomeEffect.ShowToast("${product.title} added to favorites"))
+
+                ToggleFavoriteResult.Removed ->
+                    sendEffect(HomeEffect.ShowToast("${product.title} removed from favorites"))
+
+                ToggleFavoriteResult.RequiresLogin -> {
+                    updateState {
+                        val reverted = favoriteProductIds.toMutableSet().apply {
+                            if (wasFavorite) add(product.id) else remove(product.id)
+                        }
+                        copy(favoriteProductIds = reverted)
                     }
-                    sendEffect(HomeEffect.ShowToast(message))
+                    sendEffect(HomeEffect.ShowLoginRequiredDialog)
                 }
-                .onFailure {
+
+                is ToggleFavoriteResult.Error -> {
                     updateState {
                         val reverted = favoriteProductIds.toMutableSet().apply {
                             if (wasFavorite) add(product.id) else remove(product.id)
@@ -165,6 +174,7 @@ class HomeViewModel(
                     }
                     sendEffect(HomeEffect.ShowToast("Couldn't update favorites"))
                 }
+            }
         }
     }
 }

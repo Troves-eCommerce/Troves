@@ -20,6 +20,9 @@ import com.troves.domain.repository.TrovesRepository
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import com.troves.data.repository.WishlistRepositoryImpl
 import com.troves.domain.repository.WishlistRepository
+import dev.gitlive.firebase.Firebase
+import dev.gitlive.firebase.firestore.FirebaseFirestore
+import dev.gitlive.firebase.firestore.firestore
 import io.ktor.client.HttpClient
 import org.koin.dsl.module
 
@@ -30,7 +33,7 @@ val dataModule = module {
     single<TrovesApiService> { TrovesApiServiceImpl(get()) }
 
     // ── Remote data source ────────────────────────────────────────────────────
-    single<RemoteDatasource> { RemoteDatasourceImpl(get()) }
+    single<RemoteDatasource> { RemoteDatasourceImpl(get(), get()) }
 
     // ── Local ─────────────────────────────────────────────────────────────────
     single<AppPreferencesDataSource> { AppPreferencesDataSourceImpl(get()) }
@@ -48,5 +51,6 @@ val dataModule = module {
     single<AuthenticationRepository>  { createAuthenticationRepository(get()) }
     single<PaymentRepository>         { PaymentRepositoryImpl() }
     single<CartRepository>            { CartRepositoryImpl() }
-    single<WishlistRepository>        { WishlistRepositoryImpl(get()) }
+    single<WishlistRepository>        { WishlistRepositoryImpl(get() , get()) }
+    single<FirebaseFirestore> { Firebase.firestore }
 }

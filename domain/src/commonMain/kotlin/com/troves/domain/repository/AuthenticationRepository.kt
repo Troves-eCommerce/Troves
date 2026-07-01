@@ -14,4 +14,5 @@ interface AuthenticationRepository {
     suspend fun isOnboardingDone(): Boolean
 
     suspend fun setOnboardingDone()
+    fun getCurrentUserId(): String?
 }

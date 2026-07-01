@@ -88,6 +88,9 @@ fun HomeScreen(
             is HomeEffect.NavigateToRegister -> onNavigateToRegister()
             is HomeEffect.NavigateToCart -> onNavigateToCart()
             is HomeEffect.ShowToast -> scope.launch { snackbarHostState.showSnackbar(effect.message) }
+            is HomeEffect.ShowLoginRequiredDialog -> scope.launch {
+                snackbarHostState.showSnackbar("Please login to continue")
+            }
         }
     }
 

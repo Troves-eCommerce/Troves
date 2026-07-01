@@ -63,4 +63,8 @@ class AuthenticationRepositoryFirebaseImpl(
     override suspend fun setOnboardingDone() {
         preferences.setOnboardingDone(true)
     }
+
+    override fun getCurrentUserId(): String? = firebaseAuth.currentUser?.uid.also {
+        println("DEBUG currentUserId = $it")
+    }
 }

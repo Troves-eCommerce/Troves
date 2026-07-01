@@ -7,6 +7,7 @@ import com.troves.domain.entity.Product
 import com.troves.domain.usecase.cart.AddToCartUseCase
 import com.troves.domain.usecase.details.GetProductByIdUseCase
 import com.troves.domain.usecase.wishlist.IsProductFavoritedUseCase
+import com.troves.domain.usecase.wishlist.ToggleFavoriteResult
 import com.troves.domain.usecase.wishlist.ToggleFavoriteUseCase
 import com.troves.presintation.core.mvi.DefaultEffectPublisher
 import com.troves.presintation.core.mvi.DefaultStateHolder
@@ -104,19 +105,23 @@ class ProductDetailsViewModel(
         updateState { copy(isFavorite = !wasFavorite) }
 
         viewModelScope.launch {
-            runCatching { toggleFavoriteUseCase(product) }
-                .onSuccess {
-                    val message = if (wasFavorite) {
-                        "${product.title} removed from favorites"
-                    } else {
-                        "${product.title} added to favorites"
-                    }
-                    sendEffect(ProductDetailsEffect.ShowToast(message))
+            when (toggleFavoriteUseCase(product)) {
+                ToggleFavoriteResult.Added ->
+                    sendEffect(ProductDetailsEffect.ShowToast("${product.title} added to favorites"))
+
+                ToggleFavoriteResult.Removed ->
+                    sendEffect(ProductDetailsEffect.ShowToast("${product.title} removed from favorites"))
+
+                ToggleFavoriteResult.RequiresLogin -> {
+                    updateState { copy(isFavorite = wasFavorite) }
+                    sendEffect(ProductDetailsEffect.ShowLoginRequiredDialog)
                 }
-                .onFailure {
+
+                is ToggleFavoriteResult.Error -> {
                     updateState { copy(isFavorite = wasFavorite) }
                     sendEffect(ProductDetailsEffect.ShowToast("Couldn't update favorites"))
                 }
+            }
         }
     }
 

@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.troves.domain.entity.Product
 import com.troves.domain.usecase.wishlist.GetWishlistUseCase
+import com.troves.domain.usecase.wishlist.ToggleFavoriteResult
 import com.troves.domain.usecase.wishlist.ToggleFavoriteUseCase
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -50,14 +51,18 @@ class WishlistViewModel(
     private fun removeFavorite(product: Product) {
         _state.update { current -> current.copy(items = current.items.filterNot { it.id == product.id }) }
         viewModelScope.launch {
-            runCatching { toggleFavoriteUseCase(product) }
-                .onSuccess {
+            when (val result = toggleFavoriteUseCase(product)) {
+                ToggleFavoriteResult.Removed ->
                     sendEffect(WishlistUiEffect.ShowToast("${product.title} removed from wishlist"))
+                ToggleFavoriteResult.RequiresLogin -> {
+                    sendEffect(WishlistUiEffect.ShowLoginRequiredDialog)
+                    loadWishlist()
                 }
-                .onFailure {
+                else -> {
                     sendEffect(WishlistUiEffect.ShowToast("Couldn't remove item"))
                     loadWishlist()
                 }
+            }
         }
     }
 
@@ -66,7 +71,7 @@ class WishlistViewModel(
         if (toRemove.isEmpty()) return
         _state.update { it.copy(items = emptyList()) }
         viewModelScope.launch {
-            toRemove.forEach { product -> runCatching { toggleFavoriteUseCase(product) } }
+            toRemove.forEach { product -> toggleFavoriteUseCase(product) }
             sendEffect(WishlistUiEffect.ShowToast("Wishlist cleared"))
         }
     }

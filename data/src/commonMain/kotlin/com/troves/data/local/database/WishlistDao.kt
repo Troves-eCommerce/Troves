@@ -18,4 +18,7 @@ interface WishlistDao {
 
     @Query("DELETE FROM wishlist WHERE id = :productId")
     suspend fun deleteFavorite(productId: Long)
+
+    @Query("DELETE FROM wishlist")
+    suspend fun clearAll()
 }

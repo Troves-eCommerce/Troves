@@ -127,13 +127,15 @@ fun AppNav() {
             WishlistScreen(
                 onNavigateToProduct = { productId ->
                     backStack.add(AppRoute.ProductDetails(productId))
-                }
+                },
+                onNavigateToRegister = { backStack.add(AppRoute.Register) },
             )
         }
         entry<AppRoute.ProductDetails> { key ->
             ProductDetailsScreen(
                 productId = key.productId,
-                onNavigateBack = { backStack.removeLastOrNull() }
+                onNavigateBack = { backStack.removeLastOrNull() },
+                onNavigateToLogin = { backStack.add(AppRoute.Login) },
             )
         }
         entry<AppRoute.Onboarding> {

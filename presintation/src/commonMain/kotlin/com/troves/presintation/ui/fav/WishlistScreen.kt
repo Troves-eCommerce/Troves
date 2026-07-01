@@ -27,6 +27,7 @@ import troves.designsystem.generated.resources.img_onboarding1
 @Composable
 fun WishlistScreen(
     onNavigateToProduct: (String) -> Unit,
+    onNavigateToRegister: () -> Unit,
     viewModel: WishlistViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsState()
@@ -37,12 +38,14 @@ fun WishlistScreen(
 
     var productToRemove by remember { mutableStateOf<Product?>(null) }
     var showClearAllConfirmation by remember { mutableStateOf(false) }
+    var showLoginRequiredDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
                 is WishlistUiEffect.NavigateToProduct -> onNavigateToProduct(effect.productId)
                 is WishlistUiEffect.ShowToast -> snackbarHostState.showSnackbar(effect.message)
+                WishlistUiEffect.ShowLoginRequiredDialog -> showLoginRequiredDialog = true
             }
         }
     }
@@ -83,6 +86,27 @@ fun WishlistScreen(
             },
             dismissButton = {
                 TextButton(onClick = { showClearAllConfirmation = false }) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
+
+    if (showLoginRequiredDialog) {
+        AlertDialog(
+            onDismissRequest = { showLoginRequiredDialog = false },
+            title = { Text("Login Required") },
+            text = { Text("You need to be logged in to manage your wishlist.") },
+            confirmButton = {
+                TextButton(onClick = {
+                    showLoginRequiredDialog = false
+                    onNavigateToRegister()
+                }) {
+                    Text("Log In")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showLoginRequiredDialog = false }) {
                     Text("Cancel")
                 }
             }
