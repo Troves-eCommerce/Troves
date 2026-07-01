@@ -82,8 +82,8 @@ fun AppNav() {
     val bottomNavRoutes = remember {
         listOf(
             AppRoute.Home,
-            AppRoute.Cart,
             AppRoute.Favorites,
+            AppRoute.Cart,
             AppRoute.Profile
         )
     }
