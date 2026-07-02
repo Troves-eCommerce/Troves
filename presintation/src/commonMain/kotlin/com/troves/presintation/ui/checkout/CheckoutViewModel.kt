@@ -59,7 +59,7 @@ class CheckoutViewModel(
         viewModelScope.launch {
             // Simulate API call to place order
             kotlinx.coroutines.delay(1500)
-            cartRepository.clearCart()
+            cartRepository.clearLocal()
             updateState { copy(isPlacingOrder = false) }
             sendEffect(CheckoutEffect.NavigateToOrderSuccess)
         }

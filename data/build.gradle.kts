@@ -1,3 +1,6 @@
+@file:OptIn(ApolloExperimental::class)
+
+import com.apollographql.apollo.annotations.ApolloExperimental
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
 import java.util.Properties
 
@@ -15,6 +18,8 @@ plugins {
     alias(libs.plugins.kotlinx.serialization)
     alias(libs.plugins.ksp)
     alias(libs.plugins.androidx.room)
+    alias(libs.plugins.apollo)
+
 }
 
 room {
@@ -92,6 +97,11 @@ kotlin {
                 // Firebase (GitLive KMP SDK — works on both Android & iOS)
                 implementation(libs.firebase.auth)
                 implementation(libs.firebase.firestore)
+
+                // Apollo
+                implementation(libs.apollo.runtime)
+                // Memory Cache
+                implementation(libs.apollo.normalized.cache)
             }
         }
 
@@ -151,5 +161,23 @@ buildkonfig {
             STRING, "REST_COUNTRIES_API_KEY",
             localProperties.getProperty("REST_COUNTRIES_API_KEY") ?: error("REST_COUNTRIES_API_KEY not set in local.properties")
         )
+    }
+}
+apollo {
+    service(name = "service") {
+        packageName.set("com.troves.data.source.remote.service.apollo.graphql")
+        srcDir(file("src/commonMain/graphql"))
+        generateDataBuilders.set(true)
+        val apiKey = localProperties.getProperty("SHOPIFY_API_KEY") ?: ""
+        val url = localProperties.getProperty("SHOPIFY_REST_URL") ?: ""
+
+
+        introspection {
+            endpointUrl.set("${url}graphql.json")
+
+            schemaFile.set(file("src/commonMain/graphql/schema.graphqls"))
+
+            headers.put("X-Shopify-Access-Token", apiKey)
+        }
     }
 }

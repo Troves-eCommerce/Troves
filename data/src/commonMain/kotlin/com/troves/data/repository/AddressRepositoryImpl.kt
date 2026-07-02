@@ -1,6 +1,6 @@
 package com.troves.data.repository
 
-import com.troves.data.local.database.AddressDao
+import com.troves.data.source.local.database.AddressDao
 import com.troves.data.mapper.toDomain
 import com.troves.data.mapper.toEntity
 import com.troves.domain.entity.Address

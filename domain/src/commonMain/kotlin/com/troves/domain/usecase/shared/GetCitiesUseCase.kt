@@ -1,6 +1,6 @@
 package com.troves.domain.usecase.shared
 
-import com.troves.domain.Result
+import com.troves.domain.utils.Result
 import com.troves.domain.repository.TrovesRepository
 
 class GetCitiesUseCase(

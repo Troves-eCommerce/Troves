@@ -13,8 +13,6 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.CircularWavyProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -36,6 +34,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.troves.designsystem.components.dialog.LoginRequiredDialog
+import com.troves.designsystem.components.dialog.TrovesDialog
 import com.troves.designsystem.theme.Theme
 import com.troves.presintation.core.mvi.ObserveEffect
 import com.troves.presintation.ui.productDetails.components.AddToCartButton
@@ -80,18 +80,14 @@ fun ProductDetailsScreen(
     }
 
     if (showLoginRequiredDialog) {
-        AlertDialog(
-            onDismissRequest = { showLoginRequiredDialog = false },
-            title = { Text("Login Required") },
-            text = { Text("You need to be logged in to manage your favorites.") },
-            confirmButton = {
-                TextButton(onClick = {
-                    showLoginRequiredDialog = false
-                    onNavigateToLogin()
-                }) { Text("Log In") }
+        LoginRequiredDialog(
+            message = "You need to be logged in to manage your favorites.",
+            onLoginClick = {
+                showLoginRequiredDialog = false
+                onNavigateToLogin()
             },
-            dismissButton = {
-                TextButton(onClick = { showLoginRequiredDialog = false }) { Text("Cancel") }
+            onDismiss = {
+                showLoginRequiredDialog = false
             }
         )
     }

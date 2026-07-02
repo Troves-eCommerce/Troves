@@ -1,6 +1,6 @@
 package com.troves.data.mapper
 
-import com.troves.data.local.database.AddressEntity
+import com.troves.data.source.local.database.AddressEntity
 import com.troves.domain.entity.Address
 import com.troves.domain.entity.AddressIcon
 

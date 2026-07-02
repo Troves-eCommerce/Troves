@@ -1,7 +1,7 @@
 package com.troves.data.network
 
 import com.troves.data.config.ShopifyConfig
-import com.troves.data.source.remote.service.AuthPlugin
+import com.troves.data.source.remote.service.ktor.AuthPlugin
 import io.ktor.client.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*

@@ -33,7 +33,12 @@ sealed interface AppRoute : NavKey {
     ) : AppRoute
 
     @Serializable
+    data object AllBrands : AppRoute
+
+    @Serializable
     data object Favorites : AppRoute
+    @Serializable
+    data object Search : AppRoute
 
     @Serializable
     data object Profile : AppRoute

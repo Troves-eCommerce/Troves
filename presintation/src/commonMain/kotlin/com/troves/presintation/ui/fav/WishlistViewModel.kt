@@ -19,10 +19,10 @@ class WishlistViewModel(
     private val toggleFavoriteUseCase: ToggleFavoriteUseCase,
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(WishlistUiState())
-    val state: StateFlow<WishlistUiState> = _state.asStateFlow()
+    private val _state = MutableStateFlow(WishlistState())
+    val state: StateFlow<WishlistState> = _state.asStateFlow()
 
-    private val _effect = Channel<WishlistUiEffect>(Channel.BUFFERED)
+    private val _effect = Channel<WishlistEffect>(Channel.BUFFERED)
     val effect = _effect.receiveAsFlow()
 
     init {
@@ -33,7 +33,7 @@ class WishlistViewModel(
         when (intent) {
             WishlistIntent.Load, WishlistIntent.Retry -> loadWishlist()
             is WishlistIntent.ProductClicked ->
-                sendEffect(WishlistUiEffect.NavigateToProduct(intent.product.id.toString()))
+                sendEffect(WishlistEffect.NavigateToProduct(intent.product.id.toString()))
             is WishlistIntent.RemoveClicked -> removeFavorite(intent.product)
             WishlistIntent.ClearAllClicked -> clearAll()
         }
@@ -53,13 +53,13 @@ class WishlistViewModel(
         viewModelScope.launch {
             when (val result = toggleFavoriteUseCase(product)) {
                 ToggleFavoriteResult.Removed ->
-                    sendEffect(WishlistUiEffect.ShowToast("${product.title} removed from wishlist"))
+                    sendEffect(WishlistEffect.ShowToast("${product.title} removed from wishlist"))
                 ToggleFavoriteResult.RequiresLogin -> {
-                    sendEffect(WishlistUiEffect.ShowLoginRequiredDialog)
+                    sendEffect(WishlistEffect.ShowLoginRequiredDialog)
                     loadWishlist()
                 }
                 else -> {
-                    sendEffect(WishlistUiEffect.ShowToast("Couldn't remove item"))
+                    sendEffect(WishlistEffect.ShowToast("Couldn't remove item"))
                     loadWishlist()
                 }
             }
@@ -72,11 +72,11 @@ class WishlistViewModel(
         _state.update { it.copy(items = emptyList()) }
         viewModelScope.launch {
             toRemove.forEach { product -> toggleFavoriteUseCase(product) }
-            sendEffect(WishlistUiEffect.ShowToast("Wishlist cleared"))
+            sendEffect(WishlistEffect.ShowToast("Wishlist cleared"))
         }
     }
 
-    private fun sendEffect(newEffect: WishlistUiEffect) {
+    private fun sendEffect(newEffect: WishlistEffect) {
         viewModelScope.launch { _effect.send(newEffect) }
     }
 }

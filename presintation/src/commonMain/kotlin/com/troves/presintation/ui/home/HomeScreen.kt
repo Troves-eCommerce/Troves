@@ -69,7 +69,9 @@ import troves.designsystem.generated.resources.img_onboarding1
 fun HomeScreen(
     onNavigateToProduct: (String) -> Unit,
     onNavigateToProducts: (sourceType: String, sourceId: String, sourceName: String) -> Unit,
+    onNavigateToAllBrands: () -> Unit,
     onNavigateToRegister: () -> Unit,
+    onNavigateToSearch: () -> Unit,
     onNavigateToCart: () -> Unit,
     viewModel: HomeViewModel = koinViewModel(),
 ) {
@@ -85,9 +87,11 @@ fun HomeScreen(
                 effect.sourceId,
                 effect.sourceName,
             )
+            is HomeEffect.NavigateToAllBrands -> onNavigateToAllBrands()
             is HomeEffect.NavigateToRegister -> onNavigateToRegister()
             is HomeEffect.NavigateToCart -> onNavigateToCart()
             is HomeEffect.ShowToast -> scope.launch { snackbarHostState.showSnackbar(effect.message) }
+            is HomeEffect.NavigateToSearch -> onNavigateToSearch()
             is HomeEffect.ShowLoginRequiredDialog -> scope.launch {
                 snackbarHostState.showSnackbar("Please login to continue")
             }

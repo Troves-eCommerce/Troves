@@ -11,6 +11,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.Snapshot
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
@@ -22,6 +23,7 @@ import com.troves.designsystem.components.bottomnav.BottomNavItem
 import com.troves.designsystem.components.bottomnav.SPBottomNavigation
 import com.troves.presintation.ui.MainViewModel
 import com.troves.presintation.ui.StartDestination
+import com.troves.presintation.ui.allbrands.AllBrandsScreen
 import com.troves.presintation.ui.auth.LoginScreen
 import com.troves.presintation.ui.auth.RegisterScreen
 import com.troves.presintation.ui.cart.CartScreen
@@ -31,9 +33,9 @@ import com.troves.presintation.ui.onboarding.OnboardingScreen
 import com.troves.presintation.ui.productDetails.ProductDetailsScreen
 import com.troves.presintation.ui.products.ProductsScreen
 import com.troves.presintation.ui.profile.ProfileScreen
+import com.troves.presintation.ui.search.SearchScreen
+import com.troves.presintation.ui.search.SearchScreenViewModel
 import com.troves.presintation.ui.splash.SplashScreen
-import com.troves.presintation.ui.address.ManageSavedAddressesScreen
-import com.troves.presintation.ui.address.NewAddressScreen
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import org.koin.compose.viewmodel.koinViewModel
@@ -53,13 +55,12 @@ private val navSavedStateConfiguration = SavedStateConfiguration {
             subclass(AppRoute.Register::class, AppRoute.Register.serializer())
             subclass(AppRoute.Home::class, AppRoute.Home.serializer())
             subclass(AppRoute.Products::class, AppRoute.Products.serializer())
+            subclass(AppRoute.AllBrands::class, AppRoute.AllBrands.serializer())
             subclass(AppRoute.Favorites::class, AppRoute.Favorites.serializer())
             subclass(AppRoute.Profile::class, AppRoute.Profile.serializer())
             subclass(AppRoute.ProductDetails::class, AppRoute.ProductDetails.serializer())
             subclass(AppRoute.Cart::class, AppRoute.Cart.serializer())
-            subclass(AppRoute.ManageAddresses::class, AppRoute.ManageAddresses.serializer())
-            subclass(AppRoute.NewAddress::class, AppRoute.NewAddress.serializer())
-            subclass(AppRoute.Checkout::class, AppRoute.Checkout.serializer())
+            subclass(AppRoute.Search::class, AppRoute.Search.serializer())
         }
     }
 }
@@ -85,14 +86,14 @@ fun AppNav() {
     val bottomNavRoutes = remember {
         listOf(
             AppRoute.Home,
-            AppRoute.Cart,
             AppRoute.Favorites,
+            AppRoute.Profile, // Placeholder for Orders if it doesn't exist
             AppRoute.Profile
         )
     }
 
     val selectedIndex = bottomNavRoutes.indexOf(currentRoute)
-    val shouldShowBottomBar = currentRoute in bottomNavRoutes && currentRoute != AppRoute.Products
+    val shouldShowBottomBar = currentRoute in bottomNavRoutes && currentRoute != AppRoute.Products && currentRoute != AppRoute.Cart
 
     fun replaceWith(route: NavKey) {
         Snapshot.withMutableSnapshot {
@@ -118,7 +119,9 @@ fun AppNav() {
                     backStack.add(AppRoute.ProductDetails(productId))
                 },
                 onNavigateToRegister = { backStack.add(AppRoute.Register) },
+                onNavigateToSearch = {backStack.add(AppRoute.Search)},
                 onNavigateToCart = { backStack.add(AppRoute.Cart) },
+                onNavigateToAllBrands = { backStack.add(AppRoute.AllBrands) },
                 onNavigateToProducts = { sourceType, sourceId, sourceName ->
                     backStack.add(
                         AppRoute.Products(
@@ -178,69 +181,46 @@ fun AppNav() {
                 onNavigateBack = { backStack.removeLastOrNull() },
             )
         }
+        entry<AppRoute.AllBrands> {
+            AllBrandsScreen(
+                onNavigateToProducts = { sourceType, sourceId, sourceName ->
+                    backStack.add(
+                        AppRoute.Products(
+                            sourceType = sourceType,
+                            sourceId = sourceId,
+                            sourceName = sourceName,
+                        ),
+                    )
+                },
+                onNavigateBack = { backStack.removeLastOrNull() },
+            )
+        }
         entry<AppRoute.Profile> {
             ProfileScreen(
-                onNavigateToLogin = { replaceWith(AppRoute.Login) },
-                onNavigateToAddresses = { backStack.add(AppRoute.ManageAddresses) }
+                onNavigateToLogin = { replaceWith(AppRoute.Login) }
             )
         }
         entry<AppRoute.Cart> {
             CartScreen(
                 onNavigateBack = { backStack.removeLastOrNull() },
-                onNavigateToCheckout = { backStack.add(AppRoute.Checkout) },
+                onNavigateToCheckout = { backStack.removeLastOrNull() },
+                onNavigateToLogin = { backStack.add(AppRoute.Login) },
             )
         }
-        entry<AppRoute.ManageAddresses> {
-            val viewModel: com.troves.presintation.ui.address.ManageSavedAddressesViewModel = koinViewModel()
-            val state by viewModel.state.collectAsState()
-            
-            // Handle effects
-            androidx.compose.runtime.LaunchedEffect(Unit) {
-                viewModel.effect.collect { effect ->
-                    when (effect) {
-                        is com.troves.presintation.ui.address.ManageSavedAddressesEffect.NavigateBack -> backStack.removeLastOrNull()
-                        is com.troves.presintation.ui.address.ManageSavedAddressesEffect.NavigateToEditAddress -> backStack.add(AppRoute.NewAddress)
-                        is com.troves.presintation.ui.address.ManageSavedAddressesEffect.NavigateToNewAddress -> backStack.add(AppRoute.NewAddress)
-                    }
-                }
-            }
-            
-            ManageSavedAddressesScreen(
+        entry<AppRoute.Search> {
+            val viewModel: SearchScreenViewModel = koinViewModel()
+            val state by viewModel.state.collectAsStateWithLifecycle()
+            val onIntent = viewModel::onIntent
+            SearchScreen(
                 state = state,
-                onIntent = viewModel::onIntent
-            )
-        }
-        entry<AppRoute.NewAddress> {
-            val viewModel: com.troves.presintation.ui.address.NewAddressViewModel = koinViewModel()
-            val state by viewModel.state.collectAsState()
-            
-            // Handle effects
-            androidx.compose.runtime.LaunchedEffect(Unit) {
-                viewModel.effect.collect { effect ->
-                    when (effect) {
-                        is com.troves.presintation.ui.address.NewAddressEffect.NavigateBack -> backStack.removeLastOrNull()
-                        is com.troves.presintation.ui.address.NewAddressEffect.ShowToast -> {
-                            // TODO: Show toast or snackbar
-                        }
-                    }
-                }
-            }
-
-            NewAddressScreen(
-                state = state,
-                onIntent = viewModel::onIntent
-            )
-        }
-        entry<AppRoute.Checkout> {
-            com.troves.presintation.ui.checkout.CheckoutScreen(
-                onNavigateBack = { backStack.removeLastOrNull() },
-                onNavigateToOrderSuccess = { 
-                    Snapshot.withMutableSnapshot {
-                        backStack.clear()
-                        backStack.add(AppRoute.Home)
-                    }
+                onIntent = onIntent,
+                effect = viewModel.effect,
+                onNavigateToDetails = {
+                    backStack.add(AppRoute.ProductDetails(it))
                 },
-                onNavigateToNewAddress = { backStack.add(AppRoute.NewAddress) }
+                onNavigateBack = {
+                    backStack.removeLastOrNull()
+                }
             )
         }
     }
@@ -252,8 +232,8 @@ fun AppNav() {
                 SPBottomNavigation(
                     items = listOf(
                         BottomNavItem("Home", Res.drawable.ic_home),
+                        BottomNavItem("Wishlist", Res.drawable.ic_explore),
                         BottomNavItem("Orders", Res.drawable.ic_order),
-                        BottomNavItem("Wishlist", Res.drawable.ic_wishlist),
                         BottomNavItem("Profile", Res.drawable.ic_profile)
                     ),
                     selectedIndex = if (selectedIndex != -1) selectedIndex else 0,
@@ -265,7 +245,8 @@ fun AppNav() {
         NavDisplay<NavKey>(
             modifier = Modifier
                 .fillMaxSize()
-                .windowInsetsPadding(WindowInsets(bottom = paddingValues.calculateBottomPadding())),
+                .padding(bottom = paddingValues.calculateBottomPadding())
+            ,
             entries = rememberDecoratedNavEntries(
                 backStack = backStack,
                 entryProvider = entryProvider

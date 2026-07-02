@@ -1,8 +1,8 @@
 package com.troves.data.repository
 
-import com.troves.data.local.preferenceses.AppPreferencesDataSource
-import com.troves.domain.AuthenticationRepository
-import com.troves.domain.Result
+import com.troves.data.source.local.preferenceses.AppPreferencesDataSource
+import com.troves.domain.utils.Result
+import com.troves.domain.repository.AuthenticationRepository
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.GoogleAuthProvider
 import dev.gitlive.firebase.auth.auth

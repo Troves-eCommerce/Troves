@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.troves.domain.entity.Address
 import com.troves.domain.entity.AddressIcon
-import com.troves.domain.fold
+import com.troves.domain.utils.fold
 import com.troves.domain.usecase.address.AddAddressUseCase
 import com.troves.domain.usecase.shared.GetCountriesUseCase
 import com.troves.presintation.core.mvi.DefaultEffectPublisher

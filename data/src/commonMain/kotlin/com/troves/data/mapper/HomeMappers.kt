@@ -1,8 +1,8 @@
 package com.troves.data.mapper
 
-import com.troves.data.source.remote.dto.CustomCollectionDto
-import com.troves.data.source.remote.dto.ProductDto
-import com.troves.data.source.remote.dto.SmartCollection
+import com.troves.data.source.remote.service.ktor.dto.CustomCollectionDto
+import com.troves.data.source.remote.service.ktor.dto.ProductDto
+import com.troves.data.source.remote.service.ktor.dto.SmartCollection
 import com.troves.domain.entity.Product
 import com.troves.domain.entity.Brand
 import com.troves.domain.entity.Category
