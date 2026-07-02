@@ -19,6 +19,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.withContext
 import kotlinx.io.IOException
+import kotlin.map
 
 class TrovesRepositoryImpl(
     private val remoteDataSource: RemoteDatasource,
