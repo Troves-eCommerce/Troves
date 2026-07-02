@@ -160,9 +160,9 @@ buildkonfig {
     }
 }
 apollo {
-    service(name = "service") {
-        packageName.set("com.troves.data.source.remote.service.apollo.graphql")
-        srcDir(file("src/commonMain/graphql"))
+    service(name = "admin") {
+        packageName.set("com.troves.data.source.remote.service.apollo.graphql.admin")
+        srcDir(file("src/commonMain/graphql/admin"))
         generateDataBuilders.set(true)
         val apiKey = localProperties.getProperty("SHOPIFY_API_KEY") ?: ""
         val url = localProperties.getProperty("SHOPIFY_REST_URL") ?: ""
@@ -171,9 +171,27 @@ apollo {
         introspection {
             endpointUrl.set("${url}graphql.json")
 
-            schemaFile.set(file("src/commonMain/graphql/schema.graphqls"))
+            schemaFile.set(file("src/commonMain/graphql/admin/admin.graphqls"))
 
             headers.put("X-Shopify-Access-Token", apiKey)
+        }
+    }
+}
+apollo {
+    service(name = "storefront") {
+        packageName.set("com.troves.data.source.remote.service.apollo.graphql.storefront")
+        srcDir(file("src/commonMain/graphql/storefront"))
+        generateDataBuilders.set(true)
+        val apiKey = localProperties.getProperty("SHOPIFY_STOREFRONT_ACCESS_TOKEN") ?: ""
+        val url = localProperties.getProperty("SHOPIFY_STOREFRONT_URL") ?: ""
+
+
+        introspection {
+            endpointUrl.set("${url}graphql.json")
+
+            schemaFile.set(file("src/commonMain/graphql/storefront/storefront.graphqls"))
+
+            headers.put("X-Shopify-Storefront-Access-Token", apiKey)
         }
     }
 }
