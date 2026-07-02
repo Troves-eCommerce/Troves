@@ -12,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.troves.designsystem.components.dialog.LoginRequiredDialog
 import com.troves.designsystem.components.dialog.TrovesDialog
 import com.troves.designsystem.theme.Theme
 import com.troves.domain.entity.Product
@@ -34,6 +35,7 @@ fun WishlistScreen(
 
     var productToRemove by remember { mutableStateOf<Product?>(null) }
     var showClearDialog by remember { mutableStateOf(false) }
+    var showLoginRequiredDialog by remember { mutableStateOf(false) }
 
     ObserveEffect(viewModel.effect) { effect ->
         when (effect) {
@@ -49,9 +51,22 @@ fun WishlistScreen(
             }
 
             WishlistEffect.ShowLoginRequiredDialog -> {
-                onNavigateToRegister()
+                showLoginRequiredDialog = true
             }
         }
+    }
+
+    if (showLoginRequiredDialog) {
+        LoginRequiredDialog(
+            message = "You need to be logged in to view your wishlist.",
+            onLoginClick = {
+                showLoginRequiredDialog = false
+                onNavigateToRegister()
+            },
+            onDismiss = {
+                showLoginRequiredDialog = false
+            }
+        )
     }
 
     productToRemove?.let { product ->

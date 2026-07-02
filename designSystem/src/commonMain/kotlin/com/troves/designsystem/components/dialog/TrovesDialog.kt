@@ -68,3 +68,19 @@ fun TrovesDialog(
         }
     )
 }
+
+@Composable
+fun LoginRequiredDialog(
+    message: String = "You need to be logged in to perform this action.",
+    onLoginClick: () -> Unit,
+    onDismiss: () -> Unit,
+) {
+    TrovesDialog(
+        title = "Login Required",
+        message = message,
+        confirmText = "Log In",
+        dismissText = "Cancel",
+        onConfirm = onLoginClick,
+        onDismiss = onDismiss
+    )
+}

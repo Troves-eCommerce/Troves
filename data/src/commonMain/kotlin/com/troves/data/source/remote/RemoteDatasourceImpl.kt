@@ -1,5 +1,14 @@
 package com.troves.data.source.remote
 
+import com.troves.data.source.remote.dto.Collection
+import com.troves.data.source.remote.dto.CollectionImage
+import com.troves.data.source.remote.dto.CustomCollectionResponse
+import com.troves.data.source.remote.dto.MarketingEventsResponse
+import com.troves.data.source.remote.dto.ProductDto
+import com.troves.data.source.remote.dto.ProductResponse
+import com.troves.data.source.remote.dto.SingleProductResponse
+import com.troves.data.source.remote.dto.WishlistDto
+import com.troves.data.source.remote.dto.CartItemDto
 import com.troves.data.source.remote.service.ktor.dto.Collection
 import com.troves.data.source.remote.service.ktor.dto.CollectionImage
 import com.troves.data.source.remote.service.ktor.dto.CustomCollectionResponse
@@ -85,6 +94,47 @@ class RemoteDatasourceImpl(
     override suspend fun removeFromWishlist(userId: String, productId: Long): Result<Unit> {
         return try {
             wishlistCollection(userId).document(productId.toString()).delete()
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
+    private fun cartCollection(userId: String) =
+        firestore.collection("users").document(userId).collection("cart")
+
+    override suspend fun getCart(userId: String): Result<List<CartItemDto>> {
+        return try {
+            val snapshot = cartCollection(userId).get()
+            val items = snapshot.documents.map { it.data(CartItemDto.serializer()) }
+            Result.Success(items)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
+    override suspend fun addToCart(userId: String, item: CartItemDto): Result<Unit> {
+        return try {
+            cartCollection(userId).document(item.id.toString()).set(item)
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
+    override suspend fun removeFromCart(userId: String, productId: Long): Result<Unit> {
+        return try {
+            cartCollection(userId).document(productId.toString()).delete()
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
+    override suspend fun clearCart(userId: String): Result<Unit> {
+        return try {
+            val snapshot = cartCollection(userId).get()
+            snapshot.documents.forEach { it.reference.delete() }
             Result.Success(Unit)
         } catch (e: Exception) {
             Result.Error(e)
