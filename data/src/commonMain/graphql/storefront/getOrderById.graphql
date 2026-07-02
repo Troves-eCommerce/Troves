@@ -1,0 +1,13 @@
+query GetOrderById($id: ID!) {
+    node(id: $id) {
+        ... on Order {
+            ...OrderCoreFields
+
+            lineItems(first: 100) {
+                nodes {
+                    ...OrderLineItemFields
+                }
+            }
+        }
+    }
+}
