@@ -50,7 +50,7 @@ val dataModule = module {
     single<TrovesRepository>          { TrovesRepositoryImpl(get()) }
     single<AuthenticationRepository>  { createAuthenticationRepository(get()) }
     single<PaymentRepository>         { PaymentRepositoryImpl() }
-    single<CartRepository>            { CartRepositoryImpl(get()) }
+    single<CartRepository>            { CartRepositoryImpl(get(), get()) }
     single<WishlistRepository>        { WishlistRepositoryImpl(get() , get()) }
     single<FirebaseFirestore> { Firebase.firestore }
 }

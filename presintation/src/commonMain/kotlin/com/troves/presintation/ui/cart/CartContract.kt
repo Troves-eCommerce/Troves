@@ -20,6 +20,8 @@ data class CartItemUi(
 sealed interface CartEffect {
     data object NavigateBack : CartEffect
     data object NavigateToCheckout : CartEffect
+    data object ShowLoginRequiredDialog : CartEffect
+    data class ShowToast(val message: String) : CartEffect
 }
 
 sealed interface CartIntent {

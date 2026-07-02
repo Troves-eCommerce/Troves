@@ -6,6 +6,7 @@ import com.troves.domain.entity.CartItem
 import com.troves.domain.usecase.cart.GetCartStreamUseCase
 import com.troves.domain.usecase.cart.RemoveFromCartUseCase
 import com.troves.domain.usecase.cart.UpdateCartQuantityUseCase
+import com.troves.domain.usecase.cart.CartOperationResult
 import com.troves.presintation.core.mvi.DefaultEffectPublisher
 import com.troves.presintation.core.mvi.DefaultStateHolder
 import com.troves.presintation.core.mvi.EffectPublisher
@@ -43,10 +44,19 @@ class CartViewModel(
         val item = currentState.items.find { it.productId == productId } ?: return
         val newQuantity = item.quantity + delta
         viewModelScope.launch {
-            if (newQuantity <= 0) {
+            val result = if (newQuantity <= 0) {
                 removeFromCart(productId)
             } else {
                 updateCartQuantity(productId, newQuantity)
+            }
+            when (result) {
+                CartOperationResult.RequiresLogin -> {
+                    sendEffect(CartEffect.ShowLoginRequiredDialog)
+                }
+                is CartOperationResult.Error -> {
+                    sendEffect(CartEffect.ShowToast("Couldn't update cart"))
+                }
+                CartOperationResult.Success -> Unit
             }
         }
     }

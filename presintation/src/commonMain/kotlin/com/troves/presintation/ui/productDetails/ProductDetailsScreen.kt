@@ -34,6 +34,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.troves.designsystem.components.dialog.LoginRequiredDialog
 import com.troves.designsystem.components.dialog.TrovesDialog
 import com.troves.designsystem.theme.Theme
 import com.troves.presintation.core.mvi.ObserveEffect
@@ -79,12 +80,9 @@ fun ProductDetailsScreen(
     }
 
     if (showLoginRequiredDialog) {
-        TrovesDialog(
-            title = "Login Required",
+        LoginRequiredDialog(
             message = "You need to be logged in to manage your favorites.",
-            confirmText = "Log In",
-            dismissText = "Cancel",
-            onConfirm = {
+            onLoginClick = {
                 showLoginRequiredDialog = false
                 onNavigateToLogin()
             },

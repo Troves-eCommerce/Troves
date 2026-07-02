@@ -16,13 +16,22 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
+import kotlinx.coroutines.launch
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.troves.designsystem.components.button.PrimaryButton
+import com.troves.designsystem.components.dialog.LoginRequiredDialog
 import com.troves.designsystem.components.topbar.BaseTopAppBar
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import com.troves.designsystem.theme.Theme
 import com.troves.presintation.core.mvi.ObserveEffect
 import com.troves.presintation.ui.cart.components.CartItemCard
@@ -35,24 +44,53 @@ import troves.designsystem.generated.resources.ic_arrow_back
 fun CartScreen(
     onNavigateBack: () -> Unit,
     onNavigateToCheckout: () -> Unit,
+    onNavigateToLogin: () -> Unit,
     viewModel: CartViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val snackBarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+    var showLoginRequiredDialog by remember { mutableStateOf(false) }
 
     ObserveEffect(viewModel.effect) { effect ->
         when (effect) {
             CartEffect.NavigateBack -> onNavigateBack()
             CartEffect.NavigateToCheckout -> onNavigateToCheckout()
+            CartEffect.ShowLoginRequiredDialog -> showLoginRequiredDialog = true
+            is CartEffect.ShowToast -> scope.launch { snackBarHostState.showSnackbar(effect.message) }
         }
     }
 
-    CartScreenContent(
-        state = state,
-        onIntent = viewModel::onIntent,
-        modifier = Modifier
-            .fillMaxSize()
-            .statusBarsPadding(),
-    )
+    if (showLoginRequiredDialog) {
+        LoginRequiredDialog(
+            message = "You need to be logged in to manage your cart.",
+            onLoginClick = {
+                showLoginRequiredDialog = false
+                onNavigateToLogin()
+            },
+            onDismiss = {
+                showLoginRequiredDialog = false
+            }
+        )
+    }
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        CartScreenContent(
+            state = state,
+            onIntent = viewModel::onIntent,
+            modifier = Modifier
+                .fillMaxSize()
+                .statusBarsPadding(),
+        )
+
+        SnackbarHost(
+            hostState = snackBarHostState,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .navigationBarsPadding()
+                .padding(16.dp),
+        )
+    }
 }
 
 @Composable
