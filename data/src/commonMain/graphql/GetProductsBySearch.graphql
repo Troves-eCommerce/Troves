@@ -1,0 +1,15 @@
+query GetProductsBySearch(
+    $first: Int!,
+    $query: String,
+    $after: String,
+    $sortKey: ProductSortKeys,
+    $reverse: Boolean
+) {
+    products(first: $first, query: $query, after: $after, sortKey: $sortKey, reverse: $reverse) {
+        edges {
+            node {
+                ...ProductCard
+            }
+        }
+    }
+}

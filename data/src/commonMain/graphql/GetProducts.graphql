@@ -3,28 +3,7 @@ query GetProducts($first: Int!, $after: String, $sortKey: ProductSortKeys, $reve
         edges {
             cursor
             node {
-                id
-                title
-                handle
-                vendor
-                productType
-                createdAt
-                updatedAt
-                tags
-                priceRange {
-                    minVariantPrice {
-                        amount
-                        currencyCode
-                    }
-                    maxVariantPrice {
-                        amount
-                        currencyCode
-                    }
-                }
-                featuredImage {
-                    url
-                    altText
-                }
+                ...ProductCard
             }
         }
         pageInfo {

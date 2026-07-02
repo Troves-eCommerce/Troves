@@ -16,7 +16,6 @@ import com.troves.data.source.remote.RemoteDatasource
 import com.troves.data.source.remote.RemoteDatasourceImpl
 import com.troves.data.source.remote.service.TrovesApiService
 import com.troves.data.source.remote.service.apollo.ApolloTrovesApiServiceImpl
-import com.troves.data.source.remote.service.ktor.KtorTrovesApiServiceImpl
 import com.troves.domain.repository.AuthenticationRepository
 import com.troves.domain.repository.CartRepository
 import com.troves.domain.repository.PaymentRepository
@@ -31,14 +30,13 @@ import org.koin.dsl.module
 val dataModule = module {
 
     // ── Network ───────────────────────────────────────────────────────────────
+    // Ktor client kept registered for easy rollback to the REST implementation.
     single<HttpClient> { provideHttpClient() }
-    single<TrovesApiService> { KtorTrovesApiServiceImpl(get()) }
     single<ApolloClient> {
         provideApolloClient()
     }
-    single {
-        ApolloTrovesApiServiceImpl(get())
-    }
+    // GraphQL (Apollo) is now the active TrovesApiService implementation.
+    single<TrovesApiService> { ApolloTrovesApiServiceImpl(get()) }
 
     // ── Remote data source ────────────────────────────────────────────────────
     single<RemoteDatasource> { RemoteDatasourceImpl(get(), get()) }

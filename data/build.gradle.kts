@@ -159,3 +159,21 @@ buildkonfig {
         )
     }
 }
+apollo {
+    service(name = "service") {
+        packageName.set("com.troves.data.source.remote.service.apollo.graphql")
+        srcDir(file("src/commonMain/graphql"))
+        generateDataBuilders.set(true)
+        val apiKey = localProperties.getProperty("SHOPIFY_API_KEY") ?: ""
+        val url = localProperties.getProperty("SHOPIFY_REST_URL") ?: ""
+
+
+        introspection {
+            endpointUrl.set("${url}graphql.json")
+
+            schemaFile.set(file("src/commonMain/graphql/schema.graphqls"))
+
+            headers.put("X-Shopify-Access-Token", apiKey)
+        }
+    }
+}
