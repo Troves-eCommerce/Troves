@@ -16,9 +16,38 @@ import org.jetbrains.compose.resources.painterResource
 import troves.designsystem.generated.resources.Res
 import troves.designsystem.generated.resources.ic_arrow_back
 
-@OptIn(ExperimentalMaterial3Api::class)
+import org.koin.compose.viewmodel.koinViewModel
+import com.troves.presintation.core.mvi.ObserveEffect
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.material3.SnackbarHostState
+import kotlinx.coroutines.launch
+import androidx.compose.runtime.rememberCoroutineScope
+
 @Composable
 fun NewAddressScreen(
+    onNavigateBack: () -> Unit,
+    viewModel: NewAddressViewModel = koinViewModel()
+) {
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+    
+    ObserveEffect(viewModel.effect) { effect ->
+        when (effect) {
+            NewAddressEffect.NavigateBack -> onNavigateBack()
+            is NewAddressEffect.ShowToast -> scope.launch { snackbarHostState.showSnackbar(effect.message) }
+        }
+    }
+    
+    NewAddressScreenContent(
+        state = state,
+        onIntent = viewModel::onIntent
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun NewAddressScreenContent(
     state: NewAddressUiState,
     onIntent: (NewAddressIntent) -> Unit
 ) {

@@ -36,6 +36,9 @@ import com.troves.presintation.ui.profile.ProfileScreen
 import com.troves.presintation.ui.search.SearchScreen
 import com.troves.presintation.ui.search.SearchScreenViewModel
 import com.troves.presintation.ui.splash.SplashScreen
+import com.troves.presintation.ui.checkout.CheckoutScreen
+import com.troves.presintation.ui.address.ManageSavedAddressesScreen
+import com.troves.presintation.ui.address.NewAddressScreen
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import org.koin.compose.viewmodel.koinViewModel
@@ -61,6 +64,9 @@ private val navSavedStateConfiguration = SavedStateConfiguration {
             subclass(AppRoute.ProductDetails::class, AppRoute.ProductDetails.serializer())
             subclass(AppRoute.Cart::class, AppRoute.Cart.serializer())
             subclass(AppRoute.Search::class, AppRoute.Search.serializer())
+            subclass(AppRoute.Checkout::class, AppRoute.Checkout.serializer())
+            subclass(AppRoute.ManageAddresses::class, AppRoute.ManageAddresses.serializer())
+            subclass(AppRoute.NewAddress::class, AppRoute.NewAddress.serializer())
         }
     }
 }
@@ -203,7 +209,7 @@ fun AppNav() {
         entry<AppRoute.Cart> {
             CartScreen(
                 onNavigateBack = { backStack.removeLastOrNull() },
-                onNavigateToCheckout = { backStack.removeLastOrNull() },
+                onNavigateToCheckout = { backStack.add(AppRoute.Checkout) },
                 onNavigateToLogin = { backStack.add(AppRoute.Login) },
             )
         }
@@ -221,6 +227,33 @@ fun AppNav() {
                 onNavigateBack = {
                     backStack.removeLastOrNull()
                 }
+            )
+        }
+        entry<AppRoute.Checkout> {
+            CheckoutScreen(
+                onNavigateToNewAddress = { backStack.add(AppRoute.NewAddress) },
+                onNavigateToOrderSuccess = {
+                    Snapshot.withMutableSnapshot {
+                        backStack.clear()
+                        backStack.add(AppRoute.Home)
+                    }
+                },
+                onNavigateBack = { backStack.removeLastOrNull() }
+            )
+        }
+        entry<AppRoute.ManageAddresses> {
+            ManageSavedAddressesScreen(
+                onNavigateToNewAddress = { backStack.add(AppRoute.NewAddress) },
+                onNavigateToEditAddress = { address -> 
+                    // For now, just navigate to NewAddress. Edit logic will be implemented later.
+                    backStack.add(AppRoute.NewAddress) 
+                },
+                onNavigateBack = { backStack.removeLastOrNull() }
+            )
+        }
+        entry<AppRoute.NewAddress> {
+            NewAddressScreen(
+                onNavigateBack = { backStack.removeLastOrNull() }
             )
         }
     }

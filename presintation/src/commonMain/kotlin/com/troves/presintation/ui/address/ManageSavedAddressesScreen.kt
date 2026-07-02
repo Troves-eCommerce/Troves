@@ -14,6 +14,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.troves.designsystem.components.button.SecondaryButton
 import com.troves.designsystem.components.topbar.BaseTopAppBar
 import com.troves.designsystem.theme.Theme
@@ -29,8 +30,34 @@ import androidx.compose.runtime.setValue
 import com.troves.domain.entity.Address
 import com.troves.domain.entity.AddressIcon
 
+import org.koin.compose.viewmodel.koinViewModel
+import com.troves.presintation.core.mvi.ObserveEffect
+
 @Composable
 fun ManageSavedAddressesScreen(
+    onNavigateBack: () -> Unit,
+    onNavigateToNewAddress: () -> Unit,
+    onNavigateToEditAddress: (Address) -> Unit,
+    viewModel: ManageSavedAddressesViewModel = koinViewModel()
+) {
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    
+    ObserveEffect(viewModel.effect) { effect ->
+        when (effect) {
+            ManageSavedAddressesEffect.NavigateBack -> onNavigateBack()
+            ManageSavedAddressesEffect.NavigateToNewAddress -> onNavigateToNewAddress()
+            is ManageSavedAddressesEffect.NavigateToEditAddress -> onNavigateToEditAddress(effect.address)
+        }
+    }
+    
+    ManageSavedAddressesScreenContent(
+        state = state,
+        onIntent = viewModel::onIntent
+    )
+}
+
+@Composable
+fun ManageSavedAddressesScreenContent(
     state: ManageSavedAddressesUiState,
     onIntent: (ManageSavedAddressesIntent) -> Unit
 ) {
