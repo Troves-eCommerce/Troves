@@ -61,6 +61,18 @@ class TrovesRepositoryImpl(
         }
     }
 
+    override suspend fun getProductsByVendor(vendorName: String): Result<List<Product>> {
+        return withContext(coroutineDispatcher) {
+            remoteDataSource.getProductsByVendor(vendorName = vendorName)
+        }
+    }
+
+    override suspend fun getProductsByCollection(collectionId: Long): Result<List<Product>> {
+        return withContext(coroutineDispatcher) {
+            remoteDataSource.getProductsByCollection(collectionId = collectionId.toString())
+        }
+    }
+
     override suspend fun getProductById(productId: String): Result<Product> {
         return withContext(coroutineDispatcher) {
             remoteDataSource.getProductById(productId = productId).fold(

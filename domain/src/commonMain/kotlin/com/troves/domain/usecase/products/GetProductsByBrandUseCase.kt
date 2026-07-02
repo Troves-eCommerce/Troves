@@ -8,11 +8,5 @@ class GetProductsByBrandUseCase(
     private val repository: TrovesRepository,
 ) {
     suspend operator fun invoke(brandName: String): Result<List<Product>> =
-        when (val result = repository.getAllProducts()) {
-            is Result.Success -> Result.Success(
-                result.value.filter { it.vendor.equals(brandName, ignoreCase = true) },
-            )
-            is Result.Error -> result
-            is Result.Loading -> result
-        }
+        repository.getProductsByVendor(vendorName = brandName)
 }

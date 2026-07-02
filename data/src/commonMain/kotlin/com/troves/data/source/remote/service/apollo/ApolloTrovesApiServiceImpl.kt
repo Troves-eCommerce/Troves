@@ -3,15 +3,20 @@ package com.troves.data.source.remote.service.apollo
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.api.Optional
 import com.troves.data.source.remote.service.TrovesApiService
-import com.troves.data.source.remote.service.apollo.graphql.admin.GetCollectionsQuery
-import com.troves.data.source.remote.service.apollo.graphql.admin.GetProductByIdQuery
-import com.troves.data.source.remote.service.apollo.graphql.admin.GetProductsBySearchQuery
-import com.troves.data.source.remote.service.apollo.graphql.admin.GetProductsQuery
+import com.troves.data.source.remote.service.apollo.graphql.GetCollectionsQuery
+import com.troves.data.source.remote.service.apollo.graphql.GetProductByIdQuery
+import com.troves.data.source.remote.service.apollo.graphql.GetProductsByCollectionQuery
+import com.troves.data.source.remote.service.apollo.graphql.GetProductsByVendorQuery
+import com.troves.data.source.remote.service.apollo.graphql.GetProductsBySearchQuery
+import com.troves.data.source.remote.service.apollo.graphql.GetProductsQuery
+import com.troves.data.source.remote.service.apollo.graphql.type.ProductCollectionSortKeys
+
 import com.troves.data.source.remote.service.apollo.mapper.toCustomCollectionDto
 import com.troves.data.source.remote.service.apollo.mapper.toDomainProduct
 import com.troves.data.source.remote.service.apollo.mapper.toProductDto
 import com.troves.data.source.remote.service.apollo.mapper.toSmartCollection
 import com.troves.data.source.remote.service.apollo.util.runQuery
+import com.troves.data.source.remote.service.apollo.util.toCollectionGid
 import com.troves.data.source.remote.service.apollo.util.toProductGid
 import com.troves.data.source.remote.service.apollo.util.toQueryOptional
 import com.troves.data.source.remote.service.apollo.util.toShopifySearchQuery
@@ -59,6 +64,30 @@ class ApolloTrovesApiServiceImpl(
             )
         ) { data ->
             data.products.edges.map { it.node.productCard.toDomainProduct() }
+        }
+
+    override suspend fun getProductsByVendor(vendorName: String): Result<List<Product>> =
+        apolloClient.runQuery(
+            GetProductsByVendorQuery(
+                first = SOURCE_PRODUCTS_PAGE_SIZE,
+                query = "vendor:'$vendorName'",
+            )
+        ) { data ->
+            data.products.edges.map { it.node.toDomainProduct() }
+        }
+
+    override suspend fun getProductsByCollection(collectionId: String): Result<List<Product>> =
+        apolloClient.runQuery(
+            GetProductsByCollectionQuery(
+                id = collectionId.toCollectionGid(),
+                first = SOURCE_PRODUCTS_PAGE_SIZE,
+                after = Optional.Absent,
+                sortKey = Optional.present(ProductCollectionSortKeys.BEST_SELLING),
+            )
+        ) { data ->
+            val collection = data.collection
+                ?: throw NoSuchElementException("Collection not found: $collectionId")
+            collection.products.edges.map { it.node.toDomainProduct() }
         }
 
     override suspend fun getProductImages(productId: String): Result<List<CollectionImage>> {
@@ -111,9 +140,10 @@ class ApolloTrovesApiServiceImpl(
 
     private companion object {
         const val DEFAULT_PAGE_SIZE = 250
+        const val SOURCE_PRODUCTS_PAGE_SIZE = 20
         const val BRANDS_QUERY = "collection_type:Vendor"
         const val CATEGORIES_QUERY = "collection_type:Collection"
         const val PRODUCT_TYPE_QUERY =  "collection_type:product_type"
-        
+
     }
 }
