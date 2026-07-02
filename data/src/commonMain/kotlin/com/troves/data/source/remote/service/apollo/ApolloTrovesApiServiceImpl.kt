@@ -3,13 +3,13 @@ package com.troves.data.source.remote.service.apollo
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.api.Optional
 import com.troves.data.source.remote.service.TrovesApiService
-import com.troves.data.source.remote.service.apollo.graphql.GetCollectionsQuery
-import com.troves.data.source.remote.service.apollo.graphql.GetProductByIdQuery
-import com.troves.data.source.remote.service.apollo.graphql.GetProductsByCollectionQuery
-import com.troves.data.source.remote.service.apollo.graphql.GetProductsByVendorQuery
-import com.troves.data.source.remote.service.apollo.graphql.GetProductsBySearchQuery
-import com.troves.data.source.remote.service.apollo.graphql.GetProductsQuery
-import com.troves.data.source.remote.service.apollo.graphql.type.ProductCollectionSortKeys
+import com.troves.data.source.remote.service.apollo.graphql.admin.GetCollectionsQuery
+import com.troves.data.source.remote.service.apollo.graphql.admin.GetProductByIdQuery
+import com.troves.data.source.remote.service.apollo.graphql.admin.GetProductsByCollectionQuery
+import com.troves.data.source.remote.service.apollo.graphql.admin.GetProductsBySearchQuery
+import com.troves.data.source.remote.service.apollo.graphql.admin.GetProductsByVendorQuery
+import com.troves.data.source.remote.service.apollo.graphql.admin.GetProductsQuery
+import com.troves.data.source.remote.service.apollo.graphql.admin.type.ProductCollectionSortKeys
 
 import com.troves.data.source.remote.service.apollo.mapper.toCustomCollectionDto
 import com.troves.data.source.remote.service.apollo.mapper.toDomainProduct

@@ -1,8 +1,7 @@
 package com.troves.data.source.remote.service.apollo.mapper
 
-import com.troves.data.source.remote.service.apollo.graphql.GetProductsByCollectionQuery
-import com.troves.data.source.remote.service.apollo.graphql.GetProductsByVendorQuery
-import com.troves.data.source.remote.service.apollo.graphql.fragment.ProductCard
+import com.troves.data.source.remote.service.apollo.graphql.admin.GetProductsByCollectionQuery
+import com.troves.data.source.remote.service.apollo.graphql.admin.GetProductsByVendorQuery
 import com.troves.data.source.remote.service.apollo.graphql.admin.fragment.ProductCard
 import com.troves.data.source.remote.service.apollo.util.gidToLong
 import com.troves.data.source.remote.service.ktor.dto.Option
