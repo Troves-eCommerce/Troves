@@ -86,10 +86,9 @@ fun AppNav() {
     val bottomNavRoutes = remember {
         listOf(
             AppRoute.Home,
-            AppRoute.Profile,
             AppRoute.Favorites,
             AppRoute.Cart,
-            AppRoute.Profile
+            AppRoute.Profile,
         )
     }
 
@@ -232,7 +231,7 @@ fun AppNav() {
                 SPBottomNavigation(
                     items = listOf(
                         BottomNavItem("Home", Res.drawable.ic_home),
-                        BottomNavItem("Wishlist", Res.drawable.ic_explore),
+                        BottomNavItem("Wishlist", Res.drawable.ic_wishlist),
                         BottomNavItem("Orders", Res.drawable.ic_order),
                         BottomNavItem("Profile", Res.drawable.ic_profile)
                     ),
