@@ -3,6 +3,7 @@ package com.troves.data.repository
 import com.troves.data.mapper.toBrand
 import com.troves.data.mapper.toCategory
 import com.troves.data.mapper.toDomain
+import com.troves.data.source.local.preferenceses.AppPreferencesDataSource
 import com.troves.data.source.remote.RemoteDatasource
 import com.troves.domain.entity.Ad
 import com.troves.domain.entity.Brand
@@ -17,11 +18,13 @@ import com.troves.domain.utils.map
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import kotlinx.io.IOException
 
 class TrovesRepositoryImpl(
     private val remoteDataSource: RemoteDatasource,
+    private val dataSource: AppPreferencesDataSource,
     private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : TrovesRepository {
 
@@ -98,7 +101,18 @@ class TrovesRepositoryImpl(
     }
 
     override suspend fun getAds(): Result<List<Ad>> = Result.Success(FAKE_ADS)
+    override val selectedLanguage: Flow<String> = dataSource.selectedLanguage
+    override val themeMode: Flow<String> = dataSource.themeMode
+    override val selectedCurrency: Flow<String> = dataSource.selectedCurrency
 
+    override suspend fun setSelectedLanguage(language: String) =
+        dataSource.setSelectedLanguage(language)
+
+    override suspend fun setThemeMode(mode: String) =
+        dataSource.setThemeMode(mode)
+
+    override suspend fun setSelectedCurrency(currency: String) =
+        dataSource.setSelectedCurrency(currency)
     private companion object {
         val FAKE_ADS = listOf(
             Ad(
