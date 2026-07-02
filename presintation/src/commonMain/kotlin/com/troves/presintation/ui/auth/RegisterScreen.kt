@@ -72,6 +72,7 @@ fun RegisterScreen(
             is AuthEffect.ShowMessage -> successMessage = effect.message
             is AuthEffect.ShowError -> toastError = effect.message
             AuthEffect.NavigateToHome -> onRegisterSuccess()
+            is AuthEffect.OnRegistered -> TODO()
         }
     }
 

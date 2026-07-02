@@ -72,6 +72,7 @@ fun LoginScreen(
             is AuthEffect.ShowMessage -> successMessage = effect.message
             is AuthEffect.ShowError -> toastError = effect.message
             AuthEffect.NavigateToHome -> onLoginSuccess()
+            is AuthEffect.OnRegistered -> TODO()
         }
     }
 

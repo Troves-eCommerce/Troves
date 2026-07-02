@@ -1,0 +1,13 @@
+query GetOrders(
+    $customerAccessToken: String!
+) {
+    customer(customerAccessToken: $customerAccessToken) {
+        id
+
+        orders(first: 20, reverse: true) {
+            nodes {
+                ...OrderCoreFields
+            }
+        }
+    }
+}

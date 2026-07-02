@@ -1,0 +1,56 @@
+query GetCart($cartId: ID!) {
+    cart(id: $cartId) {
+        id
+
+        checkoutUrl
+
+        totalQuantity
+
+        buyerIdentity {
+            email
+        }
+
+        cost {
+            subtotalAmount {
+                amount
+                currencyCode
+            }
+
+            totalAmount {
+                amount
+                currencyCode
+            }
+        }
+
+        lines(first: 50) {
+            nodes {
+                id
+                quantity
+
+                merchandise {
+                    ... on ProductVariant {
+                        id
+                        title
+
+                        product {
+                            id
+                            title
+                        }
+                    }
+                }
+
+                cost {
+                    subtotalAmount {
+                        amount
+                        currencyCode
+                    }
+
+                    totalAmount {
+                        amount
+                        currencyCode
+                    }
+                }
+            }
+        }
+    }
+}

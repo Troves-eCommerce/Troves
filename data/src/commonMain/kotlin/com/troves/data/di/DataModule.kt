@@ -10,8 +10,8 @@ import com.troves.data.repository.PaymentRepositoryImpl
 import com.troves.data.repository.TrovesRepositoryImpl
 import com.troves.data.repository.WishlistRepositoryImpl
 import com.troves.data.repository.createAuthenticationRepository
-import com.troves.data.source.local.preferenceses.AppPreferencesDataSource
-import com.troves.data.source.local.preferenceses.AppPreferencesDataSourceImpl
+import com.troves.data.source.local.preferenceses.TrovesPreferences
+import com.troves.data.source.local.preferenceses.TrovesPreferencesImpl
 import com.troves.data.source.remote.RemoteDatasource
 import com.troves.data.source.remote.RemoteDatasourceImpl
 import com.troves.data.source.remote.service.TrovesApiService
@@ -42,7 +42,7 @@ val dataModule = module {
     single<RemoteDatasource> { RemoteDatasourceImpl(get(), get()) }
 
     // ── Local ─────────────────────────────────────────────────────────────────
-    single<AppPreferencesDataSource> { AppPreferencesDataSourceImpl(get()) }
+    single<TrovesPreferences> { TrovesPreferencesImpl(get()) }
 
     // ── Database ──────────────────────────────────────────────────────────────
     single<TrovesDatabase> {

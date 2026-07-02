@@ -2,13 +2,22 @@ package com.troves.data.source.local.preferenceses
 
 import kotlinx.coroutines.flow.Flow
 
-interface AppPreferencesDataSource {
+interface TrovesPreferences {
     val isOnboardingDone: Flow<Boolean>
     val isLoggedIn: Flow<Boolean>
     val selectedLanguage: Flow<String>
     val themeMode: Flow<String>
     val authToken: Flow<String?>
     val newsRefreshInterval: Flow<Int>
+
+    val shopifyCustomerAccessToken: Flow<String>
+    val shopifyCustomerAccessTokenExpiring: Flow<Long>
+
+
+
+    suspend fun setShopifyCustomerAccessToken(accessToken: String)
+    suspend fun setShopifyCustomerAccessTokenExpiring(accessTokenTimestamp: Long)
+
 
     suspend fun setOnboardingDone(done: Boolean)
     suspend fun setLoggedIn(loggedIn: Boolean)

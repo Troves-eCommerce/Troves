@@ -10,6 +10,7 @@ import com.troves.data.source.remote.service.apollo.graphql.GetProductsByVendorQ
 import com.troves.data.source.remote.service.apollo.graphql.GetProductsBySearchQuery
 import com.troves.data.source.remote.service.apollo.graphql.GetProductsQuery
 import com.troves.data.source.remote.service.apollo.graphql.type.ProductCollectionSortKeys
+
 import com.troves.data.source.remote.service.apollo.mapper.toCustomCollectionDto
 import com.troves.data.source.remote.service.apollo.mapper.toDomainProduct
 import com.troves.data.source.remote.service.apollo.mapper.toProductDto
@@ -111,12 +112,22 @@ class ApolloTrovesApiServiceImpl(
 
     // region brands / categories
     override suspend fun getAllBrands(): Result<Collection> =
-        apolloClient.runQuery(GetCollectionsQuery(first = DEFAULT_PAGE_SIZE, query = Optional.present(BRANDS_QUERY))) { data ->
+        apolloClient.runQuery(
+            GetCollectionsQuery(
+                first = DEFAULT_PAGE_SIZE,
+                query = Optional.present(BRANDS_QUERY)
+            )
+        ) { data ->
             Collection(smartCollections = data.collections.edges.map { it.node.toSmartCollection() })
         }
 
     override suspend fun getCategory(): Result<CustomCollectionResponse> =
-        apolloClient.runQuery(GetCollectionsQuery(first = DEFAULT_PAGE_SIZE, query = Optional.present(CATEGORIES_QUERY))) { data ->
+        apolloClient.runQuery(
+            GetCollectionsQuery(
+                first = DEFAULT_PAGE_SIZE,
+                query = Optional.present(CATEGORIES_QUERY)
+            )
+        ) { data ->
             CustomCollectionResponse(customCollections = data.collections.edges.map { it.node.toCustomCollectionDto() })
         }
     // endregion

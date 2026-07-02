@@ -1,0 +1,34 @@
+#fragment MoneyFields on MoneyV2 {
+#    amount
+#    currencyCode
+#}
+#
+#fragment PageInfoFields on PageInfo {
+#    hasNextPage
+#    hasPreviousPage
+#    startCursor
+#    endCursor
+#}
+#
+#query CustomerOrders($customerAccessToken: String!, $first: Int!, $after: String) {
+#    customer(customerAccessToken: $customerAccessToken) {
+#        id
+#        orders(first: $first, after: $after, sortKey: PROCESSED_AT, reverse: true) {
+#            edges {
+#                node {
+#                    id
+#                    orderNumber
+#                    processedAt
+#                    financialStatus
+#                    fulfillmentStatus
+#                    totalPriceV2 {
+#                        ...MoneyFields
+#                    }
+#                }
+#            }
+#            pageInfo {
+#                ...PageInfoFields
+#            }
+#        }
+#    }
+#}
