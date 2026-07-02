@@ -30,7 +30,12 @@ class AppPreferencesDataSourceImpl(
         get() = dataStore.data
             .catchIOException()
             .map { it[AppPreferencesKeys.SELECTED_LANGUAGE] ?: "en" }
-
+    override val selectedCurrency =
+        dataStore.data
+            .catchIOException()
+            .map {
+                it[AppPreferencesKeys.SELECTED_CURRENCY] ?: "USD"
+            }
     override val themeMode: Flow<String>
         get() = dataStore.data
             .catchIOException()
@@ -58,6 +63,12 @@ class AppPreferencesDataSourceImpl(
 
     override suspend fun setSelectedLanguage(language: String) {
         dataStore.edit { it[AppPreferencesKeys.SELECTED_LANGUAGE] = language }
+    }
+
+    override suspend fun setSelectedCurrency(currency: String) {
+        dataStore.edit {
+            it[AppPreferencesKeys.SELECTED_CURRENCY] = currency
+        }
     }
 
     override suspend fun setThemeMode(mode: String) {
