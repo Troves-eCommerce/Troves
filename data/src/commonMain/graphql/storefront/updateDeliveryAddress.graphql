@@ -1,0 +1,19 @@
+mutation UpdateDeliveryAddress(
+    $cartId: ID!,
+    $addresses: [CartSelectableAddressInput!]!
+) {
+    cartDeliveryAddressesAdd(
+        cartId: $cartId,
+        addresses: $addresses
+    ) {
+        cart {
+            id
+            checkoutUrl
+        }
+
+        userErrors {
+            field
+            message
+        }
+    }
+}

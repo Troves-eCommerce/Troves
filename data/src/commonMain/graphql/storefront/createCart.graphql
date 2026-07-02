@@ -1,0 +1,54 @@
+mutation CreateCart($input: CartInput) {
+    cartCreate(input: $input) {
+        cart {
+            id
+            checkoutUrl
+            totalQuantity
+
+            cost {
+                subtotalAmount {
+                    amount
+                    currencyCode
+                }
+                totalAmount {
+                    amount
+                    currencyCode
+                }
+                totalTaxAmount {
+                    amount
+                    currencyCode
+                }
+            }
+
+            lines(first: 20) {
+                nodes {
+                    id
+                    quantity
+
+                    merchandise {
+                        ... on ProductVariant {
+                            id
+                            title
+
+                            product {
+                                id
+                                title
+                                handle
+                            }
+
+                            image {
+                                url
+                                altText
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        userErrors {
+            field
+            message
+        }
+    }
+}
