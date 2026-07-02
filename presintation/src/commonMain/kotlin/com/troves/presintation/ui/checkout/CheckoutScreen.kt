@@ -48,6 +48,7 @@ fun CheckoutScreen(
     }
 
     Scaffold(
+        modifier = Modifier.fillMaxSize().statusBarsPadding(),
         containerColor = Theme.colors.backGround,
         topBar = {
             BaseTopAppBar(
