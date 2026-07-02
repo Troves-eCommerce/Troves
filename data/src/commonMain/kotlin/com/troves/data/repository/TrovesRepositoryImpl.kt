@@ -72,6 +72,22 @@ class TrovesRepositoryImpl(
 
     override suspend fun getAds(): Result<List<Ad>> = Result.Success(FAKE_ADS)
 
+    override suspend fun getCountries(): Result<List<String>> {
+        return withContext(coroutineDispatcher) {
+            remoteDataSource.getCountries().map { dtoList ->
+                dtoList.mapNotNull { it.nameCommon ?: it.names?.common }.sorted()
+            }
+        }
+    }
+
+    override suspend fun getCities(countryName: String): Result<List<String>> {
+        return withContext(coroutineDispatcher) {
+            remoteDataSource.getCities(countryName).map { dto ->
+                dto.data?.sorted() ?: emptyList()
+            }
+        }
+    }
+
     private companion object {
         val FAKE_ADS = listOf(
             Ad(

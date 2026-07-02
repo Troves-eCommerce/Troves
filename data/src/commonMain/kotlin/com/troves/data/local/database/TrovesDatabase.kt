@@ -5,10 +5,11 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.RoomDatabaseConstructor
 
-@Database(entities = [WishlistEntity::class], version = 2)
+@Database(entities = [WishlistEntity::class, AddressEntity::class], version = 4)
 @ConstructedBy(TrovesDatabaseConstructor::class)
 abstract class TrovesDatabase : RoomDatabase() {
     abstract fun wishlistDao(): WishlistDao
+    abstract fun addressDao(): AddressDao
 }
 
 @Suppress("KotlinNoActualForExpect")

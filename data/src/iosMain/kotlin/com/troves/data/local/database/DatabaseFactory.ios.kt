@@ -10,6 +10,6 @@ actual class DatabaseFactory {
         return Room.databaseBuilder<TrovesDatabase>(
             name = dbFilePath,
             factory = { TrovesDatabase::class.instantiateImpl() }
-        )
+        ).fallbackToDestructiveMigration(true)
     }
 }

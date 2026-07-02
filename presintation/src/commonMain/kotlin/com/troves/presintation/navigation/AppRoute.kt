@@ -11,6 +11,12 @@ sealed interface AppRoute : NavKey {
     data object Onboarding : AppRoute
 
     @Serializable
+    data object Settings : AppRoute
+
+    @Serializable
+    data object Checkout : AppRoute
+
+    @Serializable
     data object Login : AppRoute
 
     @Serializable
@@ -37,4 +43,10 @@ sealed interface AppRoute : NavKey {
 
     @Serializable
     data object Cart : AppRoute
+
+    @Serializable
+    data object ManageAddresses : AppRoute
+
+    @Serializable
+    data object NewAddress : AppRoute
 }

@@ -67,4 +67,11 @@ val domainModule = module {
     factory { RemoveFromCartUseCase(get()) }
     factory { UpdateCartQuantityUseCase(get()) }
     single { SyncWishlistUseCase(get(),get()) }
+
+    // Address
+    factory { com.troves.domain.usecase.address.GetSavedAddressesUseCase(get()) }
+    factory { com.troves.domain.usecase.address.AddAddressUseCase(get()) }
+    factory { com.troves.domain.usecase.address.DeleteAddressUseCase(get()) }
+    factory { com.troves.domain.usecase.shared.GetCountriesUseCase(get()) }
+    factory { com.troves.domain.usecase.shared.GetCitiesUseCase(get()) }
 }

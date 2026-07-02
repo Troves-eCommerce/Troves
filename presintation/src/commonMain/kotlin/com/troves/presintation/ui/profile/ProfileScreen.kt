@@ -16,11 +16,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.ui.unit.dp
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun ProfileScreen(
     onNavigateToLogin: () -> Unit,
+    onNavigateToAddresses: () -> Unit = {},
     viewModel: ProfileViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -49,8 +53,16 @@ fun ProfileScreen(
             if (uiState.isLoading) {
                 CircularProgressIndicator()
             } else {
-                Button(onClick = { viewModel.onIntent(ProfileIntent.Logout) }) {
-                    Text("Logout")
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    Button(onClick = onNavigateToAddresses) {
+                        Text("Manage Saved Addresses")
+                    }
+                    Button(onClick = { viewModel.onIntent(ProfileIntent.Logout) }) {
+                        Text("Logout")
+                    }
                 }
             }
         }

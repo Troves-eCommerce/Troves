@@ -32,6 +32,8 @@ import com.troves.presintation.ui.productDetails.ProductDetailsScreen
 import com.troves.presintation.ui.products.ProductsScreen
 import com.troves.presintation.ui.profile.ProfileScreen
 import com.troves.presintation.ui.splash.SplashScreen
+import com.troves.presintation.ui.address.ManageSavedAddressesScreen
+import com.troves.presintation.ui.address.NewAddressScreen
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import org.koin.compose.viewmodel.koinViewModel
@@ -55,6 +57,9 @@ private val navSavedStateConfiguration = SavedStateConfiguration {
             subclass(AppRoute.Profile::class, AppRoute.Profile.serializer())
             subclass(AppRoute.ProductDetails::class, AppRoute.ProductDetails.serializer())
             subclass(AppRoute.Cart::class, AppRoute.Cart.serializer())
+            subclass(AppRoute.ManageAddresses::class, AppRoute.ManageAddresses.serializer())
+            subclass(AppRoute.NewAddress::class, AppRoute.NewAddress.serializer())
+            subclass(AppRoute.Checkout::class, AppRoute.Checkout.serializer())
         }
     }
 }
@@ -175,13 +180,67 @@ fun AppNav() {
         }
         entry<AppRoute.Profile> {
             ProfileScreen(
-                onNavigateToLogin = { replaceWith(AppRoute.Login) }
+                onNavigateToLogin = { replaceWith(AppRoute.Login) },
+                onNavigateToAddresses = { backStack.add(AppRoute.ManageAddresses) }
             )
         }
         entry<AppRoute.Cart> {
             CartScreen(
                 onNavigateBack = { backStack.removeLastOrNull() },
-                onNavigateToCheckout = { backStack.removeLastOrNull() },
+                onNavigateToCheckout = { backStack.add(AppRoute.Checkout) },
+            )
+        }
+        entry<AppRoute.ManageAddresses> {
+            val viewModel: com.troves.presintation.ui.address.ManageSavedAddressesViewModel = koinViewModel()
+            val state by viewModel.state.collectAsState()
+            
+            // Handle effects
+            androidx.compose.runtime.LaunchedEffect(Unit) {
+                viewModel.effect.collect { effect ->
+                    when (effect) {
+                        is com.troves.presintation.ui.address.ManageSavedAddressesEffect.NavigateBack -> backStack.removeLastOrNull()
+                        is com.troves.presintation.ui.address.ManageSavedAddressesEffect.NavigateToEditAddress -> backStack.add(AppRoute.NewAddress)
+                        is com.troves.presintation.ui.address.ManageSavedAddressesEffect.NavigateToNewAddress -> backStack.add(AppRoute.NewAddress)
+                    }
+                }
+            }
+            
+            ManageSavedAddressesScreen(
+                state = state,
+                onIntent = viewModel::onIntent
+            )
+        }
+        entry<AppRoute.NewAddress> {
+            val viewModel: com.troves.presintation.ui.address.NewAddressViewModel = koinViewModel()
+            val state by viewModel.state.collectAsState()
+            
+            // Handle effects
+            androidx.compose.runtime.LaunchedEffect(Unit) {
+                viewModel.effect.collect { effect ->
+                    when (effect) {
+                        is com.troves.presintation.ui.address.NewAddressEffect.NavigateBack -> backStack.removeLastOrNull()
+                        is com.troves.presintation.ui.address.NewAddressEffect.ShowToast -> {
+                            // TODO: Show toast or snackbar
+                        }
+                    }
+                }
+            }
+
+            NewAddressScreen(
+                state = state,
+                onIntent = viewModel::onIntent
+            )
+        }
+        entry<AppRoute.Checkout> {
+            com.troves.presintation.ui.checkout.CheckoutScreen(
+                onNavigateBack = { backStack.removeLastOrNull() },
+                onNavigateToOrderSuccess = { 
+                    Snapshot.withMutableSnapshot {
+                        backStack.clear()
+                        backStack.add(AppRoute.Home)
+                    }
+                },
+                onNavigateToNewAddress = { backStack.add(AppRoute.NewAddress) }
             )
         }
     }

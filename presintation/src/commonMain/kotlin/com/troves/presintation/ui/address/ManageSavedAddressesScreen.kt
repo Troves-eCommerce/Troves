@@ -1,0 +1,209 @@
+package com.troves.presintation.ui.address
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.*
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import com.troves.designsystem.components.button.SecondaryButton
+import com.troves.designsystem.components.topbar.BaseTopAppBar
+import com.troves.designsystem.theme.Theme
+import org.jetbrains.compose.resources.painterResource
+import troves.designsystem.generated.resources.Res
+import troves.designsystem.generated.resources.ic_arrow_back
+import troves.designsystem.generated.resources.ic_home
+import troves.designsystem.generated.resources.ic_profile
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import com.troves.domain.entity.Address
+import com.troves.domain.entity.AddressIcon
+
+@Composable
+fun ManageSavedAddressesScreen(
+    state: ManageSavedAddressesUiState,
+    onIntent: (ManageSavedAddressesIntent) -> Unit
+) {
+    var addressToDelete by remember { mutableStateOf<Address?>(null) }
+    
+    if (addressToDelete != null) {
+        AlertDialog(
+            onDismissRequest = { addressToDelete = null },
+            title = { Text("Delete Address", style = Theme.typography.body.large.copy(fontWeight = FontWeight.Bold)) },
+            text = { Text("Are you sure you want to delete this address? This action cannot be undone.", style = Theme.typography.body.medium) },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        addressToDelete?.let { onIntent(ManageSavedAddressesIntent.OnDelete(it.id)) }
+                        addressToDelete = null
+                    }
+                ) {
+                    Text("Delete", color = Theme.colors.error)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { addressToDelete = null }) {
+                    Text("Cancel", color = Theme.colors.primary)
+                }
+            },
+            containerColor = Theme.colors.surface,
+            titleContentColor = Theme.colors.primaryFont,
+            textContentColor = Theme.colors.secondaryFont
+        )
+    }
+
+    Scaffold(
+        containerColor = Theme.colors.backGround,
+        topBar = {
+            BaseTopAppBar(
+                title = "Saved Addresses",
+                leadingIcon = painterResource(Res.drawable.ic_arrow_back),
+                onLeadingClick = { onIntent(ManageSavedAddressesIntent.OnBackClick) },
+                modifier = Modifier.background(Theme.colors.backGround)
+            )
+        },
+        bottomBar = {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Theme.colors.backGround)
+                    .navigationBarsPadding()
+                    .padding(Theme.spacing.medium),
+                contentAlignment = Alignment.Center
+            ) {
+                SecondaryButton(
+                    caption = "Add New Address",
+                    onClick = { onIntent(ManageSavedAddressesIntent.OnAddNew) },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        }
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .padding(horizontal = Theme.spacing.medium)
+        ) {
+            Text(
+                text = "Manage your delivery locations",
+                style = Theme.typography.body.medium,
+                color = Theme.colors.secondaryFont,
+                modifier = Modifier.padding(bottom = Theme.spacing.medium)
+            )
+
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(Theme.spacing.medium),
+                modifier = Modifier.fillMaxSize()
+            ) {
+                items(state.addresses, key = { it.id }) { address ->
+                    AddressCard(
+                        address = address,
+                        onEdit = { onIntent(ManageSavedAddressesIntent.OnEdit(address)) },
+                        onDelete = { addressToDelete = address }
+                    )
+                }
+                item { Spacer(Modifier.height(80.dp)) } // Room for bottom button if scrolling overlaps
+            }
+        }
+    }
+}
+
+@Composable
+private fun AddressCard(
+    address: Address,
+    onEdit: () -> Unit,
+    onDelete: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .shadow(3.dp, RoundedCornerShape(20.dp), spotColor = Color.Black.copy(alpha = 0.08f))
+            .clip(RoundedCornerShape(20.dp))
+            .background(Theme.colors.surface)
+            .padding(18.dp)
+    ) {
+        Row(verticalAlignment = Alignment.Top) {
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(Theme.colors.primary.copy(alpha = 0.12f)),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    painter = if (address.icon == AddressIcon.HOME) painterResource(Res.drawable.ic_home) else painterResource(Res.drawable.ic_profile),
+                    contentDescription = null,
+                    tint = Theme.colors.primary,
+                    modifier = Modifier.size(20.dp)
+                )
+            }
+            Spacer(Modifier.width(12.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = address.label,
+                    style = Theme.typography.body.large.copy(fontWeight = FontWeight.SemiBold),
+                    color = Theme.colors.primaryFont
+                )
+                Spacer(Modifier.height(4.dp))
+                Text(
+                    text = address.phone,
+                    style = Theme.typography.body.medium,
+                    color = Theme.colors.secondaryFont
+                )
+                Spacer(Modifier.height(2.dp))
+                address.lines.forEach { line ->
+                    Text(
+                        text = line,
+                        style = Theme.typography.body.medium,
+                        color = Theme.colors.secondaryFont
+                    )
+                }
+            }
+            if (address.isDefault) {
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(Theme.colors.primary)
+                        .padding(horizontal = 10.dp, vertical = 4.dp)
+                ) {
+                    Text(
+                        text = "Default",
+                        color = Theme.colors.onPrimary,
+                        style = Theme.typography.body.small.copy(fontWeight = FontWeight.Bold)
+                    )
+                }
+            }
+        }
+
+        Spacer(Modifier.height(12.dp))
+        Divider(color = Theme.colors.hint.copy(alpha = 0.2f))
+        Spacer(Modifier.height(8.dp))
+
+        Row {
+            TextButton(
+                onClick = onEdit,
+                colors = ButtonDefaults.textButtonColors(contentColor = Theme.colors.primary)
+            ) {
+                Text("Edit", style = Theme.typography.body.medium.copy(fontWeight = FontWeight.Medium))
+            }
+            Spacer(Modifier.width(8.dp))
+            TextButton(
+                onClick = onDelete,
+                colors = ButtonDefaults.textButtonColors(contentColor = Theme.colors.error)
+            ) {
+                Text("Delete", style = Theme.typography.body.medium.copy(fontWeight = FontWeight.Medium))
+            }
+        }
+    }
+}

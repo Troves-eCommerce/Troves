@@ -41,10 +41,12 @@ val dataModule = module {
     // ── Database ──────────────────────────────────────────────────────────────
     single<TrovesDatabase> {
         get<DatabaseFactory>().createBuilder()
+            .fallbackToDestructiveMigration(dropAllTables = true)
             .setDriver(BundledSQLiteDriver())
             .build()
     }
     single { get<TrovesDatabase>().wishlistDao() }
+    single { get<TrovesDatabase>().addressDao() }
 
     // ── Repositories ──────────────────────────────────────────────────────────
     single<TrovesRepository>          { TrovesRepositoryImpl(get()) }
@@ -53,4 +55,5 @@ val dataModule = module {
     single<CartRepository>            { CartRepositoryImpl() }
     single<WishlistRepository>        { WishlistRepositoryImpl(get() , get()) }
     single<FirebaseFirestore> { Firebase.firestore }
+    single<com.troves.domain.repository.AddressRepository> { com.troves.data.repository.AddressRepositoryImpl(get()) }
 }

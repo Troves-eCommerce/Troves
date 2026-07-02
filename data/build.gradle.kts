@@ -147,5 +147,9 @@ buildkonfig {
             STRING, "SHOPIFY_REST_URL",
             localProperties.getProperty("SHOPIFY_REST_URL") ?: error("SHOPIFY_HOSTNAME not set in local.properties")
         )
+        buildConfigField(
+            STRING, "REST_COUNTRIES_API_KEY",
+            localProperties.getProperty("REST_COUNTRIES_API_KEY") ?: error("REST_COUNTRIES_API_KEY not set in local.properties")
+        )
     }
 }

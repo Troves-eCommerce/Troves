@@ -9,6 +9,9 @@ import com.troves.presintation.ui.home.HomeViewModel
 import com.troves.presintation.ui.onboarding.OnboardingViewModel
 import com.troves.presintation.ui.productDetails.ProductDetailsViewModel
 import com.troves.presintation.ui.profile.ProfileViewModel
+import com.troves.presintation.ui.address.ManageSavedAddressesViewModel
+import com.troves.presintation.ui.address.NewAddressViewModel
+import com.troves.presintation.ui.checkout.CheckoutViewModel
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
@@ -22,4 +25,7 @@ val presentationModule = module {
     viewModelOf(::WishlistViewModel)
     viewModelOf(::CartViewModel)
     viewModelOf(::ProfileViewModel)
+    viewModelOf(::ManageSavedAddressesViewModel)
+    viewModelOf(::NewAddressViewModel)
+    viewModelOf(::CheckoutViewModel)
 }

@@ -12,4 +12,6 @@ interface TrovesRepository {
     suspend fun getBrands(): Result<List<Brand>>
     suspend fun getCategories(): Result<List<Category>>
     suspend fun getAds(): Result<List<Ad>>
+    suspend fun getCountries(): Result<List<String>>
+    suspend fun getCities(countryName: String): Result<List<String>>
 }
