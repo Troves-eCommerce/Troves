@@ -1,11 +1,9 @@
-package com.troves.data.local.database
+package com.troves.data.source.local.database
 
 import android.content.Context
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
-import com.troves.data.source.local.database.DATABASE_NAME
-import com.troves.data.source.local.database.TrovesDatabase
 import kotlinx.coroutines.Dispatchers
 
 actual class DatabaseFactory(private val context: Context) {
