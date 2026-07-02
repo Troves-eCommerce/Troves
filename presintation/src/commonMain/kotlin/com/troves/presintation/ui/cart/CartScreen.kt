@@ -29,6 +29,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.troves.designsystem.components.button.PrimaryButton
 import com.troves.designsystem.components.dialog.LoginRequiredDialog
+import com.troves.designsystem.components.dialog.TrovesDialog
 import com.troves.designsystem.components.topbar.BaseTopAppBar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -51,6 +52,7 @@ fun CartScreen(
     val snackBarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     var showLoginRequiredDialog by remember { mutableStateOf(false) }
+    var itemToRemove by remember { mutableStateOf<CartItemUi?>(null) }
 
     ObserveEffect(viewModel.effect) { effect ->
         when (effect) {
@@ -58,6 +60,7 @@ fun CartScreen(
             CartEffect.NavigateToCheckout -> onNavigateToCheckout()
             CartEffect.ShowLoginRequiredDialog -> showLoginRequiredDialog = true
             is CartEffect.ShowToast -> scope.launch { snackBarHostState.showSnackbar(effect.message) }
+            is CartEffect.ShowRemoveConfirmationDialog -> itemToRemove = effect.item
         }
     }
 
@@ -70,6 +73,21 @@ fun CartScreen(
             },
             onDismiss = {
                 showLoginRequiredDialog = false
+            }
+        )
+    }
+
+    itemToRemove?.let { item ->
+        TrovesDialog(
+            title = "Remove Item",
+            message = "Are you sure you want to remove \"${item.title}\" from your cart?",
+            confirmText = "Remove",
+            onConfirm = {
+                viewModel.onIntent(CartIntent.OnRemoveItemConfirm(item.productId))
+                itemToRemove = null
+            },
+            onDismiss = {
+                itemToRemove = null
             }
         )
     }

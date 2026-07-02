@@ -37,6 +37,21 @@ class CartViewModel(
             CartIntent.OnCheckout -> sendEffect(CartEffect.NavigateToCheckout)
             is CartIntent.OnIncrement -> changeQuantity(intent.productId, delta = +1)
             is CartIntent.OnDecrement -> changeQuantity(intent.productId, delta = -1)
+            is CartIntent.OnRemoveItemConfirm -> removeItem(intent.productId)
+        }
+    }
+
+    private fun removeItem(productId: Long) {
+        viewModelScope.launch {
+            when (removeFromCart(productId)) {
+                CartOperationResult.RequiresLogin -> {
+                    sendEffect(CartEffect.ShowLoginRequiredDialog)
+                }
+                is CartOperationResult.Error -> {
+                    sendEffect(CartEffect.ShowToast("Couldn't remove item from cart"))
+                }
+                CartOperationResult.Success -> Unit
+            }
         }
     }
 
@@ -44,19 +59,18 @@ class CartViewModel(
         val item = currentState.items.find { it.productId == productId } ?: return
         val newQuantity = item.quantity + delta
         viewModelScope.launch {
-            val result = if (newQuantity <= 0) {
-                removeFromCart(productId)
+            if (newQuantity <= 0) {
+                sendEffect(CartEffect.ShowRemoveConfirmationDialog(item))
             } else {
-                updateCartQuantity(productId, newQuantity)
-            }
-            when (result) {
-                CartOperationResult.RequiresLogin -> {
-                    sendEffect(CartEffect.ShowLoginRequiredDialog)
+                when (updateCartQuantity(productId, newQuantity)) {
+                    CartOperationResult.RequiresLogin -> {
+                        sendEffect(CartEffect.ShowLoginRequiredDialog)
+                    }
+                    is CartOperationResult.Error -> {
+                        sendEffect(CartEffect.ShowToast("Couldn't update cart"))
+                    }
+                    CartOperationResult.Success -> Unit
                 }
-                is CartOperationResult.Error -> {
-                    sendEffect(CartEffect.ShowToast("Couldn't update cart"))
-                }
-                CartOperationResult.Success -> Unit
             }
         }
     }

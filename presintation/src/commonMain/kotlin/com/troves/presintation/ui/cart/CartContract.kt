@@ -22,6 +22,7 @@ sealed interface CartEffect {
     data object NavigateToCheckout : CartEffect
     data object ShowLoginRequiredDialog : CartEffect
     data class ShowToast(val message: String) : CartEffect
+    data class ShowRemoveConfirmationDialog(val item: CartItemUi) : CartEffect
 }
 
 sealed interface CartIntent {
@@ -29,4 +30,5 @@ sealed interface CartIntent {
     data object OnCheckout : CartIntent
     data class OnIncrement(val productId: Long) : CartIntent
     data class OnDecrement(val productId: Long) : CartIntent
+    data class OnRemoveItemConfirm(val productId: Long) : CartIntent
 }
