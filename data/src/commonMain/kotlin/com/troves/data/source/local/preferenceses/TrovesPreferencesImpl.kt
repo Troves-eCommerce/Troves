@@ -10,11 +10,31 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 
-class AppPreferencesDataSourceImpl(
-    private val dataStore: DataStore<Preferences>
-) : AppPreferencesDataSource {
+class TrovesPreferencesImpl(
+    private val dataStore: DataStore<Preferences>,
+) : TrovesPreferences {
 
     // ── Reads ──────────────────────────────────────────────────────────
+    override val shopifyCustomerAccessToken: Flow<String>
+        get() {
+            return dataStore
+                .data
+                .catchIOException()
+                .map {
+                    it[AppPreferencesKeys.SHOPIFY_ACCESS_TOKEN_KEY]
+                        ?: error("SHOPIFY_ACCESS_TOKEN_KEY is null")
+                }
+        }
+    override val shopifyCustomerAccessTokenExpiring: Flow<Long>
+        get() {
+            return dataStore
+                .data
+                .catchIOException()
+                .map {
+                    it[AppPreferencesKeys.SHOPIFY_ACCESS_TOKEN_KEY_EXPIRING]
+                        ?: error("SHOPIFY_ACCESS_TOKEN_KEY_EXPIRING is null")
+                }
+        }
 
     override val isOnboardingDone: Flow<Boolean>
         get() = dataStore.data
@@ -48,6 +68,17 @@ class AppPreferencesDataSourceImpl(
 
     // ── Writes ─────────────────────────────────────────────────────────
 
+
+    override suspend fun setShopifyCustomerAccessToken(accessToken: String) {
+        dataStore.edit { it[AppPreferencesKeys.SHOPIFY_ACCESS_TOKEN_KEY] = accessToken }
+    }
+
+    override suspend fun setShopifyCustomerAccessTokenExpiring(accessTokenTimestamp: Long) {
+        dataStore.edit {
+            it[AppPreferencesKeys.SHOPIFY_ACCESS_TOKEN_KEY_EXPIRING] = accessTokenTimestamp
+        }
+    }
+
     override suspend fun setOnboardingDone(done: Boolean) {
         dataStore.edit { it[AppPreferencesKeys.IS_ONBOARDING_DONE] = done }
     }
@@ -79,6 +110,7 @@ class AppPreferencesDataSourceImpl(
     override suspend fun clearAll() {
         dataStore.edit { it.clear() }
     }
+
     private fun Flow<Preferences>.catchIOException() =
         catch { e ->
             if (e is IOException) emit(emptyPreferences())

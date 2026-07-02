@@ -1,6 +1,6 @@
 package com.troves.data.source.remote.service.apollo.mapper
 
-import com.troves.data.source.remote.service.apollo.graphql.GetCollectionsQuery
+import com.troves.data.source.remote.service.apollo.graphql.admin.GetCollectionsQuery
 import com.troves.data.source.remote.service.apollo.util.gidToLong
 import com.troves.data.source.remote.service.ktor.dto.CustomCollectionDto
 import com.troves.data.source.remote.service.ktor.dto.SmartCollection

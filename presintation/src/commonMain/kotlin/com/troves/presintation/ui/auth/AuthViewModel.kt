@@ -100,7 +100,9 @@ class AuthViewModel(
         viewModelScope.launch {
             updateState { copy(isLoading = true, errorMessage = null) }
             when (val result = signInWithGoogleUseCase(idToken, accessToken)) {
-                is Result.Success -> onAuthenticated("Signed in with Google successfully")
+                is Result.Success -> {
+                    onAuthenticated("Signed in with Google successfully")
+                }
                 is Result.Error -> updateState {
                     copy(
                         isLoading = false,
