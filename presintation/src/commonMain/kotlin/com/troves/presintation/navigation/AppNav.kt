@@ -1,9 +1,7 @@
 package com.troves.presintation.navigation
 
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -40,7 +38,6 @@ import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import org.koin.compose.viewmodel.koinViewModel
 import troves.designsystem.generated.resources.Res
-import troves.designsystem.generated.resources.ic_explore
 import troves.designsystem.generated.resources.ic_home
 import troves.designsystem.generated.resources.ic_order
 import troves.designsystem.generated.resources.ic_profile
@@ -61,6 +58,10 @@ private val navSavedStateConfiguration = SavedStateConfiguration {
             subclass(AppRoute.ProductDetails::class, AppRoute.ProductDetails.serializer())
             subclass(AppRoute.Cart::class, AppRoute.Cart.serializer())
             subclass(AppRoute.Search::class, AppRoute.Search.serializer())
+            subclass(AppRoute.OrderHistory::class, AppRoute.OrderHistory.serializer())
+            subclass(AppRoute.AddressList::class, AppRoute.AddressList.serializer())
+            subclass(AppRoute.AddAddress::class, AppRoute.AddAddress.serializer())
+            subclass(AppRoute.PaymentMethods::class, AppRoute.PaymentMethods.serializer())
         }
     }
 }
@@ -197,8 +198,24 @@ fun AppNav() {
         }
         entry<AppRoute.Profile> {
             ProfileScreen(
-                onNavigateToLogin = { replaceWith(AppRoute.Login) }
+                onNavigateToLogin = { replaceWith(AppRoute.Login) },
+                onNavigateToAddresses = { backStack.add(AppRoute.AddressList) },
+                onNavigateToOrders = { backStack.add(AppRoute.OrderHistory) },
+                onNavigateToPaymentMethods = { backStack.add(AppRoute.PaymentMethods) },
+                onNavigateToEditProfile = { /* Navigate to Edit Profile screen if it exists */ }
             )
+        }
+        entry<AppRoute.OrderHistory> {
+            // OrderHistoryScreen()
+        }
+        entry<AppRoute.AddressList> {
+            // AddressListScreen()
+        }
+        entry<AppRoute.AddAddress> {
+            // AddAddressScreen()
+        }
+        entry<AppRoute.PaymentMethods> {
+            // PaymentMethodsScreen()
         }
         entry<AppRoute.Cart> {
             CartScreen(
