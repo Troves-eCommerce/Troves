@@ -3,6 +3,8 @@ package com.troves.data.local.database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
+import com.troves.data.source.local.database.DATABASE_NAME
+import com.troves.data.source.local.database.TrovesDatabase
 import kotlinx.coroutines.Dispatchers
 import platform.Foundation.NSHomeDirectory
 

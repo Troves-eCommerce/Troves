@@ -1,8 +1,8 @@
 package com.troves.data.di
 
 import com.apollographql.apollo.ApolloClient
-import com.troves.data.local.database.DatabaseFactory
-import com.troves.data.local.database.TrovesDatabase
+import com.troves.data.source.local.database.DatabaseFactory
+import com.troves.data.source.local.database.TrovesDatabase
 import com.troves.data.network.provideApolloClient
 import com.troves.data.network.provideHttpClient
 import com.troves.data.repository.CartRepositoryImpl

@@ -1,7 +1,7 @@
 package com.troves.data.repository
 
-import com.troves.data.local.database.CartDao
-import com.troves.data.local.database.CartEntity
+import com.troves.data.source.local.database.CartDao
+import com.troves.data.source.local.database.CartEntity
 import com.troves.data.source.remote.RemoteDatasource
 import com.troves.data.source.remote.dto.CartItemDto
 import com.troves.domain.entity.CartItem

@@ -1,4 +1,4 @@
-package com.troves.data.local.database
+package com.troves.data.source.local.database
 
 import androidx.room.ConstructedBy
 import androidx.room.Database
