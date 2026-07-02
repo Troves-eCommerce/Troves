@@ -7,12 +7,6 @@ import com.troves.domain.repository.TrovesRepository
 class GetProductsByCategoryUseCase(
     private val repository: TrovesRepository,
 ) {
-    suspend operator fun invoke(categoryName: String): Result<List<Product>> =
-        when (val result = repository.getAllProducts()) {
-            is Result.Success -> Result.Success(
-                result.value.filter { it.title.contains(categoryName, ignoreCase = true) },
-            )
-            is Result.Error -> result
-            is Result.Loading -> result
-        }
+    suspend operator fun invoke(categoryId: Long): Result<List<Product>> =
+        repository.getProductsByCollection(collectionId = categoryId)
 }

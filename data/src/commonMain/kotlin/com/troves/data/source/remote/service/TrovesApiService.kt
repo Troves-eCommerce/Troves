@@ -17,6 +17,8 @@ interface TrovesApiService {
     suspend fun getAllProducts(): Result<ProductResponse>
     suspend fun getProductsByQuery(queryMap: Map<String, String>): Result<ProductResponse>
     suspend fun searchProducts(params: ProductSearchParams): Result<List<Product>>
+    suspend fun getProductsByVendor(vendorName: String): Result<List<Product>>
+    suspend fun getProductsByCollection(collectionId: String): Result<List<Product>>
 
     suspend fun getProductImages(productId: String): Result<List<CollectionImage>>
     suspend fun getProductById(productId: String): Result<SingleProductResponse>

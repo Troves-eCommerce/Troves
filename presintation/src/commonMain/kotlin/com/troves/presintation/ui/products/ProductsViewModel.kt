@@ -116,7 +116,7 @@ class ProductsViewModel(
 
             val productsResult = when (init.sourceType) {
                 "brand" -> getProductsByBrand(init.sourceName)
-                "category" -> getProductsByCategory(init.sourceName)
+                "category" -> getProductsByCategory(init.sourceId.toLongOrNull() ?: 0L)
                 else -> getProducts()
             }
 

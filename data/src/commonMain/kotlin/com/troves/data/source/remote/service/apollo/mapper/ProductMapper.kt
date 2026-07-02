@@ -1,5 +1,7 @@
 package com.troves.data.source.remote.service.apollo.mapper
 
+import com.troves.data.source.remote.service.apollo.graphql.GetProductsByCollectionQuery
+import com.troves.data.source.remote.service.apollo.graphql.GetProductsByVendorQuery
 import com.troves.data.source.remote.service.apollo.graphql.fragment.ProductCard
 import com.troves.data.source.remote.service.apollo.util.gidToLong
 import com.troves.data.source.remote.service.ktor.dto.Option
@@ -51,3 +53,21 @@ private fun ProductCard.optionValuesFor(optionName: String): List<String> =
     options.firstOrNull { it.name.equals(optionName, ignoreCase = true) }
         ?.values
         .orEmpty()
+
+internal fun GetProductsByVendorQuery.Node.toDomainProduct(): Product = Product(
+    id = id.gidToLong() ?: 0L,
+    title = title,
+    vendor = vendor,
+    price = "",
+    imageUrl = featuredImage?.url?.toString() ?: "",
+    status = "",
+)
+
+internal fun GetProductsByCollectionQuery.Node.toDomainProduct(): Product = Product(
+    id = id.gidToLong() ?: 0L,
+    title = title,
+    vendor = "",
+    price = priceRangeV2.minVariantPrice.amount.toString(),
+    imageUrl = featuredImage?.url?.toString() ?: "",
+    status = "",
+)
