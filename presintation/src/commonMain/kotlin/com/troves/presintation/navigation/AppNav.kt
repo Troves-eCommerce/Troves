@@ -86,15 +86,14 @@ fun AppNav() {
     val bottomNavRoutes = remember {
         listOf(
             AppRoute.Home,
-            AppRoute.Profile,
             AppRoute.Favorites,
-            AppRoute.Cart,
+            AppRoute.Profile, // Placeholder for Orders if it doesn't exist
             AppRoute.Profile
         )
     }
 
     val selectedIndex = bottomNavRoutes.indexOf(currentRoute)
-    val shouldShowBottomBar = currentRoute in bottomNavRoutes && currentRoute != AppRoute.Products
+    val shouldShowBottomBar = currentRoute in bottomNavRoutes && currentRoute != AppRoute.Products && currentRoute != AppRoute.Cart
 
     fun replaceWith(route: NavKey) {
         Snapshot.withMutableSnapshot {
@@ -205,6 +204,7 @@ fun AppNav() {
             CartScreen(
                 onNavigateBack = { backStack.removeLastOrNull() },
                 onNavigateToCheckout = { backStack.removeLastOrNull() },
+                onNavigateToLogin = { backStack.add(AppRoute.Login) },
             )
         }
         entry<AppRoute.Search> {

@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.troves.domain.entity.Product
 import com.troves.domain.usecase.cart.AddToCartUseCase
+import com.troves.domain.usecase.cart.CartOperationResult
 import com.troves.domain.usecase.details.GetProductByIdUseCase
 import com.troves.domain.usecase.wishlist.IsProductFavoritedUseCase
 import com.troves.domain.usecase.wishlist.ToggleFavoriteResult
@@ -128,8 +129,17 @@ class ProductDetailsViewModel(
     private fun addCurrentProductToCart() {
         val product = currentState.product ?: return
         viewModelScope.launch {
-            addToCartUseCase(product)
-            sendEffect(ProductDetailsEffect.ShowToast("Added to cart"))
+            when (addToCartUseCase(product)) {
+                CartOperationResult.Success -> {
+                    sendEffect(ProductDetailsEffect.ShowToast("Added to cart"))
+                }
+                CartOperationResult.RequiresLogin -> {
+                    sendEffect(ProductDetailsEffect.ShowLoginRequiredDialog)
+                }
+                is CartOperationResult.Error -> {
+                    sendEffect(ProductDetailsEffect.ShowToast("Couldn't add to cart"))
+                }
+            }
         }
     }
 }
