@@ -23,4 +23,22 @@
     <string name="sort_price_high_to_low">Price: High to Low</string>
     <string name="sort_best_seller">Best Seller</string>
     <string name="sort_group_by_sub_category">Group by Sub-Category</string>
+    <!-- Profile Screen -->
+    <string name="profile_title">Profile</string>
+    <string name="profile_account_settings">Account Settings</string>
+    <string name="profile_manage_addresses">Manage Addresses</string>
+    <string name="profile_order_history">Order History</string>
+    <string name="profile_payment_methods">Payment Methods</string>
+    <string name="profile_market_preferences">Market Preferences</string>
+    <string name="profile_live_rates">Live Rates</string>
+    <string name="profile_application">Application</string>
+    <string name="profile_language">Language</string>
+    <string name="profile_dark_mode">Dark Mode</string>
+    <string name="profile_sign_out">Sign Out</string>
+    <string name="profile_sign_out_confirmation">Are you sure you want to sign out?</string>
+    <string name="profile_cancel">Cancel</string>
+    <string name="profile_welcome">Welcome to Troves</string>
+    <string name="profile_guest_msg">Login to track orders and manage your account</string>
+    <string name="profile_login_signup">Login / Sign Up</string>
+    <string name="profile_select_language">Select Language</string>
 </resources>
