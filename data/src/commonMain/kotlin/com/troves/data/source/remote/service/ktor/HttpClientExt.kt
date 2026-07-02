@@ -1,4 +1,4 @@
-package com.troves.data.source.remote.service
+package com.troves.data.source.remote.service.ktor
 
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body

@@ -1,4 +1,4 @@
-package com.troves.data.source.remote.dto
+package com.troves.data.source.remote.service.ktor.dto
 
 import kotlinx.serialization.Serializable
 

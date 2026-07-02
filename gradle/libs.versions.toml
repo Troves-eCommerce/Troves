@@ -44,6 +44,7 @@ firebase-kotlin-sdk = "2.4.0"
 googleServices = "4.5.0"
 credentials = "1.2.2"
 googleid = "1.1.0"
+apollo = "5.0.1"
 
 [libraries]
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "androidx-core-splashscreen" }
@@ -117,6 +118,11 @@ firebase-firestore = { module = "dev.gitlive:firebase-firestore", version.ref = 
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 
+# Apollo
+apollo-runtime = { module = "com.apollographql.apollo:apollo-runtime", version.ref = "apollo" }
+apollo-normalized-cache = { module = "com.apollographql.apollo:apollo-normalized-cache", version.ref = "apollo" }
+apollo-normalized-cache-sqlite = { module = "com.apollographql.apollo:apollo-normalized-cache-sqlite", version.ref = "apollo" }
+
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 androidMultiplatformLibrary = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
@@ -130,6 +136,7 @@ androidx-room = { id = "androidx.room", version.ref = "room" }
 android-lint = { id = "com.android.lint", version.ref = "agp" }
 buildKonfig = { id = "com.codingfeline.buildkonfig", version.ref = "buildKonfig" }
 google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }
+apollo = { id = "com.apollographql.apollo", version.ref = "apollo" }
 
 [bundles]
 coil = [
@@ -143,4 +150,9 @@ ktor = [
     "ktor-client-auth",
     "ktor-serialization-kotlinx-json",
     "ktor-logging"
+]
+apollo = [
+    "apollo-normalized-cache-sqlite",
+    "apollo-normalized-cache",
+    "apollo-runtime"
 ]
