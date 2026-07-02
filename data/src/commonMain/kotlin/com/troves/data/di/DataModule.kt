@@ -47,7 +47,7 @@ val dataModule = module {
     single { get<TrovesDatabase>().cartDao() }
 
     // ── Repositories ──────────────────────────────────────────────────────────
-    single<TrovesRepository>          { TrovesRepositoryImpl(get()) }
+    single<TrovesRepository>          { TrovesRepositoryImpl(get(), get()) }
     single<AuthenticationRepository>  { createAuthenticationRepository(get()) }
     single<PaymentRepository>         { PaymentRepositoryImpl() }
     single<CartRepository>            { CartRepositoryImpl(get()) }
