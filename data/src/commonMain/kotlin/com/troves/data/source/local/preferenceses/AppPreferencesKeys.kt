@@ -12,4 +12,5 @@ internal object AppPreferencesKeys {
     val AUTH_TOKEN            = stringPreferencesKey("auth_token")
     val LAST_SYNCED_AT        = stringPreferencesKey("last_synced_at")
     val REFRESH_INTERVAL = intPreferencesKey("news_refresh_interval_minutes")
+    val SELECTED_CURRENCY = stringPreferencesKey("selected_currency")
 }
