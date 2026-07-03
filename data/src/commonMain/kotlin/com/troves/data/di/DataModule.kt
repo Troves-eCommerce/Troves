@@ -8,9 +8,7 @@ import com.troves.data.network.provideStorefrontApolloClient
 import com.troves.data.network.provideHttpClient
 import com.troves.data.network.provideLocationHttpClient
 import com.troves.data.repository.AddressRepositoryImpl
-import com.troves.data.repository.CartRepositoryImpl
 import com.troves.data.repository.LocationRepositoryImpl
-import com.troves.data.repository.OrderRepositoryImpl
 import com.troves.data.repository.PaymentRepositoryImpl
 import com.troves.data.repository.TrovesRepositoryImpl
 import com.troves.data.repository.WishlistRepositoryImpl
@@ -29,9 +27,7 @@ import com.troves.data.source.remote.service.apollo.ApolloStorefrontApiServiceIm
 import com.troves.data.source.remote.service.apollo.ApolloTrovesApiServiceImpl
 import com.troves.domain.repository.AddressRepository
 import com.troves.domain.repository.AuthenticationRepository
-import com.troves.domain.repository.CartRepository
 import com.troves.domain.repository.LocationRepository
-import com.troves.domain.repository.OrderRepository
 import com.troves.domain.repository.PaymentRepository
 import com.troves.domain.repository.TrovesRepository
 import com.troves.domain.repository.WishlistRepository
@@ -77,11 +73,9 @@ val dataModule = module {
     single { get<TrovesDatabase>().cartDao() }
 
     // ── Repositories ──────────────────────────────────────────────────────────
-    single<TrovesRepository>          { TrovesRepositoryImpl(get(), get()) }
+    single<TrovesRepository>          { TrovesRepositoryImpl(get(), get(), get(), get(), get()) }
     single<AuthenticationRepository>  { createAuthenticationRepository(get(), get()) }
     single<PaymentRepository>         { PaymentRepositoryImpl() }
-    single<CartRepository>            { CartRepositoryImpl(get(), get(), get(), get()) }
-    single<OrderRepository>           { OrderRepositoryImpl(get(), get(), get(), get()) }
     single<WishlistRepository>        { WishlistRepositoryImpl(get() , get()) }
     single<LocationRepository>        { LocationRepositoryImpl(get()) }
     single<AddressRepository>         { AddressRepositoryImpl(get(), get(), get()) }
