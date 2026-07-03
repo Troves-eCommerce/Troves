@@ -38,4 +38,11 @@ class OrderRepositoryImpl(
         val lineItems = cart.lines.map { it.variantId to it.quantity }
         return trovesApiService.createOrder(email, address, lineItems).getOrThrow()
     }
+
+    override suspend fun attachAddressToCart(cartId: String, address: Address) {
+        val token = preferences.shopifyCustomerAccessTokenOrNull.first()
+        val email = authenticationRepository.getCurrentUserEmail()
+        storefront.updateCartBuyerIdentity(cartId, token, email)
+        storefront.updateCartDeliveryAddress(cartId, address)
+    }
 }

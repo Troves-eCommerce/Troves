@@ -43,7 +43,7 @@ class AuthenticationRepositoryFirebaseImpl(
         val token = result.user?.getIdToken(forceRefresh = false) ?: ""
         preferences.saveAuthToken(token)
         preferences.setLoggedIn(true)
-        runCatching { storefront.createCustomer(email, password) }
+        // acquireShopifyToken provisions the Shopify customer itself when one doesn't exist yet.
         acquireShopifyToken(email, password)
         Result.Success(Unit)
     } catch (e: Exception) {
@@ -52,8 +52,16 @@ class AuthenticationRepositoryFirebaseImpl(
 
     override suspend fun signInWithGoogle(idToken: String, accessToken: String?): Result<Unit> = try {
         val credential = GoogleAuthProvider.credential(idToken, accessToken)
-        firebaseAuth.signInWithCredential(credential)
+        val authResult = firebaseAuth.signInWithCredential(credential)
         preferences.setLoggedIn(true)
+        val user = authResult.user ?: firebaseAuth.currentUser
+        val email = user?.email
+        val uid = user?.uid
+        if (!email.isNullOrBlank() && !uid.isNullOrBlank()) {
+            val password = shopifyPasswordFor(uid)
+            runCatching { storefront.createCustomer(email, password) }
+            acquireShopifyToken(email, password)
+        }
         Result.Success(Unit)
     } catch (e: Exception) {
         Result.Error(e)
@@ -89,11 +97,26 @@ class AuthenticationRepositoryFirebaseImpl(
 
     override fun getCurrentUserEmail(): String? = firebaseAuth.currentUser?.email
 
-    private suspend fun acquireShopifyToken(email: String, password: String) {
+
+    private suspend fun acquireShopifyToken(email: String, password: String): Boolean {
+        if (storeShopifyToken(email, password)) return true
+        runCatching { storefront.createCustomer(email, password) }
+        return storeShopifyToken(email, password)
+    }
+
+    private suspend fun storeShopifyToken(email: String, password: String): Boolean {
         val token = runCatching { storefront.createAccessToken(email, password) }
             .getOrNull()
             ?.getOrNull()
-            ?: return
+            ?: return false
         preferences.setShopifyCustomerAccessToken(token.accessToken)
+        return true
+    }
+
+
+    private fun shopifyPasswordFor(uid: String): String {
+        val raw = "${com.troves.data.BuildKonfig.SHOPIFY_CUSTOMER_PASSWORD_SECRET}:$uid"
+        val digest = kotlin.math.abs(raw.hashCode())
+        return "Tg!${digest}Aa"
     }
 }

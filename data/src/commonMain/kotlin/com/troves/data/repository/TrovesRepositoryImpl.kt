@@ -118,21 +118,6 @@ class TrovesRepositoryImpl(
 
     override suspend fun setSelectedCurrency(currency: String) =
         dataSource.setSelectedCurrency(currency)
-    override suspend fun getCountries(): Result<List<String>> {
-        return withContext(coroutineDispatcher) {
-            remoteDataSource.getCountries().map { dtoList ->
-                dtoList.mapNotNull { it.nameCommon ?: it.names?.common }.sorted()
-            }
-        }
-    }
-
-    override suspend fun getCities(countryName: String): Result<List<String>> {
-        return withContext(coroutineDispatcher) {
-            remoteDataSource.getCities(countryName).map { dto ->
-                dto.data?.sorted() ?: emptyList()
-            }
-        }
-    }
 
     override suspend fun getDiscountCodes(): Result<List<DiscountCode>> {
         return withContext(coroutineDispatcher) {
