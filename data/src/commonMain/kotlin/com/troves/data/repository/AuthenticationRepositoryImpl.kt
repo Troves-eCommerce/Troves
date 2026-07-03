@@ -2,6 +2,8 @@ package com.troves.data.repository
 
 import com.troves.data.source.local.preferenceses.TrovesPreferences
 import com.troves.data.source.remote.service.ShopifyApiService
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import com.troves.data.source.remote.service.shopify_dtos.AccessTokenResponse
 import com.troves.domain.entity.Customer
 import com.troves.domain.repository.AuthenticationRepository
@@ -25,8 +27,9 @@ expect fun createAuthenticationRepository(
 class AuthenticationRepositoryFirebaseImpl(
     private val preferences: TrovesPreferences,
     private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO,
-    private val shopifyApiService: ShopifyApiService,
-) : PlatformAuthenticationRepository {
+) : PlatformAuthenticationRepository, KoinComponent {
+
+    private val shopifyApiService: ShopifyApiService by inject()
 
     companion object {
         lateinit var firebaseUser: FirebaseUser
