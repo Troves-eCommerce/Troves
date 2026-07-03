@@ -11,6 +11,9 @@ interface AuthenticationRepository {
 
     suspend fun logout()
 
+    suspend fun createCustomer()
+    suspend fun cacheCredincials()
+
     suspend fun isLoggedIn(): Boolean
 
     suspend fun isOnboardingDone(): Boolean
