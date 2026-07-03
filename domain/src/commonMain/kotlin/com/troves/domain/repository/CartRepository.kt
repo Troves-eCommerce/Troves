@@ -1,16 +1,23 @@
 package com.troves.domain.repository
 
-import com.troves.domain.entity.CartItem
-import com.troves.domain.entity.Product
+import com.troves.domain.entity.Cart
 import kotlinx.coroutines.flow.Flow
 
+
 interface CartRepository {
-    val cartItems: Flow<List<CartItem>>
-    suspend fun addToCart(product: Product, userId: String)
-    suspend fun removeFromCart(productId: Long, userId: String)
-    suspend fun updateQuantity(productId: Long, quantity: Int, userId: String)
-    suspend fun clearCart(userId: String)
-    suspend fun syncFromRemote(userId: String)
-    suspend fun syncLocalOfflineCart(userId: String)
+    val cart: Flow<Cart?>
+
+    suspend fun addToCart(variantId: String, quantity: Int): Cart
+    suspend fun updateQuantity(lineId: String, quantity: Int): Cart
+    suspend fun removeFromCart(lineId: String): Cart
+
+    suspend fun removeAllItems(): Cart
+
+    suspend fun applyDiscountCodes(codes: List<String>): Cart
+
+    suspend fun refreshCart()
+
+    suspend fun clearCart()
+
     suspend fun clearLocal()
 }

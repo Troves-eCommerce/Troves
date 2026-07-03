@@ -6,7 +6,10 @@ import com.troves.domain.usecase.auth.LogoutUseCase
 import com.troves.domain.usecase.auth.RegisterUseCase
 import com.troves.domain.usecase.auth.SignInWithGoogleUseCase
 import com.troves.domain.usecase.cart.AddToCartUseCase
+import com.troves.domain.usecase.cart.ApplyDiscountUseCase
 import com.troves.domain.usecase.cart.GetCartStreamUseCase
+import com.troves.domain.usecase.cart.RefreshCartUseCase
+import com.troves.domain.usecase.cart.RemoveAllFromCartUseCase
 import com.troves.domain.usecase.cart.RemoveFromCartUseCase
 import com.troves.domain.usecase.cart.SyncCartUseCase
 import com.troves.domain.usecase.cart.UpdateCartQuantityUseCase
@@ -19,6 +22,11 @@ import com.troves.domain.usecase.home.GetJustForYouProductsUseCase
 import com.troves.domain.usecase.home.GetTrendingProductsUseCase
 import com.troves.domain.usecase.onboarding.CompleteOnboardingUseCase
 import com.troves.domain.usecase.onboarding.IsOnboardingDoneUseCase
+import com.troves.domain.usecase.order.ClearCartUseCase
+import com.troves.domain.usecase.order.GetDefaultAddressUseCase
+import com.troves.domain.usecase.order.GetOrderByIdUseCase
+import com.troves.domain.usecase.order.GetOrdersUseCase
+import com.troves.domain.usecase.order.PlaceCodOrderUseCase
 import com.troves.domain.usecase.products.FilterProductsUseCase
 import com.troves.domain.usecase.products.GetProductsByBrandUseCase
 import com.troves.domain.usecase.products.GetProductsByCategoryUseCase
@@ -73,7 +81,17 @@ val domainModule = module {
     factory { GetCartStreamUseCase(get()) }
     factory { AddToCartUseCase(get(), get()) }
     factory { RemoveFromCartUseCase(get(), get()) }
+    factory { RemoveAllFromCartUseCase(get(), get()) }
     factory { UpdateCartQuantityUseCase(get(), get()) }
+    factory { ApplyDiscountUseCase(get(), get()) }
+    factory { RefreshCartUseCase(get(), get()) }
     single { SyncCartUseCase(get(), get()) }
+
+    // Checkout / orders
+    factory { GetDefaultAddressUseCase(get()) }
+    factory { GetOrdersUseCase(get()) }
+    factory { GetOrderByIdUseCase(get()) }
+    factory { PlaceCodOrderUseCase(get(), get(), get()) }
+    factory { ClearCartUseCase(get()) }
     single { SyncWishlistUseCase(get(),get()) }
 }

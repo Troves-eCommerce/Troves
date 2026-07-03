@@ -17,4 +17,6 @@ interface AuthenticationRepository {
 
     suspend fun setOnboardingDone()
     fun getCurrentUserId(): String?
+
+    fun getCurrentUserEmail(): String?
 }

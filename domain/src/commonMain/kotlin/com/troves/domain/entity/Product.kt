@@ -13,4 +13,12 @@ data class Product(
     val reviews: List<String> = emptyList(),
     val description: String = "",
     val rating: Int = 0,
+    val options: List<ProductOption> = emptyList(),
+    val variants: List<ProductVariant> = emptyList(),
+)
+
+
+data class ProductOption(
+    val name: String,
+    val values: List<String>,
 )
