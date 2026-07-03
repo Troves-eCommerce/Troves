@@ -6,6 +6,7 @@ import com.troves.domain.entity.Category
 import com.troves.domain.entity.Product
 import com.troves.domain.entity.ProductSearchParams
 import com.troves.domain.utils.Result
+import kotlinx.coroutines.flow.Flow
 
 interface TrovesRepository {
     suspend fun getAllProducts(): Result<List<Product>>
@@ -17,4 +18,13 @@ interface TrovesRepository {
     suspend fun getBrands(): Result<List<Brand>>
     suspend fun getCategories(): Result<List<Category>>
     suspend fun getAds(): Result<List<Ad>>
+    val selectedLanguage: Flow<String>
+    val themeMode: Flow<String>
+    val selectedCurrency: Flow<String>
+    suspend fun setSelectedLanguage(language: String)
+    suspend fun setThemeMode(mode: String)
+    suspend fun setSelectedCurrency(currency: String)
+
+    suspend fun getCountries(): Result<List<String>>
+    suspend fun getCities(countryName: String): Result<List<String>>
 }

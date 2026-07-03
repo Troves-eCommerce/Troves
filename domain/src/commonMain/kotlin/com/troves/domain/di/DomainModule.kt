@@ -24,6 +24,10 @@ import com.troves.domain.usecase.products.GetProductsByCategoryUseCase
 import com.troves.domain.usecase.products.SortProductsUseCase
 import com.troves.domain.usecase.search.FilterProductsByQueryUseCase
 import com.troves.domain.usecase.search.SearchProductsUseCase
+import com.troves.domain.usecase.settings.ObserveProfilePreferencesUseCase
+import com.troves.domain.usecase.settings.SetCurrencyUseCase
+import com.troves.domain.usecase.settings.SetLanguageUseCase
+import com.troves.domain.usecase.settings.SetThemeModeUseCase
 import com.troves.domain.usecase.shared.GetProductsUseCase
 import com.troves.domain.usecase.wishlist.GetWishlistUseCase
 import com.troves.domain.usecase.wishlist.IsProductFavoritedUseCase
@@ -74,4 +78,17 @@ val domainModule = module {
     factory { UpdateCartQuantityUseCase(get(), get()) }
     single { SyncCartUseCase(get(), get()) }
     single { SyncWishlistUseCase(get(),get()) }
+
+    // Address
+    factory { com.troves.domain.usecase.address.GetSavedAddressesUseCase(get()) }
+    factory { com.troves.domain.usecase.address.AddAddressUseCase(get()) }
+    factory { com.troves.domain.usecase.address.DeleteAddressUseCase(get()) }
+    factory { com.troves.domain.usecase.shared.GetCountriesUseCase(get()) }
+    factory { com.troves.domain.usecase.shared.GetCitiesUseCase(get()) }
+
+    // Settings
+    factory { SetLanguageUseCase(get()) }
+    factory { SetCurrencyUseCase(get()) }
+    factory { SetThemeModeUseCase(get()) }
+    factory { ObserveProfilePreferencesUseCase(get(), get()) }
 }

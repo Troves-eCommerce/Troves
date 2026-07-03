@@ -31,6 +31,8 @@ interface TrovesApiService {
 
     suspend fun getAllBrands(): Result<Collection>
     suspend fun getCategory(): Result<CustomCollectionResponse>
+    suspend fun getCountries(): Result<List<com.troves.data.source.remote.dto.RestCountryDto>>
+    suspend fun getCities(country: String): Result<com.troves.data.source.remote.dto.CountriesNowCitiesDto>
 
     //endregion
 

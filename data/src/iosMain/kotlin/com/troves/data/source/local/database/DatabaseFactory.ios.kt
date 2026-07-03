@@ -10,7 +10,8 @@ actual class DatabaseFactory {
     actual fun createBuilder(): RoomDatabase.Builder<TrovesDatabase> {
         val dbFilePath = NSHomeDirectory() + "/Documents/" + DATABASE_NAME
         return Room.databaseBuilder<TrovesDatabase>(
-            name = dbFilePath
+            name = dbFilePath,
+            factory = { TrovesDatabase::class.instantiateImpl() }
         )
             .setDriver(BundledSQLiteDriver())
             .setQueryCoroutineContext(Dispatchers.Default)

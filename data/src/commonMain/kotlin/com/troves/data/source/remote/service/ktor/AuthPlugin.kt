@@ -8,7 +8,6 @@ val AuthPlugin = createClientPlugin("authPlugin") {
     onRequest { request, _ ->
         request.headers {
             append("X-Shopify-Access-Token", ShopifyConfig.API_KEY)
-            append("Content-Type", "application/json")
         }
     }
 }
