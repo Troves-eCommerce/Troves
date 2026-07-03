@@ -22,7 +22,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
@@ -51,7 +50,7 @@ fun CheckoutScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val snackBarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
-    val uriHandler = LocalUriHandler.current
+    val checkout = rememberCheckout(viewModel)
 
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {
@@ -70,7 +69,9 @@ fun CheckoutScreen(
                 scope.launch { snackBarHostState.showSnackbar("Order ${effect.orderName} placed") }
                 onOrderPlaced()
             }
-            is CheckoutEffect.OpenCheckoutUrl -> uriHandler.openUri(effect.url)
+            is CheckoutEffect.OpenCheckoutUrl -> {
+                checkout.presentCheckout(effect.url)
+            }
             is CheckoutEffect.ShowToast -> scope.launch { snackBarHostState.showSnackbar(effect.message) }
             CheckoutEffect.ShowLoginRequiredDialog -> onNavigateToLogin()
         }

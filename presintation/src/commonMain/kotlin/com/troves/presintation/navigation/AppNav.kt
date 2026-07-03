@@ -28,10 +28,10 @@ import com.troves.presintation.ui.auth.LoginScreen
 import com.troves.presintation.ui.auth.RegisterScreen
 import com.troves.presintation.ui.cart.CartScreen
 import com.troves.presintation.ui.checkout.CheckoutScreen
-import com.troves.presintation.ui.orders.OrdersScreen
 import com.troves.presintation.ui.fav.WishlistScreen
 import com.troves.presintation.ui.home.HomeScreen
 import com.troves.presintation.ui.onboarding.OnboardingScreen
+import com.troves.presintation.ui.orders.OrdersScreen
 import com.troves.presintation.ui.payment.PaymentMethodsScreen
 import com.troves.presintation.ui.productDetails.ProductDetailsScreen
 import com.troves.presintation.ui.products.ProductsScreen
@@ -81,6 +81,8 @@ fun AppNav() {
         SplashScreen(onNavigateToOnboarding = {})
         return
     }
+
+
 
     val initialRoute: NavKey = when (uiState.startDestination) {
         StartDestination.Onboarding -> AppRoute.Onboarding
@@ -168,13 +170,17 @@ fun AppNav() {
         entry<AppRoute.Login> {
             LoginScreen(
                 onNavigateToRegister = { backStack.add(AppRoute.Register) },
-                onLoginSuccess = { replaceWith(AppRoute.Home) }
+                onLoginSuccess = { replaceWith(AppRoute.Home) },
+                onLoggedIn = {
+                }
             )
         }
         entry<AppRoute.Register> {
             RegisterScreen(
                 onNavigateToLogin = { backStack.add(AppRoute.Login) },
-                onRegisterSuccess = { replaceWith(AppRoute.Home) }
+                onRegisterSuccess = { replaceWith(AppRoute.Home) },
+                onRegistered = {
+                }
             )
         }
         entry<AppRoute.Products> { key ->

@@ -46,6 +46,12 @@ class TrovesPreferencesImpl(
             .catchIOException()
             .map { it[AppPreferencesKeys.SHOPIFY_CART_ID] }
 
+    override suspend fun setShopifyCustomerAccessToken(accessToken: String) {
+        dataStore.edit {
+            it[AppPreferencesKeys.SHOPIFY_ACCESS_TOKEN_KEY] = accessToken
+        }
+    }
+
     override val isOnboardingDone: Flow<Boolean>
         get() = dataStore.data
             .catchIOException()
@@ -83,16 +89,6 @@ class TrovesPreferencesImpl(
 
     // ── Writes ─────────────────────────────────────────────────────────
 
-
-    override suspend fun setShopifyCustomerAccessToken(accessToken: String) {
-        dataStore.edit { it[AppPreferencesKeys.SHOPIFY_ACCESS_TOKEN_KEY] = accessToken }
-    }
-
-    override suspend fun setShopifyCustomerAccessTokenExpiring(accessTokenTimestamp: Long) {
-        dataStore.edit {
-            it[AppPreferencesKeys.SHOPIFY_ACCESS_TOKEN_KEY_EXPIRING] = accessTokenTimestamp
-        }
-    }
 
     override suspend fun clearShopifyCustomerAccessToken() {
         dataStore.edit {
