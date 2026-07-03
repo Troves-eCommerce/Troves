@@ -47,9 +47,6 @@ sealed interface AppRoute : NavKey {
     data object Cart : AppRoute
 
     @Serializable
-    data object Checkout : AppRoute
-
-    @Serializable
     data object Orders : AppRoute
     @Serializable
     data object PaymentMethods : AppRoute
@@ -58,5 +55,5 @@ sealed interface AppRoute : NavKey {
     data object ManageAddresses : AppRoute
 
     @Serializable
-    data object NewAddress : AppRoute
+    data class NewAddress(val addressId: String? = null) : AppRoute
 }

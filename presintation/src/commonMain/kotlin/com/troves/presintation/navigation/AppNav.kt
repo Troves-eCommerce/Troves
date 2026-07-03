@@ -29,11 +29,9 @@ import com.troves.presintation.ui.auth.RegisterScreen
 import com.troves.presintation.ui.cart.CartScreen
 import com.troves.presintation.ui.checkout.CheckoutScreen
 import com.troves.presintation.ui.orders.OrdersScreen
-import com.troves.presintation.ui.checkout.CheckoutScreen
 import com.troves.presintation.ui.fav.WishlistScreen
 import com.troves.presintation.ui.home.HomeScreen
 import com.troves.presintation.ui.onboarding.OnboardingScreen
-import com.troves.presintation.ui.order.OrderHistoryScreen
 import com.troves.presintation.ui.payment.PaymentMethodsScreen
 import com.troves.presintation.ui.productDetails.ProductDetailsScreen
 import com.troves.presintation.ui.products.ProductsScreen
@@ -67,8 +65,6 @@ private val navSavedStateConfiguration = SavedStateConfiguration {
             subclass(AppRoute.Checkout::class, AppRoute.Checkout.serializer())
             subclass(AppRoute.Orders::class, AppRoute.Orders.serializer())
             subclass(AppRoute.Search::class, AppRoute.Search.serializer())
-            subclass(AppRoute.Checkout::class, AppRoute.Checkout.serializer())
-            subclass(AppRoute.OrderHistory::class, AppRoute.OrderHistory.serializer())
             subclass(AppRoute.ManageAddresses::class, AppRoute.ManageAddresses.serializer())
             subclass(AppRoute.NewAddress::class, AppRoute.NewAddress.serializer())
             subclass(AppRoute.PaymentMethods::class, AppRoute.PaymentMethods.serializer())
@@ -210,13 +206,10 @@ fun AppNav() {
             ProfileScreen(
                 onNavigateToLogin = { replaceWith(AppRoute.Login) },
                 onNavigateToAddresses = { backStack.add(AppRoute.ManageAddresses) },
-                onNavigateToOrders = { backStack.add(AppRoute.OrderHistory) },
+                onNavigateToOrders = { backStack.add(AppRoute.Orders) },
                 onNavigateToPaymentMethods = { backStack.add(AppRoute.PaymentMethods) },
                 onNavigateToEditProfile = { /* Navigate to Edit Profile screen if it exists */ }
             )
-        }
-        entry<AppRoute.OrderHistory> {
-            OrderHistoryScreen()
         }
         entry<AppRoute.PaymentMethods> {
             PaymentMethodsScreen()
@@ -232,8 +225,8 @@ fun AppNav() {
             CheckoutScreen(
                 onNavigateBack = { backStack.removeLastOrNull() },
                 onOrderPlaced = { replaceWith(AppRoute.Home) },
-                onNavigateToCheckout = { backStack.add(AppRoute.Checkout) },
                 onNavigateToLogin = { backStack.add(AppRoute.Login) },
+                onNavigateToAddresses = { backStack.add(AppRoute.ManageAddresses) },
             )
         }
         entry<AppRoute.Orders> {
@@ -255,31 +248,21 @@ fun AppNav() {
                 }
             )
         }
-        entry<AppRoute.Checkout> {
-            CheckoutScreen(
-                onNavigateToNewAddress = { backStack.add(AppRoute.NewAddress) },
-                onNavigateToOrderSuccess = {
-                    Snapshot.withMutableSnapshot {
-                        backStack.clear()
-                        backStack.add(AppRoute.Home)
-                    }
-                },
-                onNavigateBack = { backStack.removeLastOrNull() }
-            )
-        }
         entry<AppRoute.ManageAddresses> {
             ManageSavedAddressesScreen(
-                onNavigateToNewAddress = { backStack.add(AppRoute.NewAddress) },
+                onNavigateToNewAddress = { backStack.add(AppRoute.NewAddress()) },
                 onNavigateToEditAddress = { address ->
-                    // For now, just navigate to NewAddress. Edit logic will be implemented later.
-                    backStack.add(AppRoute.NewAddress)
+                    backStack.add(AppRoute.NewAddress(addressId = address.id))
                 },
+                onNavigateToLogin = { backStack.add(AppRoute.Login) },
                 onNavigateBack = { backStack.removeLastOrNull() }
             )
         }
-        entry<AppRoute.NewAddress> {
+        entry<AppRoute.NewAddress> { key ->
             NewAddressScreen(
-                onNavigateBack = { backStack.removeLastOrNull() }
+                onNavigateBack = { backStack.removeLastOrNull() },
+                onNavigateToLogin = { backStack.add(AppRoute.Login) },
+                addressId = key.addressId,
             )
         }
     }
