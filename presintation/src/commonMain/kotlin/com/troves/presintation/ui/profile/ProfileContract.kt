@@ -6,7 +6,7 @@ data class ProfileState(
     val userName: String = "",
     val userEmail: String = "",
     val selectedLanguage: String = "en",
-    val isDarkMode: Boolean = false,
+    val themeMode: String = "system",
     val selectedCurrency: String = "USD",
     val showLogoutDialog: Boolean = false,
     val errorMessage: String? = null

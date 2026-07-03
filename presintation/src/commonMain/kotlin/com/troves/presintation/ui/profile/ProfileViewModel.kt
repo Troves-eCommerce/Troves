@@ -63,7 +63,7 @@ class ProfileViewModel(
                         userName = prefs.displayName ?: "",
                         userEmail = prefs.email ?: "",
                         selectedLanguage = prefs.language,
-                        isDarkMode = prefs.themeMode == "dark",
+                        themeMode = prefs.themeMode,
                         selectedCurrency = prefs.currency,
                     )
                 }

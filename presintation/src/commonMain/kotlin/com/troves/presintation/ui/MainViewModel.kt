@@ -23,11 +23,7 @@ class MainViewModel(
             }
 
             MainUiState(
-                isDarkTheme = when (prefs.themeMode) {
-                    "dark" -> true
-                    "light" -> false
-                    else -> false
-                },
+                themeMode = prefs.themeMode,
                 language = prefs.language,
                 currency = prefs.currency,
                 startDestination = destination,
@@ -43,7 +39,7 @@ class MainViewModel(
 
 data class MainUiState(
     val isLoading: Boolean = true,
-    val isDarkTheme: Boolean = false,
+    val themeMode: String = "system",
     val language: String = "en",
     val currency: String = "USD",
     val startDestination: StartDestination = StartDestination.Onboarding

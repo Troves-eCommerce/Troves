@@ -1,6 +1,7 @@
 package com.troves.presintation.ui.profile
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -41,7 +42,11 @@ fun ProfileScreen(
 
     var showLanguageSheet by remember { mutableStateOf(false) }
 
-    val isDarkModeEnabled = uiState.isDarkMode
+    val isDarkModeEnabled = when (uiState.themeMode) {
+        "dark" -> true
+        "light" -> false
+        else -> isSystemInDarkTheme()
+    }
 
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
