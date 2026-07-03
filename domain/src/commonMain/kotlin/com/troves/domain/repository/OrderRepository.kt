@@ -12,4 +12,6 @@ interface OrderRepository {
     suspend fun getOrderById(orderId: String): Order?
 
     suspend fun placeCodOrder(cart: Cart, address: Address): String
+
+    suspend fun attachAddressToCart(cartId: String, address: Address)
 }

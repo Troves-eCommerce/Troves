@@ -27,7 +27,4 @@ interface TrovesRepository {
     suspend fun setSelectedLanguage(language: String)
     suspend fun setThemeMode(mode: String)
     suspend fun setSelectedCurrency(currency: String)
-
-    suspend fun getCountries(): Result<List<String>>
-    suspend fun getCities(countryName: String): Result<List<String>>
 }

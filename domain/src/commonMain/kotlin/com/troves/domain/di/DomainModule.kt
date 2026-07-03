@@ -43,7 +43,6 @@ import com.troves.domain.usecase.wishlist.IsProductFavoritedUseCase
 import com.troves.domain.usecase.wishlist.SyncWishlistUseCase
 import com.troves.domain.usecase.wishlist.ToggleFavoriteUseCase
 import org.koin.dsl.module
-import kotlin.coroutines.EmptyCoroutineContext.get
 
 val domainModule = module {
     // Use cases — factory creates a new instance per injection site
@@ -96,13 +95,19 @@ val domainModule = module {
     factory { GetOrdersUseCase(get()) }
     factory { GetOrderByIdUseCase(get()) }
     factory { PlaceCodOrderUseCase(get(), get(), get()) }
+    factory { com.troves.domain.usecase.order.AttachAddressToCartUseCase(get()) }
     factory { ClearCartUseCase(get()) }
     single { SyncWishlistUseCase(get(),get()) }
 
     // Address
     factory { com.troves.domain.usecase.address.GetSavedAddressesUseCase(get()) }
     factory { com.troves.domain.usecase.address.AddAddressUseCase(get()) }
+    factory { com.troves.domain.usecase.address.UpdateAddressUseCase(get()) }
     factory { com.troves.domain.usecase.address.DeleteAddressUseCase(get()) }
+    factory { com.troves.domain.usecase.address.SetDefaultAddressUseCase(get()) }
+    factory { com.troves.domain.usecase.address.GetSavedAddressByIdUseCase(get()) }
+    factory { com.troves.domain.usecase.address.GetDefaultSavedAddressUseCase(get()) }
+    factory { com.troves.domain.usecase.address.RefreshAddressesUseCase(get()) }
     factory { com.troves.domain.usecase.shared.GetCountriesUseCase(get()) }
     factory { com.troves.domain.usecase.shared.GetCitiesUseCase(get()) }
 

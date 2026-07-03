@@ -15,6 +15,10 @@ data class Address(
     val firstName: String?,
     val lastName: String?,
     val company: String?,
+    val label: String? = null,
+    val icon: AddressIcon = AddressIcon.HOME,
+    val note: String? = null,
+    val isDefault: Boolean = false,
 ) {
     val isDeliverable: Boolean
         get() = !address1.isNullOrBlank() && !city.isNullOrBlank()
@@ -23,7 +27,9 @@ data class Address(
         get() = listOfNotNull(firstName, lastName).filter { it.isNotBlank() }.joinToString(" ")
 
     val singleLine: String
+        get() = lines.joinToString(", ")
+
+    val lines: List<String>
         get() = listOfNotNull(address1, address2, city, province, country, zip)
             .filter { it.isNotBlank() }
-            .joinToString(", ")
 }
