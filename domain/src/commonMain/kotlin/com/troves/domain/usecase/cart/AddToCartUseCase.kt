@@ -1,11 +1,11 @@
 package com.troves.domain.usecase.cart
 
-import com.troves.domain.repository.CartRepository
+import com.troves.domain.repository.TrovesRepository
 import com.troves.domain.repository.AuthenticationRepository
 
 
 class AddToCartUseCase(
-    private val repository: CartRepository,
+    private val repository: TrovesRepository,
     private val authenticationRepository: AuthenticationRepository,
 ) {
     suspend operator fun invoke(variantId: String, quantity: Int = 1): CartOperationResult {

@@ -3,8 +3,7 @@ package com.troves.domain.usecase.order
 import com.troves.domain.entity.Address
 import com.troves.domain.entity.Cart
 import com.troves.domain.repository.AuthenticationRepository
-import com.troves.domain.repository.CartRepository
-import com.troves.domain.repository.OrderRepository
+import com.troves.domain.repository.TrovesRepository
 
 sealed interface PlaceOrderResult {
     data class Success(val orderName: String) : PlaceOrderResult
@@ -16,8 +15,7 @@ sealed interface PlaceOrderResult {
 
 
 class PlaceCodOrderUseCase(
-    private val orderRepository: OrderRepository,
-    private val cartRepository: CartRepository,
+    private val repository: TrovesRepository,
     private val authenticationRepository: AuthenticationRepository,
 ) {
     suspend operator fun invoke(cart: Cart, address: Address?): PlaceOrderResult {
@@ -25,8 +23,8 @@ class PlaceCodOrderUseCase(
         if (cart.lines.isEmpty()) return PlaceOrderResult.EmptyCart
         if (address == null || !address.isDeliverable) return PlaceOrderResult.NoAddress
         return try {
-            val orderName = orderRepository.placeCodOrder(cart, address)
-            cartRepository.clearCart()
+            val orderName = repository.placeCodOrder(cart, address)
+            repository.clearCart()
             PlaceOrderResult.Success(orderName)
         } catch (e: Exception) {
             PlaceOrderResult.Error(e)

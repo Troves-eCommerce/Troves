@@ -1,7 +1,7 @@
 package com.troves.domain.usecase.cart
 
 import com.troves.domain.entity.Cart
-import com.troves.domain.repository.CartRepository
+import com.troves.domain.repository.TrovesRepository
 import com.troves.domain.repository.AuthenticationRepository
 
 
@@ -12,7 +12,7 @@ sealed interface ApplyDiscountResult {
 }
 
 class ApplyDiscountUseCase(
-    private val repository: CartRepository,
+    private val repository: TrovesRepository,
     private val authenticationRepository: AuthenticationRepository,
 ) {
     suspend operator fun invoke(codes: List<String>): ApplyDiscountResult {
