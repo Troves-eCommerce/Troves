@@ -157,6 +157,17 @@ buildkonfig {
             STRING, "SHOPIFY_REST_URL",
             localProperties.getProperty("SHOPIFY_REST_URL") ?: error("SHOPIFY_HOSTNAME not set in local.properties")
         )
+        buildConfigField(
+            STRING, "SHOPIFY_STOREFRONT_URL",
+            localProperties.getProperty("SHOPIFY_STOREFRONT_URL") ?: ""
+        )
+        buildConfigField(
+            STRING, "SHOPIFY_STOREFRONT_ACCESS_TOKEN",
+            localProperties.getProperty("SHOPIFY_STORE_FRONT_API_KEY")
+                ?: localProperties.getProperty("SHOPIFY_STOREFRONT_ACCESS_TOKEN")
+                ?: localProperties.getProperty("STORE_ACCESS_TOKEN")
+                ?: ""
+        )
     }
 }
 apollo {

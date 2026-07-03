@@ -16,4 +16,5 @@ internal object AppPreferencesKeys {
 
     val SHOPIFY_ACCESS_TOKEN_KEY            = stringPreferencesKey("SHOPIFY_ACCESS_TOKEN_KEY")
     val SHOPIFY_ACCESS_TOKEN_KEY_EXPIRING   = longPreferencesKey("SHOPIFY_ACCESS_TOKEN_KEY_EXPIRING")
+    val SHOPIFY_CART_ID                     = stringPreferencesKey("shopify_cart_id")
 }

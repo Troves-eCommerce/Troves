@@ -13,10 +13,18 @@ interface TrovesPreferences {
     val shopifyCustomerAccessToken: Flow<String>
     val shopifyCustomerAccessTokenExpiring: Flow<Long>
 
+    val shopifyCustomerAccessTokenOrNull: Flow<String?>
+
+    val cartId: Flow<String?>
+
 
 
     suspend fun setShopifyCustomerAccessToken(accessToken: String)
     suspend fun setShopifyCustomerAccessTokenExpiring(accessTokenTimestamp: Long)
+    suspend fun clearShopifyCustomerAccessToken()
+
+    suspend fun setCartId(cartId: String)
+    suspend fun clearCartId()
 
 
     suspend fun setOnboardingDone(done: Boolean)
