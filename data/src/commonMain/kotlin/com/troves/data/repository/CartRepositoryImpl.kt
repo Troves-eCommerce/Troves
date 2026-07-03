@@ -1,138 +1,127 @@
 package com.troves.data.repository
 
-import com.troves.data.source.local.database.CartDao
-import com.troves.data.source.local.database.CartEntity
+import com.troves.data.source.local.preferenceses.TrovesPreferences
 import com.troves.data.source.remote.RemoteDatasource
-import com.troves.data.source.remote.dto.CartItemDto
-import com.troves.domain.entity.CartItem
-import com.troves.domain.entity.Product
+import com.troves.data.source.remote.service.StorefrontApiService
+import com.troves.domain.entity.Cart
+import com.troves.domain.repository.AuthenticationRepository
 import com.troves.domain.repository.CartRepository
-import com.troves.domain.utils.Result
+import com.troves.domain.utils.getOrThrow
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
+
 
 class CartRepositoryImpl(
-    private val cartDao: CartDao,
-    private val remoteDatasource: RemoteDatasource
+    private val storefront: StorefrontApiService,
+    private val remoteDatasource: RemoteDatasource,
+    private val preferences: TrovesPreferences,
+    private val authenticationRepository: AuthenticationRepository,
 ) : CartRepository {
 
-    override val cartItems: Flow<List<CartItem>> = cartDao.getAllCartItems().map { list ->
-        list.map { it.toDomain() }
-    }
+    private val _cart = MutableStateFlow<Cart?>(null)
+    override val cart: Flow<Cart?> = _cart.asStateFlow()
 
-    override suspend fun addToCart(product: Product, userId: String) {
-        val existingItem = cartDao.getCartItem(product.id)
-        if (existingItem != null) {
-            val newQuantity = existingItem.quantity + 1
-            cartDao.updateQuantity(product.id, newQuantity)
-            remoteDatasource.addToCart(userId, product.toDto(newQuantity))
+    override suspend fun addToCart(variantId: String, quantity: Int): Cart {
+        val existingCartId = resolveCartId()
+        val updated = if (existingCartId == null) {
+            val email = authenticationRepository.getCurrentUserEmail()
+            val token = preferences.shopifyCustomerAccessTokenOrNull.first()
+            val created = storefront.createCart(variantId, quantity, email, token).getOrThrow()
+            persistCartId(created.cartId)
+            created
         } else {
-            cartDao.insertCartItem(product.toEntity(quantity = 1))
-            remoteDatasource.addToCart(userId, product.toDto(quantity = 1))
+            storefront.addLines(existingCartId, variantId, quantity).getOrThrow()
         }
+        _cart.value = updated
+        return updated
     }
 
-    override suspend fun removeFromCart(productId: Long, userId: String) {
-        cartDao.deleteCartItem(productId)
-        remoteDatasource.removeFromCart(userId, productId)
+    override suspend fun updateQuantity(lineId: String, quantity: Int): Cart {
+        val cartId = requireCartId()
+        val updated = storefront.updateLineQuantity(cartId, lineId, quantity).getOrThrow()
+        _cart.value = updated
+        return updated
     }
 
-    override suspend fun updateQuantity(productId: Long, quantity: Int, userId: String) {
-        if (quantity > 0) {
-            cartDao.updateQuantity(productId, quantity)
-            // For Firestore we can just update the item by passing it again, but we need the product details.
-            // Let's fetch from DAO to get product details, then push to remote.
-            val existingItem = cartDao.getCartItem(productId)
-            if (existingItem != null) {
-                remoteDatasource.addToCart(userId, existingItem.toDto())
-            }
+    override suspend fun removeFromCart(lineId: String): Cart {
+        val cartId = requireCartId()
+        val updated = storefront.removeLines(cartId, listOf(lineId)).getOrThrow()
+        _cart.value = updated
+        return updated
+    }
+
+    override suspend fun removeAllItems(): Cart {
+        val cartId = requireCartId()
+        val lineIds = _cart.value?.lines?.map { it.lineId }.orEmpty()
+        if (lineIds.isEmpty()) {
+            // Nothing to remove; reconcile to the authoritative empty cart.
+            val current = storefront.getCart(cartId).getOrThrow()
+            if (current != null) _cart.value = current
+            return current ?: throw IllegalStateException("No active cart")
+        }
+        val updated = storefront.removeLines(cartId, lineIds).getOrThrow()
+        _cart.value = updated
+        return updated
+    }
+
+    override suspend fun applyDiscountCodes(codes: List<String>): Cart {
+        val cartId = requireCartId()
+        val updated = storefront.updateDiscountCodes(cartId, codes).getOrThrow()
+        _cart.value = updated
+        return updated
+    }
+
+    override suspend fun refreshCart() {
+        val cartId = resolveCartId() ?: run { _cart.value = null; return }
+        val cart = storefront.getCart(cartId).getOrThrow()
+        if (cart == null) {
+            // Cart expired or already checked out — drop the pointer and start fresh next time.
+            clearCartPointer()
+            _cart.value = null
         } else {
-            cartDao.deleteCartItem(productId)
-            remoteDatasource.removeFromCart(userId, productId)
+            _cart.value = cart
         }
     }
 
-    override suspend fun clearCart(userId: String) {
-        cartDao.clearAll()
-        remoteDatasource.clearCart(userId)
-    }
-
-    override suspend fun syncFromRemote(userId: String) {
-        when (val result = remoteDatasource.getCart(userId)) {
-            is Result.Success -> {
-                result.value.forEach { dto ->
-                    cartDao.insertCartItem(dto.toEntity())
-                }
-            }
-            is Result.Error -> Unit
-            Result.Loading -> Unit
-        }
-    }
-
-    override suspend fun syncLocalOfflineCart(userId: String) {
-        try {
-            val allLocalCartItems = cartDao.getAllCartItems().first()
-            allLocalCartItems.forEach { entity ->
-                remoteDatasource.addToCart(userId, entity.toDto())
-            }
-        } catch (_: Exception) {
-        }
+    override suspend fun clearCart() {
+        clearCartPointer()
+        _cart.value = null
     }
 
     override suspend fun clearLocal() {
-        cartDao.clearAll()
+        // Keep the Firestore pointer so the cart rehydrates on next login; drop the local copy only.
+        _cart.value = null
+        preferences.clearCartId()
     }
 
-    private fun CartEntity.toDomain() = CartItem(
-        product = Product(
-            id = id,
-            title = title,
-            vendor = vendor,
-            price = price,
-            imageUrl = imageUrl,
-            status = status,
-        ),
-        quantity = quantity
-    )
+    // ── cart identity ───────────────────────────────────────────────────────
 
-    private fun Product.toEntity(quantity: Int) = CartEntity(
-        id = id,
-        title = title,
-        vendor = vendor,
-        price = price,
-        imageUrl = imageUrl,
-        status = status,
-        quantity = quantity
-    )
+    /** In-memory → DataStore → Firestore, populating faster caches as it goes. */
+    private suspend fun resolveCartId(): String? {
+        _cart.value?.cartId?.let { return it }
+        preferences.cartId.first()?.let { return it }
+        val userId = authenticationRepository.getCurrentUserId() ?: return null
+        val remote = remoteDatasource.getUserCartId(userId)
+        if (remote != null) preferences.setCartId(remote)
+        return remote
+    }
 
-    private fun Product.toDto(quantity: Int) = CartItemDto(
-        id = id,
-        title = title,
-        vendor = vendor,
-        price = price,
-        imageUrl = imageUrl,
-        status = status,
-        quantity = quantity
-    )
+    private suspend fun requireCartId(): String =
+        resolveCartId() ?: throw IllegalStateException("No active cart")
 
-    private fun CartItemDto.toEntity() = CartEntity(
-        id = id,
-        title = title,
-        vendor = vendor,
-        price = price,
-        imageUrl = imageUrl,
-        status = status,
-        quantity = quantity
-    )
+    private suspend fun persistCartId(cartId: String) {
+        preferences.setCartId(cartId)
+        authenticationRepository.getCurrentUserId()?.let { userId ->
+            runCatching { remoteDatasource.setUserCartId(userId, cartId) }
+        }
+    }
 
-    private fun CartEntity.toDto() = CartItemDto(
-        id = id,
-        title = title,
-        vendor = vendor,
-        price = price,
-        imageUrl = imageUrl,
-        status = status,
-        quantity = quantity
-    )
+    private suspend fun clearCartPointer() {
+        preferences.clearCartId()
+        authenticationRepository.getCurrentUserId()?.let { userId ->
+            runCatching { remoteDatasource.clearUserCartId(userId) }
+        }
+    }
 }

@@ -76,16 +76,7 @@ class TrovesRepositoryImpl(
 
     override suspend fun getProductById(productId: String): Result<Product> {
         return withContext(coroutineDispatcher) {
-            remoteDataSource.getProductById(productId = productId).fold(
-                onSuccess = { response ->
-                    response.product
-                        ?.toDomain()
-                        ?.let { Result.Success(it) }
-                        ?: Result.Error(Exception("Product not found: $productId"))
-                },
-                onError = { Result.Error(it) },
-                onLoading = { Result.Loading }
-            )
+            remoteDataSource.getProductById(productId = productId)
         }
     }
 
