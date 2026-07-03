@@ -5,8 +5,9 @@ import androidx.lifecycle.viewModelScope
 import com.troves.domain.entity.Address
 import com.troves.domain.entity.Cart
 import com.troves.domain.entity.CartMoney
+import com.troves.domain.usecase.address.GetDefaultSavedAddressUseCase
 import com.troves.domain.usecase.cart.GetCartStreamUseCase
-import com.troves.domain.usecase.order.GetDefaultAddressUseCase
+import com.troves.domain.usecase.order.AttachAddressToCartUseCase
 import com.troves.domain.usecase.order.PlaceCodOrderUseCase
 import com.troves.domain.usecase.order.PlaceOrderResult
 import com.troves.presintation.core.mvi.DefaultEffectPublisher
@@ -19,8 +20,9 @@ import kotlinx.coroutines.launch
 
 class CheckoutViewModel(
     getCartStream: GetCartStreamUseCase,
-    private val getDefaultAddress: GetDefaultAddressUseCase,
+    private val getDefaultSavedAddress: GetDefaultSavedAddressUseCase,
     private val placeCodOrder: PlaceCodOrderUseCase,
+    private val attachAddressToCart: AttachAddressToCartUseCase,
 ) : ViewModel(),
     StateHolder<CheckoutUiState> by DefaultStateHolder(CheckoutUiState()),
     EffectPublisher<CheckoutEffect> by DefaultEffectPublisher() {
@@ -36,8 +38,12 @@ class CheckoutViewModel(
             }
             .launchIn(viewModelScope)
 
+        loadAddress()
+    }
+
+    private fun loadAddress() {
         viewModelScope.launch {
-            val loaded = getDefaultAddress()
+            val loaded = getDefaultSavedAddress()
             address = loaded
             updateState {
                 copy(
@@ -55,6 +61,8 @@ class CheckoutViewModel(
             CheckoutIntent.OnBack -> sendEffect(CheckoutEffect.NavigateBack)
             CheckoutIntent.OnPlaceCodOrder -> placeCod()
             CheckoutIntent.OnPayByCard -> payByCard()
+            CheckoutIntent.OnManageAddress -> sendEffect(CheckoutEffect.NavigateToAddresses)
+            CheckoutIntent.OnResume -> loadAddress()
         }
     }
 
@@ -84,16 +92,24 @@ class CheckoutViewModel(
     }
 
     private fun payByCard() {
-        if (address?.isDeliverable != true) {
+        val currentAddress = address
+        if (currentAddress?.isDeliverable != true) {
             sendEffect(CheckoutEffect.ShowToast("Sorry you don't have an address to deliver to"))
             return
         }
-        val url = cart?.checkoutUrl
-        if (url.isNullOrBlank()) {
+        val currentCart = cart
+        val url = currentCart?.checkoutUrl
+        if (currentCart == null || url.isNullOrBlank()) {
             sendEffect(CheckoutEffect.ShowToast("Checkout is unavailable"))
             return
         }
-        sendEffect(CheckoutEffect.OpenCheckoutUrl(url))
+        updateState { copy(isPlacingOrder = true) }
+        viewModelScope.launch {
+            // Attach the buyer + delivery address so Shopify's hosted checkout is prefilled/valid.
+            attachAddressToCart(currentCart.cartId, currentAddress)
+            updateState { copy(isPlacingOrder = false) }
+            sendEffect(CheckoutEffect.OpenCheckoutUrl(url))
+        }
     }
 
     private fun CheckoutUiState.applyCart(cart: Cart?): CheckoutUiState {

@@ -15,6 +15,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -24,8 +25,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.troves.designsystem.components.button.PrimaryButton
+import com.troves.designsystem.components.button.SecondaryButton
 import com.troves.designsystem.components.topbar.BaseTopAppBar
 import com.troves.designsystem.theme.Theme
 import com.troves.presintation.core.mvi.ObserveEffect
@@ -40,6 +45,7 @@ fun CheckoutScreen(
     onNavigateBack: () -> Unit,
     onOrderPlaced: () -> Unit,
     onNavigateToLogin: () -> Unit,
+    onNavigateToAddresses: () -> Unit,
     viewModel: CheckoutViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -47,9 +53,19 @@ fun CheckoutScreen(
     val scope = rememberCoroutineScope()
     val uriHandler = LocalUriHandler.current
 
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) viewModel.onIntent(CheckoutIntent.OnResume)
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
+
     ObserveEffect(viewModel.effect) { effect ->
         when (effect) {
             CheckoutEffect.NavigateBack -> onNavigateBack()
+            CheckoutEffect.NavigateToAddresses -> onNavigateToAddresses()
             is CheckoutEffect.OrderPlaced -> {
                 scope.launch { snackBarHostState.showSnackbar("Order ${effect.orderName} placed") }
                 onOrderPlaced()
@@ -108,6 +124,11 @@ fun CheckoutScreen(
                             style = Theme.typography.body.medium.copy(color = Theme.colors.error),
                         )
                     }
+                    SecondaryButton(
+                        caption = if (state.hasAddress) "Change address" else "Add address",
+                        onClick = { viewModel.onIntent(CheckoutIntent.OnManageAddress) },
+                        modifier = Modifier.fillMaxWidth(),
+                    )
                 }
 
                 SectionCard(title = "Order summary") {
