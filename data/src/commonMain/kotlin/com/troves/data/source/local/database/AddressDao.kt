@@ -4,20 +4,15 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Update
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface AddressDao {
-    @Query("SELECT * FROM addresses")
-    fun getAddresses(): Flow<List<AddressEntity>>
+    @Query("SELECT * FROM address_decorations")
+    suspend fun getDecorations(): List<AddressDecorationEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAddress(address: AddressEntity)
+    suspend fun upsertDecoration(decoration: AddressDecorationEntity)
 
-    @Query("DELETE FROM addresses WHERE id = :addressId")
-    suspend fun deleteAddress(addressId: String)
-    
-    @Update
-    suspend fun updateAddress(address: AddressEntity)
+    @Query("DELETE FROM address_decorations WHERE addressId = :addressId")
+    suspend fun deleteDecoration(addressId: String)
 }
