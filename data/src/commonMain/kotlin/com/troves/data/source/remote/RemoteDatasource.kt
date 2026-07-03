@@ -24,7 +24,7 @@ interface RemoteDatasource {
 
 
     suspend fun getProductImages(productId: String):Result<List<CollectionImage>>
-    suspend fun getProductById(productId: String): Result<SingleProductResponse>
+    suspend fun getProductById(productId: String): Result<Product>
     suspend fun updateProduct(productId: String)
     suspend fun deleteProduct(productDto: ProductDto)
     // endregion
@@ -51,6 +51,10 @@ interface RemoteDatasource {
     suspend fun addToCart(userId: String, item: CartItemDto): Result<Unit>
     suspend fun removeFromCart(userId: String, productId: Long): Result<Unit>
     suspend fun clearCart(userId: String): Result<Unit>
+
+    suspend fun getUserCartId(userId: String): String?
+    suspend fun setUserCartId(userId: String, cartId: String)
+    suspend fun clearUserCartId(userId: String)
     //endregion
 
     suspend fun getDiscountCodes(): Result<List<com.troves.domain.entity.DiscountCode>>

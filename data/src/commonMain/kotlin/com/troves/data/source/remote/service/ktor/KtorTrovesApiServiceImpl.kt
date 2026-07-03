@@ -14,6 +14,8 @@ import io.ktor.client.HttpClient
 import io.ktor.http.HttpMethod
 import io.ktor.http.path
 import com.troves.domain.utils.Result
+import com.troves.domain.utils.map
+import com.troves.data.mapper.toDomain
 import io.ktor.client.request.parameter
 import com.troves.domain.entity.DiscountCode
 
@@ -69,12 +71,16 @@ class KtorTrovesApiServiceImpl(
         }
     }
 
-    override suspend fun getProductById(productId: String): Result<SingleProductResponse> {
-        return ktorClient.getResults {
+    override suspend fun getProductById(productId: String): Result<Product> {
+        val response: Result<SingleProductResponse> = ktorClient.getResults {
             method = HttpMethod.Get
             url {
                 path("products/$productId.json")
             }
+        }
+        return response.map { single ->
+            single.product?.toDomain()
+                ?: throw NoSuchElementException("Product not found: $productId")
         }
     }
 
@@ -106,5 +112,12 @@ class KtorTrovesApiServiceImpl(
     override suspend fun getDiscountCodes(): Result<List<DiscountCode>> {
         TODO("Not yet implemented")
     }
+
+    override suspend fun createOrder(
+        email: String?,
+        address: com.troves.domain.entity.Address,
+        lineItems: List<Pair<String, Int>>,
+    ): Result<String> =
+        Result.Error(UnsupportedOperationException("Order creation is only available via the Admin GraphQL API"))
 
 }

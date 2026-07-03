@@ -10,15 +10,22 @@ import com.troves.data.source.remote.service.apollo.graphql.admin.GetProductsByS
 import com.troves.data.source.remote.service.apollo.graphql.admin.GetProductsByVendorQuery
 import com.troves.data.source.remote.service.apollo.graphql.admin.GetProductsQuery
 import com.troves.data.source.remote.service.apollo.graphql.admin.GetDiscountCodeQuery
+import com.troves.data.source.remote.service.apollo.graphql.admin.CreateOrderMutation
+import com.troves.data.source.remote.service.apollo.graphql.admin.type.OrderCreateLineItemInput
+import com.troves.data.source.remote.service.apollo.graphql.admin.type.OrderCreateOrderInput
+import com.troves.data.source.remote.service.apollo.graphql.admin.type.MailingAddressInput
 import com.troves.data.source.remote.service.apollo.graphql.admin.type.ProductCollectionSortKeys
 
 import com.troves.data.source.remote.service.apollo.mapper.toCustomCollectionDto
 import com.troves.data.source.remote.service.apollo.mapper.toDomainProduct
 import com.troves.data.source.remote.service.apollo.mapper.toProductDto
 import com.troves.data.source.remote.service.apollo.mapper.toSmartCollection
+import com.troves.data.source.remote.service.apollo.util.runMutation
 import com.troves.data.source.remote.service.apollo.util.runQuery
 import com.troves.data.source.remote.service.apollo.util.toCollectionGid
 import com.troves.data.source.remote.service.apollo.util.toProductGid
+import com.troves.data.source.remote.service.apollo.util.toVariantGid
+import com.troves.domain.entity.Address
 import com.troves.data.source.remote.service.apollo.util.toQueryOptional
 import com.troves.data.source.remote.service.apollo.util.toShopifySearchQuery
 import com.troves.data.source.remote.service.ktor.dto.Collection
@@ -27,7 +34,6 @@ import com.troves.data.source.remote.service.ktor.dto.CustomCollectionResponse
 import com.troves.data.source.remote.service.ktor.dto.MarketingEventsResponse
 import com.troves.data.source.remote.service.ktor.dto.ProductDto
 import com.troves.data.source.remote.service.ktor.dto.ProductResponse
-import com.troves.data.source.remote.service.ktor.dto.SingleProductResponse
 import com.troves.domain.entity.Product
 import com.troves.domain.entity.ProductSearchParams
 import com.troves.domain.entity.DiscountCode
@@ -96,11 +102,11 @@ class ApolloTrovesApiServiceImpl(
         TODO("Not yet implemented")
     }
 
-    override suspend fun getProductById(productId: String): Result<SingleProductResponse> =
+    override suspend fun getProductById(productId: String): Result<Product> =
         apolloClient.runQuery(GetProductByIdQuery(id = productId.toProductGid())) { data ->
             val product = data.product?.productCard
                 ?: throw NoSuchElementException("Product not found: $productId")
-            SingleProductResponse(product = product.toProductDto())
+            product.toDomainProduct()
         }
 
     override suspend fun updateProduct(productId: String) {
@@ -148,6 +154,42 @@ class ApolloTrovesApiServiceImpl(
                 }
             }
         }
+
+    override suspend fun createOrder(
+        email: String?,
+        address: Address,
+        lineItems: List<Pair<String, Int>>,
+    ): Result<String> {
+        val order = OrderCreateOrderInput(
+            email = Optional.presentIfNotNull(email),
+            shippingAddress = Optional.present(address.toMailingAddressInput()),
+            lineItems = Optional.present(
+                lineItems.map { (variantId, quantity) ->
+                    OrderCreateLineItemInput(
+                        variantId = Optional.present(variantId.toVariantGid()),
+                        quantity = quantity,
+                    )
+                }
+            ),
+        )
+        return apolloClient.runMutation(CreateOrderMutation(order = order)) { data ->
+            data.orderCreate?.userErrors?.firstOrNull()?.let { error(it.message) }
+            data.orderCreate?.order?.name ?: error("Order creation returned no order")
+        }
+    }
+
+    private fun Address.toMailingAddressInput(): MailingAddressInput = MailingAddressInput(
+        address1 = Optional.presentIfNotNull(address1),
+        address2 = Optional.presentIfNotNull(address2),
+        city = Optional.presentIfNotNull(city),
+        province = Optional.presentIfNotNull(province),
+        zip = Optional.presentIfNotNull(zip),
+        phone = Optional.presentIfNotNull(phone),
+        firstName = Optional.presentIfNotNull(firstName),
+        lastName = Optional.presentIfNotNull(lastName),
+        company = Optional.presentIfNotNull(company),
+        country = Optional.presentIfNotNull(country),
+    )
 
 
     private companion object {
