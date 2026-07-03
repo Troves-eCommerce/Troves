@@ -84,12 +84,9 @@ class TrovesPreferencesImpl(
     // ── Writes ─────────────────────────────────────────────────────────
 
 
-    override suspend fun setShopifyCustomerAccessToken(accessToken: String) {
-        dataStore.edit { it[AppPreferencesKeys.SHOPIFY_ACCESS_TOKEN_KEY] = accessToken }
-    }
-
-    override suspend fun setShopifyCustomerAccessTokenExpiring(accessTokenTimestamp: Long) {
+    override suspend fun setShopifyCustomerAccessToken(accessToken: String,accessTokenTimestamp: Long) {
         dataStore.edit {
+            it[AppPreferencesKeys.SHOPIFY_ACCESS_TOKEN_KEY] = accessToken
             it[AppPreferencesKeys.SHOPIFY_ACCESS_TOKEN_KEY_EXPIRING] = accessTokenTimestamp
         }
     }

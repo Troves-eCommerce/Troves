@@ -15,6 +15,7 @@ import com.troves.presintation.core.mvi.StateHolder
 import com.troves.presintation.ui.auth.validator.AuthValidator
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.milliseconds
 
 class AuthViewModel(
     private val loginUseCase: LoginUseCase,
@@ -120,7 +121,8 @@ class AuthViewModel(
         runCatching { syncCartUseCase() }
         updateState { copy(isLoading = false) }
         sendEffect(AuthEffect.ShowMessage(message))
-        delay(SUCCESS_NAV_DELAY_MS)
+        delay(SUCCESS_NAV_DELAY_MS.milliseconds)
+        sendEffect(AuthEffect.OnRegistered)
         sendEffect(AuthEffect.NavigateToHome)
     }
 

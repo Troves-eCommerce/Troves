@@ -19,6 +19,7 @@ import androidx.navigation3.ui.NavDisplay
 import androidx.savedstate.serialization.SavedStateConfiguration
 import com.troves.designsystem.components.bottomnav.BottomNavItem
 import com.troves.designsystem.components.bottomnav.SPBottomNavigation
+import com.troves.presintation.ui.MainIntent
 import com.troves.presintation.ui.MainViewModel
 import com.troves.presintation.ui.StartDestination
 import com.troves.presintation.ui.address.ManageSavedAddressesScreen
@@ -46,7 +47,6 @@ import troves.designsystem.generated.resources.Res
 import troves.designsystem.generated.resources.ic_home
 import troves.designsystem.generated.resources.ic_order
 import troves.designsystem.generated.resources.ic_profile
-import troves.designsystem.generated.resources.ic_wishlist
 
 private val navSavedStateConfiguration = SavedStateConfiguration {
     serializersModule = SerializersModule {
@@ -81,6 +81,8 @@ fun AppNav() {
         SplashScreen(onNavigateToOnboarding = {})
         return
     }
+
+
 
     val initialRoute: NavKey = when (uiState.startDestination) {
         StartDestination.Onboarding -> AppRoute.Onboarding
@@ -168,13 +170,19 @@ fun AppNav() {
         entry<AppRoute.Login> {
             LoginScreen(
                 onNavigateToRegister = { backStack.add(AppRoute.Register) },
-                onLoginSuccess = { replaceWith(AppRoute.Home) }
+                onLoginSuccess = { replaceWith(AppRoute.Home) },
+                onLoggedIn = {
+                    mainViewModel::onIntent.invoke(MainIntent.OnLoggedIn)
+                }
             )
         }
         entry<AppRoute.Register> {
             RegisterScreen(
                 onNavigateToLogin = { backStack.add(AppRoute.Login) },
-                onRegisterSuccess = { replaceWith(AppRoute.Home) }
+                onRegisterSuccess = { replaceWith(AppRoute.Home) },
+                onRegistered = {
+                    mainViewModel::onIntent.invoke(MainIntent.OnRegistered)
+                }
             )
         }
         entry<AppRoute.Products> { key ->

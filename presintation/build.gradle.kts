@@ -99,6 +99,9 @@ kotlin {
         androidMain {
             dependencies {
                 // Add Android-specific dependencies here.
+
+                //Shopify Checkout Android kit
+                implementation(libs.checkout.sheet.kit.android)
             }
         }
 
