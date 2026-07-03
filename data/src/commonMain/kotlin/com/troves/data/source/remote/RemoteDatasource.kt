@@ -52,4 +52,6 @@ interface RemoteDatasource {
     suspend fun removeFromCart(userId: String, productId: Long): Result<Unit>
     suspend fun clearCart(userId: String): Result<Unit>
     //endregion
+
+    suspend fun getDiscountCodes(): Result<List<com.troves.domain.entity.DiscountCode>>
 }

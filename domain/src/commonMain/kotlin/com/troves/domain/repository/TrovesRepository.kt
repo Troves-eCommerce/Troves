@@ -7,6 +7,8 @@ import com.troves.domain.entity.Product
 import com.troves.domain.entity.ProductSearchParams
 import com.troves.domain.utils.Result
 
+import com.troves.domain.entity.DiscountCode
+
 interface TrovesRepository {
     suspend fun getAllProducts(): Result<List<Product>>
     suspend fun getProductsByQuery(queryMap: Map<String, String>): Result<List<Product>>
@@ -17,4 +19,5 @@ interface TrovesRepository {
     suspend fun getBrands(): Result<List<Brand>>
     suspend fun getCategories(): Result<List<Category>>
     suspend fun getAds(): Result<List<Ad>>
+    suspend fun getDiscountCodes(): Result<List<DiscountCode>>
 }

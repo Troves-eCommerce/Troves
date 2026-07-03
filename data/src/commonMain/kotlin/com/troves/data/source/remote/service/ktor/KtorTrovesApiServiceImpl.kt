@@ -15,6 +15,7 @@ import io.ktor.http.HttpMethod
 import io.ktor.http.path
 import com.troves.domain.utils.Result
 import io.ktor.client.request.parameter
+import com.troves.domain.entity.DiscountCode
 
 class KtorTrovesApiServiceImpl(
     private val ktorClient: HttpClient
@@ -102,5 +103,8 @@ class KtorTrovesApiServiceImpl(
         TODO("Not yet implemented")
     }
 
+    override suspend fun getDiscountCodes(): Result<List<DiscountCode>> {
+        TODO("Not yet implemented")
+    }
 
 }

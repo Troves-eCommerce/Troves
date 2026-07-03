@@ -14,6 +14,7 @@ import com.troves.domain.usecase.details.GetProductByIdUseCase
 import com.troves.domain.usecase.home.GetAdsUseCase
 import com.troves.domain.usecase.home.GetBrandsUseCase
 import com.troves.domain.usecase.home.GetCategoriesUseCase
+import com.troves.domain.usecase.home.GetDiscountCodesUseCase
 import com.troves.domain.usecase.home.GetJustForYouProductsUseCase
 import com.troves.domain.usecase.home.GetTrendingProductsUseCase
 import com.troves.domain.usecase.onboarding.CompleteOnboardingUseCase
@@ -51,6 +52,7 @@ val domainModule = module {
     factory { GetTrendingProductsUseCase(get()) }
     factory { FilterProductsByQueryUseCase(get()) }
     factory { SearchProductsUseCase(get()) }
+    factory { GetDiscountCodesUseCase(get()) }
 
     // Onboarding
     factory { IsOnboardingDoneUseCase(get()) }

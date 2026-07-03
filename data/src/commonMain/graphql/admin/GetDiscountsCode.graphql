@@ -1,0 +1,11 @@
+query GetDiscountCode{
+    codeDiscountNodes(first: 7) {
+        nodes {
+            codeDiscount {
+                ... on DiscountCodeBasic {
+                    title
+                }
+            }
+        }
+    }
+}

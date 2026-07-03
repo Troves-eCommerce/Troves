@@ -51,7 +51,13 @@ class HomeViewModel(
             }
             HomeIntent.SignUpPromptDismissed -> updateState { copy(showSignUpPrompt = false) }
             HomeIntent.SeeAllBrandsClicked -> sendEffect(HomeEffect.NavigateToAllBrands)
-            is HomeIntent.AdClicked -> sendEffect(HomeEffect.ShowToast(intent.ad.titleTop))
+            is HomeIntent.AdClicked -> {
+                if (intent.ad.buttonText == "Copy code") {
+                    sendEffect(HomeEffect.ShowToast("Copied ${intent.ad.titleTop} to clipboard"))
+                } else {
+                    sendEffect(HomeEffect.ShowToast(intent.ad.titleTop))
+                }
+            }
             is HomeIntent.BrandClicked -> sendEffect(
                 HomeEffect.NavigateToProducts(
                     sourceType = "brand",
@@ -110,11 +116,7 @@ class HomeViewModel(
         }
     }
 
-    /**
-     * Keeps favoriteProductIds in sync with the wishlist source of truth,
-     * independent of loadHomeFeed's request/response cycle, so a favorite
-     * toggled from another screen (e.g. Product Details) reflects here too.
-     */
+
     private fun observeWishlist() {
         viewModelScope.launch {
             getWishlist().collect { favorites ->
@@ -123,11 +125,7 @@ class HomeViewModel(
         }
     }
 
-    /**
-     * The cart is a gated action: only signed-in users may open it. When the
-     * persisted login flag is false we surface the sign-up prompt instead of
-     * navigating, leaving browsing open to everyone.
-     */
+
     private fun onCartClicked() {
         viewModelScope.launch {
             if (isLoggedIn()) {

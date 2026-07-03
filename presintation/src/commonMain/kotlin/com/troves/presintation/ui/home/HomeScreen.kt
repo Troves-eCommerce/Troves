@@ -22,6 +22,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.material3.Icon
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -162,6 +164,8 @@ private fun HomeContent(
     val starIcon = painterResource(Res.drawable.ic_star)
     val heartIcon = painterResource(Res.drawable.ic_heart)
 
+    val clipboardManager = LocalClipboardManager.current
+
     if (state.ads.isNotEmpty()) {
         AdSlider(
             ads = state.ads.map { ad ->
@@ -175,8 +179,13 @@ private fun HomeContent(
             },
             arrowIconPainter = chevron,
             onShopNowClick = { clicked ->
-                state.ads.firstOrNull { it.titleTop == clicked.titleTop }
-                    ?.let { onIntent(HomeIntent.AdClicked(it)) }
+                val ad = state.ads.firstOrNull { it.titleTop == clicked.titleTop }
+                if (ad != null) {
+                    if (ad.buttonText == "Copy code") {
+                        clipboardManager.setText(AnnotatedString(ad.titleTop))
+                    }
+                    onIntent(HomeIntent.AdClicked(ad))
+                }
             },
         )
     }

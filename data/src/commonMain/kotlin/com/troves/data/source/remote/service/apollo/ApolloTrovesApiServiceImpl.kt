@@ -9,6 +9,7 @@ import com.troves.data.source.remote.service.apollo.graphql.admin.GetProductsByC
 import com.troves.data.source.remote.service.apollo.graphql.admin.GetProductsBySearchQuery
 import com.troves.data.source.remote.service.apollo.graphql.admin.GetProductsByVendorQuery
 import com.troves.data.source.remote.service.apollo.graphql.admin.GetProductsQuery
+import com.troves.data.source.remote.service.apollo.graphql.admin.GetDiscountCodeQuery
 import com.troves.data.source.remote.service.apollo.graphql.admin.type.ProductCollectionSortKeys
 
 import com.troves.data.source.remote.service.apollo.mapper.toCustomCollectionDto
@@ -29,6 +30,7 @@ import com.troves.data.source.remote.service.ktor.dto.ProductResponse
 import com.troves.data.source.remote.service.ktor.dto.SingleProductResponse
 import com.troves.domain.entity.Product
 import com.troves.domain.entity.ProductSearchParams
+import com.troves.domain.entity.DiscountCode
 import com.troves.domain.utils.Result
 
 
@@ -137,6 +139,16 @@ class ApolloTrovesApiServiceImpl(
         TODO("Not yet implemented")
     }
     // endregion
+
+    override suspend fun getDiscountCodes(): Result<List<DiscountCode>> =
+        apolloClient.runQuery(GetDiscountCodeQuery()) { data ->
+            data.codeDiscountNodes.nodes.mapNotNull { node ->
+                node.codeDiscount.onDiscountCodeBasic?.title?.let { title ->
+                    DiscountCode(title = title)
+                }
+            }
+        }
+
 
     private companion object {
         const val DEFAULT_PAGE_SIZE = 250
