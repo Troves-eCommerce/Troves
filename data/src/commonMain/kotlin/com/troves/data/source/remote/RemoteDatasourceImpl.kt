@@ -34,6 +34,14 @@ class RemoteDatasourceImpl(
       return  trovesApiService.searchProducts(params = params)
     }
 
+    override suspend fun getProductsByVendor(vendorName: String): Result<List<Product>> {
+        return trovesApiService.getProductsByVendor(vendorName = vendorName)
+    }
+
+    override suspend fun getProductsByCollection(collectionId: String): Result<List<Product>> {
+        return trovesApiService.getProductsByCollection(collectionId = collectionId)
+    }
+
     override suspend fun getProductImages(productId: String): Result<List<CollectionImage>> {
         return trovesApiService.getProductImages(productId = productId)
     }

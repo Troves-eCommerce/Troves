@@ -49,3 +49,6 @@ internal fun String.gidToLong(): Long? = substringAfterLast('/').toLongOrNull()
 
 internal fun String.toProductGid(): String =
     if (startsWith("gid://")) this else "gid://shopify/Product/$this"
+
+internal fun String.toCollectionGid(): String =
+    if (startsWith("gid://")) this else "gid://shopify/Collection/$this"

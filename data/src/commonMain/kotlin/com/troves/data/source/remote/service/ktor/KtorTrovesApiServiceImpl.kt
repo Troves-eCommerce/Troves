@@ -51,6 +51,14 @@ class KtorTrovesApiServiceImpl(
         }
     }
 
+    override suspend fun getProductsByVendor(vendorName: String): Result<List<Product>> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getProductsByCollection(collectionId: String): Result<List<Product>> {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun getProductImages(productId: String): Result<List<CollectionImage>> {
         return ktorClient.getResults {
             method = HttpMethod.Get

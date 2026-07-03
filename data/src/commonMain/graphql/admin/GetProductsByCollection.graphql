@@ -1,0 +1,29 @@
+query GetProductsByCollection($id: ID!, $first: Int!, $after: String, $sortKey: ProductCollectionSortKeys) {
+    collection(id: $id) {
+        id
+        title
+        products(first: $first, after: $after, sortKey: $sortKey) {
+            edges {
+                node {
+                    id
+                    title
+                    handle
+                    featuredImage {
+                        url
+                        altText
+                    }
+                    priceRangeV2 {
+                        minVariantPrice {
+                            amount
+                            currencyCode
+                        }
+                    }
+                }
+            }
+            pageInfo {
+                hasNextPage
+                endCursor
+            }
+        }
+    }
+}
