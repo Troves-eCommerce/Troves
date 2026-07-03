@@ -7,13 +7,13 @@ class UpdateCartQuantityUseCase(
     private val repository: CartRepository,
     private val authenticationRepository: AuthenticationRepository,
 ) {
-    suspend operator fun invoke(productId: Long, quantity: Int): CartOperationResult {
+    suspend operator fun invoke(lineId: String, quantity: Int): CartOperationResult {
         val userId = authenticationRepository.getCurrentUserId()
         if (userId == null || !authenticationRepository.isLoggedIn()) {
             return CartOperationResult.RequiresLogin
         }
         return try {
-            repository.updateQuantity(productId, quantity, userId)
+            repository.updateQuantity(lineId, quantity)
             CartOperationResult.Success
         } catch (e: Exception) {
             CartOperationResult.Error(e)
