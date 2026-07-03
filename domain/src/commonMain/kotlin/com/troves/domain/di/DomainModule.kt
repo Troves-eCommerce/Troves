@@ -94,7 +94,7 @@ val domainModule = module {
     factory { GetDefaultAddressUseCase(get()) }
     factory { GetOrdersUseCase(get()) }
     factory { GetOrderByIdUseCase(get()) }
-    factory { PlaceCodOrderUseCase(get(), get(), get()) }
+    factory { PlaceCodOrderUseCase(get(), get()) }
     factory { com.troves.domain.usecase.order.AttachAddressToCartUseCase(get()) }
     factory { ClearCartUseCase(get()) }
     single { SyncWishlistUseCase(get(),get()) }
