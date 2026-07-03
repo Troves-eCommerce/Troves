@@ -9,8 +9,14 @@ import com.troves.data.source.remote.service.apollo.graphql.storefront.CreateCar
 import com.troves.data.source.remote.service.apollo.graphql.storefront.CreateCustomerMutation
 import com.troves.data.source.remote.service.apollo.graphql.storefront.CustomerAccessTokenCreateMutation
 import com.troves.data.source.remote.service.apollo.graphql.storefront.CustomerAccessTokenDeleteMutation
+import com.troves.data.source.remote.service.apollo.graphql.storefront.CustomerAddressCreateMutation
+import com.troves.data.source.remote.service.apollo.graphql.storefront.CustomerAddressDeleteMutation
+import com.troves.data.source.remote.service.apollo.graphql.storefront.CustomerAddressUpdateMutation
 import com.troves.data.source.remote.service.apollo.graphql.storefront.CustomerAddressesQuery
+import com.troves.data.source.remote.service.apollo.graphql.storefront.CustomerDefaultAddressUpdateMutation
 import com.troves.data.source.remote.service.apollo.graphql.storefront.GetCartQuery
+import com.troves.data.source.remote.service.apollo.graphql.storefront.UpdateBuyerIdentityMutation
+import com.troves.data.source.remote.service.apollo.graphql.storefront.UpdateDeliveryAddressMutation
 import com.troves.data.source.remote.service.apollo.graphql.storefront.GetOrderByIdQuery
 import com.troves.data.source.remote.service.apollo.graphql.storefront.GetOrdersQuery
 import com.troves.data.source.remote.service.apollo.graphql.storefront.RemoveCartLinesMutation
@@ -21,10 +27,12 @@ import com.troves.data.source.remote.service.apollo.graphql.storefront.type.Cart
 import com.troves.data.source.remote.service.apollo.graphql.storefront.type.CartLineInput
 import com.troves.data.source.remote.service.apollo.graphql.storefront.type.CartLineUpdateInput
 import com.troves.data.source.remote.service.apollo.graphql.storefront.type.CustomerCreateInput
+import com.troves.data.source.remote.service.apollo.mapper.toCartSelectableAddressInput
 import com.troves.data.source.remote.service.apollo.mapper.toDomainCart
 import com.troves.data.source.remote.service.apollo.mapper.toDomainAddress
 import com.troves.data.source.remote.service.apollo.mapper.toDomainLineItem
 import com.troves.data.source.remote.service.apollo.mapper.toDomainOrder
+import com.troves.data.source.remote.service.apollo.mapper.toStorefrontMailingAddressInput
 import com.troves.data.source.remote.service.apollo.util.runMutation
 import com.troves.data.source.remote.service.apollo.util.runQuery
 import com.troves.data.source.remote.service.apollo.util.toVariantGid
@@ -146,10 +154,90 @@ class ApolloStorefrontApiServiceImpl(
 
     // region customer address & orders
     override suspend fun getDefaultAddress(customerAccessToken: String): Result<Address?> =
+        getCustomerAddresses(customerAccessToken).let { result ->
+            when (result) {
+                is Result.Success -> Result.Success(result.value.firstOrNull { it.isDefault })
+                is Result.Error -> result
+                is Result.Loading -> Result.Loading
+            }
+        }
+
+    override suspend fun getCustomerAddresses(customerAccessToken: String): Result<List<Address>> =
         apolloClient.runQuery(
-            CustomerAddressesQuery(customerAccessToken = customerAccessToken, first = 1)
+            CustomerAddressesQuery(customerAccessToken = customerAccessToken, first = 30)
         ) { data ->
-            data.customer?.defaultAddress?.addressFields?.toDomainAddress()
+            val defaultId = data.customer?.defaultAddress?.id
+            data.customer?.addresses?.nodes.orEmpty().map { node ->
+                node.addressFields.toDomainAddress(isDefault = node.addressFields.id == defaultId)
+            }
+        }
+
+    override suspend fun createCustomerAddress(customerAccessToken: String, address: Address): Result<Address> =
+        apolloClient.runMutation(
+            CustomerAddressCreateMutation(
+                customerAccessToken = customerAccessToken,
+                address = address.toStorefrontMailingAddressInput(),
+            )
+        ) { data ->
+            val payload = data.customerAddressCreate
+            payload?.customerUserErrors?.firstOrNull()?.let { error(it.message) }
+            payload?.customerAddress?.addressFields?.toDomainAddress()
+                ?: error("Address creation returned no address")
+        }
+
+    override suspend fun updateCustomerAddress(customerAccessToken: String, id: String, address: Address): Result<Address> =
+        apolloClient.runMutation(
+            CustomerAddressUpdateMutation(
+                customerAccessToken = customerAccessToken,
+                id = id,
+                address = address.toStorefrontMailingAddressInput(),
+            )
+        ) { data ->
+            val payload = data.customerAddressUpdate
+            payload?.customerUserErrors?.firstOrNull()?.let { error(it.message) }
+            payload?.customerAddress?.addressFields?.toDomainAddress()
+                ?: error("Address update returned no address")
+        }
+
+    override suspend fun deleteCustomerAddress(customerAccessToken: String, id: String): Result<Unit> =
+        apolloClient.runMutation(
+            CustomerAddressDeleteMutation(customerAccessToken = customerAccessToken, id = id)
+        ) { data ->
+            data.customerAddressDelete?.customerUserErrors?.firstOrNull()?.let { error(it.message) }
+            Unit
+        }
+
+    override suspend fun setDefaultCustomerAddress(customerAccessToken: String, id: String): Result<Unit> =
+        apolloClient.runMutation(
+            CustomerDefaultAddressUpdateMutation(customerAccessToken = customerAccessToken, addressId = id)
+        ) { data ->
+            data.customerDefaultAddressUpdate?.customerUserErrors?.firstOrNull()?.let { error(it.message) }
+            Unit
+        }
+
+    override suspend fun updateCartBuyerIdentity(cartId: String, customerAccessToken: String?, email: String?): Result<Unit> =
+        apolloClient.runMutation(
+            UpdateBuyerIdentityMutation(
+                cartId = cartId,
+                buyerIdentity = CartBuyerIdentityInput(
+                    email = Optional.presentIfNotNull(email),
+                    customerAccessToken = Optional.presentIfNotNull(customerAccessToken),
+                ),
+            )
+        ) { data ->
+            data.cartBuyerIdentityUpdate?.userErrors?.firstOrNull()?.let { error(it.message) }
+            Unit
+        }
+
+    override suspend fun updateCartDeliveryAddress(cartId: String, address: Address): Result<Unit> =
+        apolloClient.runMutation(
+            UpdateDeliveryAddressMutation(
+                cartId = cartId,
+                addresses = listOf(address.toCartSelectableAddressInput()),
+            )
+        ) { data ->
+            data.cartDeliveryAddressesAdd?.userErrors?.firstOrNull()?.let { error(it.message) }
+            Unit
         }
 
     override suspend fun getOrders(customerAccessToken: String): Result<List<Order>> =

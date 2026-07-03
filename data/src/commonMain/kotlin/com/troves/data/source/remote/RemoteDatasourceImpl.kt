@@ -71,13 +71,6 @@ class RemoteDatasourceImpl(
         TODO("Not yet implemented")
     }
     
-    override suspend fun getCountries(): Result<List<com.troves.data.source.remote.dto.RestCountryDto>> {
-        return trovesApiService.getCountries()
-    }
-    
-    override suspend fun getCities(country: String): Result<com.troves.data.source.remote.dto.CountriesNowCitiesDto> {
-        return trovesApiService.getCities(country)
-    }
     
     private fun wishlistCollection(userId: String) =
         firestore.collection("users").document(userId).collection("wishlist")

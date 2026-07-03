@@ -37,6 +37,17 @@ interface StorefrontApiService {
 
     // region customer address & orders (require a Storefront customer token)
     suspend fun getDefaultAddress(customerAccessToken: String): Result<Address?>
+
+    suspend fun getCustomerAddresses(customerAccessToken: String): Result<List<Address>>
+    suspend fun createCustomerAddress(customerAccessToken: String, address: Address): Result<Address>
+    suspend fun updateCustomerAddress(customerAccessToken: String, id: String, address: Address): Result<Address>
+    suspend fun deleteCustomerAddress(customerAccessToken: String, id: String): Result<Unit>
+    suspend fun setDefaultCustomerAddress(customerAccessToken: String, id: String): Result<Unit>
+
+    suspend fun updateCartBuyerIdentity(cartId: String, customerAccessToken: String?, email: String?): Result<Unit>
+
+    suspend fun updateCartDeliveryAddress(cartId: String, address: Address): Result<Unit>
+
     suspend fun getOrders(customerAccessToken: String): Result<List<Order>>
     suspend fun getOrderById(orderId: String): Result<Order?>
     // endregion

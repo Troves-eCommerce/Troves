@@ -169,8 +169,8 @@ buildkonfig {
                 ?: ""
         )
         buildConfigField(
-            STRING, "REST_COUNTRIES_API_KEY",
-            localProperties.getProperty("REST_COUNTRIES_API_KEY") ?: error("REST_COUNTRIES_API_KEY not set in local.properties")
+            STRING, "SHOPIFY_CUSTOMER_PASSWORD_SECRET",
+            localProperties.getProperty("SHOPIFY_CUSTOMER_PASSWORD_SECRET") ?: "troves-shopify-oauth-salt-v1"
         )
     }
 }

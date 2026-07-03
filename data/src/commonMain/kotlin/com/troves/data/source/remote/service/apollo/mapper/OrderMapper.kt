@@ -8,7 +8,7 @@ import com.troves.domain.entity.CartMoney
 import com.troves.domain.entity.Order
 import com.troves.domain.entity.OrderLineItem
 
-internal fun AddressFields.toDomainAddress(): Address = Address(
+internal fun AddressFields.toDomainAddress(isDefault: Boolean = false): Address = Address(
     id = id,
     address1 = address1,
     address2 = address2,
@@ -22,6 +22,7 @@ internal fun AddressFields.toDomainAddress(): Address = Address(
     firstName = firstName,
     lastName = lastName,
     company = company,
+    isDefault = isDefault,
 )
 
 internal fun OrderCoreFields.toDomainOrder(
