@@ -36,7 +36,7 @@ val dataModule = module {
         provideApolloClient()
     }
     // GraphQL (Apollo) is now the active TrovesApiService implementation.
-    single<TrovesApiService> { ApolloTrovesApiServiceImpl(get()) }
+    single<TrovesApiService> { ApolloTrovesApiServiceImpl(get(), get()) }
 
     // ── Remote data source ────────────────────────────────────────────────────
     single<RemoteDatasource> { RemoteDatasourceImpl(get(), get()) }
@@ -51,6 +51,7 @@ val dataModule = module {
             .build()
     }
     single { get<TrovesDatabase>().wishlistDao() }
+    single { get<TrovesDatabase>().addressDao() }
     single { get<TrovesDatabase>().cartDao() }
 
     // ── Repositories ──────────────────────────────────────────────────────────
@@ -60,4 +61,5 @@ val dataModule = module {
     single<CartRepository>            { CartRepositoryImpl(get(), get()) }
     single<WishlistRepository>        { WishlistRepositoryImpl(get() , get()) }
     single<FirebaseFirestore> { Firebase.firestore }
+    single<com.troves.domain.repository.AddressRepository> { com.troves.data.repository.AddressRepositoryImpl(get()) }
 }

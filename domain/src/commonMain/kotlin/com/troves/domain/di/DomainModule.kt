@@ -34,6 +34,7 @@ import com.troves.domain.usecase.wishlist.IsProductFavoritedUseCase
 import com.troves.domain.usecase.wishlist.SyncWishlistUseCase
 import com.troves.domain.usecase.wishlist.ToggleFavoriteUseCase
 import org.koin.dsl.module
+import kotlin.coroutines.EmptyCoroutineContext.get
 
 val domainModule = module {
     // Use cases — factory creates a new instance per injection site
@@ -77,6 +78,13 @@ val domainModule = module {
     factory { UpdateCartQuantityUseCase(get(), get()) }
     single { SyncCartUseCase(get(), get()) }
     single { SyncWishlistUseCase(get(),get()) }
+
+    // Address
+    factory { com.troves.domain.usecase.address.GetSavedAddressesUseCase(get()) }
+    factory { com.troves.domain.usecase.address.AddAddressUseCase(get()) }
+    factory { com.troves.domain.usecase.address.DeleteAddressUseCase(get()) }
+    factory { com.troves.domain.usecase.shared.GetCountriesUseCase(get()) }
+    factory { com.troves.domain.usecase.shared.GetCitiesUseCase(get()) }
 
     // Settings
     factory { SetLanguageUseCase(get()) }
