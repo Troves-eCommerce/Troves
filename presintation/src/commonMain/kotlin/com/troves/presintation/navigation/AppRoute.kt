@@ -42,4 +42,10 @@ sealed interface AppRoute : NavKey {
 
     @Serializable
     data object Cart : AppRoute
+
+    @Serializable
+    data object Checkout : AppRoute
+
+    @Serializable
+    data object Orders : AppRoute
 }

@@ -27,6 +27,8 @@ import com.troves.presintation.ui.allbrands.AllBrandsScreen
 import com.troves.presintation.ui.auth.LoginScreen
 import com.troves.presintation.ui.auth.RegisterScreen
 import com.troves.presintation.ui.cart.CartScreen
+import com.troves.presintation.ui.checkout.CheckoutScreen
+import com.troves.presintation.ui.orders.OrdersScreen
 import com.troves.presintation.ui.fav.WishlistScreen
 import com.troves.presintation.ui.home.HomeScreen
 import com.troves.presintation.ui.onboarding.OnboardingScreen
@@ -60,6 +62,8 @@ private val navSavedStateConfiguration = SavedStateConfiguration {
             subclass(AppRoute.Profile::class, AppRoute.Profile.serializer())
             subclass(AppRoute.ProductDetails::class, AppRoute.ProductDetails.serializer())
             subclass(AppRoute.Cart::class, AppRoute.Cart.serializer())
+            subclass(AppRoute.Checkout::class, AppRoute.Checkout.serializer())
+            subclass(AppRoute.Orders::class, AppRoute.Orders.serializer())
             subclass(AppRoute.Search::class, AppRoute.Search.serializer())
         }
     }
@@ -87,7 +91,7 @@ fun AppNav() {
         listOf(
             AppRoute.Home,
             AppRoute.Favorites,
-            AppRoute.Profile, // Placeholder for Orders if it doesn't exist
+            AppRoute.Orders,
             AppRoute.Profile
         )
     }
@@ -203,9 +207,19 @@ fun AppNav() {
         entry<AppRoute.Cart> {
             CartScreen(
                 onNavigateBack = { backStack.removeLastOrNull() },
-                onNavigateToCheckout = { backStack.removeLastOrNull() },
+                onNavigateToCheckout = { backStack.add(AppRoute.Checkout) },
                 onNavigateToLogin = { backStack.add(AppRoute.Login) },
             )
+        }
+        entry<AppRoute.Checkout> {
+            CheckoutScreen(
+                onNavigateBack = { backStack.removeLastOrNull() },
+                onOrderPlaced = { replaceWith(AppRoute.Home) },
+                onNavigateToLogin = { backStack.add(AppRoute.Login) },
+            )
+        }
+        entry<AppRoute.Orders> {
+            OrdersScreen()
         }
         entry<AppRoute.Search> {
             val viewModel: SearchScreenViewModel = koinViewModel()

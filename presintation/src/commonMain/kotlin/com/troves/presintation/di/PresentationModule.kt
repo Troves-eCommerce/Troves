@@ -5,6 +5,8 @@ import com.troves.presintation.ui.allbrands.AllBrandsViewModel
 import com.troves.presintation.ui.auth.AuthViewModel
 import com.troves.presintation.ui.fav.WishlistViewModel
 import com.troves.presintation.ui.cart.CartViewModel
+import com.troves.presintation.ui.checkout.CheckoutViewModel
+import com.troves.presintation.ui.orders.OrdersViewModel
 import com.troves.presintation.ui.products.ProductsViewModel
 import com.troves.presintation.ui.home.HomeViewModel
 import com.troves.presintation.ui.onboarding.OnboardingViewModel
@@ -25,5 +27,7 @@ val presentationModule = module {
     viewModelOf(::WishlistViewModel)
     viewModelOf(::AllBrandsViewModel)
     viewModelOf(::CartViewModel)
+    viewModelOf(::CheckoutViewModel)
+    viewModelOf(::OrdersViewModel)
     viewModelOf(::ProfileViewModel)
 }
