@@ -1,0 +1,12 @@
+mutation CreateOrder($order: OrderCreateOrderInput!) {
+    orderCreate(order: $order, options: { sendReceipt: true }) {
+        order {
+            id
+            name
+        }
+        userErrors {
+            field
+            message
+        }
+    }
+}

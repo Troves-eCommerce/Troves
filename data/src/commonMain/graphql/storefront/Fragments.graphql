@@ -3,6 +3,61 @@ fragment MoneyFields on MoneyV2 {
     currencyCode
 }
 
+# Full cart projection shared by every cart operation (create/add/update/remove/discount/get)
+# so a single mapper can rebuild the local cart cache from one round trip.
+fragment CartFields on Cart {
+    id
+    checkoutUrl
+    totalQuantity
+
+    buyerIdentity {
+        email
+    }
+
+    cost {
+        subtotalAmount { ...MoneyFields }
+        totalAmount { ...MoneyFields }
+        totalTaxAmount { ...MoneyFields }
+    }
+
+    discountCodes {
+        code
+        applicable
+    }
+
+    discountAllocations {
+        discountedAmount { ...MoneyFields }
+    }
+
+    lines(first: 50) {
+        nodes {
+            id
+            quantity
+
+            cost {
+                totalAmount { ...MoneyFields }
+                amountPerQuantity { ...MoneyFields }
+            }
+
+            merchandise {
+                ... on ProductVariant {
+                    id
+                    title
+                    availableForSale
+                    quantityAvailable
+                    image { url }
+                    price { ...MoneyFields }
+                    product {
+                        id
+                        title
+                        vendor
+                    }
+                }
+            }
+        }
+    }
+}
+
 fragment AddressFields on MailingAddress {
     id
     address1
