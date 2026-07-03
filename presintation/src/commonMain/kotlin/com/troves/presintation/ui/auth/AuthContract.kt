@@ -14,6 +14,7 @@ sealed interface AuthEffect {
 
     data class ShowMessage(val message: String) : AuthEffect
     data class ShowError(val message: String) : AuthEffect
+    data class OnRegistered(val userEmail: String, val userId: String) : AuthEffect
 
     data object NavigateToHome : AuthEffect
 }

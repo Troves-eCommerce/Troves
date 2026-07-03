@@ -3,7 +3,7 @@ package com.troves.data.repository
 import com.troves.data.mapper.toBrand
 import com.troves.data.mapper.toCategory
 import com.troves.data.mapper.toDomain
-import com.troves.data.source.local.preferenceses.AppPreferencesDataSource
+import com.troves.data.source.local.preferenceses.TrovesPreferences
 import com.troves.data.source.remote.RemoteDatasource
 import com.troves.domain.entity.Ad
 import com.troves.domain.entity.Brand
@@ -21,10 +21,11 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import kotlinx.io.IOException
+import kotlin.map
 
 class TrovesRepositoryImpl(
     private val remoteDataSource: RemoteDatasource,
-    private val dataSource: AppPreferencesDataSource,
+    private val dataSource: TrovesPreferences,
     private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : TrovesRepository {
 
@@ -60,6 +61,18 @@ class TrovesRepositoryImpl(
             }
         } catch (e: IOException) {
             Result.Error(e)
+        }
+    }
+
+    override suspend fun getProductsByVendor(vendorName: String): Result<List<Product>> {
+        return withContext(coroutineDispatcher) {
+            remoteDataSource.getProductsByVendor(vendorName = vendorName)
+        }
+    }
+
+    override suspend fun getProductsByCollection(collectionId: Long): Result<List<Product>> {
+        return withContext(coroutineDispatcher) {
+            remoteDataSource.getProductsByCollection(collectionId = collectionId.toString())
         }
     }
 

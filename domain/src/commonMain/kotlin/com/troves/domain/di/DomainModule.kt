@@ -8,6 +8,7 @@ import com.troves.domain.usecase.auth.SignInWithGoogleUseCase
 import com.troves.domain.usecase.cart.AddToCartUseCase
 import com.troves.domain.usecase.cart.GetCartStreamUseCase
 import com.troves.domain.usecase.cart.RemoveFromCartUseCase
+import com.troves.domain.usecase.cart.SyncCartUseCase
 import com.troves.domain.usecase.cart.UpdateCartQuantityUseCase
 import com.troves.domain.usecase.details.GetProductByIdUseCase
 import com.troves.domain.usecase.home.GetAdsUseCase
@@ -68,12 +69,13 @@ val domainModule = module {
     factory { RegisterUseCase(get()) }
     factory { SignInWithGoogleUseCase(get()) }
     factory { IsLoggedInUseCase(get()) }
-    factory { LogoutUseCase(get(), get()) }
+    factory { LogoutUseCase(get(), get(), get()) }
 
     factory { GetCartStreamUseCase(get()) }
-    factory { AddToCartUseCase(get()) }
-    factory { RemoveFromCartUseCase(get()) }
-    factory { UpdateCartQuantityUseCase(get()) }
+    factory { AddToCartUseCase(get(), get()) }
+    factory { RemoveFromCartUseCase(get(), get()) }
+    factory { UpdateCartQuantityUseCase(get(), get()) }
+    single { SyncCartUseCase(get(), get()) }
     single { SyncWishlistUseCase(get(),get()) }
 
     // Settings

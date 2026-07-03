@@ -1,0 +1,8 @@
+query CustomerAddresses($customerAccessToken: String!, $first: Int!) {
+    customer(customerAccessToken: $customerAccessToken) {
+        id
+        defaultAddress {
+            ...AddressFields
+        }
+    }
+}

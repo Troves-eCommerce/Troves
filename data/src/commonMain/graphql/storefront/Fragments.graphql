@@ -1,0 +1,91 @@
+fragment MoneyFields on MoneyV2 {
+    amount
+    currencyCode
+}
+
+fragment AddressFields on MailingAddress {
+    id
+    address1
+    address2
+    city
+    province
+    provinceCode
+    country
+    countryCodeV2
+    zip
+    phone
+    firstName
+    lastName
+    company
+}
+
+fragment OrderLineItemFields on OrderLineItem {
+    title
+    quantity
+
+    variant {
+        id
+        title
+        sku
+
+        product {
+            id
+            title
+            handle
+        }
+
+        image {
+            id
+            url
+            altText
+        }
+    }
+
+    originalTotalPrice {
+        ...MoneyFields
+    }
+}
+
+fragment OrderCoreFields on Order {
+    id
+    orderNumber
+    name
+
+    email
+    phone
+
+    processedAt
+
+    financialStatus
+    fulfillmentStatus
+
+    currentSubtotalPrice {
+        ...MoneyFields
+    }
+
+    currentTotalPrice {
+        ...MoneyFields
+    }
+
+    currentTotalShippingPrice {
+        ...MoneyFields
+    }
+
+    currentTotalTax {
+        ...MoneyFields
+    }
+
+    totalPrice {
+        ...MoneyFields
+    }
+
+    totalRefunded {
+        ...MoneyFields
+    }
+
+    shippingAddress {
+        ...AddressFields
+    }
+
+    statusUrl
+}

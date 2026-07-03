@@ -221,6 +221,7 @@ fun AppNav() {
             CartScreen(
                 onNavigateBack = { backStack.removeLastOrNull() },
                 onNavigateToCheckout = { backStack.removeLastOrNull() },
+                onNavigateToLogin = { backStack.add(AppRoute.Login) },
             )
         }
         entry<AppRoute.Search> {

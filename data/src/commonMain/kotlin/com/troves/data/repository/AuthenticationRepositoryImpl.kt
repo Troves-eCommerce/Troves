@@ -1,6 +1,6 @@
 package com.troves.data.repository
 
-import com.troves.data.source.local.preferenceses.AppPreferencesDataSource
+import com.troves.data.source.local.preferenceses.TrovesPreferences
 import com.troves.domain.entity.UserProfile
 import com.troves.domain.utils.Result
 import com.troves.domain.repository.AuthenticationRepository
@@ -14,11 +14,11 @@ import kotlinx.coroutines.flow.map
 interface PlatformAuthenticationRepository : AuthenticationRepository
 
 expect fun createAuthenticationRepository(
-    preferences: AppPreferencesDataSource
+    preferences: TrovesPreferences
 ): PlatformAuthenticationRepository
 
 class AuthenticationRepositoryFirebaseImpl(
-    private val preferences: AppPreferencesDataSource
+    private val preferences: TrovesPreferences
 ) : PlatformAuthenticationRepository {
 
     private val firebaseAuth by lazy { Firebase.auth }

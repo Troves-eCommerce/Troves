@@ -12,6 +12,8 @@ interface TrovesRepository {
     suspend fun getAllProducts(): Result<List<Product>>
     suspend fun getProductsByQuery(queryMap: Map<String, String>): Result<List<Product>>
     suspend fun searchProducts(params: ProductSearchParams): Result<List<Product>>
+    suspend fun getProductsByVendor(vendorName: String): Result<List<Product>>
+    suspend fun getProductsByCollection(collectionId: Long): Result<List<Product>>
     suspend fun getProductById(productId: String): Result<Product>
     suspend fun getBrands(): Result<List<Brand>>
     suspend fun getCategories(): Result<List<Category>>

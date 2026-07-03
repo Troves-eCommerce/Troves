@@ -7,6 +7,7 @@ import com.troves.domain.usecase.auth.RegisterUseCase
 import com.troves.domain.utils.Result
 import com.troves.domain.usecase.auth.SignInWithGoogleUseCase
 import com.troves.domain.usecase.wishlist.SyncWishlistUseCase
+import com.troves.domain.usecase.cart.SyncCartUseCase
 import com.troves.presintation.core.mvi.DefaultEffectPublisher
 import com.troves.presintation.core.mvi.DefaultStateHolder
 import com.troves.presintation.core.mvi.EffectPublisher
@@ -19,7 +20,8 @@ class AuthViewModel(
     private val loginUseCase: LoginUseCase,
     private val registerUseCase: RegisterUseCase,
     private val signInWithGoogleUseCase: SignInWithGoogleUseCase,
-    private val syncWishlistUseCase: SyncWishlistUseCase
+    private val syncWishlistUseCase: SyncWishlistUseCase,
+    private val syncCartUseCase: SyncCartUseCase
 ) : ViewModel(),
     StateHolder<AuthState> by DefaultStateHolder(AuthState()),
     EffectPublisher<AuthEffect> by DefaultEffectPublisher() {
@@ -98,7 +100,9 @@ class AuthViewModel(
         viewModelScope.launch {
             updateState { copy(isLoading = true, errorMessage = null) }
             when (val result = signInWithGoogleUseCase(idToken, accessToken)) {
-                is Result.Success -> onAuthenticated("Signed in with Google successfully")
+                is Result.Success -> {
+                    onAuthenticated("Signed in with Google successfully")
+                }
                 is Result.Error -> updateState {
                     copy(
                         isLoading = false,
@@ -113,6 +117,7 @@ class AuthViewModel(
 
     private suspend fun onAuthenticated(message: String) {
         runCatching { syncWishlistUseCase() }
+        runCatching { syncCartUseCase() }
         updateState { copy(isLoading = false) }
         sendEffect(AuthEffect.ShowMessage(message))
         delay(SUCCESS_NAV_DELAY_MS)
