@@ -1,9 +1,7 @@
 package com.troves.presintation.navigation
 
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -23,15 +21,20 @@ import com.troves.designsystem.components.bottomnav.BottomNavItem
 import com.troves.designsystem.components.bottomnav.SPBottomNavigation
 import com.troves.presintation.ui.MainViewModel
 import com.troves.presintation.ui.StartDestination
+import com.troves.presintation.ui.address.ManageSavedAddressesScreen
+import com.troves.presintation.ui.address.NewAddressScreen
 import com.troves.presintation.ui.allbrands.AllBrandsScreen
 import com.troves.presintation.ui.auth.LoginScreen
 import com.troves.presintation.ui.auth.RegisterScreen
 import com.troves.presintation.ui.cart.CartScreen
 import com.troves.presintation.ui.checkout.CheckoutScreen
 import com.troves.presintation.ui.orders.OrdersScreen
+import com.troves.presintation.ui.checkout.CheckoutScreen
 import com.troves.presintation.ui.fav.WishlistScreen
 import com.troves.presintation.ui.home.HomeScreen
 import com.troves.presintation.ui.onboarding.OnboardingScreen
+import com.troves.presintation.ui.order.OrderHistoryScreen
+import com.troves.presintation.ui.payment.PaymentMethodsScreen
 import com.troves.presintation.ui.productDetails.ProductDetailsScreen
 import com.troves.presintation.ui.products.ProductsScreen
 import com.troves.presintation.ui.profile.ProfileScreen
@@ -42,7 +45,6 @@ import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import org.koin.compose.viewmodel.koinViewModel
 import troves.designsystem.generated.resources.Res
-import troves.designsystem.generated.resources.ic_explore
 import troves.designsystem.generated.resources.ic_home
 import troves.designsystem.generated.resources.ic_order
 import troves.designsystem.generated.resources.ic_profile
@@ -65,6 +67,11 @@ private val navSavedStateConfiguration = SavedStateConfiguration {
             subclass(AppRoute.Checkout::class, AppRoute.Checkout.serializer())
             subclass(AppRoute.Orders::class, AppRoute.Orders.serializer())
             subclass(AppRoute.Search::class, AppRoute.Search.serializer())
+            subclass(AppRoute.Checkout::class, AppRoute.Checkout.serializer())
+            subclass(AppRoute.OrderHistory::class, AppRoute.OrderHistory.serializer())
+            subclass(AppRoute.ManageAddresses::class, AppRoute.ManageAddresses.serializer())
+            subclass(AppRoute.NewAddress::class, AppRoute.NewAddress.serializer())
+            subclass(AppRoute.PaymentMethods::class, AppRoute.PaymentMethods.serializer())
         }
     }
 }
@@ -97,7 +104,7 @@ fun AppNav() {
     }
 
     val selectedIndex = bottomNavRoutes.indexOf(currentRoute)
-    val shouldShowBottomBar = currentRoute in bottomNavRoutes && currentRoute != AppRoute.Products && currentRoute != AppRoute.Cart
+    val shouldShowBottomBar = currentRoute in bottomNavRoutes && currentRoute != AppRoute.Products
 
     fun replaceWith(route: NavKey) {
         Snapshot.withMutableSnapshot {
@@ -201,8 +208,18 @@ fun AppNav() {
         }
         entry<AppRoute.Profile> {
             ProfileScreen(
-                onNavigateToLogin = { replaceWith(AppRoute.Login) }
+                onNavigateToLogin = { replaceWith(AppRoute.Login) },
+                onNavigateToAddresses = { backStack.add(AppRoute.ManageAddresses) },
+                onNavigateToOrders = { backStack.add(AppRoute.OrderHistory) },
+                onNavigateToPaymentMethods = { backStack.add(AppRoute.PaymentMethods) },
+                onNavigateToEditProfile = { /* Navigate to Edit Profile screen if it exists */ }
             )
+        }
+        entry<AppRoute.OrderHistory> {
+            OrderHistoryScreen()
+        }
+        entry<AppRoute.PaymentMethods> {
+            PaymentMethodsScreen()
         }
         entry<AppRoute.Cart> {
             CartScreen(
@@ -215,6 +232,7 @@ fun AppNav() {
             CheckoutScreen(
                 onNavigateBack = { backStack.removeLastOrNull() },
                 onOrderPlaced = { replaceWith(AppRoute.Home) },
+                onNavigateToCheckout = { backStack.add(AppRoute.Checkout) },
                 onNavigateToLogin = { backStack.add(AppRoute.Login) },
             )
         }
@@ -237,6 +255,33 @@ fun AppNav() {
                 }
             )
         }
+        entry<AppRoute.Checkout> {
+            CheckoutScreen(
+                onNavigateToNewAddress = { backStack.add(AppRoute.NewAddress) },
+                onNavigateToOrderSuccess = {
+                    Snapshot.withMutableSnapshot {
+                        backStack.clear()
+                        backStack.add(AppRoute.Home)
+                    }
+                },
+                onNavigateBack = { backStack.removeLastOrNull() }
+            )
+        }
+        entry<AppRoute.ManageAddresses> {
+            ManageSavedAddressesScreen(
+                onNavigateToNewAddress = { backStack.add(AppRoute.NewAddress) },
+                onNavigateToEditAddress = { address ->
+                    // For now, just navigate to NewAddress. Edit logic will be implemented later.
+                    backStack.add(AppRoute.NewAddress)
+                },
+                onNavigateBack = { backStack.removeLastOrNull() }
+            )
+        }
+        entry<AppRoute.NewAddress> {
+            NewAddressScreen(
+                onNavigateBack = { backStack.removeLastOrNull() }
+            )
+        }
     }
 
     Scaffold(
@@ -246,7 +291,7 @@ fun AppNav() {
                 SPBottomNavigation(
                     items = listOf(
                         BottomNavItem("Home", Res.drawable.ic_home),
-                        BottomNavItem("Wishlist", Res.drawable.ic_explore),
+                        BottomNavItem("Wishlist", Res.drawable.ic_wishlist),
                         BottomNavItem("Orders", Res.drawable.ic_order),
                         BottomNavItem("Profile", Res.drawable.ic_profile)
                     ),
@@ -269,4 +314,3 @@ fun AppNav() {
         )
     }
 }
-

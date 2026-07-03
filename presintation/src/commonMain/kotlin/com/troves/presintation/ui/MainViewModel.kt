@@ -3,45 +3,49 @@ package com.troves.presintation.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.troves.domain.usecase.onboarding.IsOnboardingDoneUseCase
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.flow.MutableStateFlow
+import com.troves.domain.usecase.settings.ObserveProfilePreferencesUseCase
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 
 class MainViewModel(
-    private val isOnboardingDone: IsOnboardingDoneUseCase,
+    observeProfilePreferences: ObserveProfilePreferencesUseCase,
+    private val isOnboardingDone: IsOnboardingDoneUseCase
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(MainUiState())
-    val uiState: StateFlow<MainUiState> = _uiState.asStateFlow()
-
-    init {
-        resolveStartDestination()
-    }
-
-    private fun resolveStartDestination() {
-        viewModelScope.launch {
+    val uiState: StateFlow<MainUiState> = observeProfilePreferences()
+        .map { prefs ->
             val destination = try {
                 if (isOnboardingDone()) StartDestination.Home else StartDestination.Onboarding
-            } catch (e: CancellationException) {
-                throw e
-            } catch (e: Throwable) {
-
+            } catch (e: Exception) {
                 StartDestination.Onboarding
             }
-            _uiState.update { it.copy(isLoading = false, startDestination = destination) }
+
+            MainUiState(
+                themeMode = prefs.themeMode,
+                language = prefs.language,
+                currency = prefs.currency,
+                startDestination = destination,
+                isLoading = false
+            )
         }
-    }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = MainUiState(isLoading = true) // Starts as loading
+        )
 }
 
 data class MainUiState(
     val isLoading: Boolean = true,
-    val startDestination: StartDestination = StartDestination.Onboarding,
+    val themeMode: String = "system",
+    val language: String = "en",
+    val currency: String = "USD",
+    val startDestination: StartDestination = StartDestination.Onboarding
 )
 
 enum class StartDestination {
     Onboarding,
-    Home,
+    Home
 }

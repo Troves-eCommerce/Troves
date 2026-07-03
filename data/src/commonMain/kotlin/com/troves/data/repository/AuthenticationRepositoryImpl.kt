@@ -2,13 +2,16 @@ package com.troves.data.repository
 
 import com.troves.data.source.local.preferenceses.TrovesPreferences
 import com.troves.data.source.remote.service.StorefrontApiService
+import com.troves.domain.entity.UserProfile
 import com.troves.domain.utils.Result
 import com.troves.domain.utils.getOrNull
 import com.troves.domain.repository.AuthenticationRepository
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.GoogleAuthProvider
 import dev.gitlive.firebase.auth.auth
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 
 interface PlatformAuthenticationRepository : AuthenticationRepository
 
@@ -66,6 +69,12 @@ class AuthenticationRepositoryFirebaseImpl(
         preferences.setLoggedIn(false)
     }
 
+    override val isLoggedInStream: Flow<Boolean> = preferences.isLoggedIn
+
+    override val currentUserStream: Flow<UserProfile?> =
+        firebaseAuth.idTokenChanged.map { user ->
+            user?.let { UserProfile(id = it.uid, email = it.email) }
+        }
     override suspend fun isLoggedIn(): Boolean =
         preferences.isLoggedIn.first()
 

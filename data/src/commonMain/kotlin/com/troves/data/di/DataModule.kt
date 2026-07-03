@@ -58,9 +58,12 @@ val dataModule = module {
             .build()
     }
     single { get<TrovesDatabase>().wishlistDao() }
+    single { get<TrovesDatabase>().addressDao() }
     single { get<TrovesDatabase>().cartDao() }
 
     // ── Repositories ──────────────────────────────────────────────────────────
+    single<TrovesRepository>          { TrovesRepositoryImpl(get(), get()) }
+    single<AuthenticationRepository>  { createAuthenticationRepository(get()) }
     single<TrovesRepository>          { TrovesRepositoryImpl(get()) }
     single<AuthenticationRepository>  { createAuthenticationRepository(get(), get()) }
     single<PaymentRepository>         { PaymentRepositoryImpl() }
@@ -68,6 +71,7 @@ val dataModule = module {
     single<OrderRepository>           { OrderRepositoryImpl(get(), get(), get(), get()) }
     single<WishlistRepository>        { WishlistRepositoryImpl(get() , get()) }
     single<FirebaseFirestore> { Firebase.firestore }
+    single<com.troves.domain.repository.AddressRepository> { com.troves.data.repository.AddressRepositoryImpl(get()) }
 }
 
 private const val ADMIN_CLIENT = "admin"

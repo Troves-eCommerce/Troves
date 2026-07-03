@@ -168,6 +168,10 @@ buildkonfig {
                 ?: localProperties.getProperty("STORE_ACCESS_TOKEN")
                 ?: ""
         )
+        buildConfigField(
+            STRING, "REST_COUNTRIES_API_KEY",
+            localProperties.getProperty("REST_COUNTRIES_API_KEY") ?: error("REST_COUNTRIES_API_KEY not set in local.properties")
+        )
     }
 }
 apollo {

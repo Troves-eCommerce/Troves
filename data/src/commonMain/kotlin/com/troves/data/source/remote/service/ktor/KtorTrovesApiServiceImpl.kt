@@ -13,6 +13,11 @@ import com.troves.domain.entity.ProductSearchParams
 import io.ktor.client.HttpClient
 import io.ktor.http.HttpMethod
 import io.ktor.http.path
+import io.ktor.client.request.url
+import io.ktor.client.request.header
+import io.ktor.client.request.setBody
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
 import com.troves.domain.utils.Result
 import com.troves.domain.utils.map
 import com.troves.data.mapper.toDomain
@@ -109,6 +114,24 @@ class KtorTrovesApiServiceImpl(
         TODO("Not yet implemented")
     }
 
+    override suspend fun getCountries(): Result<List<com.troves.data.source.remote.dto.RestCountryDto>> {
+        val result = ktorClient.getResults<com.troves.data.source.remote.dto.RestCountriesV5Response> {
+            method = HttpMethod.Get
+            url {
+                protocol = io.ktor.http.URLProtocol.HTTPS
+                host = "api.restcountries.com"
+                pathSegments = listOf("countries", "v5")
+                parameters.append("response_fields", "names.common")
+                parameters.append("limit", "100")
+            }
+            header("Authorization", "Bearer ${com.troves.data.BuildKonfig.REST_COUNTRIES_API_KEY}")
+        }
+        return when (result) {
+            is Result.Success -> Result.Success(result.value.data?.objects ?: emptyList())
+            is Result.Error -> Result.Error(result.throwable)
+            is Result.Loading -> Result.Loading
+        }
+    }
     override suspend fun getDiscountCodes(): Result<List<DiscountCode>> {
         TODO("Not yet implemented")
     }
@@ -120,4 +143,16 @@ class KtorTrovesApiServiceImpl(
     ): Result<String> =
         Result.Error(UnsupportedOperationException("Order creation is only available via the Admin GraphQL API"))
 
+    override suspend fun getCities(country: String): Result<com.troves.data.source.remote.dto.CountriesNowCitiesDto> {
+        return ktorClient.getResults {
+            method = HttpMethod.Post
+            url {
+                protocol = io.ktor.http.URLProtocol.HTTPS
+                host = "countriesnow.space"
+                pathSegments = listOf("api", "v0.1", "countries", "cities")
+            }
+            contentType(ContentType.Application.Json)
+            setBody(com.troves.data.source.remote.dto.CountriesNowRequestDto(country = country))
+        }
+    }
 }
