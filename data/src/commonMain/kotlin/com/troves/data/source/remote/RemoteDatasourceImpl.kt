@@ -1,6 +1,7 @@
 package com.troves.data.source.remote
 
 import com.troves.data.source.remote.dto.CartItemDto
+import com.troves.data.source.remote.dto.UserProfileDto
 import com.troves.data.source.remote.service.TrovesApiService
 import com.troves.data.source.remote.service.ktor.dto.Collection
 import com.troves.data.source.remote.service.ktor.dto.CollectionImage
@@ -46,7 +47,7 @@ class RemoteDatasourceImpl(
         return trovesApiService.getProductImages(productId = productId)
     }
 
-    override suspend fun getProductById(productId: String): Result<SingleProductResponse> {
+    override suspend fun getProductById(productId: String): Result<Product> {
         return trovesApiService.getProductById(productId = productId)
     }
 
@@ -70,13 +71,6 @@ class RemoteDatasourceImpl(
         TODO("Not yet implemented")
     }
     
-    override suspend fun getCountries(): Result<List<com.troves.data.source.remote.dto.RestCountryDto>> {
-        return trovesApiService.getCountries()
-    }
-    
-    override suspend fun getCities(country: String): Result<com.troves.data.source.remote.dto.CountriesNowCitiesDto> {
-        return trovesApiService.getCities(country)
-    }
     
     private fun wishlistCollection(userId: String) =
         firestore.collection("users").document(userId).collection("wishlist")
@@ -148,6 +142,30 @@ class RemoteDatasourceImpl(
         } catch (e: Exception) {
             Result.Error(e)
         }
+    }
+
+    private fun userDoc(userId: String) =
+        firestore.collection("users").document(userId)
+
+    override suspend fun getUserCartId(userId: String): String? {
+        return try {
+            val snapshot = userDoc(userId).get()
+            if (snapshot.exists) snapshot.get<String?>("cartId") else null
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    override suspend fun setUserCartId(userId: String, cartId: String) {
+        userDoc(userId).set(UserProfileDto(cartId = cartId), merge = true)
+    }
+
+    override suspend fun clearUserCartId(userId: String) {
+        userDoc(userId).set(UserProfileDto(cartId = null), merge = true)
+    }
+
+    override suspend fun getDiscountCodes(): Result<List<com.troves.domain.entity.DiscountCode>> {
+        return trovesApiService.getDiscountCodes()
     }
 
 }

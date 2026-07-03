@@ -1,279 +1,217 @@
 package com.troves.presintation.ui.checkout
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.text.BasicText
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.troves.designsystem.components.button.PrimaryButton
 import com.troves.designsystem.components.button.SecondaryButton
 import com.troves.designsystem.components.topbar.BaseTopAppBar
 import com.troves.designsystem.theme.Theme
-import com.troves.domain.entity.Address
 import com.troves.presintation.core.mvi.ObserveEffect
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
 import troves.designsystem.generated.resources.Res
 import troves.designsystem.generated.resources.ic_arrow_back
-import troves.designsystem.generated.resources.ic_home
-import troves.designsystem.generated.resources.ic_profile
-import com.troves.domain.entity.AddressIcon
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CheckoutScreen(
     onNavigateBack: () -> Unit,
-    onNavigateToOrderSuccess: () -> Unit,
-    onNavigateToNewAddress: () -> Unit,
+    onOrderPlaced: () -> Unit,
+    onNavigateToLogin: () -> Unit,
+    onNavigateToAddresses: () -> Unit,
     viewModel: CheckoutViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val snackBarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+    val uriHandler = LocalUriHandler.current
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) viewModel.onIntent(CheckoutIntent.OnResume)
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
 
     ObserveEffect(viewModel.effect) { effect ->
         when (effect) {
             CheckoutEffect.NavigateBack -> onNavigateBack()
-            CheckoutEffect.NavigateToOrderSuccess -> onNavigateToOrderSuccess()
-            CheckoutEffect.NavigateToNewAddress -> onNavigateToNewAddress()
+            CheckoutEffect.NavigateToAddresses -> onNavigateToAddresses()
+            is CheckoutEffect.OrderPlaced -> {
+                scope.launch { snackBarHostState.showSnackbar("Order ${effect.orderName} placed") }
+                onOrderPlaced()
+            }
+            is CheckoutEffect.OpenCheckoutUrl -> uriHandler.openUri(effect.url)
+            is CheckoutEffect.ShowToast -> scope.launch { snackBarHostState.showSnackbar(effect.message) }
+            CheckoutEffect.ShowLoginRequiredDialog -> onNavigateToLogin()
         }
     }
 
-    Scaffold(
-        modifier = Modifier.fillMaxSize().statusBarsPadding(),
-        containerColor = Theme.colors.backGround,
-        topBar = {
-            BaseTopAppBar(
-                title = "Checkout",
-                leadingIcon = painterResource(Res.drawable.ic_arrow_back),
-                onLeadingClick = { viewModel.onIntent(CheckoutIntent.OnBackClick) },
-                modifier = Modifier.background(Theme.colors.backGround),
-            )
-        },
-        bottomBar = {
-            CheckoutBottomBar(
-                state = state,
-                onPlaceOrder = { viewModel.onIntent(CheckoutIntent.OnPlaceOrder) }
-            )
-        }
-    ) { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .padding(Theme.spacing.medium),
-            verticalArrangement = Arrangement.spacedBy(Theme.spacing.large)
-        ) {
-            // Address Section
-            Column(verticalArrangement = Arrangement.spacedBy(Theme.spacing.small)) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "Shipping Address",
-                        style = Theme.typography.body.large.copy(fontWeight = FontWeight.Bold),
-                        color = Theme.colors.primaryFont
-                    )
-                    Text(
-                        text = "Change",
-                        style = Theme.typography.body.medium,
-                        color = Theme.colors.primary,
-                        modifier = Modifier.clickable { viewModel.onIntent(CheckoutIntent.OnChangeAddressClick) }
-                    )
-                }
-
-                if (state.selectedAddress != null) {
-                    SelectedAddressCard(address = state.selectedAddress!!)
-                } else {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(12.dp))
-                            .background(Theme.colors.surface)
-                            .padding(Theme.spacing.medium),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "No address selected.",
-                            style = Theme.typography.body.medium,
-                            color = Theme.colors.secondaryFont
-                        )
-                    }
-                }
-            }
-
-            // Order Summary Section
-            Column(verticalArrangement = Arrangement.spacedBy(Theme.spacing.small)) {
-                Text(
-                    text = "Order Summary",
-                    style = Theme.typography.body.large.copy(fontWeight = FontWeight.Bold),
-                    color = Theme.colors.primaryFont
+    Box(modifier = Modifier.fillMaxSize()) {
+        Scaffold(
+            modifier = Modifier.fillMaxSize().statusBarsPadding(),
+            containerColor = Theme.colors.backGround,
+            topBar = {
+                BaseTopAppBar(
+                    title = "Checkout",
+                    leadingIcon = painterResource(Res.drawable.ic_arrow_back),
+                    onLeadingClick = { viewModel.onIntent(CheckoutIntent.OnBack) },
+                    modifier = Modifier.background(Theme.colors.backGround),
                 )
-                
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(Theme.colors.surface)
-                        .padding(Theme.spacing.medium)
-                ) {
-                    Column(verticalArrangement = Arrangement.spacedBy(Theme.spacing.small)) {
-                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                            Text("Subtotal", style = Theme.typography.body.medium, color = Theme.colors.secondaryFont)
-                            Text(state.subtotalFormatted, style = Theme.typography.body.medium.copy(fontWeight = FontWeight.Medium), color = Theme.colors.primaryFont)
-                        }
-                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                            Text("Shipping", style = Theme.typography.body.medium, color = Theme.colors.secondaryFont)
-                            Text(state.shippingFormatted, style = Theme.typography.body.medium.copy(fontWeight = FontWeight.Medium), color = Theme.colors.primaryFont)
-                        }
-                        Divider(color = Theme.colors.hint.copy(alpha = 0.2f), modifier = Modifier.padding(vertical = 4.dp))
-                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                            Text("Total", style = Theme.typography.body.large.copy(fontWeight = FontWeight.Bold), color = Theme.colors.primaryFont)
-                            Text(state.totalFormatted, style = Theme.typography.body.large.copy(fontWeight = FontWeight.Bold), color = Theme.colors.primaryFont)
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    if (state.showAddressSheet) {
-        ModalBottomSheet(
-            onDismissRequest = { viewModel.onIntent(CheckoutIntent.OnDismissAddressSheet) },
-            containerColor = Theme.colors.backGround
-        ) {
+            },
+            bottomBar = {
+                CheckoutActions(
+                    state = state,
+                    onPlaceCod = { viewModel.onIntent(CheckoutIntent.OnPlaceCodOrder) },
+                    onPayByCard = { viewModel.onIntent(CheckoutIntent.OnPayByCard) },
+                )
+            },
+        ) { innerPadding ->
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .fillMaxSize()
+                    .padding(innerPadding)
                     .padding(Theme.spacing.medium),
-                verticalArrangement = Arrangement.spacedBy(Theme.spacing.medium)
+                verticalArrangement = Arrangement.spacedBy(Theme.spacing.medium),
             ) {
-                Text(
-                    text = "Select Address",
-                    style = Theme.typography.title.copy(fontWeight = FontWeight.Bold),
-                    color = Theme.colors.primaryFont
-                )
-
-                LazyColumn(verticalArrangement = Arrangement.spacedBy(Theme.spacing.small)) {
-                    items(state.addresses, key = { it.id }) { address ->
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clip(RoundedCornerShape(12.dp))
-                                .background(Theme.colors.surface)
-                                .clickable { viewModel.onIntent(CheckoutIntent.OnAddressSelected(address)) }
-                                .padding(Theme.spacing.medium)
-                        ) {
-                            Row(verticalAlignment = Alignment.Top) {
-                                Icon(
-                                    painter = if (address.icon == AddressIcon.HOME) painterResource(Res.drawable.ic_home) else painterResource(Res.drawable.ic_profile),
-                                    contentDescription = null,
-                                    tint = Theme.colors.primary,
-                                    modifier = Modifier.size(24.dp)
-                                )
-                                Spacer(Modifier.width(12.dp))
-                                Column {
-                                    Text(
-                                        text = address.label,
-                                        style = Theme.typography.body.large.copy(fontWeight = FontWeight.Medium),
-                                        color = Theme.colors.primaryFont
-                                    )
-                                    Text(
-                                        text = address.lines.joinToString(", "),
-                                        style = Theme.typography.body.medium,
-                                        color = Theme.colors.secondaryFont
-                                    )
-                                }
-                            }
+                SectionCard(title = "Shipping address") {
+                    if (state.hasAddress) {
+                        if (state.recipientName.isNotBlank()) {
+                            BasicText(
+                                text = state.recipientName,
+                                style = Theme.typography.body.large.copy(
+                                    color = Theme.colors.primaryFont,
+                                    fontWeight = FontWeight.SemiBold,
+                                ),
+                            )
                         }
+                        BasicText(
+                            text = state.addressLine,
+                            style = Theme.typography.body.medium.copy(color = Theme.colors.secondaryFont),
+                        )
+                    } else if (!state.isLoading) {
+                        BasicText(
+                            text = "Sorry you don't have an address to deliver to",
+                            style = Theme.typography.body.medium.copy(color = Theme.colors.error),
+                        )
                     }
+                    SecondaryButton(
+                        caption = if (state.hasAddress) "Change address" else "Add address",
+                        onClick = { viewModel.onIntent(CheckoutIntent.OnManageAddress) },
+                        modifier = Modifier.fillMaxWidth(),
+                    )
                 }
-                
-                SecondaryButton(
-                    caption = "Add New Address",
-                    onClick = { viewModel.onIntent(CheckoutIntent.OnAddNewAddress) },
-                    modifier = Modifier.fillMaxWidth()
-                )
-                Spacer(Modifier.height(Theme.spacing.large))
+
+                SectionCard(title = "Order summary") {
+                    SummaryRow("Items", state.itemCount.toString())
+                    SummaryRow("Subtotal", state.subtotalFormatted)
+                    SummaryRow("Total", state.totalFormatted, emphasize = true)
+                }
             }
         }
+
+        SnackbarHost(
+            hostState = snackBarHostState,
+            modifier = Modifier.align(Alignment.BottomCenter).navigationBarsPadding().padding(16.dp),
+        )
     }
 }
 
 @Composable
-private fun SelectedAddressCard(address: Address) {
-    Row(
+private fun SectionCard(title: String, content: @Composable () -> Unit) {
+    Column(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(12.dp))
+            .clip(Theme.shapes.large)
             .background(Theme.colors.surface)
             .padding(Theme.spacing.medium),
-        verticalAlignment = Alignment.Top
+        verticalArrangement = Arrangement.spacedBy(Theme.spacing.small),
     ) {
-        Box(
-            modifier = Modifier
-                .size(40.dp)
-                .clip(RoundedCornerShape(10.dp))
-                .background(Theme.colors.primary.copy(alpha = 0.1f)),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                painter = if (address.icon == AddressIcon.HOME) painterResource(Res.drawable.ic_home) else painterResource(Res.drawable.ic_profile),
-                contentDescription = null,
-                tint = Theme.colors.primary,
-                modifier = Modifier.size(20.dp)
-            )
-        }
-        Spacer(Modifier.width(12.dp))
-        Column {
-            Text(
-                text = address.label,
-                style = Theme.typography.body.large.copy(fontWeight = FontWeight.SemiBold),
-                color = Theme.colors.primaryFont
-            )
-            Spacer(Modifier.height(4.dp))
-            Text(
-                text = address.lines.joinToString(", "),
-                style = Theme.typography.body.medium,
-                color = Theme.colors.secondaryFont
-            )
-            Spacer(Modifier.height(2.dp))
-            Text(
-                text = address.phone,
-                style = Theme.typography.body.small,
-                color = Theme.colors.secondaryFont
-            )
-        }
+        BasicText(
+            text = title,
+            style = Theme.typography.body.large.copy(
+                color = Theme.colors.primaryFont,
+                fontWeight = FontWeight.Bold,
+            ),
+        )
+        content()
     }
 }
 
 @Composable
-private fun CheckoutBottomBar(
+private fun SummaryRow(label: String, value: String, emphasize: Boolean = false) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+    ) {
+        BasicText(
+            text = label,
+            style = Theme.typography.body.medium.copy(color = Theme.colors.secondaryFont),
+        )
+        BasicText(
+            text = value,
+            style = Theme.typography.body.medium.copy(
+                color = Theme.colors.primaryFont,
+                fontWeight = if (emphasize) FontWeight.Bold else FontWeight.Medium,
+            ),
+        )
+    }
+}
+
+@Composable
+private fun CheckoutActions(
     state: CheckoutUiState,
-    onPlaceOrder: () -> Unit
+    onPlaceCod: () -> Unit,
+    onPayByCard: () -> Unit,
 ) {
-    Box(
+    Column(
         modifier = Modifier
             .fillMaxWidth()
             .background(Theme.colors.backGround)
             .navigationBarsPadding()
-            .padding(Theme.spacing.medium)
+            .padding(Theme.spacing.medium),
+        verticalArrangement = Arrangement.spacedBy(Theme.spacing.small),
     ) {
         PrimaryButton(
-            caption = "Place Order",
-            onClick = onPlaceOrder,
-            isDisabled = state.selectedAddress == null || state.isPlacingOrder || state.cartItems.isEmpty(),
-            modifier = Modifier.fillMaxWidth()
+            caption = if (state.isPlacingOrder) "Placing order..." else "Cash on Delivery",
+            onClick = onPlaceCod,
+            isDisabled = !state.canPlaceOrder,
+            modifier = Modifier.fillMaxWidth(),
+        )
+        PrimaryButton(
+            caption = "Pay by Card",
+            onClick = onPayByCard,
+            isDisabled = state.isPlacingOrder || state.isCartEmpty || !state.hasAddress,
+            modifier = Modifier.fillMaxWidth(),
         )
     }
 }

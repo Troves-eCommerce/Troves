@@ -6,7 +6,10 @@ import com.troves.domain.usecase.auth.LogoutUseCase
 import com.troves.domain.usecase.auth.RegisterUseCase
 import com.troves.domain.usecase.auth.SignInWithGoogleUseCase
 import com.troves.domain.usecase.cart.AddToCartUseCase
+import com.troves.domain.usecase.cart.ApplyDiscountUseCase
 import com.troves.domain.usecase.cart.GetCartStreamUseCase
+import com.troves.domain.usecase.cart.RefreshCartUseCase
+import com.troves.domain.usecase.cart.RemoveAllFromCartUseCase
 import com.troves.domain.usecase.cart.RemoveFromCartUseCase
 import com.troves.domain.usecase.cart.SyncCartUseCase
 import com.troves.domain.usecase.cart.UpdateCartQuantityUseCase
@@ -14,10 +17,16 @@ import com.troves.domain.usecase.details.GetProductByIdUseCase
 import com.troves.domain.usecase.home.GetAdsUseCase
 import com.troves.domain.usecase.home.GetBrandsUseCase
 import com.troves.domain.usecase.home.GetCategoriesUseCase
+import com.troves.domain.usecase.home.GetDiscountCodesUseCase
 import com.troves.domain.usecase.home.GetJustForYouProductsUseCase
 import com.troves.domain.usecase.home.GetTrendingProductsUseCase
 import com.troves.domain.usecase.onboarding.CompleteOnboardingUseCase
 import com.troves.domain.usecase.onboarding.IsOnboardingDoneUseCase
+import com.troves.domain.usecase.order.ClearCartUseCase
+import com.troves.domain.usecase.order.GetDefaultAddressUseCase
+import com.troves.domain.usecase.order.GetOrderByIdUseCase
+import com.troves.domain.usecase.order.GetOrdersUseCase
+import com.troves.domain.usecase.order.PlaceCodOrderUseCase
 import com.troves.domain.usecase.products.FilterProductsUseCase
 import com.troves.domain.usecase.products.GetProductsByBrandUseCase
 import com.troves.domain.usecase.products.GetProductsByCategoryUseCase
@@ -34,7 +43,6 @@ import com.troves.domain.usecase.wishlist.IsProductFavoritedUseCase
 import com.troves.domain.usecase.wishlist.SyncWishlistUseCase
 import com.troves.domain.usecase.wishlist.ToggleFavoriteUseCase
 import org.koin.dsl.module
-import kotlin.coroutines.EmptyCoroutineContext.get
 
 val domainModule = module {
     // Use cases — factory creates a new instance per injection site
@@ -55,6 +63,7 @@ val domainModule = module {
     factory { GetTrendingProductsUseCase(get()) }
     factory { FilterProductsByQueryUseCase(get()) }
     factory { SearchProductsUseCase(get()) }
+    factory { GetDiscountCodesUseCase(get()) }
 
     // Onboarding
     factory { IsOnboardingDoneUseCase(get()) }
@@ -75,14 +84,30 @@ val domainModule = module {
     factory { GetCartStreamUseCase(get()) }
     factory { AddToCartUseCase(get(), get()) }
     factory { RemoveFromCartUseCase(get(), get()) }
+    factory { RemoveAllFromCartUseCase(get(), get()) }
     factory { UpdateCartQuantityUseCase(get(), get()) }
+    factory { ApplyDiscountUseCase(get(), get()) }
+    factory { RefreshCartUseCase(get(), get()) }
     single { SyncCartUseCase(get(), get()) }
+
+    // Checkout / orders
+    factory { GetDefaultAddressUseCase(get()) }
+    factory { GetOrdersUseCase(get()) }
+    factory { GetOrderByIdUseCase(get()) }
+    factory { PlaceCodOrderUseCase(get(), get()) }
+    factory { com.troves.domain.usecase.order.AttachAddressToCartUseCase(get()) }
+    factory { ClearCartUseCase(get()) }
     single { SyncWishlistUseCase(get(),get()) }
 
     // Address
     factory { com.troves.domain.usecase.address.GetSavedAddressesUseCase(get()) }
     factory { com.troves.domain.usecase.address.AddAddressUseCase(get()) }
+    factory { com.troves.domain.usecase.address.UpdateAddressUseCase(get()) }
     factory { com.troves.domain.usecase.address.DeleteAddressUseCase(get()) }
+    factory { com.troves.domain.usecase.address.SetDefaultAddressUseCase(get()) }
+    factory { com.troves.domain.usecase.address.GetSavedAddressByIdUseCase(get()) }
+    factory { com.troves.domain.usecase.address.GetDefaultSavedAddressUseCase(get()) }
+    factory { com.troves.domain.usecase.address.RefreshAddressesUseCase(get()) }
     factory { com.troves.domain.usecase.shared.GetCountriesUseCase(get()) }
     factory { com.troves.domain.usecase.shared.GetCitiesUseCase(get()) }
 

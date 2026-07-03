@@ -23,13 +23,14 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.troves.designsystem.theme.Theme
-import com.troves.presintation.ui.cart.CartItemUi
+import com.troves.presintation.ui.cart.CartLineUi
 
 @Composable
 fun CartItemCard(
-    item: CartItemUi,
+    item: CartLineUi,
     onIncrement: () -> Unit,
     onDecrement: () -> Unit,
+    onRemove: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -55,18 +56,31 @@ fun CartItemCard(
             modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
-            BasicText(
-                text = item.title,
-                style = Theme.typography.body.large.copy(
-                    color = Theme.colors.primaryFont,
-                    fontWeight = FontWeight.SemiBold,
-                ),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Top,
+            ) {
+                BasicText(
+                    text = item.title,
+                    style = Theme.typography.body.large.copy(
+                        color = Theme.colors.primaryFont,
+                        fontWeight = FontWeight.SemiBold,
+                    ),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f),
+                )
+                // Remove this entire line from the cart.
+                BasicText(
+                    text = "Remove",
+                    style = Theme.typography.body.small.copy(color = Theme.colors.error),
+                    modifier = Modifier.clickable(onClick = onRemove).padding(start = 8.dp),
+                )
+            }
 
             BasicText(
-                text = item.description,
+                text = item.variantTitle,
                 style = Theme.typography.body.small.copy(color = Theme.colors.secondaryFont),
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
@@ -89,6 +103,7 @@ fun CartItemCard(
 
                 QuantityStepper(
                     quantity = item.quantity,
+                    incrementEnabled = !item.atMaxQuantity,
                     onIncrement = onIncrement,
                     onDecrement = onDecrement,
                 )
@@ -100,6 +115,7 @@ fun CartItemCard(
 @Composable
 private fun QuantityStepper(
     quantity: Int,
+    incrementEnabled: Boolean,
     onIncrement: () -> Unit,
     onDecrement: () -> Unit,
 ) {
@@ -107,7 +123,7 @@ private fun QuantityStepper(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small),
     ) {
-        StepperButton(label = "\u2212", onClick = onDecrement)
+        StepperButton(label = "\u2212", enabled = true, onClick = onDecrement)
 
         BasicText(
             text = quantity.toString().padStart(2, '0'),
@@ -117,13 +133,14 @@ private fun QuantityStepper(
             ),
         )
 
-        StepperButton(label = "+", onClick = onIncrement)
+        StepperButton(label = "+", enabled = incrementEnabled, onClick = onIncrement)
     }
 }
 
 @Composable
 private fun StepperButton(
     label: String,
+    enabled: Boolean,
     onClick: () -> Unit,
 ) {
     Box(
@@ -131,13 +148,13 @@ private fun StepperButton(
             .size(28.dp)
             .clip(CircleShape)
             .background(Theme.colors.surface)
-            .clickable(onClick = onClick),
+            .clickable(enabled = enabled, onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {
         BasicText(
             text = label,
             style = Theme.typography.body.large.copy(
-                color = Theme.colors.primaryFont,
+                color = if (enabled) Theme.colors.primaryFont else Theme.colors.hint,
                 fontWeight = FontWeight.Bold,
             ),
         )

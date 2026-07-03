@@ -14,3 +14,16 @@ import com.troves.data.config.ShopifyConfig
         .addHttpInterceptor(LoggingInterceptor(level = LoggingInterceptor.Level.BODY))
         .build()
 }
+
+
+fun provideStorefrontApolloClient(): ApolloClient {
+    val base = ShopifyConfig.STOREFRONT_URL
+        .ifBlank { ShopifyConfig.REST_URL.replace("/admin/api/", "/api/") }
+        .trimEnd('/')
+    return ApolloClient.Builder()
+        .serverUrl("$base/graphql.json")
+        .addHttpHeader("X-Shopify-Storefront-Access-Token", ShopifyConfig.STOREFRONT_ACCESS_TOKEN)
+        .addHttpHeader("Content-Type", "application/json")
+        .addHttpInterceptor(LoggingInterceptor(level = LoggingInterceptor.Level.BODY))
+        .build()
+}

@@ -5,7 +5,7 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.RoomDatabaseConstructor
 
-@Database(entities = [WishlistEntity::class, AddressEntity::class, CartEntity::class], version = 5)
+@Database(entities = [WishlistEntity::class, AddressDecorationEntity::class, CartEntity::class], version = 6)
 @ConstructedBy(TrovesDatabaseConstructor::class)
 abstract class TrovesDatabase : RoomDatabase() {
     abstract fun wishlistDao(): WishlistDao

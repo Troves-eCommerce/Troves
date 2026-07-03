@@ -1,12 +1,12 @@
 package com.troves.domain.usecase.shared
 
 import com.troves.domain.utils.Result
-import com.troves.domain.repository.TrovesRepository
+import com.troves.domain.repository.LocationRepository
 
 class GetCitiesUseCase(
-    private val trovesRepository: TrovesRepository
+    private val locationRepository: LocationRepository
 ) {
     suspend operator fun invoke(countryName: String): Result<List<String>> {
-        return trovesRepository.getCities(countryName)
+        return locationRepository.getCities(countryName)
     }
 }

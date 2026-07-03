@@ -7,9 +7,7 @@ mutation AddCartLines(
         lines: $lines
     ) {
         cart {
-            id
-            totalQuantity
-            checkoutUrl
+            ...CartFields
         }
 
         userErrors {

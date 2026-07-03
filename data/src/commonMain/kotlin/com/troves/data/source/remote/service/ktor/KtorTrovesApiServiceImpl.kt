@@ -19,7 +19,10 @@ import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import com.troves.domain.utils.Result
+import com.troves.domain.utils.map
+import com.troves.data.mapper.toDomain
 import io.ktor.client.request.parameter
+import com.troves.domain.entity.DiscountCode
 
 class KtorTrovesApiServiceImpl(
     private val ktorClient: HttpClient
@@ -73,12 +76,16 @@ class KtorTrovesApiServiceImpl(
         }
     }
 
-    override suspend fun getProductById(productId: String): Result<SingleProductResponse> {
-        return ktorClient.getResults {
+    override suspend fun getProductById(productId: String): Result<Product> {
+        val response: Result<SingleProductResponse> = ktorClient.getResults {
             method = HttpMethod.Get
             url {
                 path("products/$productId.json")
             }
+        }
+        return response.map { single ->
+            single.product?.toDomain()
+                ?: throw NoSuchElementException("Product not found: $productId")
         }
     }
 
@@ -107,35 +114,14 @@ class KtorTrovesApiServiceImpl(
         TODO("Not yet implemented")
     }
 
-    override suspend fun getCountries(): Result<List<com.troves.data.source.remote.dto.RestCountryDto>> {
-        val result = ktorClient.getResults<com.troves.data.source.remote.dto.RestCountriesV5Response> {
-            method = HttpMethod.Get
-            url {
-                protocol = io.ktor.http.URLProtocol.HTTPS
-                host = "api.restcountries.com"
-                pathSegments = listOf("countries", "v5")
-                parameters.append("response_fields", "names.common")
-                parameters.append("limit", "100")
-            }
-            header("Authorization", "Bearer ${com.troves.data.BuildKonfig.REST_COUNTRIES_API_KEY}")
-        }
-        return when (result) {
-            is Result.Success -> Result.Success(result.value.data?.objects ?: emptyList())
-            is Result.Error -> Result.Error(result.throwable)
-            is Result.Loading -> Result.Loading
-        }
+    override suspend fun getDiscountCodes(): Result<List<DiscountCode>> {
+        TODO("Not yet implemented")
     }
 
-    override suspend fun getCities(country: String): Result<com.troves.data.source.remote.dto.CountriesNowCitiesDto> {
-        return ktorClient.getResults {
-            method = HttpMethod.Post
-            url {
-                protocol = io.ktor.http.URLProtocol.HTTPS
-                host = "countriesnow.space"
-                pathSegments = listOf("api", "v0.1", "countries", "cities")
-            }
-            contentType(ContentType.Application.Json)
-            setBody(com.troves.data.source.remote.dto.CountriesNowRequestDto(country = country))
-        }
-    }
+    override suspend fun createOrder(
+        email: String?,
+        address: com.troves.domain.entity.Address,
+        lineItems: List<Pair<String, Int>>,
+    ): Result<String> =
+        Result.Error(UnsupportedOperationException("Order creation is only available via the Admin GraphQL API"))
 }

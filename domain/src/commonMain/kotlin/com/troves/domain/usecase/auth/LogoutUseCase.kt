@@ -2,12 +2,12 @@ package com.troves.domain.usecase.auth
 
 import com.troves.domain.repository.AuthenticationRepository
 import com.troves.domain.repository.WishlistRepository
-import com.troves.domain.repository.CartRepository
+import com.troves.domain.repository.TrovesRepository
 
 class LogoutUseCase(
     private val authenticationRepository: AuthenticationRepository,
     private val wishlistRepository: WishlistRepository,
-    private val cartRepository: CartRepository,
+    private val cartRepository: TrovesRepository,
 ) {
     suspend operator fun invoke() {
         authenticationRepository.logout()
