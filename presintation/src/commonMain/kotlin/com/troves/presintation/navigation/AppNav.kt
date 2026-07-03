@@ -31,6 +31,8 @@ import com.troves.presintation.ui.checkout.CheckoutScreen
 import com.troves.presintation.ui.fav.WishlistScreen
 import com.troves.presintation.ui.home.HomeScreen
 import com.troves.presintation.ui.onboarding.OnboardingScreen
+import com.troves.presintation.ui.order.OrderHistoryScreen
+import com.troves.presintation.ui.payment.PaymentMethodsScreen
 import com.troves.presintation.ui.productDetails.ProductDetailsScreen
 import com.troves.presintation.ui.products.ProductsScreen
 import com.troves.presintation.ui.profile.ProfileScreen
@@ -210,10 +212,10 @@ fun AppNav() {
             )
         }
         entry<AppRoute.OrderHistory> {
-            // OrderHistoryScreen()
+            OrderHistoryScreen()
         }
         entry<AppRoute.PaymentMethods> {
-            // PaymentMethodsScreen()
+            PaymentMethodsScreen()
         }
         entry<AppRoute.Cart> {
             CartScreen(

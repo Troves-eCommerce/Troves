@@ -5,6 +5,6 @@ import androidx.compose.runtime.Composable
 import com.troves.presintation.navigation.AppRoute
 
 @Composable
-fun PaymentScreen(){
-    Text(text = "Payment Screen")
+fun PaymentMethodsScreen(){
+    Text(text = "Payment Methods Screen")
 }

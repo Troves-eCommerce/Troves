@@ -5,6 +5,6 @@ import androidx.compose.runtime.Composable
 import com.troves.presintation.navigation.AppRoute
 
 @Composable
-fun OrderHistory(){
+fun OrderHistoryScreen(){
     Text(text = "Order History Screen")
 }
