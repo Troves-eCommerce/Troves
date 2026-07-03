@@ -23,7 +23,7 @@ class CheckoutViewModel(
     private val getDefaultSavedAddress: GetDefaultSavedAddressUseCase,
     private val placeCodOrder: PlaceCodOrderUseCase,
     private val attachAddressToCart: AttachAddressToCartUseCase,
-) : ViewModel(),
+) : ViewModel(), CheckoutEvent,
     StateHolder<CheckoutUiState> by DefaultStateHolder(CheckoutUiState()),
     EffectPublisher<CheckoutEffect> by DefaultEffectPublisher() {
 
@@ -121,6 +121,15 @@ class CheckoutViewModel(
             subtotalFormatted = format(cart.subtotal),
             totalFormatted = format(cart.total),
         )
+    }
+
+    override fun onCheckoutCanceled() {
+    }
+
+    override fun onCheckoutCompleted(checkoutCompletedEvent: CheckoutCompletedEvent) {
+    }
+
+    override fun onCheckoutFailed(error: Exception) {
     }
 }
 

@@ -1,8 +1,5 @@
 package com.troves.presintation.ui.checkout
 
-import com.troves.domain.entity.CheckoutCompletedEvent
-import com.troves.domain.entity.CheckoutException
-
 /**
  * Copyright (c) 2026 Wahid Ali Wahid Hussien.
  *

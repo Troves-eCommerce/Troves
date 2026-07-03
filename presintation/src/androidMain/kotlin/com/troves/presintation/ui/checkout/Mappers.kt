@@ -33,12 +33,12 @@ import com.shopify.checkoutsheetkit.pixelevents.MoneyV2
  * Created: 03/07/2026
  */
 fun CheckoutCompletedEvent.toDomain() =
-    com.troves.domain.entity.CheckoutCompletedEvent(
+    com.troves.presintation.ui.checkout.CheckoutCompletedEvent(
         orderDetails = orderDetails.toDomain()
     )
 
 fun OrderDetails.toDomain() =
-    com.troves.domain.entity.OrderDetails(
+    com.troves.presintation.ui.checkout.OrderDetails(
         billingAddress = billingAddress?.toDomain(),
         cart = cart.toDomain(),
         deliveries = deliveries.map { it.toDomain() },
@@ -48,7 +48,7 @@ fun OrderDetails.toDomain() =
         phone = phone
     )
 fun Address.toDomain() =
-    com.troves.domain.entity.Address(
+    com.troves.presintation.ui.checkout.Address(
         address1,
         address2,
         city,
@@ -63,13 +63,13 @@ fun Address.toDomain() =
     )
 
 fun MoneyV2.toDomain() =
-    com.troves.domain.entity.MoneyV2(
+    com.troves.presintation.ui.checkout.MoneyV2(
         amount = amount,
         currencyCode = currencyCode
     )
 
 fun CartInfo.toDomain() =
-    com.troves.domain.entity.CartInfo(
+    com.troves.presintation.ui.checkout.CartInfo(
         lines = lines.map { it.toDomain() },
         price = price.toDomain(),
         token = token
@@ -77,7 +77,7 @@ fun CartInfo.toDomain() =
 
 
 fun CartLine.toDomain() =
-    com.troves.domain.entity.CartLine(
+    com.troves.presintation.ui.checkout.CartLine(
         discounts = discounts?.map { it.toDomain() },
         image = image?.toDomain(),
         merchandiseId = merchandiseId,
@@ -89,7 +89,7 @@ fun CartLine.toDomain() =
 
 
 fun CartLineImage.toDomain() =
-    com.troves.domain.entity.CartLineImage(
+    com.troves.presintation.ui.checkout.CartLineImage(
         altText = altText,
         lg = lg,
         md = md,
@@ -98,7 +98,7 @@ fun CartLineImage.toDomain() =
 
 
 fun Discount.toDomain() =
-    com.troves.domain.entity.Discount(
+    com.troves.presintation.ui.checkout.Discount(
         amount = amount?.toDomain(),
         applicationType = applicationType,
         title = title,
@@ -107,7 +107,7 @@ fun Discount.toDomain() =
     )
 
 fun DeliveryDetails.toDomain() =
-    com.troves.domain.entity.DeliveryDetails(
+    com.troves.presintation.ui.checkout.DeliveryDetails(
         additionalInfo = additionalInfo,
         location = location?.toDomain(),
         name = name
@@ -115,19 +115,19 @@ fun DeliveryDetails.toDomain() =
 
 
 fun DeliveryInfo.toDomain() =
-    com.troves.domain.entity.DeliveryInfo(
+    com.troves.presintation.ui.checkout.DeliveryInfo(
         details = details.toDomain(),
         method = method
     )
 
 fun PaymentMethod.toDomain() =
-    com.troves.domain.entity.PaymentMethod(
+    com.troves.presintation.ui.checkout.PaymentMethod(
         details = details,
         type = type
     )
 
 fun Price.toDomain() =
-    com.troves.domain.entity.Price(
+    com.troves.presintation.ui.checkout.Price(
         discounts = discounts?.map { it.toDomain() },
         shipping = shipping?.toDomain(),
         subtotal = subtotal?.toDomain(),

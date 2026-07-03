@@ -22,7 +22,6 @@ interface TrovesPreferences {
 
 
     suspend fun setShopifyCustomerAccessToken(accessToken: String)
-    suspend fun setShopifyCustomerAccessTokenExpiring(accessTokenTimestamp: Long)
     suspend fun clearShopifyCustomerAccessToken()
 
     suspend fun setCartId(cartId: String)

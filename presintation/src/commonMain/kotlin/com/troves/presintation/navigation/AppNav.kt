@@ -19,7 +19,6 @@ import androidx.navigation3.ui.NavDisplay
 import androidx.savedstate.serialization.SavedStateConfiguration
 import com.troves.designsystem.components.bottomnav.BottomNavItem
 import com.troves.designsystem.components.bottomnav.SPBottomNavigation
-import com.troves.presintation.ui.MainIntent
 import com.troves.presintation.ui.MainViewModel
 import com.troves.presintation.ui.StartDestination
 import com.troves.presintation.ui.address.ManageSavedAddressesScreen
@@ -29,10 +28,10 @@ import com.troves.presintation.ui.auth.LoginScreen
 import com.troves.presintation.ui.auth.RegisterScreen
 import com.troves.presintation.ui.cart.CartScreen
 import com.troves.presintation.ui.checkout.CheckoutScreen
-import com.troves.presintation.ui.orders.OrdersScreen
 import com.troves.presintation.ui.fav.WishlistScreen
 import com.troves.presintation.ui.home.HomeScreen
 import com.troves.presintation.ui.onboarding.OnboardingScreen
+import com.troves.presintation.ui.orders.OrdersScreen
 import com.troves.presintation.ui.payment.PaymentMethodsScreen
 import com.troves.presintation.ui.productDetails.ProductDetailsScreen
 import com.troves.presintation.ui.products.ProductsScreen
@@ -47,6 +46,7 @@ import troves.designsystem.generated.resources.Res
 import troves.designsystem.generated.resources.ic_home
 import troves.designsystem.generated.resources.ic_order
 import troves.designsystem.generated.resources.ic_profile
+import troves.designsystem.generated.resources.ic_wishlist
 
 private val navSavedStateConfiguration = SavedStateConfiguration {
     serializersModule = SerializersModule {
@@ -172,7 +172,6 @@ fun AppNav() {
                 onNavigateToRegister = { backStack.add(AppRoute.Register) },
                 onLoginSuccess = { replaceWith(AppRoute.Home) },
                 onLoggedIn = {
-                    mainViewModel::onIntent.invoke(MainIntent.OnLoggedIn)
                 }
             )
         }
@@ -181,7 +180,6 @@ fun AppNav() {
                 onNavigateToLogin = { backStack.add(AppRoute.Login) },
                 onRegisterSuccess = { replaceWith(AppRoute.Home) },
                 onRegistered = {
-                    mainViewModel::onIntent.invoke(MainIntent.OnRegistered)
                 }
             )
         }
