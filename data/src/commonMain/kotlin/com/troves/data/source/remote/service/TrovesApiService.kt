@@ -37,4 +37,6 @@ interface TrovesApiService {
     //region events
     suspend fun getAllEventsById(eventId: String): MarketingEventsResponse
     //endregion
+
+    suspend fun getDiscountCodes(): Result<List<com.troves.domain.entity.DiscountCode>>
 }

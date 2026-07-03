@@ -9,6 +9,7 @@ import com.troves.domain.entity.Brand
 import com.troves.domain.entity.Category
 import com.troves.domain.entity.Product
 import com.troves.domain.entity.ProductSearchParams
+import com.troves.domain.entity.DiscountCode
 import com.troves.domain.repository.TrovesRepository
 import com.troves.domain.utils.Result
 import com.troves.domain.utils.fold
@@ -111,6 +112,13 @@ class TrovesRepositoryImpl(
     }
 
     override suspend fun getAds(): Result<List<Ad>> = Result.Success(FAKE_ADS)
+
+    override suspend fun getDiscountCodes(): Result<List<DiscountCode>> {
+        return withContext(coroutineDispatcher) {
+            remoteDataSource.getDiscountCodes()
+        }
+    }
+
 
     private companion object {
         val FAKE_ADS = listOf(

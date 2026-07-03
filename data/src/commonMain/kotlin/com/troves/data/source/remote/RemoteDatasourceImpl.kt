@@ -141,4 +141,8 @@ class RemoteDatasourceImpl(
         }
     }
 
+    override suspend fun getDiscountCodes(): Result<List<com.troves.domain.entity.DiscountCode>> {
+        return trovesApiService.getDiscountCodes()
+    }
+
 }
