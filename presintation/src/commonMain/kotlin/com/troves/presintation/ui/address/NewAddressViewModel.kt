@@ -4,26 +4,35 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.troves.domain.entity.Address
 import com.troves.domain.entity.AddressIcon
-import com.troves.domain.utils.fold
 import com.troves.domain.usecase.address.AddAddressUseCase
+import com.troves.domain.usecase.address.GetSavedAddressByIdUseCase
+import com.troves.domain.usecase.address.UpdateAddressUseCase
+import com.troves.domain.usecase.shared.GetCitiesUseCase
 import com.troves.domain.usecase.shared.GetCountriesUseCase
+import com.troves.domain.utils.Result
+import com.troves.domain.utils.ShopifyAuthRequiredException
+import com.troves.domain.utils.fold
 import com.troves.presintation.core.mvi.DefaultEffectPublisher
 import com.troves.presintation.core.mvi.DefaultStateHolder
 import com.troves.presintation.core.mvi.EffectPublisher
 import com.troves.presintation.core.mvi.StateHolder
 import kotlinx.coroutines.launch
-import kotlin.random.Random
 
 data class NewAddressUiState(
     val label: String = "",
+    val recipientName: String = "",
     val phone: String = "",
     val country: String = "",
     val city: String = "",
+    val province: String = "",
     val street: String = "",
+    val zip: String = "",
     val note: String = "",
     val isDefault: Boolean = false,
     val icon: AddressIcon = AddressIcon.HOME,
-    
+
+    val isEditMode: Boolean = false,
+
     val countries: List<String> = emptyList(),
     val isCountriesLoading: Boolean = false,
     val countriesError: String? = null,
@@ -35,14 +44,18 @@ data class NewAddressUiState(
 
 sealed interface NewAddressIntent {
     data class OnLabelChange(val label: String) : NewAddressIntent
+    data class OnRecipientNameChange(val name: String) : NewAddressIntent
     data class OnPhoneChange(val phone: String) : NewAddressIntent
     data class OnCountryChange(val country: String) : NewAddressIntent
     data class OnCityChange(val city: String) : NewAddressIntent
+    data class OnProvinceChange(val province: String) : NewAddressIntent
     data class OnStreetChange(val street: String) : NewAddressIntent
+    data class OnZipChange(val zip: String) : NewAddressIntent
     data class OnNoteChange(val note: String) : NewAddressIntent
     data class OnDefaultChange(val isDefault: Boolean) : NewAddressIntent
     data class OnIconChange(val icon: AddressIcon) : NewAddressIntent
-    
+
+    data class Load(val addressId: String?) : NewAddressIntent
     data object OnSaveClick : NewAddressIntent
     data object OnBackClick : NewAddressIntent
     data object LoadCountries : NewAddressIntent
@@ -50,16 +63,24 @@ sealed interface NewAddressIntent {
 
 sealed interface NewAddressEffect {
     data object NavigateBack : NewAddressEffect
+    /** Address persisted on Shopify — show [message], then close. */
+    data class SavedAndClose(val message: String) : NewAddressEffect
+    /** Shopify customer token missing — route the user to re-authenticate. */
+    data class RequireLogin(val message: String) : NewAddressEffect
     data class ShowToast(val message: String) : NewAddressEffect
 }
 
 class NewAddressViewModel(
     private val getCountriesUseCase: GetCountriesUseCase,
-    private val getCitiesUseCase: com.troves.domain.usecase.shared.GetCitiesUseCase,
-    private val addAddressUseCase: AddAddressUseCase
+    private val getCitiesUseCase: GetCitiesUseCase,
+    private val addAddressUseCase: AddAddressUseCase,
+    private val updateAddressUseCase: UpdateAddressUseCase,
+    private val getSavedAddressByIdUseCase: GetSavedAddressByIdUseCase,
 ) : ViewModel(),
     StateHolder<NewAddressUiState> by DefaultStateHolder(NewAddressUiState()),
     EffectPublisher<NewAddressEffect> by DefaultEffectPublisher() {
+
+    private var editingId: String? = null
 
     init {
         onIntent(NewAddressIntent.LoadCountries)
@@ -68,19 +89,48 @@ class NewAddressViewModel(
     fun onIntent(intent: NewAddressIntent) {
         when (intent) {
             is NewAddressIntent.OnLabelChange -> updateState { copy(label = intent.label) }
+            is NewAddressIntent.OnRecipientNameChange -> updateState { copy(recipientName = intent.name) }
             is NewAddressIntent.OnPhoneChange -> updateState { copy(phone = intent.phone) }
             is NewAddressIntent.OnCountryChange -> {
                 updateState { copy(country = intent.country, city = "", cities = emptyList(), citiesError = null) }
                 if (intent.country.isNotBlank()) loadCities(intent.country)
             }
             is NewAddressIntent.OnCityChange -> updateState { copy(city = intent.city) }
+            is NewAddressIntent.OnProvinceChange -> updateState { copy(province = intent.province) }
             is NewAddressIntent.OnStreetChange -> updateState { copy(street = intent.street) }
+            is NewAddressIntent.OnZipChange -> updateState { copy(zip = intent.zip) }
             is NewAddressIntent.OnNoteChange -> updateState { copy(note = intent.note) }
             is NewAddressIntent.OnDefaultChange -> updateState { copy(isDefault = intent.isDefault) }
             is NewAddressIntent.OnIconChange -> updateState { copy(icon = intent.icon) }
+            is NewAddressIntent.Load -> load(intent.addressId)
             NewAddressIntent.OnBackClick -> sendEffect(NewAddressEffect.NavigateBack)
             NewAddressIntent.OnSaveClick -> saveAddress()
             NewAddressIntent.LoadCountries -> loadCountries()
+        }
+    }
+
+    private fun load(addressId: String?) {
+        if (addressId.isNullOrBlank() || editingId == addressId) return
+        editingId = addressId
+        viewModelScope.launch {
+            val address = getSavedAddressByIdUseCase(addressId) ?: return@launch
+            updateState {
+                copy(
+                    isEditMode = true,
+                    label = address.label.orEmpty(),
+                    recipientName = address.recipientName,
+                    phone = address.phone.orEmpty(),
+                    country = address.country.orEmpty(),
+                    city = address.city.orEmpty(),
+                    province = address.province.orEmpty(),
+                    street = address.address1.orEmpty(),
+                    zip = address.zip.orEmpty(),
+                    note = address.note.orEmpty(),
+                    isDefault = address.isDefault,
+                    icon = address.icon,
+                )
+            }
+            if (!address.country.isNullOrBlank()) loadCities(address.country!!)
         }
     }
 
@@ -116,24 +166,53 @@ class NewAddressViewModel(
 
     private fun saveAddress() {
         val state = currentState
-        if (state.label.isBlank() || state.phone.isBlank() || state.country.isBlank() || state.city.isBlank() || state.street.isBlank()) {
-            sendEffect(NewAddressEffect.ShowToast("Please fill all fields"))
+        if (state.recipientName.isBlank() || state.phone.isBlank() ||
+            state.country.isBlank() || state.city.isBlank() || state.street.isBlank()
+        ) {
+            sendEffect(NewAddressEffect.ShowToast("Please fill all required fields"))
             return
         }
         updateState { copy(isSaving = true) }
         viewModelScope.launch {
             val address = Address(
-                id = Random.nextLong().toString(),
-                label = state.label,
-                icon = state.icon,
+                id = editingId.orEmpty(),
+                address1 = state.street,
+                address2 = null,
+                city = state.city,
+                province = state.province.ifBlank { null },
+                provinceCode = null,
+                country = state.country,
+                countryCode = null,
+                zip = state.zip.ifBlank { null },
                 phone = state.phone,
-                lines = listOf(state.street, state.city, state.country),
+                firstName = state.recipientName.substringBefore(" ").ifBlank { null },
+                lastName = state.recipientName.substringAfter(" ", "").ifBlank { null },
+                company = null,
+                label = state.label.ifBlank { null },
+                icon = state.icon,
+                note = state.note.ifBlank { null },
                 isDefault = state.isDefault,
-                note = state.note.takeIf { it.isNotBlank() }
             )
-            addAddressUseCase(address)
+            val isEdit = editingId != null
+            val result = if (isEdit) {
+                updateAddressUseCase(address)
+            } else {
+                addAddressUseCase(address)
+            }
             updateState { copy(isSaving = false) }
-            sendEffect(NewAddressEffect.NavigateBack)
+            when (result) {
+                is Result.Success -> sendEffect(
+                    NewAddressEffect.SavedAndClose(
+                        if (isEdit) "Address updated" else "Address saved successfully"
+                    )
+                )
+                is Result.Error -> if (result.throwable is ShopifyAuthRequiredException) {
+                    sendEffect(NewAddressEffect.RequireLogin(result.throwable.message ?: "Please sign in again"))
+                } else {
+                    sendEffect(NewAddressEffect.ShowToast(result.throwable.message ?: "Couldn't save address"))
+                }
+                is Result.Loading -> Unit
+            }
         }
     }
 }

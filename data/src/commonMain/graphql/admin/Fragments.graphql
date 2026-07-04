@@ -25,4 +25,17 @@ fragment ProductCard on Product {
         name
         values
     }
+    variants(first: 100) {
+        nodes {
+            id
+            title
+            price
+            availableForSale
+            inventoryQuantity
+            selectedOptions {
+                name
+                value
+            }
+        }
+    }
 }

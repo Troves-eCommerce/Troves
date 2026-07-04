@@ -7,8 +7,7 @@ mutation UpdateDiscountCodes(
         discountCodes: $discountCodes
     ) {
         cart {
-            id
-            checkoutUrl
+            ...CartFields
         }
 
         userErrors {

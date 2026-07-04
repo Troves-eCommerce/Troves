@@ -7,6 +7,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -27,8 +31,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import com.troves.domain.entity.Address
 import com.troves.domain.entity.AddressIcon
+import kotlinx.coroutines.launch
 
 import org.koin.compose.viewmodel.koinViewModel
 import com.troves.presintation.core.mvi.ObserveEffect
@@ -38,20 +46,39 @@ fun ManageSavedAddressesScreen(
     onNavigateBack: () -> Unit,
     onNavigateToNewAddress: () -> Unit,
     onNavigateToEditAddress: (Address) -> Unit,
+    onNavigateToLogin: () -> Unit,
     viewModel: ManageSavedAddressesViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+
+    // Re-fetch when returning to the screen (e.g. after re-authenticating, or adding an address).
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) viewModel.onIntent(ManageSavedAddressesIntent.OnResume)
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
+
     ObserveEffect(viewModel.effect) { effect ->
         when (effect) {
             ManageSavedAddressesEffect.NavigateBack -> onNavigateBack()
             ManageSavedAddressesEffect.NavigateToNewAddress -> onNavigateToNewAddress()
             is ManageSavedAddressesEffect.NavigateToEditAddress -> onNavigateToEditAddress(effect.address)
+            is ManageSavedAddressesEffect.RequireLogin -> {
+                scope.launch { snackbarHostState.showSnackbar(effect.message) }
+                onNavigateToLogin()
+            }
+            is ManageSavedAddressesEffect.ShowToast -> scope.launch { snackbarHostState.showSnackbar(effect.message) }
         }
     }
-    
+
     ManageSavedAddressesScreenContent(
         state = state,
+        snackbarHostState = snackbarHostState,
         onIntent = viewModel::onIntent
     )
 }
@@ -59,6 +86,7 @@ fun ManageSavedAddressesScreen(
 @Composable
 fun ManageSavedAddressesScreenContent(
     state: ManageSavedAddressesUiState,
+    snackbarHostState: SnackbarHostState,
     onIntent: (ManageSavedAddressesIntent) -> Unit
 ) {
     var addressToDelete by remember { mutableStateOf<Address?>(null) }
@@ -92,6 +120,7 @@ fun ManageSavedAddressesScreenContent(
     Scaffold(
         modifier = Modifier.fillMaxSize().statusBarsPadding(),
         containerColor = Theme.colors.backGround,
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             BaseTopAppBar(
                 title = "Saved Addresses",
@@ -138,7 +167,8 @@ fun ManageSavedAddressesScreenContent(
                     AddressCard(
                         address = address,
                         onEdit = { onIntent(ManageSavedAddressesIntent.OnEdit(address)) },
-                        onDelete = { addressToDelete = address }
+                        onDelete = { addressToDelete = address },
+                        onSetDefault = { onIntent(ManageSavedAddressesIntent.OnSetDefault(address.id)) }
                     )
                 }
                 item { Spacer(Modifier.height(80.dp)) } // Room for bottom button if scrolling overlaps
@@ -151,7 +181,8 @@ fun ManageSavedAddressesScreenContent(
 private fun AddressCard(
     address: Address,
     onEdit: () -> Unit,
-    onDelete: () -> Unit
+    onDelete: () -> Unit,
+    onSetDefault: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -179,13 +210,13 @@ private fun AddressCard(
             Spacer(Modifier.width(12.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = address.label,
+                    text = address.label ?: address.recipientName.ifBlank { "Address" },
                     style = Theme.typography.body.large.copy(fontWeight = FontWeight.SemiBold),
                     color = Theme.colors.primaryFont
                 )
                 Spacer(Modifier.height(4.dp))
                 Text(
-                    text = address.phone,
+                    text = address.phone.orEmpty(),
                     style = Theme.typography.body.medium,
                     color = Theme.colors.secondaryFont
                 )
@@ -231,6 +262,15 @@ private fun AddressCard(
                 colors = ButtonDefaults.textButtonColors(contentColor = Theme.colors.error)
             ) {
                 Text("Delete", style = Theme.typography.body.medium.copy(fontWeight = FontWeight.Medium))
+            }
+            if (!address.isDefault) {
+                Spacer(Modifier.width(8.dp))
+                TextButton(
+                    onClick = onSetDefault,
+                    colors = ButtonDefaults.textButtonColors(contentColor = Theme.colors.secondaryFont)
+                ) {
+                    Text("Set Default", style = Theme.typography.body.medium.copy(fontWeight = FontWeight.Medium))
+                }
             }
         }
     }

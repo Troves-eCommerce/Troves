@@ -36,6 +36,22 @@ class TrovesPreferencesImpl(
                 }
         }
 
+    override val shopifyCustomerAccessTokenOrNull: Flow<String?>
+        get() = dataStore.data
+            .catchIOException()
+            .map { it[AppPreferencesKeys.SHOPIFY_ACCESS_TOKEN_KEY] }
+
+    override val cartId: Flow<String?>
+        get() = dataStore.data
+            .catchIOException()
+            .map { it[AppPreferencesKeys.SHOPIFY_CART_ID] }
+
+    override suspend fun setShopifyCustomerAccessToken(accessToken: String) {
+        dataStore.edit {
+            it[AppPreferencesKeys.SHOPIFY_ACCESS_TOKEN_KEY] = accessToken
+        }
+    }
+
     override val isOnboardingDone: Flow<Boolean>
         get() = dataStore.data
             .catchIOException()
@@ -74,14 +90,19 @@ class TrovesPreferencesImpl(
     // ── Writes ─────────────────────────────────────────────────────────
 
 
-    override suspend fun setShopifyCustomerAccessToken(accessToken: String) {
-        dataStore.edit { it[AppPreferencesKeys.SHOPIFY_ACCESS_TOKEN_KEY] = accessToken }
+    override suspend fun clearShopifyCustomerAccessToken() {
+        dataStore.edit {
+            it.remove(AppPreferencesKeys.SHOPIFY_ACCESS_TOKEN_KEY)
+            it.remove(AppPreferencesKeys.SHOPIFY_ACCESS_TOKEN_KEY_EXPIRING)
+        }
     }
 
-    override suspend fun setShopifyCustomerAccessTokenExpiring(accessTokenTimestamp: Long) {
-        dataStore.edit {
-            it[AppPreferencesKeys.SHOPIFY_ACCESS_TOKEN_KEY_EXPIRING] = accessTokenTimestamp
-        }
+    override suspend fun setCartId(cartId: String) {
+        dataStore.edit { it[AppPreferencesKeys.SHOPIFY_CART_ID] = cartId }
+    }
+
+    override suspend fun clearCartId() {
+        dataStore.edit { it.remove(AppPreferencesKeys.SHOPIFY_CART_ID) }
     }
 
     override suspend fun setOnboardingDone(done: Boolean) {

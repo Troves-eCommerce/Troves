@@ -154,15 +154,26 @@ buildkonfig {
     defaultConfigs {
         buildConfigField(
             STRING, "SHOPIFY_API_KEY",
-            localProperties.getProperty("SHOPIFY_API_KEY") ?: error("SHOPIFY_API_KEY not set in local.properties")
+            localProperties.getProperty("SHOPIFY_API_KEY") ?: ""
+        )
+        buildConfigField(
+            STRING, "SHOPIFY_STOREFRONT_URL",
+            localProperties.getProperty("SHOPIFY_STOREFRONT_URL") ?: ""
+        )
+        buildConfigField(
+            STRING, "SHOPIFY_STOREFRONT_ACCESS_TOKEN",
+            localProperties.getProperty("SHOPIFY_STORE_FRONT_API_KEY")
+                ?: localProperties.getProperty("SHOPIFY_STOREFRONT_ACCESS_TOKEN")
+                ?: localProperties.getProperty("STORE_ACCESS_TOKEN")
+                ?: ""
         )
         buildConfigField(
             STRING, "SHOPIFY_REST_URL",
-            localProperties.getProperty("SHOPIFY_REST_URL") ?: error("SHOPIFY_HOSTNAME not set in local.properties")
+            localProperties.getProperty("SHOPIFY_REST_URL") ?: ""
         )
         buildConfigField(
-            STRING, "REST_COUNTRIES_API_KEY",
-            localProperties.getProperty("REST_COUNTRIES_API_KEY") ?: error("REST_COUNTRIES_API_KEY not set in local.properties")
+            STRING, "SHOPIFY_CUSTOMER_PASSWORD_SECRET",
+            localProperties.getProperty("SHOPIFY_CUSTOMER_PASSWORD_SECRET") ?: "troves-shopify-oauth-salt-v1"
         )
     }
 }

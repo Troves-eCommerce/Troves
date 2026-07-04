@@ -43,11 +43,10 @@ class ProductDetailsViewModel(
 
             is ProductDetailsIntent.OnFavoriteClick -> onFavoriteClick()
 
-            is ProductDetailsIntent.OnColorSelectedChange ->
-                updateState { copy(selectedColorIndex = intent.colorIndex) }
-
-            is ProductDetailsIntent.OnSizeSelectedChange ->
-                updateState { copy(selectedSizeLabel = intent.newSize) }
+            is ProductDetailsIntent.OnOptionSelected ->
+                updateState {
+                    copy(selectedOptions = selectedOptions + (intent.optionName to intent.value))
+                }
 
             is ProductDetailsIntent.Retry -> fetchProduct(intent.productId)
             is ProductDetailsIntent.Load -> fetchProduct(intent.productId)
@@ -73,7 +72,6 @@ class ProductDetailsViewModel(
                             isLoading = false,
                             product = value,
                             images = value.images,
-                            colors = value.colors,
                             title = value.title,
                             priceFormatted = value.price,
                             errorMessage = null,
@@ -127,18 +125,26 @@ class ProductDetailsViewModel(
     }
 
     private fun addCurrentProductToCart() {
-        val product = currentState.product ?: return
+        val state = currentState
+        state.product ?: return
+        val variant = state.selectedVariant
+        if (variant == null || !variant.available) {
+            sendEffect(ProductDetailsEffect.ShowToast(state.addToCartHint ?: "Select options first"))
+            return
+        }
+        updateState { copy(isAddingToCart = true) }
         viewModelScope.launch {
-            when (addToCartUseCase(product)) {
-                CartOperationResult.Success -> {
+            val result = addToCartUseCase(variantId = variant.variantId, quantity = 1)
+            updateState { copy(isAddingToCart = false) }
+            when (result) {
+                CartOperationResult.Success ->
                     sendEffect(ProductDetailsEffect.ShowToast("Added to cart"))
-                }
-                CartOperationResult.RequiresLogin -> {
+
+                CartOperationResult.RequiresLogin ->
                     sendEffect(ProductDetailsEffect.ShowLoginRequiredDialog)
-                }
-                is CartOperationResult.Error -> {
+
+                is CartOperationResult.Error ->
                     sendEffect(ProductDetailsEffect.ShowToast("Couldn't add to cart"))
-                }
             }
         }
     }

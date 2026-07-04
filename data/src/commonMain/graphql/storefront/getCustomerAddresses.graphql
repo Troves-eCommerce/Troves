@@ -2,7 +2,12 @@ query CustomerAddresses($customerAccessToken: String!, $first: Int!) {
     customer(customerAccessToken: $customerAccessToken) {
         id
         defaultAddress {
-            ...AddressFields
+            id
+        }
+        addresses(first: $first) {
+            nodes {
+                ...AddressFields
+            }
         }
     }
 }

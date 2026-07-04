@@ -19,28 +19,51 @@ import troves.designsystem.generated.resources.ic_arrow_back
 import org.koin.compose.viewmodel.koinViewModel
 import com.troves.presintation.core.mvi.ObserveEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarDuration
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.rememberCoroutineScope
 
 @Composable
 fun NewAddressScreen(
     onNavigateBack: () -> Unit,
+    onNavigateToLogin: () -> Unit,
+    addressId: String? = null,
     viewModel: NewAddressViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
-    
+
+    LaunchedEffect(addressId) {
+        viewModel.onIntent(NewAddressIntent.Load(addressId))
+    }
+
     ObserveEffect(viewModel.effect) { effect ->
         when (effect) {
             NewAddressEffect.NavigateBack -> onNavigateBack()
+            is NewAddressEffect.SavedAndClose -> {
+                // Briefly confirm the save, then return to the list (which reflects it reactively and
+                // re-fetches on resume). The snackbar is short-lived; navigation shouldn't wait on it.
+                scope.launch { snackbarHostState.showSnackbar(effect.message, duration = SnackbarDuration.Short) }
+                scope.launch {
+                    delay(900)
+                    onNavigateBack()
+                }
+            }
+            is NewAddressEffect.RequireLogin -> {
+                scope.launch { snackbarHostState.showSnackbar(effect.message) }
+                onNavigateToLogin()
+            }
             is NewAddressEffect.ShowToast -> scope.launch { snackbarHostState.showSnackbar(effect.message) }
         }
     }
-    
+
     NewAddressScreenContent(
         state = state,
+        snackbarHostState = snackbarHostState,
         onIntent = viewModel::onIntent
     )
 }
@@ -49,6 +72,7 @@ fun NewAddressScreen(
 @Composable
 fun NewAddressScreenContent(
     state: NewAddressUiState,
+    snackbarHostState: SnackbarHostState,
     onIntent: (NewAddressIntent) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
@@ -57,9 +81,10 @@ fun NewAddressScreenContent(
     Scaffold(
         modifier = Modifier.fillMaxSize().statusBarsPadding(),
         containerColor = Theme.colors.backGround,
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             BaseTopAppBar(
-                title = "New Address",
+                title = if (state.isEditMode) "Edit Address" else "New Address",
                 leadingIcon = painterResource(Res.drawable.ic_arrow_back),
                 onLeadingClick = { onIntent(NewAddressIntent.OnBackClick) },
                 modifier = Modifier.background(Theme.colors.backGround)
@@ -77,7 +102,8 @@ fun NewAddressScreenContent(
                 PrimaryButton(
                     caption = "Save Address",
                     onClick = { onIntent(NewAddressIntent.OnSaveClick) },
-                    isDisabled = state.city.isBlank() || state.street.isBlank() || state.label.isBlank() || state.phone.isBlank(),
+                    isDisabled = state.city.isBlank() || state.street.isBlank() ||
+                        state.recipientName.isBlank() || state.phone.isBlank() || state.country.isBlank(),
                     isLoading = state.isSaving,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -100,9 +126,20 @@ fun NewAddressScreenContent(
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()
             )
-            
+
             Spacer(Modifier.height(Theme.spacing.medium))
-            
+
+            TextField(
+                text = state.recipientName,
+                onTextChange = { onIntent(NewAddressIntent.OnRecipientNameChange(it)) },
+                title = "Full Name",
+                hint = "e.g. Jane Doe",
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(Modifier.height(Theme.spacing.medium))
+
             TextField(
                 text = state.phone,
                 onTextChange = { onIntent(NewAddressIntent.OnPhoneChange(it)) },
@@ -233,7 +270,29 @@ fun NewAddressScreenContent(
             )
 
             Spacer(Modifier.height(Theme.spacing.medium))
-            
+
+            Row(modifier = Modifier.fillMaxWidth()) {
+                TextField(
+                    text = state.province,
+                    onTextChange = { onIntent(NewAddressIntent.OnProvinceChange(it)) },
+                    title = "State / Province",
+                    hint = "e.g. California",
+                    singleLine = true,
+                    modifier = Modifier.weight(1f)
+                )
+                Spacer(Modifier.width(Theme.spacing.medium))
+                TextField(
+                    text = state.zip,
+                    onTextChange = { onIntent(NewAddressIntent.OnZipChange(it)) },
+                    title = "Zip / Postal",
+                    hint = "e.g. 90001",
+                    singleLine = true,
+                    modifier = Modifier.weight(1f)
+                )
+            }
+
+            Spacer(Modifier.height(Theme.spacing.medium))
+
             TextField(
                 text = state.note,
                 onTextChange = { onIntent(NewAddressIntent.OnNoteChange(it)) },

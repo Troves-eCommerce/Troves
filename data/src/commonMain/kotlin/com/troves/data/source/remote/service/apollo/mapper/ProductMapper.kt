@@ -7,6 +7,8 @@ import com.troves.data.source.remote.service.apollo.util.gidToLong
 import com.troves.data.source.remote.service.ktor.dto.Option
 import com.troves.data.source.remote.service.ktor.dto.ProductDto
 import com.troves.domain.entity.Product
+import com.troves.domain.entity.ProductOption
+import com.troves.domain.entity.ProductVariant
 
 internal fun ProductCard.toProductDto(): ProductDto = ProductDto(
     adminGraphqlApiId = null,
@@ -47,6 +49,17 @@ internal fun ProductCard.toDomainProduct(): Product = Product(
     sizes = optionValuesFor("Size"),
     colors = optionValuesFor("Color"),
     description = descriptionHtml.toString(),
+    options = options.map { ProductOption(name = it.name, values = it.values) },
+    variants = variants.nodes.map { node ->
+        ProductVariant(
+            variantId = node.id,
+            title = node.title,
+            price = node.price.toString(),
+            available = node.availableForSale,
+            inventoryQuantity = node.inventoryQuantity,
+            selectedOptions = node.selectedOptions.associate { it.name to it.value },
+        )
+    },
 )
 
 private fun ProductCard.optionValuesFor(optionName: String): List<String> =

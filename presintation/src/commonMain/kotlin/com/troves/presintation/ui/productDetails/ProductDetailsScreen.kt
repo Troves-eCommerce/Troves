@@ -39,13 +39,12 @@ import com.troves.designsystem.components.dialog.TrovesDialog
 import com.troves.designsystem.theme.Theme
 import com.troves.presintation.core.mvi.ObserveEffect
 import com.troves.presintation.ui.productDetails.components.AddToCartButton
-import com.troves.presintation.ui.productDetails.components.ColorSelectorRow
 import com.troves.presintation.ui.productDetails.components.CustomerReviewsSection
+import com.troves.presintation.ui.productDetails.components.OptionSelectorRow
 import com.troves.presintation.ui.productDetails.components.ProductDetailTopBar
 import com.troves.presintation.ui.productDetails.components.ProductDetailsShimmer
 import com.troves.presintation.ui.productDetails.components.ProductImageCarousel
 import com.troves.presintation.ui.productDetails.components.SectionHeaderRow
-import com.troves.presintation.ui.productDetails.components.SizeSelectorRow
 import com.troves.presintation.ui.productDetails.components.StarRatingRow
 import com.troves.presintation.utils.Currency
 import com.troves.presintation.utils.priceFormat
@@ -117,8 +116,9 @@ fun ProductDetailsScreen(
                     uiState = uiState,
                     onBackClick = { intent(ProductDetailsIntent.OnBackClick) },
                     onAddToCart = { intent(ProductDetailsIntent.OnAddToCart) },
-                    onSizeSelected = { intent(ProductDetailsIntent.OnSizeSelectedChange(it)) },
-                    onColorSelected = { intent(ProductDetailsIntent.OnColorSelectedChange(it)) },
+                    onOptionSelected = { name, value ->
+                        intent(ProductDetailsIntent.OnOptionSelected(name, value))
+                    },
                     onFavoriteClick = { intent(ProductDetailsIntent.OnFavoriteClick) },
                     onSeeAllReviews = { intent(ProductDetailsIntent.OnSeeAllReviews) },
                     onSizeGuide = { intent(ProductDetailsIntent.OnSizeGuide) },
@@ -143,8 +143,7 @@ fun ProductDetailsScreenContent(
     uiState: ProductDetailUiState,
     onBackClick: () -> Unit,
     onAddToCart: () -> Unit,
-    onSizeSelected: (String) -> Unit,
-    onColorSelected: (Int) -> Unit,
+    onOptionSelected: (String, String) -> Unit,
     onFavoriteClick: () -> Unit,
     onSeeAllReviews: () -> Unit,
     onSizeGuide: () -> Unit,
@@ -204,7 +203,7 @@ fun ProductDetailsScreenContent(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(
-                            text = uiState.priceFormatted.priceFormat(Currency.USD),
+                            text = uiState.displayPrice.priceFormat(Currency.USD),
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold,
                             color = Theme.colors.primary,
@@ -215,34 +214,14 @@ fun ProductDetailsScreenContent(
                         )
                     }
 
-                    Spacer(Modifier.height(Theme.spacing.medium))
-                    if (uiState.sizes.isNotEmpty()){
-                        SectionHeaderRow(
-                            title = "Size",
-                            actionLabel = "Size Guide",
-                            onActionClick = onSizeGuide,
-                        )
+                    uiState.displayOptions.forEach { option ->
+                        Spacer(Modifier.height(Theme.spacing.medium))
+                        SectionHeaderRow(title = option.name)
                         Spacer(Modifier.height(10.dp))
-                        SizeSelectorRow(
-                            sizes = uiState.sizes,
-                            selectedSizeLabel = uiState.selectedSizeLabel,
-                            onSizeSelected = onSizeSelected,
-                        )
-                    }
-
-                    Spacer(Modifier.height(Theme.spacing.medium))
-
-                    if (uiState.colors.isNotEmpty()){
-                        SectionHeaderRow(
-                            title = "Colors",
-                            actionLabel = "Color Guide",
-                            onActionClick = onSizeGuide,
-                        )
-                        Spacer(Modifier.height(10.dp))
-                        ColorSelectorRow(
-                            colors = uiState.colors,
-                            selectedColorIndex = uiState.selectedColorIndex,
-                            onColorSelected = onColorSelected,
+                        OptionSelectorRow(
+                            values = option.values,
+                            selectedValue = uiState.selectedOptions[option.name],
+                            onValueSelected = { value -> onOptionSelected(option.name, value) },
                         )
                     }
 
@@ -259,8 +238,18 @@ fun ProductDetailsScreenContent(
 
                     Spacer(Modifier.height(Theme.spacing.large))
 
+                    val hint = uiState.addToCartHint
+                    if (hint != null) {
+                        Text(
+                            text = hint,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Theme.colors.error,
+                        )
+                        Spacer(Modifier.height(8.dp))
+                    }
                     AddToCartButton(
                         onAddToCart = onAddToCart,
+                        enabled = uiState.canAddToCart,
                         modifier = Modifier.fillMaxWidth()
                     )
 

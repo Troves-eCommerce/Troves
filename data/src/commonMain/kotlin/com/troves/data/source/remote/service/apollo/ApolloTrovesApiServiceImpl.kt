@@ -9,15 +9,23 @@ import com.troves.data.source.remote.service.apollo.graphql.admin.GetProductsByC
 import com.troves.data.source.remote.service.apollo.graphql.admin.GetProductsBySearchQuery
 import com.troves.data.source.remote.service.apollo.graphql.admin.GetProductsByVendorQuery
 import com.troves.data.source.remote.service.apollo.graphql.admin.GetProductsQuery
+import com.troves.data.source.remote.service.apollo.graphql.admin.GetDiscountCodeQuery
+import com.troves.data.source.remote.service.apollo.graphql.admin.CreateOrderMutation
+import com.troves.data.source.remote.service.apollo.graphql.admin.type.OrderCreateLineItemInput
+import com.troves.data.source.remote.service.apollo.graphql.admin.type.OrderCreateOrderInput
+import com.troves.data.source.remote.service.apollo.graphql.admin.type.MailingAddressInput
 import com.troves.data.source.remote.service.apollo.graphql.admin.type.ProductCollectionSortKeys
 
 import com.troves.data.source.remote.service.apollo.mapper.toCustomCollectionDto
 import com.troves.data.source.remote.service.apollo.mapper.toDomainProduct
 import com.troves.data.source.remote.service.apollo.mapper.toProductDto
 import com.troves.data.source.remote.service.apollo.mapper.toSmartCollection
+import com.troves.data.source.remote.service.apollo.util.runMutation
 import com.troves.data.source.remote.service.apollo.util.runQuery
 import com.troves.data.source.remote.service.apollo.util.toCollectionGid
 import com.troves.data.source.remote.service.apollo.util.toProductGid
+import com.troves.data.source.remote.service.apollo.util.toVariantGid
+import com.troves.domain.entity.Address
 import com.troves.data.source.remote.service.apollo.util.toQueryOptional
 import com.troves.data.source.remote.service.apollo.util.toShopifySearchQuery
 import com.troves.data.source.remote.service.ktor.dto.Collection
@@ -26,24 +34,14 @@ import com.troves.data.source.remote.service.ktor.dto.CustomCollectionResponse
 import com.troves.data.source.remote.service.ktor.dto.MarketingEventsResponse
 import com.troves.data.source.remote.service.ktor.dto.ProductDto
 import com.troves.data.source.remote.service.ktor.dto.ProductResponse
-import com.troves.data.source.remote.service.ktor.dto.SingleProductResponse
 import com.troves.domain.entity.Product
 import com.troves.domain.entity.ProductSearchParams
+import com.troves.domain.entity.DiscountCode
 import com.troves.domain.utils.Result
 
 
-import io.ktor.client.HttpClient
-import io.ktor.http.HttpMethod
-import io.ktor.client.request.url
-import io.ktor.client.request.header
-import io.ktor.client.request.setBody
-import io.ktor.http.ContentType
-import io.ktor.http.contentType
-import com.troves.data.source.remote.service.ktor.getResults
-
 class ApolloTrovesApiServiceImpl(
-    private val apolloClient: ApolloClient,
-    private val ktorClient: HttpClient
+    private val apolloClient: ApolloClient
 ) : TrovesApiService {
 
     // region products
@@ -104,11 +102,11 @@ class ApolloTrovesApiServiceImpl(
         TODO("Not yet implemented")
     }
 
-    override suspend fun getProductById(productId: String): Result<SingleProductResponse> =
+    override suspend fun getProductById(productId: String): Result<Product> =
         apolloClient.runQuery(GetProductByIdQuery(id = productId.toProductGid())) { data ->
             val product = data.product?.productCard
                 ?: throw NoSuchElementException("Product not found: $productId")
-            SingleProductResponse(product = product.toProductDto())
+            product.toDomainProduct()
         }
 
     override suspend fun updateProduct(productId: String) {
@@ -148,37 +146,51 @@ class ApolloTrovesApiServiceImpl(
     }
     // endregion
 
-    override suspend fun getCountries(): Result<List<com.troves.data.source.remote.dto.RestCountryDto>> {
-        val result = ktorClient.getResults<com.troves.data.source.remote.dto.RestCountriesV5Response> {
-            method = HttpMethod.Get
-            url {
-                protocol = io.ktor.http.URLProtocol.HTTPS
-                host = "api.restcountries.com"
-                pathSegments = listOf("countries", "v5")
-                parameters.append("response_fields", "names.common")
-                parameters.append("limit", "100")
+    override suspend fun getDiscountCodes(): Result<List<DiscountCode>> =
+        apolloClient.runQuery(GetDiscountCodeQuery()) { data ->
+            data.codeDiscountNodes.nodes.mapNotNull { node ->
+                node.codeDiscount.onDiscountCodeBasic?.title?.let { title ->
+                    DiscountCode(title = title)
+                }
             }
-            header("Authorization", "Bearer ${com.troves.data.BuildKonfig.REST_COUNTRIES_API_KEY}")
         }
-        return when (result) {
-            is Result.Success -> Result.Success(result.value.data?.objects ?: emptyList())
-            is Result.Error -> Result.Error(result.throwable)
-            is Result.Loading -> Result.Loading
+
+    override suspend fun createOrder(
+        email: String?,
+        address: Address,
+        lineItems: List<Pair<String, Int>>,
+    ): Result<String> {
+        val order = OrderCreateOrderInput(
+            email = Optional.presentIfNotNull(email),
+            shippingAddress = Optional.present(address.toMailingAddressInput()),
+            lineItems = Optional.present(
+                lineItems.map { (variantId, quantity) ->
+                    OrderCreateLineItemInput(
+                        variantId = Optional.present(variantId.toVariantGid()),
+                        quantity = quantity,
+                    )
+                }
+            ),
+        )
+        return apolloClient.runMutation(CreateOrderMutation(order = order)) { data ->
+            data.orderCreate?.userErrors?.firstOrNull()?.let { error(it.message) }
+            data.orderCreate?.order?.name ?: error("Order creation returned no order")
         }
     }
 
-    override suspend fun getCities(country: String): Result<com.troves.data.source.remote.dto.CountriesNowCitiesDto> {
-        return ktorClient.getResults {
-            method = HttpMethod.Post
-            url {
-                protocol = io.ktor.http.URLProtocol.HTTPS
-                host = "countriesnow.space"
-                pathSegments = listOf("api", "v0.1", "countries", "cities")
-            }
-            contentType(ContentType.Application.Json)
-            setBody(com.troves.data.source.remote.dto.CountriesNowRequestDto(country = country))
-        }
-    }
+    private fun Address.toMailingAddressInput(): MailingAddressInput = MailingAddressInput(
+        address1 = Optional.presentIfNotNull(address1),
+        address2 = Optional.presentIfNotNull(address2),
+        city = Optional.presentIfNotNull(city),
+        province = Optional.presentIfNotNull(province),
+        zip = Optional.presentIfNotNull(zip),
+        phone = Optional.presentIfNotNull(phone),
+        firstName = Optional.presentIfNotNull(firstName),
+        lastName = Optional.presentIfNotNull(lastName),
+        company = Optional.presentIfNotNull(company),
+        country = Optional.presentIfNotNull(country),
+    )
+
 
     private companion object {
         const val DEFAULT_PAGE_SIZE = 250

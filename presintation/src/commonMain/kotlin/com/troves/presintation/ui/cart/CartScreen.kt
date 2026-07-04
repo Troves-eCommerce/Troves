@@ -1,6 +1,7 @@
 package com.troves.presintation.ui.cart
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.BasicText
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -52,7 +54,8 @@ fun CartScreen(
     val snackBarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     var showLoginRequiredDialog by remember { mutableStateOf(false) }
-    var itemToRemove by remember { mutableStateOf<CartItemUi?>(null) }
+    var itemToRemove by remember { mutableStateOf<CartLineUi?>(null) }
+    var showClearConfirm by remember { mutableStateOf(false) }
 
     ObserveEffect(viewModel.effect) { effect ->
         when (effect) {
@@ -61,6 +64,7 @@ fun CartScreen(
             CartEffect.ShowLoginRequiredDialog -> showLoginRequiredDialog = true
             is CartEffect.ShowToast -> scope.launch { snackBarHostState.showSnackbar(effect.message) }
             is CartEffect.ShowRemoveConfirmationDialog -> itemToRemove = effect.item
+            CartEffect.ShowClearCartConfirmationDialog -> showClearConfirm = true
         }
     }
 
@@ -83,12 +87,25 @@ fun CartScreen(
             message = "Are you sure you want to remove \"${item.title}\" from your cart?",
             confirmText = "Remove",
             onConfirm = {
-                viewModel.onIntent(CartIntent.OnRemoveItemConfirm(item.productId))
+                viewModel.onIntent(CartIntent.OnRemoveItemConfirm(item.lineId))
                 itemToRemove = null
             },
             onDismiss = {
                 itemToRemove = null
             }
+        )
+    }
+
+    if (showClearConfirm) {
+        TrovesDialog(
+            title = "Clear Cart",
+            message = "Remove all items from your cart?",
+            confirmText = "Clear All",
+            onConfirm = {
+                viewModel.onIntent(CartIntent.OnClearCartConfirm)
+                showClearConfirm = false
+            },
+            onDismiss = { showClearConfirm = false },
         )
     }
 
@@ -143,12 +160,45 @@ private fun CartScreenContent(
             contentPadding = PaddingValues(Theme.spacing.medium),
             verticalArrangement = Arrangement.spacedBy(Theme.spacing.medium),
         ) {
-            items(state.items, key = { it.productId }) { item ->
+            if (!state.isEmpty && !state.isLoading) {
+                item {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        BasicText(
+                            text = "${state.items.size} item(s)",
+                            style = Theme.typography.body.medium.copy(color = Theme.colors.secondaryFont),
+                        )
+                        BasicText(
+                            text = "Clear all",
+                            style = Theme.typography.body.medium.copy(color = Theme.colors.error),
+                            modifier = Modifier.clickable { onIntent(CartIntent.OnClearCartClick) },
+                        )
+                    }
+                }
+            }
+
+            items(state.items, key = { it.lineId }) { item ->
                 CartItemCard(
                     item = item,
-                    onIncrement = { onIntent(CartIntent.OnIncrement(item.productId)) },
-                    onDecrement = { onIntent(CartIntent.OnDecrement(item.productId)) },
+                    onIncrement = { onIntent(CartIntent.OnIncrement(item.lineId)) },
+                    onDecrement = { onIntent(CartIntent.OnDecrement(item.lineId)) },
+                    onRemove = { onIntent(CartIntent.OnRemoveItemClick(item.lineId)) },
                 )
+            }
+
+            if (!state.isEmpty && !state.isLoading) {
+                item {
+                    DiscountCodeRow(
+                        value = state.discountInput,
+                        appliedCode = state.appliedDiscountCode,
+                        isApplying = state.isApplyingDiscount,
+                        onValueChange = { onIntent(CartIntent.OnDiscountInputChange(it)) },
+                        onApply = { onIntent(CartIntent.OnApplyDiscount) },
+                    )
+                }
             }
 
             if (state.isEmpty) {
@@ -168,6 +218,42 @@ private fun CartScreenContent(
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun DiscountCodeRow(
+    value: String,
+    appliedCode: String?,
+    isApplying: Boolean,
+    onValueChange: (String) -> Unit,
+    onApply: () -> Unit,
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(Theme.spacing.small)) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            OutlinedTextField(
+                value = value,
+                onValueChange = onValueChange,
+                singleLine = true,
+                placeholder = { BasicText("Discount code") },
+                modifier = Modifier.weight(1f),
+            )
+            PrimaryButton(
+                caption = if (isApplying) "..." else "Apply",
+                onClick = onApply,
+                isDisabled = isApplying || value.isBlank(),
+            )
+        }
+        if (!appliedCode.isNullOrBlank()) {
+            BasicText(
+                text = "Applied: $appliedCode",
+                style = Theme.typography.body.small.copy(color = Theme.colors.primary),
+            )
         }
     }
 }
