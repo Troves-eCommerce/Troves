@@ -10,4 +10,7 @@ data class Ad(
     val titleBottom: String,
     val description: String,
     val buttonText: String = "Shop now",
+    val targetType: String? = null, // e.g., "brand", "category"
+    val targetId: String? = null,
+    val targetName: String? = null,
 )
