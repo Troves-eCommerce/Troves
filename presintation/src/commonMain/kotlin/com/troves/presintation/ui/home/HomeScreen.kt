@@ -238,19 +238,39 @@ private fun HomeContent(
             actionIcon = chevron,
             onAction = { onIntent(HomeIntent.SeeAllBrandsClicked) },
         )
+
         LazyRow(
             contentPadding = PaddingValues(horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             items(state.brands, key = { it.id }) { brand ->
+
+                val localBrandImage = when (brand.name.trim().lowercase()) {
+                    "nike" -> Res.drawable.ic_brand_nike
+                    "adidas" -> Res.drawable.ic_brand_adidas
+                    "puma" -> Res.drawable.ic_brand_puma
+                    "reebok" -> Res.drawable.ic_brand_supra
+                    "new balance" -> Res.drawable.ic_brand_supra
+                    "under armour" -> Res.drawable.ic_brand_supra
+                    "converse" -> Res.drawable.ic_brand_converse
+                    "vans" -> Res.drawable.ic_brand_vans
+                    else -> null
+                }
+
                 BrandItem(
                     name = brand.name,
-                    imagePainter = rememberAsyncImagePainter(
-                        model = brand.logoUrl,
-                        placeholder = brandImage,
-                        error = brandImage,
-                    ),
-                    onClick = { onIntent(HomeIntent.BrandClicked(brand)) },
+                    imagePainter = if (localBrandImage != null) {
+                        painterResource(localBrandImage)
+                    } else {
+                        rememberAsyncImagePainter(
+                            model = brand.logoUrl,
+                            placeholder = brandImage,
+                            error = brandImage,
+                        )
+                    },
+                    onClick = {
+                        onIntent(HomeIntent.BrandClicked(brand))
+                    },
                 )
             }
         }
@@ -365,7 +385,6 @@ private fun HomeShimmer() {
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         repeat(5) {
-            // تحديث الشيمر هنا ليطابق حجم الكارت الجديد للـ Categories تماماً
             Box(
                 modifier = Modifier
                     .width(85.dp)

@@ -82,7 +82,7 @@ private fun CategoryItemPreview() {
     SpTheme {
         CategoryItem(
             name = "Men",
-            iconPainter = Res.drawable.ic_eye, // only for test
+            iconPainter = Res.drawable.ic_eye,
             onClick = {},
             modifier = Modifier
                 .size(width = 85.dp, height = 100.dp)

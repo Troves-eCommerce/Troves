@@ -40,28 +40,25 @@ fun BrandItem(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        // دائرة الشعار المحاطة بحدود ناعمة مطابقة للصورة تماماً
         Box(
             modifier = Modifier
                 .size(72.dp)
                 .clip(CircleShape)
-                .background(Theme.colors.surfaceVariant) // لون الخلفية الفاتح الكريمي
-                .border(1.dp, Theme.colors.onPrimary, CircleShape), // حدود دائرية رفيعة
+                .background(Theme.colors.surfaceVariant)
+                .border(1.dp, Theme.colors.onPrimary, CircleShape),
             contentAlignment = Alignment.Center
         ) {
             Image(
                 painter = imagePainter,
                 contentDescription = name,
-                // استخدام ContentScale.Fit لكي يحافظ الشعار على أبعاده الهندسية الأصلية داخل الدائرة
                 contentScale = ContentScale.Fit,
                 modifier = Modifier
-                    .size(42.dp) // حجم الشعار الداخلي ليعطي مساحة تنفس (Padding) داخل الدائرة
+                    .size(50.dp)
             )
         }
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // اسم البراند أسفل الدائرة
         BasicText(
             text = name,
             style = Theme.typography.body.medium.copy(
