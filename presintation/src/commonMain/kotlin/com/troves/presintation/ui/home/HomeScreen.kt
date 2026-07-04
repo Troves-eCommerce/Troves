@@ -221,7 +221,12 @@ private fun HomeContent(
     }
 
     if (state.justForYou.isNotEmpty()) {
-        SectionHeader(title = stringResource(Res.string.home_just_for_you))
+        SectionHeader(
+            title = stringResource(Res.string.home_just_for_you),
+            actionIcon = chevron,
+            actionLabel = stringResource(Res.string.home_view_all),
+            onAction = { onIntent(HomeIntent.ViewAllJustForYouClicked) }
+        )
         ProductRow(
             products = state.justForYou,
             favoriteIds = state.favoriteProductIds,
@@ -277,7 +282,12 @@ private fun HomeContent(
     }
 
     if (state.trending.isNotEmpty()) {
-        SectionHeader(title = stringResource(Res.string.home_trending_now))
+        SectionHeader(
+            title = stringResource(Res.string.home_trending_now),
+            actionIcon = chevron,
+            actionLabel = stringResource(Res.string.home_view_all),
+            onAction = { onIntent(HomeIntent.ViewAllTrendingClicked) }
+        )
         ProductRow(
             products = state.trending,
             favoriteIds = state.favoriteProductIds,

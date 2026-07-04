@@ -39,6 +39,8 @@ sealed interface HomeIntent {
     data object Load : HomeIntent
     data object Retry : HomeIntent
     data object ViewAllCategoriesClicked : HomeIntent
+    data object ViewAllJustForYouClicked : HomeIntent
+    data object ViewAllTrendingClicked : HomeIntent
     data object SearchClicked : HomeIntent
     data object CartClicked : HomeIntent
     data object SeeAllBrandsClicked : HomeIntent

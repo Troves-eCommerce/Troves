@@ -26,13 +26,11 @@ import com.troves.presintation.ui.MainViewModel
 import com.troves.presintation.ui.StartDestination
 import com.troves.presintation.ui.address.ManageSavedAddressesScreen
 import com.troves.presintation.ui.address.NewAddressScreen
-import com.troves.presintation.ui.allbrands.AllBrandsScreen
 import com.troves.presintation.ui.auth.LoginScreen
 import com.troves.presintation.ui.auth.RegisterScreen
 import com.troves.presintation.ui.cart.CartScreen
 import com.troves.presintation.ui.checkout.CheckoutScreen
 import com.troves.presintation.ui.fav.WishlistScreen
-import com.troves.presintation.ui.home.AllCategoriesScreen
 import com.troves.presintation.ui.home.HomeScreen
 import com.troves.presintation.ui.onboarding.OnboardingScreen
 import com.troves.presintation.ui.orderresult.OrderResultScreen
@@ -43,6 +41,7 @@ import com.troves.presintation.ui.products.ProductsScreen
 import com.troves.presintation.ui.profile.ProfileScreen
 import com.troves.presintation.ui.search.SearchScreen
 import com.troves.presintation.ui.search.SearchScreenViewModel
+import com.troves.presintation.ui.seeall.SeeAllScreen
 import com.troves.presintation.ui.splash.SplashScreen
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
@@ -62,7 +61,7 @@ private val navSavedStateConfiguration = SavedStateConfiguration {
             subclass(AppRoute.Register::class, AppRoute.Register.serializer())
             subclass(AppRoute.Home::class, AppRoute.Home.serializer())
             subclass(AppRoute.Products::class, AppRoute.Products.serializer())
-            subclass(AppRoute.AllBrands::class, AppRoute.AllBrands.serializer())
+            subclass(AppRoute.SeeAll::class, AppRoute.SeeAll.serializer())
             subclass(AppRoute.Favorites::class, AppRoute.Favorites.serializer())
             subclass(AppRoute.Profile::class, AppRoute.Profile.serializer())
             subclass(AppRoute.ProductDetails::class, AppRoute.ProductDetails.serializer())
@@ -126,14 +125,18 @@ fun AppNav() {
                 onNavigateToRegister = { backStack.add(AppRoute.Register) },
                 onNavigateToSearch = {backStack.add(AppRoute.Search)},
                 onNavigateToCart = { backStack.add(AppRoute.Cart) },
-                onNavigateToAllCategories = { backStack.add(AppRoute.AllCategories) },
-                onNavigateToAllBrands = { backStack.add(AppRoute.AllBrands) },
+                onNavigateToAllCategories = {
+                    backStack.add(AppRoute.SeeAll(AppRoute.SeeAllType.CATEGORIES, name = "Categories"))
+                },
+                onNavigateToAllBrands = {
+                    backStack.add(AppRoute.SeeAll(AppRoute.SeeAllType.BRANDS, name = "Brands"))
+                },
                 onNavigateToProducts = { sourceType, sourceId, sourceName ->
                     backStack.add(
-                        AppRoute.Products(
-                            sourceType = sourceType,
-                            sourceId = sourceId,
-                            sourceName = sourceName,
+                        AppRoute.SeeAll(
+                            type = AppRoute.SeeAllType.PRODUCTS,
+                            id = sourceId,
+                            name = sourceName,
                         ),
                     )
                 },
@@ -190,14 +193,25 @@ fun AppNav() {
                 }
             )
         }
-        entry<AppRoute.AllCategories> {
-            AllCategoriesScreen()
-        }
         entry<AppRoute.Register> {
             RegisterScreen(
                 onNavigateToLogin = { backStack.add(AppRoute.Login) },
                 onRegisterSuccess = { replaceWith(AppRoute.Home) },
                 onRegistered = {
+                }
+            )
+        }
+        entry<AppRoute.SeeAll> { key ->
+            SeeAllScreen(
+                type = key.type,
+                id = key.id,
+                name = key.name,
+                onNavigateBack = { backStack.removeLastOrNull() },
+                onNavigateToProducts = { sourceType, sourceId, sourceName ->
+                    backStack.add(AppRoute.SeeAll(AppRoute.SeeAllType.PRODUCTS, sourceId, sourceName))
+                },
+                onNavigateToProductDetails = { productId ->
+                    backStack.add(AppRoute.ProductDetails(productId))
                 }
             )
         }
@@ -208,20 +222,6 @@ fun AppNav() {
                 sourceName = key.sourceName,
                 onNavigateToProduct = { productId ->
                     backStack.add(AppRoute.ProductDetails(productId))
-                },
-                onNavigateBack = { backStack.removeLastOrNull() },
-            )
-        }
-        entry<AppRoute.AllBrands> {
-            AllBrandsScreen(
-                onNavigateToProducts = { sourceType, sourceId, sourceName ->
-                    backStack.add(
-                        AppRoute.Products(
-                            sourceType = sourceType,
-                            sourceId = sourceId,
-                            sourceName = sourceName,
-                        ),
-                    )
                 },
                 onNavigateBack = { backStack.removeLastOrNull() },
             )
