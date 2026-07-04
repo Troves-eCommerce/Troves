@@ -23,6 +23,7 @@ import com.troves.domain.utils.getOrElse
 import com.troves.domain.utils.getOrNull
 import com.troves.domain.utils.getOrThrow
 import com.troves.domain.utils.map
+import com.troves.data.source.local.ads.LocalAdsDataSource
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -36,6 +37,7 @@ import kotlinx.io.IOException
 class TrovesRepositoryImpl(
     private val remoteDataSource: RemoteDatasource,
     private val dataSource: TrovesPreferences,
+    private val localAdsDataSource: LocalAdsDataSource,
     private val storefront: StorefrontApiService,
     private val trovesApiService: TrovesApiService,
     private val authenticationRepository: AuthenticationRepository,
@@ -130,7 +132,7 @@ class TrovesRepositoryImpl(
         }
     }
 
-    override suspend fun getAds(): Result<List<Ad>> = Result.Success(FAKE_ADS)
+    override suspend fun getAds(): Result<List<Ad>> = Result.Success(localAdsDataSource.getAds())
     override val selectedLanguage: Flow<String> = dataSource.selectedLanguage
     override val themeMode: Flow<String> = dataSource.themeMode
     override val selectedCurrency: Flow<String> = dataSource.selectedCurrency
@@ -283,26 +285,4 @@ class TrovesRepositoryImpl(
         storefront.updateCartDeliveryAddress(cartId, address)
     }
 
-    private companion object {
-        val FAKE_ADS = listOf(
-            Ad(
-                id = 1,
-                titleTop = "30% DISCOUNT",
-                titleBottom = "Today special",
-                description = "Get discount for every order, only valid for today.",
-            ),
-            Ad(
-                id = 2,
-                titleTop = "NEW ARRIVALS",
-                titleBottom = "Summer 2026",
-                description = "Fresh styles just landed. Explore the latest collection.",
-            ),
-            Ad(
-                id = 3,
-                titleTop = "FREE SHIPPING",
-                titleBottom = "Orders over \$50",
-                description = "Shop more, save more with free delivery on big orders.",
-            ),
-        )
-    }
 }

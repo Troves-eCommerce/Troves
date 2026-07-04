@@ -160,6 +160,7 @@ fun AppNav() {
                 productId = key.productId,
                 onNavigateBack = { backStack.removeLastOrNull() },
                 onNavigateToLogin = { backStack.add(AppRoute.Login) },
+                onNavigateToCart = { backStack.add(AppRoute.Cart) },
             )
         }
         entry<AppRoute.Onboarding> {
