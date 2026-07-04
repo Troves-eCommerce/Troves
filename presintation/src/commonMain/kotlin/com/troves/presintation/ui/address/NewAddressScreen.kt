@@ -15,6 +15,7 @@ import com.troves.designsystem.theme.Theme
 import org.jetbrains.compose.resources.painterResource
 import troves.designsystem.generated.resources.Res
 import troves.designsystem.generated.resources.ic_arrow_back
+import troves.designsystem.generated.resources.ic_arrow_drop_down
 
 import org.koin.compose.viewmodel.koinViewModel
 import com.troves.presintation.core.mvi.ObserveEffect
@@ -161,6 +162,7 @@ fun NewAddressScreenContent(
                         onTextChange = {},
                         title = "Country",
                         readOnly = true,
+                        trailingIcon = painterResource(Res.drawable.ic_arrow_drop_down),
                         modifier = Modifier.fillMaxWidth(),
                         onClickTrailingIcon = { expanded = !expanded }
                     )
@@ -214,6 +216,7 @@ fun NewAddressScreenContent(
                         title = "City",
                         hint = if (state.country.isBlank()) "Select a country first" else "Select or type City",
                         readOnly = false,
+                        trailingIcon = painterResource(Res.drawable.ic_arrow_drop_down),
                         modifier = Modifier.fillMaxWidth(),
                         onClickTrailingIcon = { if (state.country.isNotBlank()) cityExpanded = !cityExpanded }
                     )
