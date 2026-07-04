@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.BasicText
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -189,18 +188,6 @@ private fun CartScreenContent(
                 )
             }
 
-            if (!state.isEmpty && !state.isLoading) {
-                item {
-                    DiscountCodeRow(
-                        value = state.discountInput,
-                        appliedCode = state.appliedDiscountCode,
-                        isApplying = state.isApplyingDiscount,
-                        onValueChange = { onIntent(CartIntent.OnDiscountInputChange(it)) },
-                        onApply = { onIntent(CartIntent.OnApplyDiscount) },
-                    )
-                }
-            }
-
             if (state.isEmpty) {
                 item {
                     Box(
@@ -218,42 +205,6 @@ private fun CartScreenContent(
                     }
                 }
             }
-        }
-    }
-}
-
-@Composable
-private fun DiscountCodeRow(
-    value: String,
-    appliedCode: String?,
-    isApplying: Boolean,
-    onValueChange: (String) -> Unit,
-    onApply: () -> Unit,
-) {
-    Column(verticalArrangement = Arrangement.spacedBy(Theme.spacing.small)) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            OutlinedTextField(
-                value = value,
-                onValueChange = onValueChange,
-                singleLine = true,
-                placeholder = { BasicText("Discount code") },
-                modifier = Modifier.weight(1f),
-            )
-            PrimaryButton(
-                caption = if (isApplying) "..." else "Apply",
-                onClick = onApply,
-                isDisabled = isApplying || value.isBlank(),
-            )
-        }
-        if (!appliedCode.isNullOrBlank()) {
-            BasicText(
-                text = "Applied: $appliedCode",
-                style = Theme.typography.body.small.copy(color = Theme.colors.primary),
-            )
         }
     }
 }
