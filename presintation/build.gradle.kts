@@ -87,6 +87,8 @@ kotlin {
 
                 // Coil
                 implementation(libs.bundles.coil)
+                // Kermet
+                implementation(libs.kermit)
             }
         }
 

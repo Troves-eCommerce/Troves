@@ -129,4 +129,8 @@
     <string name="register_button">Register</string>
     <string name="register_already_have_account">Already have an account? </string>
     <string name="register_login_now">Login now</string>
+
+    <string name="register_password_not_match">Passwords do not match</string>
+    <string name="login_google_failed">Google Sign-In failed</string>
+    <string name="login_google_unsupported">Google Sign-In is not supported on this platform</string>
 </resources>

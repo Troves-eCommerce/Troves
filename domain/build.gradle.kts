@@ -58,6 +58,7 @@ kotlin {
                 implementation(libs.kotlinx.coroutines.core)
                 implementation("io.insert-koin:koin-core:3.5.3")
                 implementation(libs.kotlinx.coroutines.core)
+                implementation(libs.kermit)
                 // Add KMP dependencies here
             }
         }

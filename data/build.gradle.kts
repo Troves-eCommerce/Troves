@@ -103,6 +103,7 @@ kotlin {
                 implementation(libs.apollo.runtime)
                 // Memory Cache
                 implementation(libs.apollo.normalized.cache)
+                implementation(libs.kermit)
             }
         }
 

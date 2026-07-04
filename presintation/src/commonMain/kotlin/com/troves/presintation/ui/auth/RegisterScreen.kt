@@ -50,14 +50,10 @@ import com.troves.designsystem.theme.Theme
 import com.troves.presintation.core.mvi.ObserveEffect
 import com.troves.presintation.ui.auth.google.LocalGoogleAuthHandler
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import troves.designsystem.generated.resources.Res
-import troves.designsystem.generated.resources.ic_eye
-import troves.designsystem.generated.resources.ic_eye_off
-import troves.designsystem.generated.resources.ic_outline_email
-import troves.designsystem.generated.resources.ic_google
-// تأكدي من توفير أو استيراد أيقونة الشخص لحقل الاسم إذا كانت متوفرة، مثل:
-// import troves.designsystem.generated.resources.ic_user
+import troves.designsystem.generated.resources.*
 
 @Composable
 fun RegisterScreen(
@@ -71,6 +67,11 @@ fun RegisterScreen(
 
     var successMessage by remember { mutableStateOf<String?>(null) }
     var toastError by remember { mutableStateOf<String?>(null) }
+
+    // Pre-resolve strings that are referenced inside lambdas / non-composable scopes
+    val googleSignInFailedText = stringResource(Res.string.login_google_failed)
+    val googleSignInUnsupportedText = stringResource(Res.string.login_google_unsupported)
+    val passwordsDoNotMatchText = stringResource(Res.string.register_password_not_match)
 
     ObserveEffect(viewModel.effect) { effect ->
         when (effect) {
@@ -111,7 +112,7 @@ fun RegisterScreen(
             Spacer(Modifier.height(16.dp))
 
             BasicText(
-                text = "sss",
+                text = stringResource(Res.string.register_title),
                 style = Theme.typography.displayMedium.copy(
                     color = Theme.colors.primaryFont,
                     fontWeight = FontWeight.Bold,
@@ -122,7 +123,7 @@ fun RegisterScreen(
             Spacer(Modifier.height(8.dp))
 
             BasicText(
-                text = "Join us and start shopping",
+                text = stringResource(Res.string.register_desc),
                 style = Theme.typography.body.large.copy(
                     color = Theme.colors.secondaryFont,
                     textAlign = TextAlign.Center
@@ -134,8 +135,8 @@ fun RegisterScreen(
             CustomTextField(
                 text = email,
                 onTextChange = { viewModel.onIntent(AuthIntent.EmailChanged(it)) },
-                title = "Your Email",
-                hint = "hello@veyra.shop",
+                title = stringResource(Res.string.login_email_title),
+                hint = stringResource(Res.string.login_email_hint),
                 singleLine = true,
                 borderColor = Theme.colors.hint.copy(alpha = 0.4f),
                 onFocusBorderColor = Theme.colors.primary,
@@ -150,32 +151,12 @@ fun RegisterScreen(
             )
 
             Spacer(Modifier.height(20.dp))
-            /*
-            CustomTextField(
-                text = name,
-                onTextChange = { viewModel.onIntent(AuthIntent.FullNameChanged(it))  },
-                title = "Full Name",
-                hint = "Enter your name",
-                singleLine = true,
-                borderColor = Theme.colors.hint.copy(alpha = 0.4f),
-                onFocusBorderColor = Theme.colors.primary,
-                leadingIcon = painterResource(Res.drawable.ic_eye),
-                leadingIconColor = Theme.colors.primaryFont.copy(alpha = 0.7f),
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Text,
-                    imeAction = ImeAction.Next
-                ),
-                isError = errorMessage != null && name.isBlank(),
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Spacer(Modifier.height(20.dp))*/
 
             CustomTextField(
                 text = password,
                 onTextChange = { viewModel.onIntent(AuthIntent.PasswordChanged(it)) },
-                title = "Password",
-                hint = "••••••••",
+                title = stringResource(Res.string.register_password_title),
+                hint = stringResource(Res.string.login_password_hint),
                 singleLine = true,
                 borderColor = Theme.colors.hint.copy(alpha = 0.4f),
                 onFocusBorderColor = Theme.colors.primary,
@@ -196,8 +177,8 @@ fun RegisterScreen(
             CustomTextField(
                 text = confirmPassword,
                 onTextChange = { viewModel.onIntent(AuthIntent.ConfirmPasswordChanged(it)) },
-                title = "Confirm Password",
-                hint = "••••••••",
+                title = stringResource(Res.string.register_confirm_password_title),
+                hint = stringResource(Res.string.login_password_hint),
                 singleLine = true,
                 borderColor = Theme.colors.hint.copy(alpha = 0.4f),
                 onFocusBorderColor = Theme.colors.primary,
@@ -210,7 +191,7 @@ fun RegisterScreen(
                 trailingIconColor = Theme.colors.primaryFont.copy(alpha = 0.7f),
                 onClickTrailingIcon = { viewModel.onIntent(AuthIntent.ToggleConfirmPasswordVisibility) },
                 isError = confirmPassword.isNotBlank() && confirmPassword != password,
-                errorMessage = if (confirmPassword.isNotBlank() && confirmPassword != password) "Passwords do not match" else null,
+                errorMessage = if (confirmPassword.isNotBlank() && confirmPassword != password) passwordsDoNotMatchText else null,
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -235,7 +216,7 @@ fun RegisterScreen(
             Spacer(Modifier.height(32.dp))
 
             PrimaryButton(
-                caption = "Register",
+                caption = stringResource(Res.string.register_button),
                 onClick = { viewModel.onIntent(AuthIntent.Register) },
                 modifier = Modifier.fillMaxWidth(),
                 isLoading = isLoading,
@@ -251,7 +232,7 @@ fun RegisterScreen(
             ) {
                 HorizontalDivider(modifier = Modifier.weight(1f), color = Theme.colors.secondary)
                 BasicText(
-                    text = "  or continue with  ",
+                    text = "  ${stringResource(Res.string.login_or_continue)}  ",
                     style = Theme.typography.body.medium.copy(
                         color = Theme.colors.secondaryFont,
                         fontSize = 14.sp
@@ -275,9 +256,9 @@ fun RegisterScreen(
                                 viewModel.onIntent(AuthIntent.GoogleSignIn(idToken, accessToken))
                             },
                             onError = { error ->
-                                toastError = error.message ?: "Google Sign-In failed"
+                                toastError = error.message ?: googleSignInFailedText
                             }
-                        ) ?: run { toastError = "Google Sign-In is not supported on this platform" }
+                        ) ?: run { toastError = googleSignInUnsupportedText }
                     },
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
@@ -289,7 +270,7 @@ fun RegisterScreen(
                 )
                 Spacer(Modifier.width(12.dp))
                 BasicText(
-                    text = "Continue with Google",
+                    text = stringResource(Res.string.login_google),
                     style = Theme.typography.body.large.copy(
                         color = Theme.colors.primaryFont.copy(alpha = 0.8f),
                         fontWeight = FontWeight.Medium,
@@ -300,10 +281,13 @@ fun RegisterScreen(
 
             Spacer(Modifier.height(42.dp))
 
+            val alreadyHaveAccountText = stringResource(Res.string.register_already_have_account)
+            val loginNowText = stringResource(Res.string.register_login_now)
+
             BasicText(
                 text = buildAnnotatedString {
                     withStyle(SpanStyle(color = Theme.colors.secondaryFont)) {
-                        append("Already have an account? ")
+                        append(alreadyHaveAccountText)
                     }
                     withStyle(
                         SpanStyle(
@@ -311,7 +295,7 @@ fun RegisterScreen(
                             fontWeight = FontWeight.SemiBold
                         )
                     ) {
-                        append("Log in")
+                        append(loginNowText)
                     }
                 },
                 style = Theme.typography.body.large.copy(textAlign = TextAlign.Center),

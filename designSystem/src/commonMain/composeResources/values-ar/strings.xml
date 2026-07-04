@@ -129,4 +129,7 @@
     <string name="register_button">إنشاء حساب</string>
     <string name="register_already_have_account">لديك حساب بالفعل؟ </string>
     <string name="register_login_now">سجل دخول الآن</string>
+    <string name="register_password_not_match">كلمتا المرور غير متطابقتين</string>
+    <string name="login_google_failed">فشل تسجيل الدخول باستخدام جوجل</string>
+    <string name="login_google_unsupported">تسجيل الدخول باستخدام جوجل غير مدعوم على هذه المنصة</string>
 </resources>
