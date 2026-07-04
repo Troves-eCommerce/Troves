@@ -13,6 +13,8 @@ import com.troves.data.repository.PaymentRepositoryImpl
 import com.troves.data.repository.TrovesRepositoryImpl
 import com.troves.data.repository.WishlistRepositoryImpl
 import com.troves.data.repository.createAuthenticationRepository
+import com.troves.data.source.local.ads.LocalAdsDataSource
+import com.troves.data.source.local.ads.LocalAdsDataSourceImpl
 import com.troves.data.source.local.preferenceses.TrovesPreferences
 import com.troves.data.source.local.preferenceses.TrovesPreferencesImpl
 import com.troves.data.source.remote.RemoteDatasource
@@ -61,6 +63,7 @@ val dataModule = module {
 
     // ── Local ─────────────────────────────────────────────────────────────────
     single<TrovesPreferences> { TrovesPreferencesImpl(get()) }
+    single<LocalAdsDataSource> { LocalAdsDataSourceImpl() }
 
     // ── Database ──────────────────────────────────────────────────────────────
     single<TrovesDatabase> {
@@ -73,7 +76,7 @@ val dataModule = module {
     single { get<TrovesDatabase>().cartDao() }
 
     // ── Repositories ──────────────────────────────────────────────────────────
-    single<TrovesRepository>          { TrovesRepositoryImpl(get(), get(), get(), get(), get()) }
+    single<TrovesRepository>          { TrovesRepositoryImpl(get(), get(), get(), get(), get(), get()) }
     single<AuthenticationRepository>  { createAuthenticationRepository(get(), get()) }
     single<PaymentRepository>         { PaymentRepositoryImpl() }
     single<WishlistRepository>        { WishlistRepositoryImpl(get() , get()) }
