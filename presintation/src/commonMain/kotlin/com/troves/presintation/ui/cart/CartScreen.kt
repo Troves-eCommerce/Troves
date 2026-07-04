@@ -16,6 +16,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxValue
+import androidx.compose.material3.rememberSwipeToDismissBoxState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.clip
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -127,6 +135,7 @@ fun CartScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CartScreenContent(
     state: CartUiState,
@@ -149,6 +158,7 @@ private fun CartScreenContent(
                 totalFormatted = state.totalFormatted,
                 onCheckout = { onIntent(CartIntent.OnCheckout) },
                 isLoading = state.isLoading,
+                isEmpty = state.isEmpty,
             )
         },
     ) { innerPadding ->
@@ -170,23 +180,64 @@ private fun CartScreenContent(
                             text = "${state.items.size} item(s)",
                             style = Theme.typography.body.medium.copy(color = Theme.colors.secondaryFont),
                         )
-                        BasicText(
-                            text = "Clear all",
-                            style = Theme.typography.body.medium.copy(color = Theme.colors.error),
-                            modifier = Modifier.clickable { onIntent(CartIntent.OnClearCartClick) },
-                        )
+                        TextButton(onClick = { onIntent(CartIntent.OnClearCartClick) }) {
+                            Text(
+                                text = "Clear all",
+                                style = Theme.typography.body.medium,
+                                color = Theme.colors.error,
+                            )
+                        }
                     }
                 }
             }
 
-            items(state.items, key = { it.lineId }) { item ->
-                CartItemCard(
-                    item = item,
-                    onIncrement = { onIntent(CartIntent.OnIncrement(item.lineId)) },
-                    onDecrement = { onIntent(CartIntent.OnDecrement(item.lineId)) },
-                    onRemove = { onIntent(CartIntent.OnRemoveItemClick(item.lineId)) },
+            items(state.items, key = { it.lineId }, itemContent = { item ->
+                val dismissState = rememberSwipeToDismissBoxState(
+                    confirmValueChange = {
+                        if (it == SwipeToDismissBoxValue.EndToStart) {
+                            onIntent(CartIntent.OnRemoveItemClick(item.lineId))
+                            false
+                        } else {
+                            false
+                        }
+                    }
                 )
-            }
+
+                SwipeToDismissBox(
+                    state = dismissState,
+                    backgroundContent = {
+                        val color = if (dismissState.targetValue == SwipeToDismissBoxValue.EndToStart) {
+                            Theme.colors.error
+                        } else {
+                            Color.Transparent
+                        }
+
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .clip(Theme.shapes.large)
+                                .background(color)
+                                .padding(horizontal = 24.dp),
+                            contentAlignment = Alignment.CenterEnd
+                        ) {
+                            if (dismissState.targetValue == SwipeToDismissBoxValue.EndToStart) {
+                                Text(
+                                    text = "Remove",
+                                    color = Color.White,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                        }
+                    },
+                    enableDismissFromStartToEnd = false,
+                ) {
+                    CartItemCard(
+                        item = item,
+                        onIncrement = { onIntent(CartIntent.OnIncrement(item.lineId)) },
+                        onDecrement = { onIntent(CartIntent.OnDecrement(item.lineId)) },
+                    )
+                }
+            })
 
             if (state.isEmpty) {
                 item {
@@ -214,6 +265,7 @@ private fun CartBottomBar(
     totalFormatted: String,
     onCheckout: () -> Unit,
     isLoading: Boolean,
+    isEmpty: Boolean,
 ) {
     Row(
         modifier = Modifier
@@ -244,7 +296,7 @@ private fun CartBottomBar(
         PrimaryButton(
             caption = "Checkout",
             onClick = onCheckout,
-            isDisabled = isLoading,
+            isDisabled = isLoading || isEmpty,
             modifier = Modifier
                 .weight(1f)
                 .padding(start = Theme.spacing.medium),
