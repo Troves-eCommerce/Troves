@@ -41,6 +41,7 @@ class ProfileViewModel(
             is ProfileIntent.ManageAddressesClicked -> emitEffect(ProfileEffect.NavigateToAddresses)
             is ProfileIntent.OrderHistoryClicked -> emitEffect(ProfileEffect.NavigateToOrders)
             is ProfileIntent.PaymentMethodsClicked -> emitEffect(ProfileEffect.NavigateToPaymentMethods)
+            is ProfileIntent.AiAssistantClicked -> emitEffect(ProfileEffect.NavigateToAiAssistant)
             is ProfileIntent.LanguageClicked -> Unit
             is ProfileIntent.LanguageSelected -> selectLanguage(intent.language)
             is ProfileIntent.DarkModeChanged -> setDarkMode(intent.enabled)
