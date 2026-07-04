@@ -23,15 +23,13 @@ fun SpTheme(
         if (isDarkTheme) darkColors else lightColors
     }
 
-    // Since defaultSPTypographyForLanguage is @Composable, we call it directly here.
-    // Its internal implementation should handle the font family properly.
     val typography = defaultSPTypographyForLanguage(languageCode)
 
     val layoutDirection = remember(languageCode) {
         if (isRtlLanguage(languageCode)) LayoutDirection.Rtl else LayoutDirection.Ltr
     }
 
-    val fontFamily = if (languageCode == "ar") arabicFontFamily else arabicFontFamily // From Typography.kt
+    val fontFamily = if (languageCode == "ar") arabicFontFamily else defaultFontFamily
 
     CompositionLocalProvider(
         LocalLayoutDirection provides layoutDirection,

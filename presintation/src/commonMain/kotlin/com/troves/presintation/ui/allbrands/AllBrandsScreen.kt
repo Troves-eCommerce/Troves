@@ -42,8 +42,8 @@ import org.koin.compose.viewmodel.koinViewModel
 import troves.designsystem.generated.resources.Res as DesignRes
 import troves.designsystem.generated.resources.ic_arrow_back
 import troves.designsystem.generated.resources.img_onboarding1
-import troves.presintation.generated.resources.Res
-import troves.presintation.generated.resources.products_retry
+import troves.designsystem.generated.resources.Res
+import troves.designsystem.generated.resources.products_retry
 
 private val BrandCardHeight = 140.dp
 

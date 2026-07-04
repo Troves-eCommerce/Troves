@@ -28,6 +28,10 @@ internal val arabicFontFamily: FontFamily
             weight = FontWeight.Medium
         )
     )
+
+// TODO: swap in your bundled Latin font resource once you confirm the file name
+internal val defaultFontFamily: FontFamily = FontFamily.Default
+
 data class SPTextStyle(
     val display: TextStyle,
     val title: TextStyle,
@@ -43,12 +47,12 @@ internal val LocalSPTypography = staticCompositionLocalOf<SPTextStyle> {
 internal val LocalSPFontFamily = staticCompositionLocalOf<FontFamily> {
     error("No font family provided")
 }
+
 data class SizedTextStyle(
     val large: TextStyle,
     val medium: TextStyle,
     val small: TextStyle
 )
-
 
 @Composable
 internal fun spTypographyOf(fontFamily: FontFamily): SPTextStyle = SPTextStyle(
@@ -70,7 +74,6 @@ internal fun spTypographyOf(fontFamily: FontFamily): SPTextStyle = SPTextStyle(
         fontWeight = FontWeight.SemiBold,
         lineHeight = 32.sp
     ),
-
     body = SizedTextStyle(
         large = TextStyle(
             fontFamily = fontFamily,
@@ -115,4 +118,4 @@ internal fun spTypographyOf(fontFamily: FontFamily): SPTextStyle = SPTextStyle(
 
 @Composable
 internal fun defaultSPTypographyForLanguage(languageCode: String): SPTextStyle =
-    spTypographyOf(fontFamily = if (languageCode == "ar") arabicFontFamily else arabicFontFamily)
+    spTypographyOf(fontFamily = if (languageCode == "ar") arabicFontFamily else defaultFontFamily)

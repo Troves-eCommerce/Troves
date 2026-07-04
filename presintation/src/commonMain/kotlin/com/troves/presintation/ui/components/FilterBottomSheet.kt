@@ -23,13 +23,13 @@ import com.troves.designsystem.components.button.SecondaryButton
 import com.troves.designsystem.components.chip.AppChip
 import com.troves.designsystem.components.bottomsheet.BaseBottomSheet
 import com.troves.designsystem.theme.Theme
-import troves.presintation.generated.resources.Res
-import troves.presintation.generated.resources.apply
-import troves.presintation.generated.resources.filter_brands
-import troves.presintation.generated.resources.filter_categories
-import troves.presintation.generated.resources.filter_sub_categories
-import troves.presintation.generated.resources.filter_title
-import troves.presintation.generated.resources.reset
+import troves.designsystem.generated.resources.Res
+import troves.designsystem.generated.resources.apply
+import troves.designsystem.generated.resources.filter_brands
+import troves.designsystem.generated.resources.filter_categories
+import troves.designsystem.generated.resources.filter_sub_categories
+import troves.designsystem.generated.resources.filter_title
+import troves.designsystem.generated.resources.reset
 import org.jetbrains.compose.resources.stringResource
 
 

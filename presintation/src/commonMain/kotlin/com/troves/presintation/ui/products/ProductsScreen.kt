@@ -52,11 +52,11 @@ import troves.designsystem.generated.resources.ic_arrow_back
 import troves.designsystem.generated.resources.ic_heart
 import troves.designsystem.generated.resources.ic_star
 import troves.designsystem.generated.resources.img_onboarding1
-import troves.presintation.generated.resources.Res
-import troves.presintation.generated.resources.filter_title
-import troves.presintation.generated.resources.products_empty
-import troves.presintation.generated.resources.products_retry
-import troves.presintation.generated.resources.sort_title
+import troves.designsystem.generated.resources.Res
+import troves.designsystem.generated.resources.filter_title
+import troves.designsystem.generated.resources.products_empty
+import troves.designsystem.generated.resources.products_retry
+import troves.designsystem.generated.resources.sort_title
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

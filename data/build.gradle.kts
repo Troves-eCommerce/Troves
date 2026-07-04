@@ -77,6 +77,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(libs.kotlin.stdlib)
+                implementation(libs.kotlinx.coroutines.core)
                 implementation(libs.ktor.serialization.kotlinx.json)
                 implementation(libs.ktor.client.core)
                 implementation(libs.ktor.logging)
@@ -117,6 +118,8 @@ kotlin {
                 implementation(project.dependencies.platform(libs.firebase.bom))
                 implementation(libs.androidx.sqlite.bundled)
                 implementation(libs.androidx.room.runtime)
+                implementation(libs.androidx.appcompat)
+                implementation(libs.androidx.core.ktx)
             }
         }
 
