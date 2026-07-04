@@ -4,10 +4,7 @@ data class CartUiState(
     val items: List<CartLineUi> = emptyList(),
     val subtotalFormatted: String = "$0.00",
     val totalFormatted: String = "$0.00",
-    val discountInput: String = "",
-    val appliedDiscountCode: String? = null,
     val checkoutUrl: String? = null,
-    val isApplyingDiscount: Boolean = false,
     val isLoading: Boolean = true,
 ) {
     val isEmpty: Boolean get() = !isLoading && items.isEmpty()
@@ -22,7 +19,6 @@ data class CartLineUi(
     val quantity: Int,
     val maxQuantity: Int?,
 ) {
-    /** True when Shopify has no more stock of this variant to add. */
     val atMaxQuantity: Boolean get() = maxQuantity != null && quantity >= maxQuantity
 }
 
@@ -45,6 +41,4 @@ sealed interface CartIntent {
     data class OnRemoveItemConfirm(val lineId: String) : CartIntent
     data object OnClearCartClick : CartIntent
     data object OnClearCartConfirm : CartIntent
-    data class OnDiscountInputChange(val value: String) : CartIntent
-    data object OnApplyDiscount : CartIntent
 }

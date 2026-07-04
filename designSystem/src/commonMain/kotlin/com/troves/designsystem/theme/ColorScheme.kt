@@ -28,13 +28,13 @@ data class ColorScheme(
     val onDisable: Color,
 )
 val lightColors = ColorScheme(
-    primary = Color(0xFF9C6E02),
-    primaryVariant = Color(0XFF000000),
-    secondary = Color(0xFF000000),
-    backGround = Color(0xFFF2F4F7),
+    primary = Color(0xFFA9B6A1),
+    primaryVariant = Color(0xFF8E9B87),
+    secondary = Color(0xFFD2D9CC),
+    backGround = Color(0xFFFCF9F6),
     primaryFont = Color(0xFF000000),
     secondaryFont = Color(0xFF636369),
-    surface = Color(0xFFFFFFFF),
+    surface = Color(0xFFF4F2ED),
     surfaceVariant = Color(0xFFF9F7FC),
     hint = Color(0xFFA7A7A7),
     warning = Color(0xFFFFC107),
@@ -53,8 +53,8 @@ val lightColors = ColorScheme(
 )
 
 val darkColors = ColorScheme(
-    primary = Color(0xFF9C6E02),
-    primaryVariant = Color(0XFF000000),
+    primary = Color(0xFFA9B6A1),
+    primaryVariant = Color(0xFF8E9B87),
     secondary = Color(0xFF7CB3C0),
     backGround = Color(0xFF121212),
     primaryFont = Color(0xFFEEEEEE),
