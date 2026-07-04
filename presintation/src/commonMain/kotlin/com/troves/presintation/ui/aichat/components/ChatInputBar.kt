@@ -62,17 +62,12 @@ fun ChatInputBar(
             keyboardActions = KeyboardActions(onSend = { if (canSend) onSend() }),
             fieldHeight = 52.dp,
             shape = RoundedCornerShape(28.dp),
-            trailingIcon = rememberVectorPainter(Lucide.Image),
-            onClickTrailingIcon = onAttachImage,
-        )
-
-        Icon(
-            painter = rememberVectorPainter(Lucide.Mic),
-            contentDescription = "Voice input",
-            tint = Theme.colors.secondaryFont,
-            modifier = Modifier
-                .size(24.dp)
-                .clickable(onClick = onMic),
+            leadingIcon = rememberVectorPainter(Lucide.Image),
+            leadingIconColor = Theme.colors.secondaryFont,
+            onClickLeadingIcon = onAttachImage,
+            trailingIcon = rememberVectorPainter(Lucide.Mic),
+            trailingIconColor = Theme.colors.secondaryFont,
+            onClickTrailingIcon = onMic,
         )
 
         Box(

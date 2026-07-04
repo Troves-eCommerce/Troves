@@ -1,7 +1,6 @@
 package com.troves.presintation.ui.aichat.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -43,14 +42,10 @@ fun AiChatHeader(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        Icon(
-            painter = painterResource(Res.drawable.ic_arrow_back),
+        IconBox(
+            icon = painterResource(Res.drawable.ic_arrow_back),
             contentDescription = "Back",
-            tint = Theme.colors.primaryFont,
-            modifier = Modifier
-                .size(24.dp)
-                .clip(CircleShape)
-                .clickable(onClick = onBack),
+            onClick = onBack,
         )
 
         Box(

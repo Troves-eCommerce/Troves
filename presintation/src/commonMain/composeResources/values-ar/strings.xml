@@ -90,14 +90,14 @@
     <string name="checkout_order_confirmation_desc">ستتلقى رسالة تأكيد عبر البريد الإلكتروني بمجرد إتمام طلبك.</string>
 
     <!-- AI Assistant -->
-    <string name="ai_assistant_name">فيرا AI</string>
+    <string name="ai_assistant_name">Troves AI</string>
     <string name="ai_assistant_subtitle">مساعد التسوق الذكي</string>
     <string name="ai_input_hint">اسأل أي شيء…</string>
     <string name="ai_suggestion_header">قد يعجبك أيضاً</string>
     <string name="ai_view_all_recommendations">عرض كل التوصيات</string>
-    <string name="ai_disclaimer">قد يرتكب فيرا AI أخطاء. يرجى التحقق من المعلومات المهمة.</string>
+    <string name="ai_disclaimer">قد يرتكب Troves AI أخطاء. يرجى التحقق من المعلومات المهمة.</string>
     <string name="ai_error_generic">حدث خطأ ما. حاول مرة أخرى.</string>
     <string name="ai_retry">إعادة المحاولة</string>
     <string name="ai_rate_limited">لقد وصلت إلى حد المحادثة. حاول مرة أخرى خلال %1$s.</string>
-    <string name="ai_profile_entry">فيرا AI</string>
+    <string name="ai_profile_entry">Troves AI</string>
 </resources>

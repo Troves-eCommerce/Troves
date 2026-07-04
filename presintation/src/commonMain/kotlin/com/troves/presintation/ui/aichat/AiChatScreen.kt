@@ -1,25 +1,28 @@
 package com.troves.presintation.ui.aichat
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.ime
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -57,6 +60,7 @@ fun AiChatScreen(
 ) {
     val coroutineScope = rememberCoroutineScope()
     val snackBarState = remember { SnackbarHostState() }
+    val listState = rememberLazyListState()
 
     val suggestionHeader = stringResource(Res.string.ai_suggestion_header)
     val viewAllLabel = stringResource(Res.string.ai_view_all_recommendations)
@@ -73,19 +77,19 @@ fun AiChatScreen(
         }
     }
 
+    LaunchedEffect(state.messages.size, state.isSending) {
+        val lastIndex = state.messages.size - 1 + if (state.isSending) 1 else 0
+        if (lastIndex >= 0) {
+            listState.animateScrollToItem(lastIndex)
+        }
+    }
+
     Scaffold(
-        modifier = modifier
-            .fillMaxSize()
-            .statusBarsPadding(),
+        modifier = modifier.fillMaxSize(),
         containerColor = Theme.colors.backGround,
-    ) { paddingValues ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .imePadding(),
-        ) {
-            Column(modifier = Modifier.fillMaxSize()) {
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
+        topBar = {
+            Column(modifier = Modifier.fillMaxWidth().statusBarsPadding()) {
                 AiChatHeader(
                     title = stringResource(Res.string.ai_assistant_name),
                     subtitle = stringResource(Res.string.ai_assistant_subtitle),
@@ -98,33 +102,18 @@ fun AiChatScreen(
                         message = stringResource(Res.string.ai_rate_limited, "${minutes}m"),
                     )
                 }
-
-                LazyColumn(
-                    modifier = Modifier.weight(1f).fillMaxWidth(),
-                    reverseLayout = true,
-                    contentPadding = PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                ) {
-                    if (state.isSending) {
-                        item { TypingIndicator() }
-                    }
-                    items(state.messages.reversed(), key = { it.id }) { msg ->
-                        when (msg.sender) {
-                            AiSender.USER -> UserMessageBubble(text = msg.text)
-                            AiSender.ASSISTANT -> AssistantMessageBubble(
-                                text = msg.text,
-                                products = msg.products,
-                                isSuggestion = msg.isSuggestion,
-                                suggestionHeader = suggestionHeader,
-                                viewAllLabel = viewAllLabel,
-                                onProductClick = { onIntent(AiChatIntent.ProductClicked(it)) },
-                                onFavoriteClick = { onIntent(AiChatIntent.ToggleFavorite(it)) },
-                                onViewAll = { onIntent(AiChatIntent.ViewAllRecommendations) },
-                            )
-                        }
-                    }
-                }
-
+            }
+        },
+        bottomBar = {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        WindowInsets.ime
+                            .union(WindowInsets.navigationBars)
+                            .asPaddingValues(),
+                    ),
+            ) {
                 state.errorMessage?.let { message ->
                     ErrorRetryBar(
                         message = message,
@@ -154,14 +143,36 @@ fun AiChatScreen(
                         .padding(horizontal = 16.dp, vertical = 6.dp),
                 )
             }
+        },
+        snackbarHost = { SnackbarHost(hostState = snackBarState) },
+    ) { paddingValues ->
+        LazyColumn(
+            state = listState,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues),
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            items(state.messages, key = { it.id }) { msg ->
+                when (msg.sender) {
+                    AiSender.USER -> UserMessageBubble(text = msg.text)
+                    AiSender.ASSISTANT -> AssistantMessageBubble(
+                        text = msg.text,
+                        products = msg.products,
+                        isSuggestion = msg.isSuggestion,
+                        suggestionHeader = suggestionHeader,
+                        viewAllLabel = viewAllLabel,
+                        onProductClick = { onIntent(AiChatIntent.ProductClicked(it)) },
+                        onFavoriteClick = { onIntent(AiChatIntent.ToggleFavorite(it)) },
+                        onViewAll = { onIntent(AiChatIntent.ViewAllRecommendations) },
+                    )
+                }
+            }
 
-            SnackbarHost(
-                hostState = snackBarState,
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .navigationBarsPadding()
-                    .padding(16.dp),
-            )
+            if (state.isSending) {
+                item { TypingIndicator() }
+            }
         }
     }
 }
