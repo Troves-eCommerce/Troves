@@ -202,11 +202,27 @@ private fun HomeContent(
         ) {
             items(state.categories.take(5), key = { it.id }) { category ->
                 val categoryIcon = when (category.name.lowercase().trim()) {
-                    "MEN" -> Res.drawable.ic_category_man
-                    "WOMEN" -> Res.drawable.ic_category_women
-                    "Footwear" -> Res.drawable.ic_category_footwear
-                    "bags" -> Res.drawable.ic_star
+                    "footwear" -> Res.drawable.ic_category_footwear
+                    "outerwear" -> Res.drawable.ic_category_man
                     "accessories" -> Res.drawable.ic_category_accessories
+                    "sale" -> Res.drawable.ic_category_sales
+                    "new arrivals" -> Res.drawable.ic_category_sales
+                    "best sellers" -> Res.drawable.ic_star
+                    "men" -> Res.drawable.ic_category_man
+                    "women" -> Res.drawable.ic_category_women
+                    "dr martens" -> Res.drawable.ic_brand_dr_martens
+                    "herschel" -> Res.drawable.ic_brand_herschel
+                    "flex fit" -> Res.drawable.ic_brand_flexfit
+                    "puma" -> Res.drawable.ic_brand_puma
+                    "supra" -> Res.drawable.ic_brand_supra
+                    "timberland" -> Res.drawable.ic_brand_timberland
+                    "converse" -> Res.drawable.ic_brand_converse
+                    "asics tiger" -> Res.drawable.ic_brand_asics_tiger
+                    "palladuim" -> Res.drawable.ic_brand_palladium
+                    "vans" -> Res.drawable.ic_brand_vans
+                    "adidas" -> Res.drawable.ic_brand_adidas
+                    "nike" -> Res.drawable.ic_brand_nike
+                    "kids" -> Res.drawable.ic_category_kids
                     else -> Res.drawable.ic_star
                 }
 
@@ -253,14 +269,27 @@ private fun HomeContent(
             items(state.brands, key = { it.id }) { brand ->
 
                 val localBrandImage = when (brand.name.trim().lowercase()) {
-                    "nike" -> Res.drawable.ic_brand_nike
-                    "adidas" -> Res.drawable.ic_brand_adidas
+                    "footwear" -> Res.drawable.ic_category_footwear
+                    "outerwear" -> Res.drawable.ic_category_man
+                    "accessories" -> Res.drawable.ic_category_accessories
+                    "sale" -> Res.drawable.ic_category_sales
+                    "new arrivals" -> Res.drawable.ic_category_sales
+                    "best sellers" -> Res.drawable.ic_star
+                    "men" -> Res.drawable.ic_category_man
+                    "women" -> Res.drawable.ic_category_women
+                    "dr martens" -> Res.drawable.ic_brand_dr_martens
+                    "herschel" -> Res.drawable.ic_brand_herschel
+                    "flex fit" -> Res.drawable.ic_brand_flexfit
                     "puma" -> Res.drawable.ic_brand_puma
-                    "reebok" -> Res.drawable.ic_brand_supra
-                    "new balance" -> Res.drawable.ic_brand_supra
-                    "under armour" -> Res.drawable.ic_brand_supra
+                    "supra" -> Res.drawable.ic_brand_supra
+                    "timberland" -> Res.drawable.ic_brand_timberland
                     "converse" -> Res.drawable.ic_brand_converse
+                    "asics tiger" -> Res.drawable.ic_brand_asics_tiger
+                    "palladuim" -> Res.drawable.ic_brand_palladium
                     "vans" -> Res.drawable.ic_brand_vans
+                    "adidas" -> Res.drawable.ic_brand_adidas
+                    "nike" -> Res.drawable.ic_brand_nike
+                    "kids" -> Res.drawable.ic_category_kids
                     else -> null
                 }
 

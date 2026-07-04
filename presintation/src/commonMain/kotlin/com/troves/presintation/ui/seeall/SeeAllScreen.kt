@@ -140,17 +140,26 @@ private fun SeeAllContent(
             ) {
                 items(state.categories, key = { it.id }) { category ->
                     val categoryIcon = when (category.name.lowercase().trim()) {
-                        "men" -> Res.drawable.ic_category_man
-                        "women" -> Res.drawable.ic_category_women
-                        "kid" -> Res.drawable.ic_category_kids
                         "footwear" -> Res.drawable.ic_category_footwear
+                        "outerwear" -> Res.drawable.ic_category_man
                         "accessories" -> Res.drawable.ic_category_accessories
                         "sale" -> Res.drawable.ic_category_sales
+                        "new arrivals" -> Res.drawable.ic_category_sales
+                        "best sellers" -> Res.drawable.ic_star
+                        "men" -> Res.drawable.ic_category_man
+                        "women" -> Res.drawable.ic_category_women
+                        "dr martens" -> Res.drawable.ic_brand_dr_martens
+                        "herschel" -> Res.drawable.ic_brand_herschel
+                        "flex fit" -> Res.drawable.ic_brand_flexfit
                         "puma" -> Res.drawable.ic_brand_puma
                         "supra" -> Res.drawable.ic_brand_supra
                         "timberland" -> Res.drawable.ic_brand_timberland
                         "converse" -> Res.drawable.ic_brand_converse
+                        "asics tiger" -> Res.drawable.ic_brand_asics_tiger
                         "palladuim" -> Res.drawable.ic_brand_palladium
+                        "vans" -> Res.drawable.ic_brand_vans
+                        "adidas" -> Res.drawable.ic_brand_adidas
+                        "nike" -> Res.drawable.ic_brand_nike
                         else -> Res.drawable.ic_star
                     }
 
@@ -173,28 +182,37 @@ private fun SeeAllContent(
                 verticalArrangement = Arrangement.spacedBy(Theme.spacing.medium)
             ) {
                 items(state.brands, key = { it.id }) { brand ->
-                    // تحديد الأيقونة المحلية الخاصة بالبراند وتجاهل رابط الـ API
                     val brandIconRes = when (brand.name.lowercase().trim()) {
+                        "footwear" -> Res.drawable.ic_category_footwear
+                        "outerwear" -> Res.drawable.ic_category_man
+                        "accessories" -> Res.drawable.ic_category_accessories
+                        "sale" -> Res.drawable.ic_category_sales
+                        "new arrivals" -> Res.drawable.ic_category_sales
+                        "best sellers" -> Res.drawable.ic_star
                         "men" -> Res.drawable.ic_category_man
                         "women" -> Res.drawable.ic_category_women
-                        "footwear" -> Res.drawable.ic_category_footwear
-                        "bags" -> Res.drawable.ic_star
-                        "accessories" -> Res.drawable.ic_category_accessories
+                        "dr martens" -> Res.drawable.ic_brand_dr_martens
+                        "herschel" -> Res.drawable.ic_brand_herschel
+                        "flex fit" -> Res.drawable.ic_brand_flexfit
                         "puma" -> Res.drawable.ic_brand_puma
                         "supra" -> Res.drawable.ic_brand_supra
                         "timberland" -> Res.drawable.ic_brand_timberland
                         "converse" -> Res.drawable.ic_brand_converse
-                        //"asics tiger" -> Res.drawable.ic_brand_asics_tiger
+                        "asics tiger" -> Res.drawable.ic_brand_asics_tiger
                         "palladuim" -> Res.drawable.ic_brand_palladium
+                        "vans" -> Res.drawable.ic_brand_vans
+                        "adidas" -> Res.drawable.ic_brand_adidas
+                        "nike" -> Res.drawable.ic_brand_nike
+                        "kids" -> Res.drawable.ic_category_kids
                         else -> Res.drawable.ic_star
                     }
 
                     BrandCard(
                         name = brand.name,
-                        imagePainter = painterResource(brandIconRes), // تمرير الأيقونة الثابتة مباشرة
+                        imagePainter = painterResource(brandIconRes),
                         onClick = { onIntent(SeeAllIntent.BrandClicked(brand)) },
                         modifier = Modifier
-                            .height(100.dp) // نفس الطول لتبدو الكروت متطابقة ومربعة
+                            .height(100.dp)
                             .animateItem()
                     )
                 }
@@ -272,7 +290,6 @@ private fun SeeAllShimmer(type: AppRoute.SeeAllType) {
             }
         }
         AppRoute.SeeAllType.BRANDS -> {
-            // الشيمر الخاص بالبراندات تم تحويله لـ Grid بـ 3 أعمدة ليطابق التصميم الجديد تماماً
             LazyVerticalGrid(
                 columns = GridCells.Fixed(3),
                 contentPadding = PaddingValues(Theme.spacing.medium),
