@@ -180,6 +180,11 @@ buildkonfig {
             STRING, "SHOPIFY_CUSTOMER_PASSWORD_SECRET",
             localProperties.getProperty("SHOPIFY_CUSTOMER_PASSWORD_SECRET") ?: "troves-shopify-oauth-salt-v1"
         )
+        buildConfigField(
+            STRING, "AI_ASSISTANT_BASE_URL",
+            localProperties.getProperty("AI_ASSISTANT_BASE_URL")
+                ?: "https://ai-shopping-assistant.trovess.workers.dev/"
+        )
     }
 }
 apollo {
