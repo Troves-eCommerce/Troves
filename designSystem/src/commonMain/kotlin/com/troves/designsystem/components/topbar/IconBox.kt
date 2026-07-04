@@ -13,6 +13,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.troves.designsystem.theme.SpTheme
@@ -33,11 +34,12 @@ fun IconBox(
     onClick: (() -> Unit)? = null,
     backgroundColor: Color = Theme.colors.surface,
     iconTint: Color = Theme.colors.primaryFont,
+    shape: Shape = RoundedCornerShape(CORNER_RADIUS),
 ) {
     Box(
         modifier = modifier
             .size(BOX_SIZE)
-            .clip(RoundedCornerShape(CORNER_RADIUS))
+            .clip(shape)
             .background(backgroundColor)
             .then(
                 if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier,

@@ -17,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -31,18 +32,21 @@ fun AppChip(
     modifier: Modifier = Modifier,
     leadingIcon: Painter? = null,
     enabled: Boolean = true,
+    containerColor: Color? = null,
+    contentColor: Color? = null,
+    borderColor: Color? = null,
 ) {
-    val targetContainer = when {
+    val targetContainer = containerColor ?: when {
         !enabled -> Theme.colors.disable
         selected -> Theme.colors.primary
         else -> Theme.colors.surface
     }
-    val targetContent = when {
+    val targetContent = contentColor ?: when {
         !enabled -> Theme.colors.onDisable
         selected -> Theme.colors.onPrimary
         else -> Theme.colors.primaryFont
     }
-    val targetBorder = when {
+    val targetBorder = borderColor ?: when {
         !enabled -> Theme.colors.disable
         selected -> Theme.colors.primary
         else -> Theme.colors.hint

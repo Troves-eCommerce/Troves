@@ -6,21 +6,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SegmentedButtonDefaults.Icon
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.SearchCheck
 import com.troves.designsystem.theme.Theme
-import org.jetbrains.compose.resources.painterResource
-import troves.designsystem.generated.resources.Res
-import troves.designsystem.generated.resources.ic_search
 
 /**
  * Copyright (c) 2026 Wahid Ali Wahid Hussien.
@@ -51,7 +44,7 @@ fun EmptySearchResult(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = Theme.size.medium, vertical = Theme.size.large),
+            .padding(horizontal = Theme.spacing.large, vertical = Theme.spacing.extraLarge),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
@@ -64,19 +57,20 @@ fun EmptySearchResult(
 
         Spacer(Modifier.height(Theme.spacing.large))
 
-        Text(
+        BasicText(
             text = title,
-            style = Theme.typography.title,
-            textAlign = TextAlign.Center
+            style = Theme.typography.title.copy(
+                color = Theme.colors.primaryFont
+            )
         )
 
         Spacer(Modifier.height(Theme.spacing.small))
 
-        Text(
+        BasicText(
             text = message,
-            style = Theme.typography.body.medium,
-            color = Theme.colors.onSurface,
-            textAlign = TextAlign.Center
+            style = Theme.typography.body.medium.copy(
+                color = Theme.colors.secondaryFont
+            )
         )
     }
 }

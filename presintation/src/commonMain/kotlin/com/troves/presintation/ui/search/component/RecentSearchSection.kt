@@ -1,32 +1,35 @@
 package com.troves.presintation.ui.search.component
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.AssistChip
-import androidx.compose.material3.AssistChipDefaults
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.composables.icons.lucide.History
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.X
+import com.troves.designsystem.theme.Theme
 import com.troves.presintation.ui.search.RecentSearchUi
 
 /**
@@ -55,6 +58,7 @@ fun RecentSearchSection(
     modifier: Modifier = Modifier,
     onSearchClick: (String) -> Unit,
     onRemoveClick: (String) -> Unit,
+    onClearAllClick: () -> Unit,
 ) {
     AnimatedVisibility(
         visible = recentSearches.isNotEmpty(),
@@ -64,88 +68,82 @@ fun RecentSearchSection(
         Column(
             modifier = modifier.fillMaxWidth()
         ) {
-
-            Text(
-                text = "Recent Searches",
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(
-                    horizontal = 16.dp,
-                    vertical = 12.dp
-                )
-            )
-
-            LazyRow(
-                modifier = Modifier.fillMaxWidth(),
-                contentPadding = PaddingValues(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-
-                items(
-                    items = recentSearches,
-                    key = { it }
-                ) { query ->
-
-                    RecentSearchChip(
-                        query = query.query,
-                        onClick = {
-                            onSearchClick(query.query)
-                        },
-                        onRemoveClick = {
-                            onRemoveClick(query.query)
-                        }
-                    )
-
+                Text(
+                    text = "Recent Searches",
+                    style = MaterialTheme.typography.titleMedium
+                )
+                TextButton(onClick = onClearAllClick) {
+                    Text("Clear all", color = Theme.colors.primary)
                 }
+            }
 
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                recentSearches.forEach { query ->
+                    RecentSearchItem(
+                        query = query.query,
+                        onClick = { onSearchClick(query.query) },
+                        onRemoveClick = { onRemoveClick(query.query) }
+                    )
+                }
             }
         }
     }
 }
+
 @Composable
-private fun RecentSearchChip(
+private fun RecentSearchItem(
     query: String,
     onClick: () -> Unit,
     onRemoveClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-
-    AssistChip(
-        modifier = modifier.animateContentSize(),
-        onClick = onClick,
-        label = {
-            Text(
-                text = query,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-        },
-        leadingIcon = {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(12.dp))
+            .background(Color(0xFFF5F5F5))
+            .clickable(onClick = onClick)
+            .padding(horizontal = 12.dp, vertical = 12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        Icon(
+            imageVector = Lucide.History,
+            contentDescription = null,
+            tint = Theme.colors.secondaryFont,
+            modifier = Modifier.size(20.dp)
+        )
+        
+        Text(
+            text = query,
+            modifier = Modifier.weight(1f),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            style = MaterialTheme.typography.bodyLarge
+        )
+        
+        IconButton(
+            onClick = onRemoveClick,
+            modifier = Modifier.size(48.dp)
+        ) {
             Icon(
-                imageVector = Lucide.History,
-                contentDescription = null,
-                modifier = Modifier.size(AssistChipDefaults.IconSize)
+                imageVector = Lucide.X,
+                contentDescription = "Remove recent search",
+                tint = Theme.colors.hint,
+                modifier = Modifier.size(16.dp)
             )
-        },
-        trailingIcon = {
-            IconButton(
-                onClick = onRemoveClick,
-                modifier = Modifier.size(20.dp)
-            ) {
-                Icon(
-                    imageVector = Lucide.X,
-                    contentDescription = "Remove recent search"
-                )
-            }
         }
-    )
-}
-/*
-* RecentSearchSection(
-    recentSearches = state.recentSearches,
-    onSearchClick = {
-        onIntent(SearchIntent.SearchQueryChange(it))
-    },
-    onRemoveClick = {
-        // ViewModel action
     }
-)*/
+}

@@ -2,8 +2,6 @@ package com.troves.presintation.ui.search.component
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,12 +16,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -32,7 +29,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
@@ -76,13 +72,14 @@ fun BrandRow(
         modifier = modifier.fillMaxWidth()
     ) {
 
-        Text(
+        BasicText(
             text = "Brands",
-            style = MaterialTheme.typography.titleMedium,
+            style = Theme.typography.body.large.copy(
+                color = Theme.colors.primaryFont
+            ),
             modifier = Modifier.padding(
                 Theme.spacing.medium
             ),
-            color = Theme.colors.primaryFont
         )
 
         LazyRow(
@@ -191,13 +188,13 @@ private fun BrandItem(
 
         Spacer(Modifier.height(8.dp))
 
-        Text(
+        BasicText(
             text = brand.name,
-            style = MaterialTheme.typography.labelMedium,
+            style = Theme.typography.body.small.copy(
+                color = Theme.colors.primaryFont
+            ),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            textAlign = TextAlign.Center,
-            color = Theme.colors.primaryFont
         )
 
     }

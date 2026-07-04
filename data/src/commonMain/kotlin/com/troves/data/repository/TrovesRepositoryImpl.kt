@@ -12,14 +12,13 @@ import com.troves.domain.entity.Address
 import com.troves.domain.entity.Brand
 import com.troves.domain.entity.Cart
 import com.troves.domain.entity.Category
+import com.troves.domain.entity.DiscountCode
 import com.troves.domain.entity.Order
 import com.troves.domain.entity.Product
 import com.troves.domain.entity.ProductSearchParams
-import com.troves.domain.entity.DiscountCode
 import com.troves.domain.repository.AuthenticationRepository
 import com.troves.domain.repository.TrovesRepository
 import com.troves.domain.utils.Result
-import com.troves.domain.utils.fold
 import com.troves.domain.utils.getOrElse
 import com.troves.domain.utils.getOrNull
 import com.troves.domain.utils.getOrThrow
@@ -33,7 +32,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import kotlinx.io.IOException
-import kotlin.map
 
 class TrovesRepositoryImpl(
     private val remoteDataSource: RemoteDatasource,
@@ -70,6 +68,19 @@ class TrovesRepositoryImpl(
                 if (!params.query.isNullOrBlank()) {
                     products = products.filter {
                         it.title.contains(params.query ?: "", ignoreCase = true)
+                    }
+                }
+                val vendors = params.vendors
+                if (!vendors.isNullOrEmpty()) {
+                    products = products.filter {
+                        vendors.contains(it.vendor)
+                    }
+                }
+                
+                val productTypes = params.productTypes
+                if (!productTypes.isNullOrEmpty()) {
+                    products = products.filter { product ->
+                        productTypes.any { product.title.contains(it, ignoreCase = true) }
                     }
                 }
                 Result.Success(products)
