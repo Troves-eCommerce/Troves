@@ -74,7 +74,7 @@ fun ChatInputBar(
             modifier = Modifier
                 .size(44.dp)
                 .clip(CircleShape)
-                .background(if (canSend) Theme.colors.primary else Theme.colors.disable)
+                .background(if (canSend) Theme.colors.primary else Theme.colors.surface)
                 .clickable(enabled = canSend, onClick = onSend),
             contentAlignment = Alignment.Center,
         ) {
