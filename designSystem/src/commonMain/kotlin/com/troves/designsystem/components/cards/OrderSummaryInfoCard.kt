@@ -23,11 +23,12 @@ import com.troves.designsystem.theme.Theme
 
 @Composable
 fun OrderSummaryInfoCard(
-    itemCount: Int,
+    subtotalLabel: String,
     subtotalFormatted: String,
+    totalLabel: String,
     totalFormatted: String,
     modifier: Modifier = Modifier,
-    discountCode: String? = null,
+    discountLabel: String? = null,
     discountValueFormatted: String? = null,
 ) {
     Column(
@@ -39,38 +40,27 @@ fun OrderSummaryInfoCard(
         verticalArrangement = Arrangement.spacedBy(Theme.spacing.small),
     ) {
         SummaryRow(
-            label = "Subtotal ($itemCount items)",
+            label = subtotalLabel,
             value = subtotalFormatted,
             labelColor = Theme.colors.primaryFont,
             valueColor = Theme.colors.primaryFont,
         )
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = Theme.spacing.extraSmall)
-                .height(1.dp)
-                .background(Theme.colors.primary),
-        )
 
-        if (discountCode != null && discountValueFormatted != null) {
+
+        if (discountLabel != null && discountValueFormatted != null) {
+            Divider()
             SummaryRow(
-                label = "Discount ($discountCode)",
+                label = discountLabel,
                 value = discountValueFormatted,
                 labelColor = Theme.colors.success,
                 valueColor = Theme.colors.success,
             )
         }
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = Theme.spacing.extraSmall)
-                .height(1.dp)
-                .background(Theme.colors.primary),
-        )
+        Divider()
 
         SummaryRow(
-            label = "Total",
+            label = totalLabel,
             value = totalFormatted,
             labelColor = Theme.colors.primaryFont,
             valueColor = Theme.colors.primaryFont,
@@ -78,6 +68,17 @@ fun OrderSummaryInfoCard(
             fontWeight = FontWeight.Bold,
         )
     }
+}
+
+@Composable
+private fun Divider() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = Theme.spacing.extraSmall)
+            .height(1.dp)
+            .background(Theme.colors.primary),
+    )
 }
 
 @Composable
@@ -116,15 +117,17 @@ private fun OrderSummaryInfoCardPreview() {
             verticalArrangement = Arrangement.spacedBy(Theme.spacing.medium),
         ) {
             OrderSummaryInfoCard(
-                itemCount = 3,
+                subtotalLabel = "Subtotal (3 items)",
                 subtotalFormatted = "\$246.00",
+                totalLabel = "Total",
                 totalFormatted = "\$221.40",
-                discountCode = "WELCOME10",
+                discountLabel = "Discount (WELCOME10)",
                 discountValueFormatted = "- \$24.60",
             )
             OrderSummaryInfoCard(
-                itemCount = 2,
+                subtotalLabel = "Subtotal (2 items)",
                 subtotalFormatted = "\$180.00",
+                totalLabel = "Total",
                 totalFormatted = "\$180.00",
             )
         }

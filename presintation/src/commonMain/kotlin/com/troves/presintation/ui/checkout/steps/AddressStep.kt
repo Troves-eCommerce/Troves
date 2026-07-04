@@ -33,11 +33,17 @@ import com.troves.designsystem.components.stepper.HorizontalStepper
 import com.troves.designsystem.theme.SpTheme
 import com.troves.designsystem.theme.Theme
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import troves.designsystem.generated.resources.Res
 import troves.designsystem.generated.resources.ic_home
 import troves.designsystem.generated.resources.ic_location
+import troves.presintation.generated.resources.Res as StringRes
+import troves.presintation.generated.resources.checkout_add_new_address
+import troves.presintation.generated.resources.checkout_address_default
+import troves.presintation.generated.resources.checkout_address_step_subtitle
+import troves.presintation.generated.resources.checkout_address_step_title
+import troves.presintation.generated.resources.checkout_no_saved_addresses
 
-/** UI model for a saved address in the Shipping Address step. */
 data class AddressUi(
     val id: String,
     val title: String,
@@ -48,11 +54,7 @@ data class AddressUi(
     val isDefault: Boolean = false,
 )
 
-/**
- * Body of the "Select Delivery Address" checkout step: the list of saved addresses
- * (selectable) plus an "Add New Address" action. Handles the empty state when the
- * user has no saved addresses. No top app bar in this pass.
- */
+
 @Composable
 fun AddressStepContent(
     addresses: List<AddressUi>,
@@ -74,20 +76,20 @@ fun AddressStepContent(
         HorizontalStepper(currentStep = currentStep, totalSteps = totalSteps)
 
         BasicText(
-            text = "Select Delivery Address",
+            text = stringResource(StringRes.string.checkout_address_step_title),
             style = Theme.typography.title.copy(
                 color = Theme.colors.primaryFont,
                 fontWeight = FontWeight.Bold,
             ),
         )
         BasicText(
-            text = "Choose where you want your order to be delivered.",
+            text = stringResource(StringRes.string.checkout_address_step_subtitle),
             style = Theme.typography.body.medium.copy(color = Theme.colors.secondaryFont),
         )
 
         if (addresses.isEmpty()) {
             BasicText(
-                text = "You don't have any saved addresses yet.",
+                text = stringResource(StringRes.string.checkout_no_saved_addresses),
                 style = Theme.typography.body.medium.copy(color = Theme.colors.secondaryFont),
                 modifier = Modifier.padding(vertical = Theme.spacing.small),
             )
@@ -101,7 +103,7 @@ fun AddressStepContent(
                     icon = address.iconPainter,
                     selected = address.id == selectedAddressId,
                     onClick = { onSelectAddress(address.id) },
-                    label = if (address.isDefault) "Default" else null,
+                    label = if (address.isDefault) stringResource(StringRes.string.checkout_address_default) else null,
                     onEditClick = { onEditAddress(address.id) },
                 )
             }
@@ -143,7 +145,7 @@ private fun AddAddressButton(onClick: () -> Unit) {
                 ),
             )
             BasicText(
-                text = "Add New Address",
+                text = stringResource(StringRes.string.checkout_add_new_address),
                 style = Theme.typography.body.medium.copy(
                     color = Theme.colors.primaryFont,
                     fontWeight = FontWeight.Medium,

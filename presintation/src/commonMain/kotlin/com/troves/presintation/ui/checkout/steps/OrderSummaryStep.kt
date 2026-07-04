@@ -34,10 +34,19 @@ import com.troves.designsystem.components.textfield.TextField
 import com.troves.designsystem.theme.SpTheme
 import com.troves.designsystem.theme.Theme
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import troves.designsystem.generated.resources.Res
 import troves.designsystem.generated.resources.product_card
+import troves.presintation.generated.resources.Res as StringRes
+import troves.presintation.generated.resources.apply
+import troves.presintation.generated.resources.checkout_coupon_hint
+import troves.presintation.generated.resources.checkout_coupon_label
+import troves.presintation.generated.resources.checkout_discount_code
+import troves.presintation.generated.resources.checkout_order_summary
+import troves.presintation.generated.resources.checkout_review_subtitle
+import troves.presintation.generated.resources.checkout_subtotal_items
+import troves.presintation.generated.resources.checkout_total
 
-/** UI model for a single order line in the Order Summary step. */
 data class OrderSummaryItemUi(
     val imagePainter: Painter,
     val name: String,
@@ -46,10 +55,7 @@ data class OrderSummaryItemUi(
     val priceFormatted: String,
 )
 
-/**
- * Body of the "Order Summary" (Review) checkout step: a coupon-code entry,
- * the list of order line items, and the totals card. No top app bar in this pass.
- */
+
 @Composable
 fun OrderSummaryStepContent(
     couponInput: String,
@@ -76,21 +82,21 @@ fun OrderSummaryStepContent(
         HorizontalStepper(currentStep = currentStep, totalSteps = totalSteps)
 
         BasicText(
-            text = "Order Summary",
+            text = stringResource(StringRes.string.checkout_order_summary),
             style = Theme.typography.title.copy(
                 color = Theme.colors.primaryFont,
                 fontWeight = FontWeight.Bold,
             ),
         )
         BasicText(
-            text = "Review your items and apply a coupon.",
+            text = stringResource(StringRes.string.checkout_review_subtitle),
             style = Theme.typography.body.medium.copy(color = Theme.colors.secondaryFont),
         )
         Column(
             verticalArrangement = Arrangement.spacedBy(Theme.spacing.extraSmall)
         ) {
             BasicText(
-            text = "Coupon Code",
+            text = stringResource(StringRes.string.checkout_coupon_label),
             style = Theme.typography.body.medium.copy(color = Theme.colors.primaryFont),
         )
             Row(
@@ -101,12 +107,12 @@ fun OrderSummaryStepContent(
                 TextField(
                     text = couponInput,
                     onTextChange = onCouponChange,
-                    hint = "Enter coupon code",
+                    hint = stringResource(StringRes.string.checkout_coupon_hint),
                     singleLine = true,
                     modifier = Modifier.fillMaxHeight().width(280.dp).padding(end = 8.dp)
                 )
                 PrimaryButton(
-                    caption = "Apply",
+                    caption = stringResource(StringRes.string.apply),
                     onClick = onApplyCoupon,
                     isLoading = isApplyingCoupon,
                     isDisabled = couponInput.isBlank(),
@@ -134,10 +140,11 @@ fun OrderSummaryStepContent(
         }
 
         OrderSummaryInfoCard(
-            itemCount = itemCount,
+            subtotalLabel = stringResource(StringRes.string.checkout_subtotal_items, itemCount),
             subtotalFormatted = subtotalFormatted,
+            totalLabel = stringResource(StringRes.string.checkout_total),
             totalFormatted = totalFormatted,
-            discountCode = discountCode,
+            discountLabel = discountCode?.let { stringResource(StringRes.string.checkout_discount_code, it) },
             discountValueFormatted = discountValueFormatted,
         )
     }
