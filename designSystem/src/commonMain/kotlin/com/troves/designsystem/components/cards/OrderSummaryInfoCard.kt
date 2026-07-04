@@ -44,15 +44,10 @@ fun OrderSummaryInfoCard(
             labelColor = Theme.colors.primaryFont,
             valueColor = Theme.colors.primaryFont,
         )
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = Theme.spacing.extraSmall)
-                .height(1.dp)
-                .background(Theme.colors.primary),
-        )
+
 
         if (discountCode != null && discountValueFormatted != null) {
+            Divider()
             SummaryRow(
                 label = "Discount ($discountCode)",
                 value = discountValueFormatted,
@@ -61,13 +56,7 @@ fun OrderSummaryInfoCard(
             )
         }
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = Theme.spacing.extraSmall)
-                .height(1.dp)
-                .background(Theme.colors.primary),
-        )
+        Divider()
 
         SummaryRow(
             label = "Total",
@@ -78,6 +67,17 @@ fun OrderSummaryInfoCard(
             fontWeight = FontWeight.Bold,
         )
     }
+}
+
+@Composable
+private fun Divider() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = Theme.spacing.extraSmall)
+            .height(1.dp)
+            .background(Theme.colors.primary),
+    )
 }
 
 @Composable
