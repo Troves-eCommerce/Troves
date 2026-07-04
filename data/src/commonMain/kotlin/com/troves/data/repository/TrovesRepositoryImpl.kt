@@ -73,6 +73,19 @@ class TrovesRepositoryImpl(
                         it.title.contains(params.query ?: "", ignoreCase = true)
                     }
                 }
+                val vendors = params.vendors
+                if (!vendors.isNullOrEmpty()) {
+                    products = products.filter {
+                        vendors.contains(it.vendor)
+                    }
+                }
+
+                val productTypes = params.productTypes
+                if (!productTypes.isNullOrEmpty()) {
+                    products = products.filter { product ->
+                        productTypes.any { product.title.contains(it, ignoreCase = true) }
+                    }
+                }
                 Result.Success(products)
             }
         } catch (e: IOException) {
@@ -97,6 +110,7 @@ class TrovesRepositoryImpl(
             remoteDataSource.getProductById(productId = productId)
         }
     }
+
 
     override suspend fun getBrands(): Result<List<Brand>> {
         return withContext(coroutineDispatcher) {
