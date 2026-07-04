@@ -88,4 +88,16 @@
     <string name="checkout_items_count">%1$d items</string>
     <string name="checkout_order_confirmation_title">Order Confirmation</string>
     <string name="checkout_order_confirmation_desc">You will receive an email confirmation once your order is placed.</string>
+
+    <!-- AI Assistant -->
+    <string name="ai_assistant_name">Veyra AI</string>
+    <string name="ai_assistant_subtitle">Your smart shopping assistant</string>
+    <string name="ai_input_hint">Ask anything…</string>
+    <string name="ai_suggestion_header">You might also like</string>
+    <string name="ai_view_all_recommendations">View all recommendations</string>
+    <string name="ai_disclaimer">Veyra AI can make mistakes. Please double-check important info.</string>
+    <string name="ai_error_generic">Something went wrong. Please try again.</string>
+    <string name="ai_retry">Retry</string>
+    <string name="ai_rate_limited">You\'ve reached the chat limit. Try again in %1$s.</string>
+    <string name="ai_profile_entry">Veyra AI</string>
 </resources>
