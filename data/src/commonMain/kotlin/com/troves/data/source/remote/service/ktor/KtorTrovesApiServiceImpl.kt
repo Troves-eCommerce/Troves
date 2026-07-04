@@ -1,5 +1,7 @@
 package com.troves.data.source.remote.service.ktor
 
+import com.troves.data.mapper.toDomain
+import com.troves.data.source.remote.service.TrovesApiService
 import com.troves.data.source.remote.service.ktor.dto.Collection
 import com.troves.data.source.remote.service.ktor.dto.CollectionImage
 import com.troves.data.source.remote.service.ktor.dto.CustomCollectionResponse
@@ -7,22 +9,15 @@ import com.troves.data.source.remote.service.ktor.dto.MarketingEventsResponse
 import com.troves.data.source.remote.service.ktor.dto.ProductDto
 import com.troves.data.source.remote.service.ktor.dto.ProductResponse
 import com.troves.data.source.remote.service.ktor.dto.SingleProductResponse
-import com.troves.data.source.remote.service.TrovesApiService
+import com.troves.domain.entity.DiscountCode
 import com.troves.domain.entity.Product
 import com.troves.domain.entity.ProductSearchParams
-import io.ktor.client.HttpClient
-import io.ktor.http.HttpMethod
-import io.ktor.http.path
-import io.ktor.client.request.url
-import io.ktor.client.request.header
-import io.ktor.client.request.setBody
-import io.ktor.http.ContentType
-import io.ktor.http.contentType
 import com.troves.domain.utils.Result
 import com.troves.domain.utils.map
-import com.troves.data.mapper.toDomain
+import io.ktor.client.HttpClient
 import io.ktor.client.request.parameter
-import com.troves.domain.entity.DiscountCode
+import io.ktor.http.HttpMethod
+import io.ktor.http.path
 
 class KtorTrovesApiServiceImpl(
     private val ktorClient: HttpClient
@@ -49,14 +44,18 @@ class KtorTrovesApiServiceImpl(
         }
 
     override suspend fun searchProducts(params: ProductSearchParams): Result<List<Product>> {
-       return ktorClient.getResults {
+       val response: Result<ProductResponse> = ktorClient.getResults {
             method = HttpMethod.Get
-            params.vendor?.let { parameter("vendor", it) }
-            params.productType?.let { parameter("product_type", it) }
+            url { path("products.json") }
+            val vendorToUse = params.vendor ?: params.vendors?.firstOrNull()
+            val productTypeToUse = params.productType ?: params.productTypes?.firstOrNull()
+            vendorToUse?.let { parameter("vendor", it) }
+            productTypeToUse?.let { parameter("product_type", it) }
             params.collectionId?.let { parameter("collection_id", it) }
             params.status?.let { parameter("status", it.restValue) }
-            parameter("limit", params.limit)
+            parameter("limit", 250)
         }
+        return response.map { res -> res.products?.map { it.toDomain() }.orEmpty() }
     }
 
     override suspend fun getProductsByVendor(vendorName: String): Result<List<Product>> {

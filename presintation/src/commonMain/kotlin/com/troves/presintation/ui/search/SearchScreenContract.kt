@@ -4,7 +4,6 @@ import androidx.compose.runtime.Immutable
 import com.troves.domain.entity.Brand
 import com.troves.domain.entity.Category
 import com.troves.domain.entity.Product
-import com.troves.presintation.ui.components.FilterOption
 
 /**
  * Copyright (c) 2026 Wahid Ali Wahid Hussien.
@@ -46,6 +45,7 @@ data class SearchUiState(
     val recentSearches: Set<RecentSearchUi> = emptySet(),
     val errorMessage: String? = null,
     val showFilterSheet: Boolean = false,
+    val favoriteProductIds: Set<String> = emptySet(),
 ) {
     val hasError get() = errorMessage != null
     val isEmpty get() = !isLoading && products.isEmpty() && !hasError
@@ -70,6 +70,9 @@ sealed interface SearchIntent {
     data class CategoriesChange(val newCategory: List<String>) : SearchIntent
     data class BrandsChange(val newBrands: List<String>) : SearchIntent
     data class BrandChange(val newBrand: String) : SearchIntent
+    data class RemoveRecentSearch(val query: String) : SearchIntent
+    data object ClearRecentSearches : SearchIntent
+    data class ToggleFavorite(val productId: String) : SearchIntent
 }
 
 sealed interface SearchEffect {
