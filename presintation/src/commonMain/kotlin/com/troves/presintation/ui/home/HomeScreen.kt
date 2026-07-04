@@ -202,12 +202,12 @@ private fun HomeContent(
         ) {
             items(state.categories.take(5), key = { it.id }) { category ->
                 val categoryIcon = when (category.name.lowercase().trim()) {
-                    "men" -> Res.drawable.ic_eye        // استبدلها بأيقونة الرجال النهائية
-                    "women" -> Res.drawable.ic_star      // استبدلها بأيقونة النساء
-                    "shoes" -> Res.drawable.ic_star      // استبدلها بأيقونة الأحذية
-                    "bags" -> Res.drawable.ic_star       // استبدلها بأيقونة الحقائب
-                    "accessories" -> Res.drawable.ic_star// استبدلها بأيقونة الإكسسوارات
-                    else -> Res.drawable.ic_star         // أيقونة افتراضية عند عدم التطابق
+                    "MEN" -> Res.drawable.ic_category_man
+                    "WOMEN" -> Res.drawable.ic_category_women
+                    "Footwear" -> Res.drawable.ic_category_footwear
+                    "bags" -> Res.drawable.ic_star
+                    "accessories" -> Res.drawable.ic_category_accessories
+                    else -> Res.drawable.ic_star
                 }
 
                 CategoryItem(

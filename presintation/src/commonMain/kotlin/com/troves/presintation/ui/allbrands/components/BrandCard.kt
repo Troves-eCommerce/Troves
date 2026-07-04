@@ -2,26 +2,25 @@ package com.troves.presintation.ui.allbrands.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.ColorPainter
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.troves.designsystem.theme.SpTheme
 import com.troves.designsystem.theme.Theme
 
 @Composable
@@ -31,50 +30,39 @@ fun BrandCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Box(
+    Column(
         modifier = modifier
             .clip(Theme.shapes.medium)
-            .clickable(onClick = onClick),
+            .background(Theme.colors.surface) // خلفية الكارد البيضاء النظيفة
+            .border(
+                width = 1.dp,
+                color = Theme.colors.primaryFont.copy(alpha = 0.05f), // إطار خفيف جداً
+                shape = Theme.shapes.medium
+            )
+            .clickable(onClick = onClick)
+            .padding(Theme.spacing.small),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
+        // عرض الأيقونة المحلية الثابتة
         Image(
             painter = imagePainter,
             contentDescription = name,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Fit,
+            colorFilter = ColorFilter.tint(Theme.colors.primaryFont), // تلوين الأيقونة بلون خط التطبيق الأساسي لتوحيد الشكل
+            modifier = Modifier.size(36.dp) // حجم متناسق داخل الكارد المربع
         )
 
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(
-                    Brush.verticalGradient(
-                        colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.65f)),
-                    ),
-                ),
-        )
+        Spacer(modifier = Modifier.height(Theme.spacing.small))
 
+        // اسم البراند
         BasicText(
             text = name,
-            style = Theme.typography.body.large.copy(
-                color = Color.White,
-                fontWeight = FontWeight.Bold,
-            ),
-            modifier = Modifier
-                .align(Alignment.BottomStart)
-                .padding(12.dp),
-        )
-    }
-}
-
-@Preview
-@Composable
-private fun BrandCardPreview() {
-    SpTheme {
-        BrandCard(
-            name = "Nike",
-            imagePainter = ColorPainter(Color.DarkGray),
-            onClick = {},
-            modifier = Modifier.fillMaxWidth().height(140.dp),
+            style = Theme.typography.body.medium.copy(
+                color = Theme.colors.primaryFont,
+                fontWeight = FontWeight.SemiBold,
+                textAlign = TextAlign.Center
+            )
         )
     }
 }

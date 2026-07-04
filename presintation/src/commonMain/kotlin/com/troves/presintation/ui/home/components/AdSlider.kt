@@ -89,7 +89,7 @@ fun AdSlider(
                         .size(if (isSelected) 8.dp else 6.dp)
                         .clip(CircleShape)
                         .background(
-                            if (isSelected) Color.White else Color.White.copy(alpha = 0.4f)
+                            if (isSelected) Color.White else Color.White.copy(alpha = 0.6f)
                         )
                 )
             }

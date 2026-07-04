@@ -45,6 +45,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.troves.designsystem.components.dialog.LoginRequiredDialog
 import com.troves.designsystem.theme.Theme
 import com.troves.designsystem.util.formatPrice
+import com.troves.designsystem.util.stripHtml
 import com.troves.presintation.core.mvi.ObserveEffect
 import com.troves.presintation.ui.productDetails.components.AddToCartButton
 import com.troves.presintation.ui.productDetails.components.CustomerReviewsSection
@@ -265,7 +266,7 @@ fun ProductDetailsScreenContent(
 
                     Column(modifier = Modifier.animateContentSize()) {
                         Text(
-                            text = uiState.description,
+                            text = uiState.description.stripHtml(),
                             style = MaterialTheme.typography.bodyMedium,
                             color = Color(0xFF666666),
                             lineHeight = 22.sp,
@@ -321,24 +322,10 @@ fun ProductDetailsScreenContent(
             ) {
                 AddToCartButton(
                     onAddToCart = onAddToCart,
-                    enabled = true, // إلغاء التعطيل الإجباري والفاليديتورز المزعجة لجعل تجربة المستخدم سريعة ومريحة
+                    enabled = true,
                     modifier = Modifier.weight(1f)
                 )
 
-                IconButton(
-                    onClick = { /* التنقل المباشر للحقيبة */ },
-                    modifier = Modifier
-                        .size(48.dp)
-                        .clip(CircleShape)
-                        .background(Color(0xFFF5F5F3))
-                ) {
-                    Icon(
-                        painter = painterResource(Res.drawable.ic_cart),
-                        contentDescription = "Shopping Bag",
-                        tint = Color.Black.copy(alpha = 0.8f),
-                        modifier = Modifier.size(22.dp)
-                    )
-                }
             }
         }
     }

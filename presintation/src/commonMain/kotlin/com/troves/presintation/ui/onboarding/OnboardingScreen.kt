@@ -41,26 +41,26 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import com.troves.designsystem.components.button.PrimaryButton
-import com.troves.designsystem.components.button.SecondaryButton
 import com.troves.designsystem.theme.Theme
 import com.troves.presintation.core.mvi.ObserveEffect
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 import org.koin.compose.viewmodel.koinViewModel
 import troves.designsystem.generated.resources.Res
-import troves.designsystem.generated.resources.ads_placholder
 import troves.designsystem.generated.resources.img_onboarding
+import troves.designsystem.generated.resources.img_onboarding0
+import troves.designsystem.generated.resources.img_onboarding_1
 
 private val onboardingPages = listOf(
     OnboardingPageInfo(
         title = "Discover\nCurated Styles",
         description = "Explore thousands of trendy fashion pieces handpicked just for you.",
-        imageRes = Res.drawable.img_onboarding
+        imageRes = Res.drawable.img_onboarding0
     ),
     OnboardingPageInfo(
         title = "Find What\nFits You",
         description = "Find looks that match your style, mood, and everyday moments.",
-        imageRes = Res.drawable.img_onboarding
+        imageRes = Res.drawable.img_onboarding_1
     ),
     OnboardingPageInfo(
         title = "Shop. Love.\nRepeat.",

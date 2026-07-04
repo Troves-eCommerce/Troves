@@ -118,7 +118,7 @@ fun ProductImageCarousel(
                         .size(if (isSelected) 8.dp else 7.dp)
                         .clip(CircleShape)
                         .background(
-                            if (isSelected) Theme.colors.primary else Color.Black.copy(alpha = 0.15f)
+                            if (isSelected) Theme.colors.primary else Color.Black.copy(alpha = 0.35f)
                         ),
                 )
             }
