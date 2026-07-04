@@ -41,4 +41,51 @@
     <string name="profile_guest_msg">سجل الدخول لتتبع طلباتك وإدارة حسابك</string>
     <string name="profile_login_signup">تسجيل الدخول / إنشاء حساب</string>
     <string name="profile_select_language">اختر اللغة</string>
+
+    <!-- Checkout · shared -->
+    <string name="checkout_continue">متابعة</string>
+    <string name="checkout_place_order">إتمام الطلب</string>
+    <string name="checkout_order_summary">ملخص الطلب</string>
+    <string name="checkout_title_delivery_address">عنوان التوصيل</string>
+    <string name="checkout_title_payment">الدفع</string>
+    <string name="checkout_title_confirm_order">تأكيد الطلب</string>
+    <string name="checkout_login_required">يجب تسجيل الدخول لإتمام الطلب.</string>
+
+    <!-- Checkout · Order Summary step -->
+    <string name="checkout_review_subtitle">راجع منتجاتك وطبّق كوبون الخصم.</string>
+    <string name="checkout_coupon_label">كوبون الخصم</string>
+    <string name="checkout_coupon_hint">أدخل كوبون الخصم</string>
+    <string name="checkout_subtotal_items">المجموع الفرعي (%1$d منتج)</string>
+    <string name="checkout_discount_code">خصم (%1$s)</string>
+    <string name="checkout_total">الإجمالي</string>
+
+    <!-- Checkout · Address step -->
+    <string name="checkout_address_step_title">اختر عنوان التوصيل</string>
+    <string name="checkout_address_step_subtitle">اختر المكان الذي تريد توصيل طلبك إليه.</string>
+    <string name="checkout_no_saved_addresses">لا يوجد لديك أي عناوين محفوظة بعد.</string>
+    <string name="checkout_address_default">افتراضي</string>
+    <string name="checkout_add_new_address">إضافة عنوان جديد</string>
+
+    <!-- Checkout · Payment step -->
+    <string name="checkout_payment_step_title">اختر طريقة الدفع</string>
+    <string name="checkout_payment_step_subtitle">اختر الطريقة التي تريد الدفع بها لطلبك.</string>
+    <string name="checkout_payment_cod_title">الدفع عند الاستلام</string>
+    <string name="checkout_payment_cod_desc">ادفع نقداً عند توصيل طلبك.</string>
+    <string name="checkout_payment_cod_label">عند الاستلام</string>
+    <string name="checkout_payment_cod_limit">الحد النقدي: حتى $500.00</string>
+    <string name="checkout_payment_online_title">الدفع الإلكتروني</string>
+    <string name="checkout_payment_online_desc">ادفع بأمان باستخدام بطاقتك.</string>
+    <string name="checkout_secure_title">دفع آمن</string>
+    <string name="checkout_secure_desc">معلومات الدفع الخاصة بك مشفّرة وآمنة لدينا.</string>
+
+    <!-- Checkout · Confirm &amp; Place Order step -->
+    <string name="checkout_confirm_step_title">التأكيد وإتمام الطلب</string>
+    <string name="checkout_confirm_step_subtitle">راجع تفاصيلك وأتمم طلبك.</string>
+    <string name="checkout_section_payment_method">طريقة الدفع</string>
+    <string name="checkout_change">تغيير</string>
+    <string name="checkout_section_shipping_address">عنوان الشحن</string>
+    <string name="checkout_edit_cart">تعديل السلة</string>
+    <string name="checkout_items_count">%1$d منتج</string>
+    <string name="checkout_order_confirmation_title">تأكيد الطلب</string>
+    <string name="checkout_order_confirmation_desc">ستتلقى رسالة تأكيد عبر البريد الإلكتروني بمجرد إتمام طلبك.</string>
 </resources>

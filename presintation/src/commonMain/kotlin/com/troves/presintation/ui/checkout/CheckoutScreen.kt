@@ -44,12 +44,26 @@ import com.troves.presintation.ui.checkout.steps.PaymentStepContent
 import com.troves.presintation.ui.checkout.steps.PlaceOrderStepContent
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import troves.designsystem.generated.resources.Res
 import troves.designsystem.generated.resources.ic_arrow_back
 import troves.designsystem.generated.resources.ic_home
 import troves.designsystem.generated.resources.ic_location
 import troves.designsystem.generated.resources.ic_payment_method
+import troves.presintation.generated.resources.Res as StringRes
+import troves.presintation.generated.resources.checkout_continue
+import troves.presintation.generated.resources.checkout_login_required
+import troves.presintation.generated.resources.checkout_order_summary
+import troves.presintation.generated.resources.checkout_payment_cod_desc
+import troves.presintation.generated.resources.checkout_payment_cod_limit
+import troves.presintation.generated.resources.checkout_payment_cod_title
+import troves.presintation.generated.resources.checkout_payment_online_desc
+import troves.presintation.generated.resources.checkout_payment_online_title
+import troves.presintation.generated.resources.checkout_place_order
+import troves.presintation.generated.resources.checkout_title_confirm_order
+import troves.presintation.generated.resources.checkout_title_delivery_address
+import troves.presintation.generated.resources.checkout_title_payment
 
 @Composable
 fun CheckoutScreen(
@@ -89,7 +103,7 @@ fun CheckoutScreen(
 
     if (showLoginDialog) {
         LoginRequiredDialog(
-            message = "You need to be logged in to place an order.",
+            message = stringResource(StringRes.string.checkout_login_required),
             onLoginClick = {
                 showLoginDialog = false
                 onNavigateToLogin()
@@ -177,10 +191,11 @@ fun CheckoutScreen(
                             currentStep = state.stepNumber,
                             totalSteps = state.totalSteps,
                             paymentIcon = painterResource(Res.drawable.ic_payment_method),
-                            paymentTitle = if (cod) "Cash on Delivery (COD)" else "Online Payment",
-                            paymentDescription = if (cod) "Pay with cash when your order is delivered."
-                            else "Pay securely using your card.",
-                            paymentSubDescription = if (cod) "Cash limit: up to \$500.00" else null,
+                            paymentTitle = if (cod) stringResource(StringRes.string.checkout_payment_cod_title)
+                            else stringResource(StringRes.string.checkout_payment_online_title),
+                            paymentDescription = if (cod) stringResource(StringRes.string.checkout_payment_cod_desc)
+                            else stringResource(StringRes.string.checkout_payment_online_desc),
+                            paymentSubDescription = if (cod) stringResource(StringRes.string.checkout_payment_cod_limit) else null,
                             addressTitle = address?.label ?: "Delivery address",
                             recipientName = address?.recipientName.orEmpty(),
                             addressLines = address?.lines.orEmpty(),
@@ -222,7 +237,8 @@ private fun CheckoutBottomBar(
             .padding(Theme.spacing.medium),
     ) {
         PrimaryButton(
-            caption = if (isPlaceOrderStep) "Place Order" else "Continue",
+            caption = if (isPlaceOrderStep) stringResource(StringRes.string.checkout_place_order)
+            else stringResource(StringRes.string.checkout_continue),
             onClick = onClick,
             isDisabled = !enabled,
             isLoading = isBusy,
@@ -231,11 +247,12 @@ private fun CheckoutBottomBar(
     }
 }
 
+@Composable
 private fun titleFor(step: CheckoutStep): String = when (step) {
-    CheckoutStep.Review -> "Order Summary"
-    CheckoutStep.Address -> "Delivery Address"
-    CheckoutStep.Payment -> "Payment"
-    CheckoutStep.PlaceOrder -> "Confirm Order"
+    CheckoutStep.Review -> stringResource(StringRes.string.checkout_order_summary)
+    CheckoutStep.Address -> stringResource(StringRes.string.checkout_title_delivery_address)
+    CheckoutStep.Payment -> stringResource(StringRes.string.checkout_title_payment)
+    CheckoutStep.PlaceOrder -> stringResource(StringRes.string.checkout_title_confirm_order)
 }
 
 private fun CheckoutPaymentMethod.toOption(): PaymentOption = when (this) {

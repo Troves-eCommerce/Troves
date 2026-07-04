@@ -31,8 +31,20 @@ import com.troves.designsystem.components.stepper.HorizontalStepper
 import com.troves.designsystem.theme.SpTheme
 import com.troves.designsystem.theme.Theme
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import troves.designsystem.generated.resources.Res
 import troves.designsystem.generated.resources.ic_payment_method
+import troves.presintation.generated.resources.Res as StringRes
+import troves.presintation.generated.resources.checkout_payment_cod_desc
+import troves.presintation.generated.resources.checkout_payment_cod_label
+import troves.presintation.generated.resources.checkout_payment_cod_limit
+import troves.presintation.generated.resources.checkout_payment_cod_title
+import troves.presintation.generated.resources.checkout_payment_online_desc
+import troves.presintation.generated.resources.checkout_payment_online_title
+import troves.presintation.generated.resources.checkout_payment_step_subtitle
+import troves.presintation.generated.resources.checkout_payment_step_title
+import troves.presintation.generated.resources.checkout_secure_desc
+import troves.presintation.generated.resources.checkout_secure_title
 
 
 enum class PaymentOption { CashOnDelivery, Online }
@@ -56,29 +68,29 @@ fun PaymentStepContent(
         HorizontalStepper(currentStep = currentStep, totalSteps = totalSteps)
 
         BasicText(
-            text = "Select Payment Method",
+            text = stringResource(StringRes.string.checkout_payment_step_title),
             style = Theme.typography.title.copy(
                 color = Theme.colors.primaryFont,
                 fontWeight = FontWeight.Bold,
             ),
         )
         BasicText(
-            text = "Choose how you'd like to pay for your order.",
+            text = stringResource(StringRes.string.checkout_payment_step_subtitle),
             style = Theme.typography.body.medium.copy(color = Theme.colors.secondaryFont),
         )
 
         PaymentMethodCard(
-            title = "Cash on Delivery (COD)",
-            description = "Pay with cash when your order is delivered.",
+            title = stringResource(StringRes.string.checkout_payment_cod_title),
+            description = stringResource(StringRes.string.checkout_payment_cod_desc),
             icon = painterResource(Res.drawable.ic_payment_method),
             selected = selected == PaymentOption.CashOnDelivery,
             onClick = { onSelect(PaymentOption.CashOnDelivery) },
-            label = "COD",
-            subDescription = "Cash limit: up to \$500.00",
+            label = stringResource(StringRes.string.checkout_payment_cod_label),
+            subDescription = stringResource(StringRes.string.checkout_payment_cod_limit),
         )
         PaymentMethodCard(
-            title = "Online Payment",
-            description = "Pay securely using your card.",
+            title = stringResource(StringRes.string.checkout_payment_online_title),
+            description = stringResource(StringRes.string.checkout_payment_online_desc),
             icon = painterResource(Res.drawable.ic_payment_method),
             selected = selected == PaymentOption.Online,
             onClick = { onSelect(PaymentOption.Online) },
@@ -122,14 +134,14 @@ private fun SecureCheckoutNote() {
         )
         Column(verticalArrangement = Arrangement.spacedBy(Theme.spacing.extraSmall), modifier = Modifier.background(Theme.colors.surface)) {
             BasicText(
-                text = "Secure Checkout",
+                text = stringResource(StringRes.string.checkout_secure_title),
                 style = Theme.typography.body.medium.copy(
                     color = Theme.colors.primaryFont,
                     fontWeight = FontWeight.SemiBold,
                 ),
             )
             BasicText(
-                text = "Your payment information is encrypted and safe with us.",
+                text = stringResource(StringRes.string.checkout_secure_desc),
                 style = Theme.typography.body.small.copy(color = Theme.colors.secondaryFont),
             )
         }
