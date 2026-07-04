@@ -32,11 +32,13 @@ sealed interface HomeEffect {
     data object NavigateToSearch : HomeEffect
     data object NavigateToCart : HomeEffect
     data object ShowLoginRequiredDialog : HomeEffect
+    data object NavigateToAllCategories : HomeEffect
 }
 
 sealed interface HomeIntent {
     data object Load : HomeIntent
     data object Retry : HomeIntent
+    data object ViewAllCategoriesClicked : HomeIntent
     data object SearchClicked : HomeIntent
     data object CartClicked : HomeIntent
     data object SeeAllBrandsClicked : HomeIntent

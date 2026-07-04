@@ -39,9 +39,9 @@ import com.troves.designsystem.theme.Theme
 import com.troves.presintation.core.mvi.ObserveEffect
 import com.troves.presintation.ui.cart.components.CartItemCard
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-import troves.designsystem.generated.resources.Res
-import troves.designsystem.generated.resources.ic_arrow_back
+import troves.designsystem.generated.resources.*
 
 @Composable
 fun CartScreen(
@@ -70,7 +70,7 @@ fun CartScreen(
 
     if (showLoginRequiredDialog) {
         LoginRequiredDialog(
-            message = "You need to be logged in to manage your cart.",
+            message = stringResource(Res.string.cart_login_msg),
             onLoginClick = {
                 showLoginRequiredDialog = false
                 onNavigateToLogin()
@@ -83,9 +83,9 @@ fun CartScreen(
 
     itemToRemove?.let { item ->
         TrovesDialog(
-            title = "Remove Item",
-            message = "Are you sure you want to remove \"${item.title}\" from your cart?",
-            confirmText = "Remove",
+            title = stringResource(Res.string.cart_remove_title),
+            message = stringResource(Res.string.cart_remove_msg),
+            confirmText = stringResource(Res.string.cart_remove_title), // Should be "Remove"
             onConfirm = {
                 viewModel.onIntent(CartIntent.OnRemoveItemConfirm(item.lineId))
                 itemToRemove = null
@@ -98,9 +98,9 @@ fun CartScreen(
 
     if (showClearConfirm) {
         TrovesDialog(
-            title = "Clear Cart",
-            message = "Remove all items from your cart?",
-            confirmText = "Clear All",
+            title = stringResource(Res.string.cart_clear_title),
+            message = stringResource(Res.string.cart_clear_msg),
+            confirmText = stringResource(Res.string.clear_all),
             onConfirm = {
                 viewModel.onIntent(CartIntent.OnClearCartConfirm)
                 showClearConfirm = false
@@ -139,7 +139,7 @@ private fun CartScreenContent(
         containerColor = Theme.colors.backGround,
         topBar = {
             BaseTopAppBar(
-                title = "Cart",
+                title = stringResource(Res.string.cart_title),
                 leadingIcon = painterResource(Res.drawable.ic_arrow_back),
                 onLeadingClick = { onIntent(CartIntent.OnBackClick) },
                 modifier = Modifier.background(Theme.colors.backGround),
@@ -168,11 +168,11 @@ private fun CartScreenContent(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         BasicText(
-                            text = "${state.items.size} item(s)",
+                            text = stringResource(Res.string.cart_items_count, state.items.size),
                             style = Theme.typography.body.medium.copy(color = Theme.colors.secondaryFont),
                         )
                         BasicText(
-                            text = "Clear all",
+                            text = stringResource(Res.string.clear_all),
                             style = Theme.typography.body.medium.copy(color = Theme.colors.error),
                             modifier = Modifier.clickable { onIntent(CartIntent.OnClearCartClick) },
                         )
@@ -210,7 +210,7 @@ private fun CartScreenContent(
                         contentAlignment = Alignment.Center,
                     ) {
                         BasicText(
-                            text = "Your cart is empty",
+                            text = stringResource(Res.string.cart_empty),
                             style = Theme.typography.body.large.copy(
                                 color = Theme.colors.secondaryFont,
                             ),
@@ -240,11 +240,11 @@ private fun DiscountCodeRow(
                 value = value,
                 onValueChange = onValueChange,
                 singleLine = true,
-                placeholder = { BasicText("Discount code") },
+                placeholder = { BasicText(stringResource(Res.string.cart_discount_code)) },
                 modifier = Modifier.weight(1f),
             )
             PrimaryButton(
-                caption = if (isApplying) "..." else "Apply",
+                caption = if (isApplying) "..." else stringResource(Res.string.apply),
                 onClick = onApply,
                 isDisabled = isApplying || value.isBlank(),
             )
@@ -278,7 +278,7 @@ private fun CartBottomBar(
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(Theme.spacing.extraSmall)) {
             BasicText(
-                text = "Total Price",
+                text = stringResource(Res.string.cart_total),
                 style = Theme.typography.body.small.copy(color = Theme.colors.secondaryFont),
             )
             BasicText(
@@ -291,7 +291,7 @@ private fun CartBottomBar(
         }
 
         PrimaryButton(
-            caption = "Checkout",
+            caption = stringResource(Res.string.cart_checkout),
             onClick = onCheckout,
             isDisabled = isLoading,
             modifier = Modifier

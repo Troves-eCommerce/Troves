@@ -41,4 +41,92 @@
     <string name="profile_guest_msg">سجل الدخول لتتبع طلباتك وإدارة حسابك</string>
     <string name="profile_login_signup">تسجيل الدخول / إنشاء حساب</string>
     <string name="profile_select_language">اختر اللغة</string>
+
+    <!-- Payment Methods Screen -->
+    <string name="payment_methods_title">طرق الدفع</string>
+
+    <!-- Wishlist Screen -->
+    <string name="wishlist_title">قائمة الأمنيات</string>
+    <string name="wishlist_empty">قائمة الأمنيات الخاصة بك فارغة</string>
+    <string name="wishlist_remove_title">حذف المنتج</string>
+    <string name="wishlist_remove_msg">هل أنت متأكد أنك تريد حذف هذا المنتج من قائمة الأمنيات؟</string>
+    <string name="wishlist_clear_title">مسح قائمة الأمنيات</string>
+    <string name="wishlist_clear_msg">سيؤدي هذا الإجراء إلى إزالة جميع العناصر من قائمة الأمنيات.</string>
+    <string name="wishlist_login_msg">يجب عليك تسجيل الدخول لعرض قائمة الأمنيات الخاصة بك.</string>
+    <string name="wishlist_remove">حذف</string>
+
+    <!-- Cart Screen -->
+    <string name="cart_title">السلة</string>
+    <string name="cart_empty">سلتك فارغة</string>
+    <string name="cart_remove_title">حذف المنتج</string>
+    <string name="cart_remove_msg">هل أنت متأكد أنك تريد حذف هذا المنتج من سلتك؟</string>
+    <string name="cart_clear_title">مسح السلة</string>
+    <string name="cart_clear_msg">هل تريد إزالة جميع العناصر من سلتك؟</string>
+    <string name="cart_login_msg">يجب عليك تسجيل الدخول لإدارة سلة التسوق الخاصة بك.</string>
+    <string name="cart_checkout">الدفع</string>
+    <string name="cart_total">السعر الإجمالي</string>
+    <string name="cart_discount_code">كود الخصم</string>
+    <string name="cart_items_count">%s منتج</string>
+
+    <!-- Address Management -->
+    <string name="address_manage_title">العناوين المحفوظة</string>
+    <string name="address_manage_desc">إدارة مواقع التسليم الخاصة بك</string>
+    <string name="address_add_new">إضافة عنوان جديد</string>
+    <string name="address_delete_title">حذف العنوان</string>
+    <string name="address_delete_msg">هل أنت متأكد أنك تريد حذف هذا العنوان؟ لا يمكن التراجع عن هذا الإجراء.</string>
+    <string name="address_delete">حذف</string>
+    <string name="address_edit">تعديل</string>
+    <string name="address_set_default">تعيين كافتراضي</string>
+    <string name="address_default">افتراضي</string>
+    <string name="address_fallback_label">العنوان</string>
+
+    <!-- New/Edit Address Screen -->
+    <string name="address_new_title">عنوان جديد</string>
+    <string name="address_edit_title">تعديل العنوان</string>
+    <string name="address_save">حفظ العنوان</string>
+    <string name="address_label_title">تسمية العنوان</string>
+    <string name="address_label_hint">مثال: المنزل، المكتب</string>
+    <string name="address_name_title">الاسم الكامل</string>
+    <string name="address_name_hint">مثال: جان دو</string>
+    <string name="address_phone_title">رقم الهاتف</string>
+    <string name="address_phone_hint">مثال: +1 234 567 890</string>
+    <string name="address_country_title">الدولة</string>
+    <string name="address_city_title">المدينة</string>
+    <string name="address_city_hint">اختر أو اكتب المدينة</string>
+    <string name="address_city_no_country_hint">اختر الدولة أولاً</string>
+    <string name="address_street_title">عنوان الشارع</string>
+    <string name="address_street_hint">مثال: 123 شارع إميرالد، شقة 4ب</string>
+    <string name="address_province_title">الولاية / المقاطعة</string>
+    <string name="address_province_hint">مثال: كاليفورنيا</string>
+    <string name="address_zip_title">الرمز البريدي</string>
+    <string name="address_zip_hint">مثال: 90001</string>
+    <string name="address_note_title">ملاحظة (اختياري)</string>
+    <string name="address_note_hint">مثال: اترك الطرد عند الباب</string>
+    <string name="address_loading">جارٍ التحميل...</string>
+    <string name="address_error_countries">خطأ في تحميل الدول</string>
+    <string name="address_error_cities">تعذر تحميل المدن. يمكنك كتابة مدينتك يدوياً.</string>
+
+    <!-- Auth Screens -->
+    <string name="login_welcome">مرحباً بعودتك!</string>
+    <string name="login_desc">سجل الدخول إلى حسابك</string>
+    <string name="login_email_title">بريدك الإلكتروني</string>
+    <string name="login_email_hint">hello@veyra.shop</string>
+    <string name="login_password_title">كلمة المرور</string>
+    <string name="login_password_hint">••••••••</string>
+    <string name="login_forgot_password">نسيت كلمة المرور؟</string>
+    <string name="login_button">تسجيل الدخول</string>
+    <string name="login_or_continue">أو تابع باستخدام</string>
+    <string name="login_google">المتابعة باستخدام جوجل</string>
+    <string name="login_dont_have_account">ليس لديك حساب؟ </string>
+    <string name="login_sign_up">إنشاء حساب</string>
+
+    <string name="register_title">إنشاء حساب</string>
+    <string name="register_desc">انضم إلينا وابدأ التسوق</string>
+    <string name="register_name_title">الاسم الكامل</string>
+    <string name="register_name_hint">أدخل اسمك</string>
+    <string name="register_password_title">كلمة المرور</string>
+    <string name="register_confirm_password_title">تأكيد كلمة المرور</string>
+    <string name="register_button">إنشاء حساب</string>
+    <string name="register_already_have_account">لديك حساب بالفعل؟ </string>
+    <string name="register_login_now">سجل دخول الآن</string>
 </resources>

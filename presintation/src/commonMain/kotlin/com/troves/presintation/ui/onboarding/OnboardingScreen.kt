@@ -28,6 +28,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import com.troves.designsystem.components.button.PrimaryButton
 import com.troves.designsystem.components.button.SecondaryButton
 import com.troves.designsystem.theme.Theme
@@ -35,24 +37,23 @@ import com.troves.presintation.core.mvi.ObserveEffect
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 import troves.designsystem.generated.resources.Res
-import troves.designsystem.generated.resources.img_onboarding1
-import troves.designsystem.generated.resources.img_onboarding2
+import troves.designsystem.generated.resources.ads_placholder
 
 private val onboardingPages = listOf(
     OnboardingPageInfo(
-        title = "Uncover Hidden Gems",
-        description = "Browse thousands of unique products hand-picked from top suppliers around the world.",
-        imageRes = Res.drawable.img_onboarding1
+        title = "Discover\nCurated Styles",
+        description = "Explore thousands of trendy fashion pieces handpicked just for you.",
+        imageRes = Res.drawable.ads_placholder
     ),
     OnboardingPageInfo(
-        title = "Explore What's Out There",
-        description = "Find rare, trending, and high-demand products before anyone else does.",
-        imageRes = Res.drawable.img_onboarding2
+        title = "Find What\nFits You",
+        description = "Find looks that match your style, mood, and everyday moments.",
+        imageRes = Res.drawable.ads_placholder
     ),
     OnboardingPageInfo(
-        title = "Handpick What Sells",
-        description = "Select only the products that match your brand, your audience, and your vision.",
-        imageRes = Res.drawable.img_onboarding1
+        title = "Shop. Love.\nRepeat.",
+        description = "Shop your favorites, save what you love, and stay ahead of trends.",
+        imageRes = Res.drawable.ads_placholder
     )
 )
 
@@ -122,21 +123,24 @@ fun OnboardingScreen(
                 repeat(onboardingPages.size) { iteration ->
                     val isSelected = pagerState.currentPage == iteration
                     val indicatorColor by animateColorAsState(
-                        targetValue = if (isSelected) Theme.colors.primary
-                        else Theme.colors.surfaceVariant,
+                        targetValue = if (isSelected) {
+                            Theme.colors.primary
+                        } else {
+                            Color(0xFFDCDCDC) // تعديل اللون الرصاصي الفاتح للـ dots غير النشطة هنا
+                        },
                         animationSpec = tween(300)
                     )
                     Box(
                         modifier = Modifier
                             .padding(horizontal = Theme.spacing.extraSmall)
-                            .size(Theme.spacing.small)
+                            .size(8.dp)
                             .clip(CircleShape)
                             .background(indicatorColor)
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.height(Theme.spacing.extraLarge))
+            Spacer(modifier = Modifier.height(32.dp))
             if (uiState.isLastPage) {
                 PrimaryButton(
                     caption = "Let's get started",

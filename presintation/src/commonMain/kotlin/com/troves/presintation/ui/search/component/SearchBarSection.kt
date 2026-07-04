@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.SlidersHorizontal
 import com.composables.icons.lucide.X
-import com.troves.designsystem.components.textfield.TextField
+import com.troves.designsystem.components.textfield.CustomTextField
 import com.troves.designsystem.components.topbar.IconBox
 import com.troves.designsystem.theme.Theme
 import org.jetbrains.compose.resources.painterResource
@@ -27,26 +27,6 @@ import troves.designsystem.generated.resources.Res
 import troves.designsystem.generated.resources.ic_arrow_back
 import troves.designsystem.generated.resources.ic_search
 
-/**
- * Copyright (c) 2026 Wahid Ali Wahid Hussien.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-/**
- * Author: Wahid Ali Wahid Hussien
- * Created: 30/06/2026
- */
 @Composable
 fun SearchBarSection(
     query: String,
@@ -74,7 +54,7 @@ fun SearchBarSection(
             shape = CircleShape
         )
 
-        TextField(
+        CustomTextField(
             text = query,
             onTextChange = onQueryChange,
             modifier = Modifier.weight(1f),

@@ -9,12 +9,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.troves.designsystem.components.button.PrimaryButton
-import com.troves.designsystem.components.textfield.TextField
 import com.troves.designsystem.components.topbar.BaseTopAppBar
 import com.troves.designsystem.theme.Theme
 import org.jetbrains.compose.resources.painterResource
-import troves.designsystem.generated.resources.Res
-import troves.designsystem.generated.resources.ic_arrow_back
+import org.jetbrains.compose.resources.stringResource
+import troves.designsystem.generated.resources.*
 
 import org.koin.compose.viewmodel.koinViewModel
 import com.troves.presintation.core.mvi.ObserveEffect
@@ -25,6 +24,7 @@ import androidx.compose.material3.SnackbarDuration
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.rememberCoroutineScope
+import com.troves.designsystem.components.textfield.CustomTextField
 
 @Composable
 fun NewAddressScreen(
@@ -84,7 +84,7 @@ fun NewAddressScreenContent(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             BaseTopAppBar(
-                title = if (state.isEditMode) "Edit Address" else "New Address",
+                title = if (state.isEditMode) stringResource(Res.string.address_edit_title) else stringResource(Res.string.address_new_title),
                 leadingIcon = painterResource(Res.drawable.ic_arrow_back),
                 onLeadingClick = { onIntent(NewAddressIntent.OnBackClick) },
                 modifier = Modifier.background(Theme.colors.backGround)
@@ -100,7 +100,7 @@ fun NewAddressScreenContent(
                 contentAlignment = Alignment.Center
             ) {
                 PrimaryButton(
-                    caption = "Save Address",
+                    caption = stringResource(Res.string.address_save),
                     onClick = { onIntent(NewAddressIntent.OnSaveClick) },
                     isDisabled = state.city.isBlank() || state.street.isBlank() ||
                         state.recipientName.isBlank() || state.phone.isBlank() || state.country.isBlank(),
@@ -118,33 +118,33 @@ fun NewAddressScreenContent(
         ) {
             Spacer(Modifier.height(Theme.spacing.small))
 
-            TextField(
+            CustomTextField(
                 text = state.label,
                 onTextChange = { onIntent(NewAddressIntent.OnLabelChange(it)) },
-                title = "Address Label",
-                hint = "e.g. Home, Office",
+                title = stringResource(Res.string.address_label_title),
+                hint = stringResource(Res.string.address_label_hint),
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()
             )
 
             Spacer(Modifier.height(Theme.spacing.medium))
 
-            TextField(
+            CustomTextField(
                 text = state.recipientName,
                 onTextChange = { onIntent(NewAddressIntent.OnRecipientNameChange(it)) },
-                title = "Full Name",
-                hint = "e.g. Jane Doe",
+                title = stringResource(Res.string.address_name_title),
+                hint = stringResource(Res.string.address_name_hint),
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()
             )
 
             Spacer(Modifier.height(Theme.spacing.medium))
 
-            TextField(
+            CustomTextField(
                 text = state.phone,
                 onTextChange = { onIntent(NewAddressIntent.OnPhoneChange(it)) },
-                title = "Phone Number",
-                hint = "e.g. +1 234 567 890",
+                title = stringResource(Res.string.address_phone_title),
+                hint = stringResource(Res.string.address_phone_hint),
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -156,10 +156,10 @@ fun NewAddressScreenContent(
                 onExpandedChange = { expanded = it }
             ) {
                 Box(modifier = Modifier.menuAnchor()) {
-                    TextField(
+                    CustomTextField(
                         text = state.country,
                         onTextChange = {},
-                        title = "Country",
+                        title = stringResource(Res.string.address_country_title),
                         readOnly = true,
                         modifier = Modifier.fillMaxWidth(),
                         onClickTrailingIcon = { expanded = !expanded }
@@ -173,12 +173,12 @@ fun NewAddressScreenContent(
                 ) {
                     if (state.isCountriesLoading) {
                         DropdownMenuItem(
-                            text = { Text("Loading...", style = Theme.typography.body.medium, color = Theme.colors.secondaryFont) },
+                            text = { Text(stringResource(Res.string.address_loading), style = Theme.typography.body.medium, color = Theme.colors.secondaryFont) },
                             onClick = {}
                         )
                     } else if (state.countriesError != null) {
                         DropdownMenuItem(
-                            text = { Text("Error loading countries", style = Theme.typography.body.medium, color = Theme.colors.error) },
+                            text = { Text(stringResource(Res.string.address_error_countries), style = Theme.typography.body.medium, color = Theme.colors.error) },
                             onClick = { onIntent(NewAddressIntent.LoadCountries) }
                         )
                     } else {
@@ -208,11 +208,11 @@ fun NewAddressScreenContent(
                 onExpandedChange = { if (state.country.isNotBlank()) cityExpanded = it }
             ) {
                 Box(modifier = Modifier.menuAnchor()) {
-                    TextField(
+                    CustomTextField(
                         text = state.city,
                         onTextChange = { onIntent(NewAddressIntent.OnCityChange(it)) },
-                        title = "City",
-                        hint = if (state.country.isBlank()) "Select a country first" else "Select or type City",
+                        title = stringResource(Res.string.address_city_title),
+                        hint = if (state.country.isBlank()) stringResource(Res.string.address_city_no_country_hint) else stringResource(Res.string.address_city_hint),
                         readOnly = false,
                         modifier = Modifier.fillMaxWidth(),
                         onClickTrailingIcon = { if (state.country.isNotBlank()) cityExpanded = !cityExpanded }
@@ -226,7 +226,7 @@ fun NewAddressScreenContent(
                 ) {
                     if (state.isCitiesLoading) {
                         DropdownMenuItem(
-                            text = { Text("Loading...", style = Theme.typography.body.medium, color = Theme.colors.secondaryFont) },
+                            text = { Text(stringResource(Res.string.address_loading), style = Theme.typography.body.medium, color = Theme.colors.secondaryFont) },
                             onClick = {}
                         )
                     } else if (state.cities.isNotEmpty()) {
@@ -252,7 +252,7 @@ fun NewAddressScreenContent(
             // Show city error / empty message inline below the field
             if (state.citiesError != null && state.cities.isEmpty() && !state.isCitiesLoading) {
                 Text(
-                    text = "Could not load cities. You can type your city manually.",
+                    text = stringResource(Res.string.address_error_cities),
                     style = Theme.typography.body.small,
                     color = Theme.colors.error,
                     modifier = Modifier.padding(start = 4.dp, top = 2.dp)
@@ -260,32 +260,32 @@ fun NewAddressScreenContent(
             }
 
             Spacer(Modifier.height(Theme.spacing.medium))
-            
-            TextField(
+
+            CustomTextField(
                 text = state.street,
                 onTextChange = { onIntent(NewAddressIntent.OnStreetChange(it)) },
-                title = "Street Address",
-                hint = "e.g. 123 Emerald Ave, Apt 4B",
+                title = stringResource(Res.string.address_street_title),
+                hint = stringResource(Res.string.address_street_hint),
                 modifier = Modifier.fillMaxWidth()
             )
 
             Spacer(Modifier.height(Theme.spacing.medium))
 
             Row(modifier = Modifier.fillMaxWidth()) {
-                TextField(
+                CustomTextField(
                     text = state.province,
                     onTextChange = { onIntent(NewAddressIntent.OnProvinceChange(it)) },
-                    title = "State / Province",
-                    hint = "e.g. California",
+                    title = stringResource(Res.string.address_province_title),
+                    hint = stringResource(Res.string.address_province_hint),
                     singleLine = true,
                     modifier = Modifier.weight(1f)
                 )
                 Spacer(Modifier.width(Theme.spacing.medium))
-                TextField(
+                CustomTextField(
                     text = state.zip,
                     onTextChange = { onIntent(NewAddressIntent.OnZipChange(it)) },
-                    title = "Zip / Postal",
-                    hint = "e.g. 90001",
+                    title = stringResource(Res.string.address_zip_title),
+                    hint = stringResource(Res.string.address_zip_hint),
                     singleLine = true,
                     modifier = Modifier.weight(1f)
                 )
@@ -293,11 +293,11 @@ fun NewAddressScreenContent(
 
             Spacer(Modifier.height(Theme.spacing.medium))
 
-            TextField(
+            CustomTextField(
                 text = state.note,
                 onTextChange = { onIntent(NewAddressIntent.OnNoteChange(it)) },
-                title = "Note (Optional)",
-                hint = "e.g. Leave package at the door",
+                title = stringResource(Res.string.address_note_title),
+                hint = stringResource(Res.string.address_note_hint),
                 singleLine = false,
                 modifier = Modifier.fillMaxWidth().heightIn(min = 100.dp)
             )

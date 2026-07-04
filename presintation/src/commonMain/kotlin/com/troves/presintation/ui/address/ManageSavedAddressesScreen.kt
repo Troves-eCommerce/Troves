@@ -23,10 +23,8 @@ import com.troves.designsystem.components.button.SecondaryButton
 import com.troves.designsystem.components.topbar.BaseTopAppBar
 import com.troves.designsystem.theme.Theme
 import org.jetbrains.compose.resources.painterResource
-import troves.designsystem.generated.resources.Res
-import troves.designsystem.generated.resources.ic_arrow_back
-import troves.designsystem.generated.resources.ic_home
-import troves.designsystem.generated.resources.ic_profile
+import org.jetbrains.compose.resources.stringResource
+import troves.designsystem.generated.resources.*
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
@@ -94,8 +92,8 @@ fun ManageSavedAddressesScreenContent(
     if (addressToDelete != null) {
         AlertDialog(
             onDismissRequest = { addressToDelete = null },
-            title = { Text("Delete Address", style = Theme.typography.body.large.copy(fontWeight = FontWeight.Bold)) },
-            text = { Text("Are you sure you want to delete this address? This action cannot be undone.", style = Theme.typography.body.medium) },
+            title = { Text(stringResource(Res.string.address_delete_title), style = Theme.typography.body.large.copy(fontWeight = FontWeight.Bold)) },
+            text = { Text(stringResource(Res.string.address_delete_msg), style = Theme.typography.body.medium) },
             confirmButton = {
                 TextButton(
                     onClick = {
@@ -103,12 +101,12 @@ fun ManageSavedAddressesScreenContent(
                         addressToDelete = null
                     }
                 ) {
-                    Text("Delete", color = Theme.colors.error)
+                    Text(stringResource(Res.string.address_delete), color = Theme.colors.error)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { addressToDelete = null }) {
-                    Text("Cancel", color = Theme.colors.primary)
+                    Text(stringResource(Res.string.profile_cancel), color = Theme.colors.primary)
                 }
             },
             containerColor = Theme.colors.surface,
@@ -123,7 +121,7 @@ fun ManageSavedAddressesScreenContent(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             BaseTopAppBar(
-                title = "Saved Addresses",
+                title = stringResource(Res.string.address_manage_title),
                 leadingIcon = painterResource(Res.drawable.ic_arrow_back),
                 onLeadingClick = { onIntent(ManageSavedAddressesIntent.OnBackClick) },
                 modifier = Modifier.background(Theme.colors.backGround)
@@ -139,7 +137,7 @@ fun ManageSavedAddressesScreenContent(
                 contentAlignment = Alignment.Center
             ) {
                 SecondaryButton(
-                    caption = "Add New Address",
+                    caption = stringResource(Res.string.address_add_new),
                     onClick = { onIntent(ManageSavedAddressesIntent.OnAddNew) },
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -153,7 +151,7 @@ fun ManageSavedAddressesScreenContent(
                 .padding(horizontal = Theme.spacing.medium)
         ) {
             Text(
-                text = "Manage your delivery locations",
+                text = stringResource(Res.string.address_manage_desc),
                 style = Theme.typography.body.medium,
                 color = Theme.colors.secondaryFont,
                 modifier = Modifier.padding(bottom = Theme.spacing.medium)
@@ -210,7 +208,7 @@ private fun AddressCard(
             Spacer(Modifier.width(12.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = address.label ?: address.recipientName.ifBlank { "Address" },
+                    text = address.label ?: address.recipientName.ifBlank { stringResource(Res.string.address_fallback_label) },
                     style = Theme.typography.body.large.copy(fontWeight = FontWeight.SemiBold),
                     color = Theme.colors.primaryFont
                 )
@@ -237,7 +235,7 @@ private fun AddressCard(
                         .padding(horizontal = 10.dp, vertical = 4.dp)
                 ) {
                     Text(
-                        text = "Default",
+                        text = stringResource(Res.string.address_default),
                         color = Theme.colors.onPrimary,
                         style = Theme.typography.body.small.copy(fontWeight = FontWeight.Bold)
                     )
@@ -254,14 +252,14 @@ private fun AddressCard(
                 onClick = onEdit,
                 colors = ButtonDefaults.textButtonColors(contentColor = Theme.colors.primary)
             ) {
-                Text("Edit", style = Theme.typography.body.medium.copy(fontWeight = FontWeight.Medium))
+                Text(stringResource(Res.string.address_edit), style = Theme.typography.body.medium.copy(fontWeight = FontWeight.Medium))
             }
             Spacer(Modifier.width(8.dp))
             TextButton(
                 onClick = onDelete,
                 colors = ButtonDefaults.textButtonColors(contentColor = Theme.colors.error)
             ) {
-                Text("Delete", style = Theme.typography.body.medium.copy(fontWeight = FontWeight.Medium))
+                Text(stringResource(Res.string.address_delete), style = Theme.typography.body.medium.copy(fontWeight = FontWeight.Medium))
             }
             if (!address.isDefault) {
                 Spacer(Modifier.width(8.dp))
@@ -269,7 +267,7 @@ private fun AddressCard(
                     onClick = onSetDefault,
                     colors = ButtonDefaults.textButtonColors(contentColor = Theme.colors.secondaryFont)
                 ) {
-                    Text("Set Default", style = Theme.typography.body.medium.copy(fontWeight = FontWeight.Medium))
+                    Text(stringResource(Res.string.address_set_default), style = Theme.typography.body.medium.copy(fontWeight = FontWeight.Medium))
                 }
             }
         }

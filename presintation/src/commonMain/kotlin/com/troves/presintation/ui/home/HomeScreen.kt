@@ -1,5 +1,6 @@
 package com.troves.presintation.ui.home
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -62,10 +63,14 @@ import com.troves.presintation.ui.home.components.CategoryItem
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
 import troves.designsystem.generated.resources.Res
+import troves.designsystem.generated.resources.ads_placholder
 import troves.designsystem.generated.resources.ic_chevron_right
 import troves.designsystem.generated.resources.ic_heart
 import troves.designsystem.generated.resources.ic_star
 import troves.designsystem.generated.resources.img_onboarding1
+import troves.designsystem.generated.resources.ic_eye
+import troves.designsystem.generated.resources.ic_full_heart
+import troves.designsystem.generated.resources.ic_solid_heart
 
 @Composable
 fun HomeScreen(
@@ -75,6 +80,7 @@ fun HomeScreen(
     onNavigateToRegister: () -> Unit,
     onNavigateToSearch: () -> Unit,
     onNavigateToCart: () -> Unit,
+    onNavigateToAllCategories: () -> Unit,
     viewModel: HomeViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -91,6 +97,7 @@ fun HomeScreen(
             )
             is HomeEffect.NavigateToAllBrands -> onNavigateToAllBrands()
             is HomeEffect.NavigateToRegister -> onNavigateToRegister()
+            is HomeEffect.NavigateToAllCategories -> onNavigateToAllCategories()
             is HomeEffect.NavigateToCart -> onNavigateToCart()
             is HomeEffect.ShowToast -> scope.launch { snackbarHostState.showSnackbar(effect.message) }
             is HomeEffect.NavigateToSearch -> onNavigateToSearch()
@@ -123,6 +130,10 @@ fun HomeScreen(
             TrovesTopBar(
                 onSearchClick = { viewModel.onIntent(HomeIntent.SearchClicked) },
                 onCartClick = { viewModel.onIntent(HomeIntent.CartClicked) },
+                border = BorderStroke(
+                    width = 1.dp,
+                    color = Theme.colors.onPrimary
+                )
             )
 
             if (state.isLoading) {
@@ -150,19 +161,12 @@ private fun HomeContent(
     state: HomeUiState,
     onIntent: (HomeIntent) -> Unit,
 ) {
-    val adImage = remember {
-        BrushPainter(
-            Brush.linearGradient(
-                colors = listOf(Color(0xFF0F3D44), Color(0xFF177180)),
-            ),
-        )
-    }
     val brandImage = painterResource(Res.drawable.img_onboarding1)
-    val categoryImage = painterResource(Res.drawable.img_onboarding1)
     val productImage = painterResource(Res.drawable.img_onboarding1)
     val chevron = painterResource(Res.drawable.ic_chevron_right)
     val starIcon = painterResource(Res.drawable.ic_star)
-    val heartIcon = painterResource(Res.drawable.ic_heart)
+    val heartIcon = painterResource(Res.drawable.ic_solid_heart)
+    val adImage = painterResource(Res.drawable.ads_placholder)
 
     val clipboardManager = LocalClipboardManager.current
 
@@ -190,9 +194,53 @@ private fun HomeContent(
         )
     }
 
+    if (state.categories.isNotEmpty()) {
+        SectionHeader(
+            title = "Categories",
+            actionIcon = chevron,
+            actionLabel = "View all",
+            onAction = { onIntent(HomeIntent.ViewAllCategoriesClicked) }
+        )
+        LazyRow(
+            contentPadding = PaddingValues(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            items(state.categories.take(5), key = { it.id }) { category ->
+                val categoryIcon = when (category.name.lowercase().trim()) {
+                    "men" -> Res.drawable.ic_eye        // استبدلها بأيقونة الرجال النهائية
+                    "women" -> Res.drawable.ic_star      // استبدلها بأيقونة النساء
+                    "shoes" -> Res.drawable.ic_star      // استبدلها بأيقونة الأحذية
+                    "bags" -> Res.drawable.ic_star       // استبدلها بأيقونة الحقائب
+                    "accessories" -> Res.drawable.ic_star// استبدلها بأيقونة الإكسسوارات
+                    else -> Res.drawable.ic_star         // أيقونة افتراضية عند عدم التطابق
+                }
+
+                CategoryItem(
+                    name = category.name,
+                    iconPainter = categoryIcon,
+                    onClick = { onIntent(HomeIntent.CategoryClicked(category)) },
+                    modifier = Modifier
+                        .width(85.dp)
+                        .height(100.dp),
+                )
+            }
+        }
+    }
+
+    if (state.justForYou.isNotEmpty()) {
+        SectionHeader(title = "Just For You")
+        ProductRow(
+            products = state.justForYou,
+            favoriteIds = state.favoriteProductIds,
+            productImage = productImage,
+            starIcon = starIcon,
+            heartIcon = heartIcon,
+            onIntent = onIntent,
+        )
+    }
     if (state.brands.isNotEmpty()) {
         SectionHeader(
-            title = "Brands",
+            title = "Top Brands",
             actionLabel = "View All",
             actionIcon = chevron,
             onAction = { onIntent(HomeIntent.SeeAllBrandsClicked) },
@@ -210,39 +258,6 @@ private fun HomeContent(
                         error = brandImage,
                     ),
                     onClick = { onIntent(HomeIntent.BrandClicked(brand)) },
-                )
-            }
-        }
-    }
-
-    if (state.justForYou.isNotEmpty()) {
-        SectionHeader(title = "Just For You")
-        ProductRow(
-            products = state.justForYou,
-            favoriteIds = state.favoriteProductIds,
-            productImage = productImage,
-            starIcon = starIcon,
-            heartIcon = heartIcon,
-            onIntent = onIntent,
-        )
-    }
-
-    if (state.categories.isNotEmpty()) {
-        SectionHeader(title = "Categories")
-        LazyRow(
-            contentPadding = PaddingValues(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            items(state.categories, key = { it.id }) { category ->
-                CategoryItem(
-                    name = category.name,
-                    imagePainter = rememberAsyncImagePainter(
-                        model = category.imageUrl,
-                        placeholder = categoryImage,
-                        error = categoryImage,
-                    ),
-                    onClick = { onIntent(HomeIntent.CategoryClicked(category)) },
-                    modifier = Modifier.width(120.dp).height(150.dp),
                 )
             }
         }
@@ -354,13 +369,15 @@ private fun HomeShimmer() {
 
     Row(
         modifier = Modifier.padding(horizontal = 16.dp),
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         repeat(5) {
+            // تحديث الشيمر هنا ليطابق حجم الكارت الجديد للـ Categories تماماً
             Box(
                 modifier = Modifier
-                    .size(72.dp)
-                    .clip(CircleShape)
+                    .width(85.dp)
+                    .height(100.dp)
+                    .clip(Theme.shapes.medium)
                     .shimmerEffect(),
             )
         }
@@ -435,7 +452,7 @@ private fun previewHomeState(): HomeUiState {
             Brand(id = index.toLong(), name = "Brand ${index + 1}", logoUrl = null)
         },
         justForYou = products,
-        categories = List(4) { index ->
+        categories = List(6) { index ->
             Category(id = index.toLong(), name = "Category ${index + 1}", imageUrl = null)
         },
         trending = products,

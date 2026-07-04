@@ -49,12 +49,9 @@ import com.troves.designsystem.components.toast.TrovesToast
 import com.troves.designsystem.theme.Theme
 import com.troves.presintation.core.mvi.ObserveEffect
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-import troves.designsystem.generated.resources.Res
-import troves.designsystem.generated.resources.ic_eye
-import troves.designsystem.generated.resources.ic_eye_off
-import troves.designsystem.generated.resources.ic_outline_email
-import troves.designsystem.generated.resources.ic_google // استيراد أيقونة جوجل الخاصة بكِ
+import troves.designsystem.generated.resources.*
 
 import com.troves.presintation.ui.auth.google.LocalGoogleAuthHandler
 
@@ -108,7 +105,7 @@ fun LoginScreen(
 
             Spacer(Modifier.height(24.dp))
             BasicText(
-                text = "Welcome Back!",
+                text = stringResource(Res.string.login_welcome),
                 style = Theme.typography.displayMedium.copy(
                     color = Theme.colors.primaryFont,
                     fontWeight = FontWeight.Bold,
@@ -119,7 +116,7 @@ fun LoginScreen(
             Spacer(Modifier.height(8.dp))
 
             BasicText(
-                text = "Log in to your account",
+                text = stringResource(Res.string.login_desc),
                 style = Theme.typography.body.large.copy(
                     color = Theme.colors.secondaryFont,
                     textAlign = TextAlign.Center
@@ -131,8 +128,8 @@ fun LoginScreen(
             CustomTextField(
                 text = email,
                 onTextChange = { viewModel.onIntent(AuthIntent.EmailChanged(it)) },
-                title = "Your Email",
-                hint = "hello@veyra.shop",
+                title = stringResource(Res.string.login_email_title),
+                hint = stringResource(Res.string.login_email_hint),
                 singleLine = true,
                 borderColor = Theme.colors.hint.copy(alpha = 0.4f),
                 onFocusBorderColor = Theme.colors.primary,
@@ -151,8 +148,8 @@ fun LoginScreen(
             CustomTextField(
                 text = password,
                 onTextChange = { viewModel.onIntent(AuthIntent.PasswordChanged(it)) },
-                title = "Your Password",
-                hint = "••••••••",
+                title = stringResource(Res.string.login_password_title),
+                hint = stringResource(Res.string.login_password_hint),
                 singleLine = true,
                 borderColor = Theme.colors.hint.copy(alpha = 0.4f),
                 onFocusBorderColor = Theme.colors.primary,
@@ -175,7 +172,7 @@ fun LoginScreen(
                 contentAlignment = Alignment.CenterEnd
             ) {
                 BasicText(
-                    text = "Forgot password?",
+                    text = stringResource(Res.string.login_forgot_password),
                     style = Theme.typography.body.medium.copy(
                         color = Theme.colors.primary,
                         fontWeight = FontWeight.Medium,
@@ -206,7 +203,7 @@ fun LoginScreen(
             Spacer(Modifier.height(32.dp))
 
             PrimaryButton(
-                caption = "Log in",
+                caption = stringResource(Res.string.login_button),
                 onClick = { viewModel.onIntent(AuthIntent.Login) },
                 modifier = Modifier.fillMaxWidth(),
                 isLoading = isLoading,
@@ -222,7 +219,7 @@ fun LoginScreen(
             ) {
                 HorizontalDivider(modifier = Modifier.weight(1f), color = Theme.colors.secondary)
                 BasicText(
-                    text = "  or continue with  ",
+                    text = stringResource(Res.string.login_or_continue),
                     style = Theme.typography.body.medium.copy(
                         color = Theme.colors.secondaryFont,
                         fontSize = 14.sp
@@ -260,7 +257,7 @@ fun LoginScreen(
                 )
                 Spacer(Modifier.width(12.dp))
                 BasicText(
-                    text = "Continue with Google",
+                    text = stringResource(Res.string.login_google),
                     style = Theme.typography.body.large.copy(
                         color = Theme.colors.primaryFont.copy(alpha = 0.8f),
                         fontWeight = FontWeight.Medium,
@@ -274,7 +271,7 @@ fun LoginScreen(
             BasicText(
                 text = buildAnnotatedString {
                     withStyle(SpanStyle(color = Theme.colors.secondaryFont)) {
-                        append("Don't have an account? ")
+                        append(stringResource(Res.string.login_dont_have_account))
                     }
                     withStyle(
                         SpanStyle(
@@ -282,7 +279,7 @@ fun LoginScreen(
                             fontWeight = FontWeight.SemiBold
                         )
                     ) {
-                        append("Sign up")
+                        append(stringResource(Res.string.login_sign_up))
                     }
                 },
                 style = Theme.typography.body.large.copy(textAlign = TextAlign.Center),
