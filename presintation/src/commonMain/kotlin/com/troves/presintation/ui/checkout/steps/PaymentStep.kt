@@ -34,10 +34,7 @@ import org.jetbrains.compose.resources.painterResource
 import troves.designsystem.generated.resources.Res
 import troves.designsystem.generated.resources.ic_payment_method
 
-/**
- * Payment-method selection option for this UI pass. The canonical `PaymentMethod`
- * enum + ViewModel wiring arrives with the checkout state-machine phase.
- */
+
 enum class PaymentOption { CashOnDelivery, Online }
 
 
@@ -117,7 +114,6 @@ private fun SecureCheckoutNote() {
         horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        // Placeholder glyph until a dedicated lock icon asset exists.
         Icon(
             painter = painterResource(Res.drawable.ic_payment_method),
             contentDescription = null,
@@ -157,7 +153,6 @@ private fun PaymentStepPreview() {
                     currentStep = 3,
                 )
             }
-            // Temporary CTA — moves to a shared sticky bottom bar in a later phase.
             PrimaryButton(
                 caption = "Continue",
                 onClick = {},
