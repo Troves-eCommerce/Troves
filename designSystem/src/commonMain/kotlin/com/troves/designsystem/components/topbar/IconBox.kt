@@ -20,6 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.troves.designsystem.theme.SpTheme
 import com.troves.designsystem.theme.Theme
+import com.troves.designsystem.util.autoMirror
 
 @Composable
 fun IconBox(
@@ -31,6 +32,7 @@ fun IconBox(
     iconTint: Color = Theme.colors.primaryFont,
     shape: Shape = RoundedCornerShape(CORNER_RADIUS),
     border: BorderStroke? = null,
+    autoMirror: Boolean = false,
 ) {
     Box(
         modifier = modifier
@@ -47,7 +49,9 @@ fun IconBox(
             painter = icon,
             contentDescription = contentDescription,
             tint = iconTint,
-            modifier = Modifier.size(ICON_SIZE),
+            modifier = Modifier
+                .size(ICON_SIZE)
+                .then(if (autoMirror) Modifier.autoMirror() else Modifier),
         )
     }
 }

@@ -46,6 +46,7 @@ import com.troves.designsystem.components.shimmer.shimmerEffect
 import com.troves.designsystem.components.topbar.TrovesTopBar
 import com.troves.designsystem.theme.SpTheme
 import com.troves.designsystem.theme.Theme
+import com.troves.designsystem.util.autoMirror
 import com.troves.domain.entity.Ad
 import com.troves.domain.entity.Brand
 import com.troves.domain.entity.Category
@@ -371,7 +372,9 @@ private fun SectionHeader(
                         painter = actionIcon,
                         contentDescription = null,
                         tint = Theme.colors.secondaryFont,
-                        modifier = Modifier.size(18.dp),
+                        modifier = Modifier
+                            .size(18.dp)
+                            .autoMirror(),
                     )
                 }
             }

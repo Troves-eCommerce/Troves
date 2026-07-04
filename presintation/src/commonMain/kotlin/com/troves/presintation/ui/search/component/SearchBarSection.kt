@@ -51,7 +51,8 @@ fun SearchBarSection(
             onClick = onBackClick,
             backgroundColor = barBg,
             iconTint = Theme.colors.primaryFont,
-            shape = CircleShape
+            shape = CircleShape,
+            autoMirror = true,
         )
 
         CustomTextField(

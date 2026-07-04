@@ -33,6 +33,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.troves.designsystem.theme.Theme
+import com.troves.designsystem.util.autoMirror
 
 data class AdData(
     val titleTop: String,
@@ -192,7 +193,9 @@ private fun AdBannerItem(
                         painter = arrowIconPainter,
                         contentDescription = null,
                         tint = ad.getButtonTextColor(),
-                        modifier = Modifier.size(14.dp)
+                        modifier = Modifier
+                            .size(14.dp)
+                            .autoMirror()
                     )
                 }
             }

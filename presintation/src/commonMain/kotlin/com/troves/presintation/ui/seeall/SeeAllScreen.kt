@@ -108,6 +108,7 @@ private fun SeeAllToolbar(
             icon = painterResource(DesignRes.drawable.ic_arrow_back),
             contentDescription = "Back",
             onClick = onBackClick,
+            autoMirror = true,
         )
         BasicText(
             text = title,

@@ -143,6 +143,7 @@ private fun CartScreenContent(
                 leadingIcon = painterResource(Res.drawable.ic_arrow_back),
                 onLeadingClick = { onIntent(CartIntent.OnBackClick) },
                 modifier = Modifier.background(Theme.colors.backGround),
+                autoMirrorLeadingIcon = true
             )
         },
         bottomBar = {

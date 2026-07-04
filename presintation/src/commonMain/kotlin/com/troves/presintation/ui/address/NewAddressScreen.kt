@@ -87,7 +87,8 @@ fun NewAddressScreenContent(
                 title = if (state.isEditMode) stringResource(Res.string.address_edit_title) else stringResource(Res.string.address_new_title),
                 leadingIcon = painterResource(Res.drawable.ic_arrow_back),
                 onLeadingClick = { onIntent(NewAddressIntent.OnBackClick) },
-                modifier = Modifier.background(Theme.colors.backGround)
+                modifier = Modifier.background(Theme.colors.backGround),
+                autoMirrorLeadingIcon = true
             )
         },
         bottomBar = {

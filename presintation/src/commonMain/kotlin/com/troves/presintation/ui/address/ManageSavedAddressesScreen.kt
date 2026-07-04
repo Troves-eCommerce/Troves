@@ -124,7 +124,8 @@ fun ManageSavedAddressesScreenContent(
                 title = stringResource(Res.string.address_manage_title),
                 leadingIcon = painterResource(Res.drawable.ic_arrow_back),
                 onLeadingClick = { onIntent(ManageSavedAddressesIntent.OnBackClick) },
-                modifier = Modifier.background(Theme.colors.backGround)
+                modifier = Modifier.background(Theme.colors.backGround),
+                autoMirrorLeadingIcon = true
             )
         },
         bottomBar = {

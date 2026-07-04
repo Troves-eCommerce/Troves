@@ -26,6 +26,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.troves.designsystem.theme.Theme
+import com.troves.designsystem.util.autoMirror
 import org.jetbrains.compose.resources.painterResource
 import troves.designsystem.generated.resources.Res
 import troves.designsystem.generated.resources.ic_arrow_back
@@ -79,7 +80,9 @@ fun ProductImageCarousel(
                 painter = painterResource(Res.drawable.ic_arrow_back),
                 contentDescription = "Back",
                 tint = Color.Black,
-                modifier = Modifier.size(20.dp)
+                modifier = Modifier
+                    .size(20.dp)
+                    .autoMirror()
             )
         }
 

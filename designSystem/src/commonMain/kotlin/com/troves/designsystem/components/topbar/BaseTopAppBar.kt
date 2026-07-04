@@ -41,7 +41,8 @@ fun BaseTopAppBar(
         color = Theme.colors.primaryFont,
         fontWeight = FontWeight.Bold,
     ),
-    border: BorderStroke? = null, // 1. Added optional border parameter
+    border: BorderStroke? = null,
+    autoMirrorLeadingIcon: Boolean = false,
 ) {
     Row(
         modifier = modifier
@@ -55,6 +56,7 @@ fun BaseTopAppBar(
                 contentDescription = "Navigate up",
                 onClick = onLeadingClick,
                 border = border,
+                autoMirror = autoMirrorLeadingIcon,
             )
             Spacer(Modifier.width(leadingSpacing))
         }

@@ -126,6 +126,7 @@ private fun AllBrandsToolbar(
             icon = painterResource(DesignRes.drawable.ic_arrow_back),
             contentDescription = "Navigate up",
             onClick = onBackClick,
+            autoMirror = true,
         )
         BasicText(
             text = title,

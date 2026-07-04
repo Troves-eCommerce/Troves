@@ -181,6 +181,7 @@ private fun ProductsToolbar(
             icon = painterResource(DesignRes.drawable.ic_arrow_back),
             contentDescription = "Navigate up",
             onClick = onBackClick,
+            autoMirror = true,
         )
         BasicText(
             text = title,
