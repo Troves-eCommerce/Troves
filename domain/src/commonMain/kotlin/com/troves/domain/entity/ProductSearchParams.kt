@@ -23,7 +23,9 @@ package com.troves.domain.entity
 data class ProductSearchParams(
     val query: String? = null,
     val vendor: String? = null,
+    val vendors: List<String>? = null,
     val productType: String? = null,
+    val productTypes: List<String>? = null,
     val collectionId: String? = null,
     val status: ProductStatus? = ProductStatus.ACTIVE,
     val limit: Int = 50,

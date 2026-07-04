@@ -4,23 +4,21 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.FilledTonalButton
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.composables.icons.lucide.Lucide
-import com.composables.icons.lucide.RefreshCw
 import com.composables.icons.lucide.ServerCrash
+import com.troves.designsystem.components.button.PrimaryButton
+import com.troves.designsystem.theme.Theme
 
 /**
  * Copyright (c) 2026 Wahid Ali Wahid Hussien.
@@ -60,42 +58,36 @@ fun ErrorView(
             imageVector = Lucide.ServerCrash,
             contentDescription = null,
             modifier = Modifier.size(72.dp),
-            tint = MaterialTheme.colorScheme.error
+            tint = Theme.colors.error
         )
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(Theme.spacing.large))
 
-        Text(
+        BasicText(
             text = "Something went wrong",
-            style = MaterialTheme.typography.headlineSmall,
-            textAlign = TextAlign.Center
+            style = Theme.typography.title.copy(
+                color = Theme.colors.primaryFont,
+                fontWeight = FontWeight.Bold
+            )
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(Theme.spacing.small))
 
-        Text(
+        BasicText(
             text = message,
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = TextAlign.Center
+            style = Theme.typography.body.large.copy(
+                color = Theme.colors.secondaryFont
+            )
         )
 
         if (onRetry != null) {
+            Spacer(modifier = Modifier.height(Theme.spacing.extraLarge))
 
-            Spacer(modifier = Modifier.height(32.dp))
-
-            FilledTonalButton(
-                onClick = onRetry
-            ) {
-                Icon(
-                    imageVector = Lucide.RefreshCw,
-                    contentDescription = null
-                )
-
-                Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
-
-                Text("Try Again")
-            }
+            PrimaryButton(
+                caption = "Try Again",
+                onClick = onRetry,
+                modifier = Modifier.fillMaxWidth(0.6f)
+            )
         }
     }
 }
