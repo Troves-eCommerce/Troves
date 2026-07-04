@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.troves.domain.entity.Address
 import com.troves.domain.entity.Cart
-import com.troves.domain.entity.CartMoney
 import com.troves.domain.usecase.address.GetSavedAddressesUseCase
 import com.troves.domain.usecase.address.RefreshAddressesUseCase
 import com.troves.domain.usecase.cart.ApplyDiscountResult
@@ -22,7 +21,6 @@ import com.troves.presintation.navigation.AppRoute
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import kotlin.math.roundToLong
 
 class CheckoutViewModel(
     getCartStream: GetCartStreamUseCase,
@@ -79,8 +77,25 @@ class CheckoutViewModel(
             CheckoutStep.Payment -> CheckoutStep.Address
             CheckoutStep.PlaceOrder -> CheckoutStep.Payment
         }
-        if (previous == null) sendEffect(CheckoutEffect.NavigateBack)
-        else updateState { copy(step = previous) }
+        if (previous == null) {
+            resetCheckoutProgress()
+            sendEffect(CheckoutEffect.NavigateBack)
+        } else {
+            updateState { copy(step = previous) }
+        }
+    }
+
+
+    private fun resetCheckoutProgress() {
+        updateState {
+            copy(
+                step = CheckoutStep.Review,
+                couponInput = "",
+                paymentMethod = null,
+                isApplyingCoupon = false,
+                isBusy = false,
+            )
+        }
     }
 
     private fun onNext() {
@@ -152,7 +167,8 @@ class CheckoutViewModel(
             val result = placeCodOrder(currentCart, address)
             updateState { copy(isBusy = false) }
             when (result) {
-                is PlaceOrderResult.Success ->
+                is PlaceOrderResult.Success -> {
+                    resetCheckoutProgress()
                     sendEffect(CheckoutEffect.NavigateToOrderResult(
                         buildResultFromState(
                             state = snapshot,
@@ -163,6 +179,7 @@ class CheckoutViewModel(
                             paymentLabel = "Cash on Delivery (COD)",
                         )
                     ))
+                }
                 PlaceOrderResult.RequiresLogin -> sendEffect(CheckoutEffect.ShowLoginRequiredDialog)
                 PlaceOrderResult.NoAddress -> {
                     sendEffect(CheckoutEffect.ShowToast("Sorry you don't have an address to deliver to"))
@@ -172,7 +189,8 @@ class CheckoutViewModel(
                     sendEffect(CheckoutEffect.ShowToast("Your cart is empty"))
                     sendEffect(CheckoutEffect.NavigateToCart)
                 }
-                is PlaceOrderResult.Error ->
+                is PlaceOrderResult.Error -> {
+                    resetCheckoutProgress()
                     sendEffect(CheckoutEffect.NavigateToOrderResult(
                         buildResultFromState(
                             state = snapshot,
@@ -183,6 +201,7 @@ class CheckoutViewModel(
                             paymentLabel = "Cash on Delivery (COD)",
                         )
                     ))
+                }
             }
         }
     }
@@ -215,23 +234,23 @@ class CheckoutViewModel(
 
 
     override fun onCheckoutCompleted(checkoutCompletedEvent: CheckoutCompletedEvent) {
-        updateState { copy(isBusy = false) }
         viewModelScope.launch { clearCart() }
-        sendEffect(CheckoutEffect.NavigateToOrderResult(checkoutCompletedEvent.orderDetails.toSuccessResult()))
+        val result = checkoutCompletedEvent.orderDetails.toSuccessResult()
+        resetCheckoutProgress()
+        sendEffect(CheckoutEffect.NavigateToOrderResult(result))
     }
 
     override fun onCheckoutFailed(error: Exception) {
-        updateState { copy(isBusy = false) }
-        sendEffect(CheckoutEffect.NavigateToOrderResult(
-            buildResultFromState(
-                state = currentState,
-                address = currentState.selectedAddress,
-                success = false,
-                orderName = null,
-                errorMessage = error.message ?: "Payment failed. Please try again.",
-                paymentLabel = "Online Payment",
-            )
-        ))
+        val result = buildResultFromState(
+            state = currentState,
+            address = currentState.selectedAddress,
+            success = false,
+            orderName = null,
+            errorMessage = error.message ?: "Payment failed. Please try again.",
+            paymentLabel = "Online Payment",
+        )
+        resetCheckoutProgress()
+        sendEffect(CheckoutEffect.NavigateToOrderResult(result))
     }
 
     override fun onCheckoutCanceled() {
@@ -333,43 +352,4 @@ class CheckoutViewModel(
             totalFormatted = formatMoney(total?.amount, total?.currencyCode),
         )
     }
-
-
-    private fun lineTotal(unitPrice: String, quantity: Int, currencyCode: String): String {
-        val unit = unitPrice.toDoubleOrNull() ?: return formatMoney(null, currencyCode)
-        return formatMoney(unit * quantity, currencyCode)
-    }
-
-    private fun savings(subtotal: CartMoney?, total: CartMoney?): String? =
-        savings(subtotal?.amount, total?.amount, subtotal?.currencyCode)
-
-    private fun savings(subtotalAmount: String?, totalAmount: String?, currencyCode: String?): String? {
-        val s = subtotalAmount?.toDoubleOrNull() ?: return null
-        val t = totalAmount?.toDoubleOrNull() ?: return null
-        val diff = s - t
-        if (diff <= 0.009) return null
-        return "- " + formatMoney(diff, currencyCode)
-    }
-
-    private fun savings(subtotalAmount: Double?, totalAmount: Double?, currencyCode: String?): String? {
-        if (subtotalAmount == null || totalAmount == null) return null
-        val diff = subtotalAmount - totalAmount
-        if (diff <= 0.009) return null
-        return "- " + formatMoney(diff, currencyCode)
-    }
-}
-
-private fun format(money: CartMoney?): String {
-    if (money == null) return "$0.00"
-    return if (money.currencyCode == "USD") "$${money.amount}" else "${money.amount} ${money.currencyCode}"
-}
-
-private fun formatMoney(amount: Double?, currencyCode: String?): String {
-    if (amount == null) return if (currencyCode == "USD" || currencyCode == null) "$0.00" else "0.00 $currencyCode"
-    val cents = (amount * 100).roundToLong()
-    val whole = cents / 100
-    val frac = (cents % 100).let { if (it < 0) -it else it }
-    val fracStr = if (frac < 10) "0$frac" else "$frac"
-    val body = "$whole.$fracStr"
-    return if (currencyCode == "USD" || currencyCode == null) "$$body" else "$body $currencyCode"
 }

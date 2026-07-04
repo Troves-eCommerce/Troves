@@ -30,10 +30,25 @@ import com.troves.designsystem.components.stepper.HorizontalStepper
 import com.troves.designsystem.theme.SpTheme
 import com.troves.designsystem.theme.Theme
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import troves.designsystem.generated.resources.Res
 import troves.designsystem.generated.resources.ic_order
 import troves.designsystem.generated.resources.ic_payment_method
 import troves.designsystem.generated.resources.product_card
+import troves.presintation.generated.resources.Res as StringRes
+import troves.presintation.generated.resources.checkout_change
+import troves.presintation.generated.resources.checkout_confirm_step_subtitle
+import troves.presintation.generated.resources.checkout_confirm_step_title
+import troves.presintation.generated.resources.checkout_discount_code
+import troves.presintation.generated.resources.checkout_edit_cart
+import troves.presintation.generated.resources.checkout_items_count
+import troves.presintation.generated.resources.checkout_order_confirmation_desc
+import troves.presintation.generated.resources.checkout_order_confirmation_title
+import troves.presintation.generated.resources.checkout_order_summary
+import troves.presintation.generated.resources.checkout_section_payment_method
+import troves.presintation.generated.resources.checkout_section_shipping_address
+import troves.presintation.generated.resources.checkout_subtotal_items
+import troves.presintation.generated.resources.checkout_total
 
 /**
  * Body of the "Confirm & Place Order" checkout step: read-only recap of the chosen
@@ -74,18 +89,22 @@ fun PlaceOrderStepContent(
         HorizontalStepper(currentStep = currentStep, totalSteps = totalSteps)
 
         BasicText(
-            text = "Confirm & Place Order",
+            text = stringResource(StringRes.string.checkout_confirm_step_title),
             style = Theme.typography.title.copy(
                 color = Theme.colors.primaryFont,
                 fontWeight = FontWeight.Bold,
             ),
         )
         BasicText(
-            text = "Review your details and place your order.",
+            text = stringResource(StringRes.string.checkout_confirm_step_subtitle),
             style = Theme.typography.body.medium.copy(color = Theme.colors.secondaryFont),
         )
 
-        SectionCard(title = "Payment Method", actionText = "Change", onActionClick = onChangePayment) {
+        SectionCard(
+            title = stringResource(StringRes.string.checkout_section_payment_method),
+            actionText = stringResource(StringRes.string.checkout_change),
+            onActionClick = onChangePayment,
+        ) {
             Row(horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small)) {
                 Box(
                     modifier = Modifier
@@ -126,7 +145,11 @@ fun PlaceOrderStepContent(
             }
         }
 
-        SectionCard(title = "Shipping Address", actionText = "Change", onActionClick = onChangeAddress) {
+        SectionCard(
+            title = stringResource(StringRes.string.checkout_section_shipping_address),
+            actionText = stringResource(StringRes.string.checkout_change),
+            onActionClick = onChangeAddress,
+        ) {
             BasicText(
                 text = addressTitle,
                 style = Theme.typography.body.medium.copy(
@@ -150,7 +173,11 @@ fun PlaceOrderStepContent(
             )
         }
 
-        SectionCard(title = "Order Summary", actionText = "Edit Cart", onActionClick = onEditCart) {
+        SectionCard(
+            title = stringResource(StringRes.string.checkout_order_summary),
+            actionText = stringResource(StringRes.string.checkout_edit_cart),
+            onActionClick = onEditCart,
+        ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -169,7 +196,7 @@ fun PlaceOrderStepContent(
                     }
                 }
                 BasicText(
-                    text = "$itemCount items",
+                    text = stringResource(StringRes.string.checkout_items_count, itemCount),
                     style = Theme.typography.body.medium.copy(color = Theme.colors.secondaryFont),
                 )
             }
@@ -177,13 +204,13 @@ fun PlaceOrderStepContent(
             Divider()
 
             SummaryRow(
-                label = "Subtotal ($itemCount items)",
+                label = stringResource(StringRes.string.checkout_subtotal_items, itemCount),
                 value = subtotalFormatted,
                 color = Theme.colors.primaryFont,
             )
             if (discountCode != null && discountValueFormatted != null) {
                 SummaryRow(
-                    label = "Discount ($discountCode)",
+                    label = stringResource(StringRes.string.checkout_discount_code, discountCode),
                     value = discountValueFormatted,
                     color = Theme.colors.success,
                 )
@@ -192,7 +219,7 @@ fun PlaceOrderStepContent(
             Divider()
 
             SummaryRow(
-                label = "Total",
+                label = stringResource(StringRes.string.checkout_total),
                 value = totalFormatted,
                 color = Theme.colors.primaryFont,
                 style = Theme.typography.body.large,
@@ -252,14 +279,14 @@ private fun OrderConfirmationNote() {
         )
         Column(verticalArrangement = Arrangement.spacedBy(Theme.spacing.extraSmall)) {
             BasicText(
-                text = "Order Confirmation",
+                text = stringResource(StringRes.string.checkout_order_confirmation_title),
                 style = Theme.typography.body.medium.copy(
                     color = Theme.colors.primaryFont,
                     fontWeight = FontWeight.SemiBold,
                 ),
             )
             BasicText(
-                text = "You will receive an email confirmation once your order is placed.",
+                text = stringResource(StringRes.string.checkout_order_confirmation_desc),
                 style = Theme.typography.body.small.copy(color = Theme.colors.secondaryFont),
             )
         }

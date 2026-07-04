@@ -41,4 +41,51 @@
     <string name="profile_guest_msg">Login to track orders and manage your account</string>
     <string name="profile_login_signup">Login / Sign Up</string>
     <string name="profile_select_language">Select Language</string>
+
+    <!-- Checkout · shared -->
+    <string name="checkout_continue">Continue</string>
+    <string name="checkout_place_order">Place Order</string>
+    <string name="checkout_order_summary">Order Summary</string>
+    <string name="checkout_title_delivery_address">Delivery Address</string>
+    <string name="checkout_title_payment">Payment</string>
+    <string name="checkout_title_confirm_order">Confirm Order</string>
+    <string name="checkout_login_required">You need to be logged in to place an order.</string>
+
+    <!-- Checkout · Order Summary step -->
+    <string name="checkout_review_subtitle">Review your items and apply a coupon.</string>
+    <string name="checkout_coupon_label">Coupon Code</string>
+    <string name="checkout_coupon_hint">Enter coupon code</string>
+    <string name="checkout_subtotal_items">Subtotal (%1$d items)</string>
+    <string name="checkout_discount_code">Discount (%1$s)</string>
+    <string name="checkout_total">Total</string>
+
+    <!-- Checkout · Address step -->
+    <string name="checkout_address_step_title">Select Delivery Address</string>
+    <string name="checkout_address_step_subtitle">Choose where you want your order to be delivered.</string>
+    <string name="checkout_no_saved_addresses">You don\'t have any saved addresses yet.</string>
+    <string name="checkout_address_default">Default</string>
+    <string name="checkout_add_new_address">Add New Address</string>
+
+    <!-- Checkout · Payment step -->
+    <string name="checkout_payment_step_title">Select Payment Method</string>
+    <string name="checkout_payment_step_subtitle">Choose how you\'d like to pay for your order.</string>
+    <string name="checkout_payment_cod_title">Cash on Delivery (COD)</string>
+    <string name="checkout_payment_cod_desc">Pay with cash when your order is delivered.</string>
+    <string name="checkout_payment_cod_label">COD</string>
+    <string name="checkout_payment_cod_limit">Cash limit: up to $500.00</string>
+    <string name="checkout_payment_online_title">Online Payment</string>
+    <string name="checkout_payment_online_desc">Pay securely using your card.</string>
+    <string name="checkout_secure_title">Secure Checkout</string>
+    <string name="checkout_secure_desc">Your payment information is encrypted and safe with us.</string>
+
+    <!-- Checkout · Confirm &amp; Place Order step -->
+    <string name="checkout_confirm_step_title">Confirm &amp; Place Order</string>
+    <string name="checkout_confirm_step_subtitle">Review your details and place your order.</string>
+    <string name="checkout_section_payment_method">Payment Method</string>
+    <string name="checkout_change">Change</string>
+    <string name="checkout_section_shipping_address">Shipping Address</string>
+    <string name="checkout_edit_cart">Edit Cart</string>
+    <string name="checkout_items_count">%1$d items</string>
+    <string name="checkout_order_confirmation_title">Order Confirmation</string>
+    <string name="checkout_order_confirmation_desc">You will receive an email confirmation once your order is placed.</string>
 </resources>
