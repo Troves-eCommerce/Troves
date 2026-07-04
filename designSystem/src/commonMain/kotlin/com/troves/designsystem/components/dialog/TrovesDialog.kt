@@ -22,7 +22,7 @@ fun TrovesDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         containerColor = Theme.colors.surface,
-        shape = RoundedCornerShape(20.dp),
+        shape = RoundedCornerShape(15.dp),
         tonalElevation = 0.dp,
 
         title = {

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -20,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
@@ -40,93 +42,93 @@ fun MainCard(
     onFavoriteClick: () -> Unit,
     modifier: Modifier = Modifier,
     isFavorite: Boolean = false,
-    containerColor: Color = Theme.colors.surface,
+    containerColor: Color = Color.Transparent,
 ) {
+    val cardShape = Theme.shapes.medium
+
     Column(
         modifier = modifier
-            .fillMaxWidth()
-            .clip(Theme.shapes.medium)
+            .clip(cardShape)
             .background(containerColor)
-            .border(1.dp, Theme.colors.surfaceVariant, Theme.shapes.medium)
+            .border(1.dp, Theme.colors.onPrimary, cardShape)
             .clickable(onClick = onClick)
     ) {
-        // Top Image Section
+        // 1. قسم الصورة ثابت النسبة
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .aspectRatio(1f)
+                .aspectRatio(0.95f)
                 .background(Theme.colors.surfaceVariant)
         ) {
             Image(
                 painter = imagePainter,
                 contentDescription = title,
-                modifier = Modifier.fillMaxWidth().aspectRatio(1f),
+                modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop
             )
-
-            // Favorite Button
             Box(
                 modifier = Modifier
                     .align(Alignment.TopEnd)
-                    .padding(8.dp)
-                    .size(32.dp)
-                    .background(
-                        if (isFavorite) Color(0xFFE54848) else Color.Black,
-                        CircleShape,
-                    )
+                    .padding(12.dp)
+                    .size(36.dp)
+                    .shadow(elevation = 2.dp, shape = CircleShape)
+                    .background(Color.White, CircleShape)
                     .clickable(onClick = onFavoriteClick),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     painter = favoriteIconPainter,
                     contentDescription = if (isFavorite) "Remove from favorites" else "Add to favorites",
-                    tint = Color.White,
-                    modifier = Modifier.size(18.dp)
+                    tint = if (isFavorite) Color(0xFFE54848) else Theme.colors.primaryFont,
+                    modifier = Modifier.size(20.dp)
                 )
             }
         }
 
-        // Bottom Details Section
         Column(
-            modifier = Modifier.fillMaxWidth().padding(12.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp, vertical = 10.dp),
+            verticalArrangement = Arrangement.spacedBy(6.dp)
         ) {
-            // Rating
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 Icon(
                     painter = ratingIconPainter,
                     contentDescription = "Rating",
                     tint = Theme.colors.amber,
-                    modifier = Modifier.size(16.dp)
+                    modifier = Modifier.size(14.dp)
                 )
                 BasicText(
                     text = rating.toString(),
-                    style = Theme.typography.body.small.copy(color = Theme.colors.hint)
+                    style = Theme.typography.body.medium.copy(
+                        color = Theme.colors.secondaryFont,
+                        fontWeight = FontWeight.Medium
+                    )
                 )
             }
-
-            // Title
             BasicText(
                 text = title,
-                modifier = Modifier.height(40.dp),
-                style = Theme.typography.body.medium.copy(
-                    color = Theme.colors.primaryFont,
-                    fontWeight = FontWeight.Medium
-                ),
                 maxLines = 2,
-                overflow = TextOverflow.Ellipsis
+                style = Theme.typography.body.large.copy(
+                    color = Theme.colors.primaryFont,
+                    fontWeight = FontWeight.Normal
+                ),
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp)
             )
 
-            // Price
             BasicText(
                 text = price,
                 style = Theme.typography.body.large.copy(
                     color = Theme.colors.primaryFont,
                     fontWeight = FontWeight.Bold
-                )
+                ),
+                modifier = Modifier.padding(bottom = 6.dp)
             )
         }
     }

@@ -2,79 +2,90 @@ package com.troves.presintation.ui.home.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.ColorPainter
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.troves.designsystem.theme.SpTheme
 import com.troves.designsystem.theme.Theme
+import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.painterResource
+import troves.designsystem.generated.resources.Res
+import troves.designsystem.generated.resources.ic_eye
 
 @Composable
 fun CategoryItem(
     name: String,
-    imagePainter: Painter,
+    iconPainter: DrawableResource,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Box(
-        modifier = modifier
-            .clip(Theme.shapes.medium)
-            .clickable(onClick = onClick),
-    ) {
-        Image(
-            painter = imagePainter,
-            contentDescription = name,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxSize(),
-        )
+    val iconAndTextColor = Theme.colors.primaryFont
+    val shape = Theme.shapes.medium
 
-        Box(
+    Column(
+        modifier = modifier
+            .clip(shape)
+            .border(
+                width = 1.dp,
+                color = Theme.colors.onPrimary,
+                shape = shape
+            )
+            .background(Theme.colors.surfaceVariant)
+            .clickable(onClick = onClick)
+            .padding(vertical = 12.dp, horizontal = 8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
+        Column(
             modifier = Modifier
-                .fillMaxSize()
-                .background(
-                    Brush.verticalGradient(
-                        colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.65f)),
-                    ),
-                ),
-        )
+                .weight(1f)
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Image(
+                painter = painterResource(iconPainter),
+                contentDescription = name,
+                modifier = Modifier.size(36.dp),
+                colorFilter = ColorFilter.tint(iconAndTextColor)
+            )
+        }
 
         BasicText(
             text = name,
-            style = Theme.typography.body.large.copy(
-                color = Color.White,
-                fontWeight = FontWeight.Bold,
+            style = Theme.typography.body.small.copy(
+                color = Theme.colors.primaryFont,
+                fontWeight = FontWeight.Medium,
             ),
-            modifier = Modifier
-                .align(Alignment.BottomStart)
-                .padding(12.dp),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
         )
     }
 }
-
 @Preview
 @Composable
 private fun CategoryItemPreview() {
     SpTheme {
         CategoryItem(
             name = "Men",
-            imagePainter = ColorPainter(Color.DarkGray),
+            iconPainter = Res.drawable.ic_eye, // only for test
             onClick = {},
-            modifier = Modifier.width(120.dp).height(140.dp),
+            modifier = Modifier
+                .size(width = 85.dp, height = 100.dp)
         )
     }
 }

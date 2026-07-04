@@ -1,5 +1,6 @@
 package com.troves.designsystem.components.topbar
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -21,13 +22,11 @@ import androidx.compose.ui.unit.dp
 import com.troves.designsystem.theme.SpTheme
 import com.troves.designsystem.theme.Theme
 
-
 data class TopBarAction(
     val icon: Painter,
     val contentDescription: String? = null,
     val onClick: () -> Unit,
 )
-
 
 @Composable
 fun BaseTopAppBar(
@@ -42,6 +41,7 @@ fun BaseTopAppBar(
         color = Theme.colors.primaryFont,
         fontWeight = FontWeight.Bold,
     ),
+    border: BorderStroke? = null, // 1. Added optional border parameter
 ) {
     Row(
         modifier = modifier
@@ -54,6 +54,7 @@ fun BaseTopAppBar(
                 icon = leadingIcon,
                 contentDescription = "Navigate up",
                 onClick = onLeadingClick,
+                border = border,
             )
             Spacer(Modifier.width(leadingSpacing))
         }
@@ -70,6 +71,7 @@ fun BaseTopAppBar(
                     icon = action.icon,
                     contentDescription = action.contentDescription,
                     onClick = action.onClick,
+                    border = border,
                 )
             }
         }
@@ -84,6 +86,7 @@ private fun BaseTopAppBarPreview() {
             title = "Troves",
             leadingIcon = ColorPainter(Color.Black),
             onLeadingClick = {},
+            border = BorderStroke(1.dp, Color.LightGray),
             actions = listOf(
                 TopBarAction(ColorPainter(Color.Black), "Search") {},
                 TopBarAction(ColorPainter(Color.Black), "Cart") {},

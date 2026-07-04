@@ -29,6 +29,7 @@ import com.troves.presintation.ui.auth.RegisterScreen
 import com.troves.presintation.ui.cart.CartScreen
 import com.troves.presintation.ui.checkout.CheckoutScreen
 import com.troves.presintation.ui.fav.WishlistScreen
+import com.troves.presintation.ui.home.AllCategoriesScreen
 import com.troves.presintation.ui.home.HomeScreen
 import com.troves.presintation.ui.onboarding.OnboardingScreen
 import com.troves.presintation.ui.orders.OrdersScreen
@@ -130,6 +131,7 @@ fun AppNav() {
                 onNavigateToRegister = { backStack.add(AppRoute.Register) },
                 onNavigateToSearch = {backStack.add(AppRoute.Search)},
                 onNavigateToCart = { backStack.add(AppRoute.Cart) },
+                onNavigateToAllCategories = { backStack.add(AppRoute.AllCategories) },
                 onNavigateToAllBrands = { backStack.add(AppRoute.AllBrands) },
                 onNavigateToProducts = { sourceType, sourceId, sourceName ->
                     backStack.add(
@@ -174,6 +176,9 @@ fun AppNav() {
                 onLoggedIn = {
                 }
             )
+        }
+        entry<AppRoute.AllCategories> {
+            AllCategoriesScreen()
         }
         entry<AppRoute.Register> {
             RegisterScreen(

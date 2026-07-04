@@ -1,8 +1,11 @@
 package com.troves.designsystem.components.topbar
 
+import androidx.compose.foundation.BorderStroke // Added
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color       // Added
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp             // Added
 import com.troves.designsystem.theme.SpTheme
 import org.jetbrains.compose.resources.painterResource
 import troves.designsystem.generated.resources.Res
@@ -19,10 +22,12 @@ fun TrovesTopBar(
     onCartClick: () -> Unit,
     modifier: Modifier = Modifier,
     title: String = "Troves",
+    border: BorderStroke? = null,
 ) {
     BaseTopAppBar(
         modifier = modifier,
         title = title,
+        border = border,
         actions = listOf(
             TopBarAction(
                 icon = painterResource(Res.drawable.ic_search),
@@ -42,6 +47,10 @@ fun TrovesTopBar(
 @Composable
 private fun TrovesTopBarPreview() {
     SpTheme {
-        TrovesTopBar(onSearchClick = {}, onCartClick = {})
+        TrovesTopBar(
+            onSearchClick = {},
+            onCartClick = {},
+            border = BorderStroke(1.dp, Color.LightGray)
+        )
     }
 }

@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -22,13 +23,6 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
 import com.troves.designsystem.theme.Theme
 
-
-/**
- * Where the [iconPainter] sits relative to the caption inside a button. [Start] is the
- * default (matches Material `Button` with a leading icon — visual left in LTR, visual
- * right in RTL). [End] flips the source order so the icon is the row's last child —
- * visual right in LTR, visual left in RTL — used for "go forward" / "share" CTAs.
- */
 enum class ButtonIconPosition { Start, End }
 
 @Composable
@@ -55,10 +49,10 @@ internal fun BaseButton(
             )
             .border(
                 width = 1.dp,
-                shape = Theme.shapes.small,
+                shape = RoundedCornerShape(14.dp),
                 color = borderColor
             )
-            .clip(Theme.shapes.small)
+            .clip(RoundedCornerShape(14.dp))
             .background(backGroundColor)
             .clickable(
                 enabled = !isDisabled && !isLoading,

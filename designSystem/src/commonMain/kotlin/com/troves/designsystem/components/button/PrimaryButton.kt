@@ -65,17 +65,6 @@ private fun PreviewPrimaryButton() {
             PrimaryButton(
                 caption = "Button",
                 onClick = {},
-                modifier = Modifier.fillMaxWidth(0.5f)
-            )
-            PrimaryButton(
-                caption = "Button",
-                onClick = {},
-                modifier = Modifier.fillMaxWidth(0.5f),
-                isDisabled = true
-            )
-            PrimaryButton(
-                caption = "Button",
-                onClick = {},
                 modifier = Modifier.fillMaxWidth(0.5f),
                 isLoading = true
             )

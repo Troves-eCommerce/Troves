@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -41,29 +40,33 @@ fun BrandItem(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+        // دائرة الشعار المحاطة بحدود ناعمة مطابقة للصورة تماماً
         Box(
             modifier = Modifier
                 .size(72.dp)
                 .clip(CircleShape)
-                .background(Theme.colors.surfaceVariant)
-                .border(1.dp, Theme.colors.surfaceVariant, CircleShape),
+                .background(Theme.colors.surfaceVariant) // لون الخلفية الفاتح الكريمي
+                .border(1.dp, Theme.colors.onPrimary, CircleShape), // حدود دائرية رفيعة
             contentAlignment = Alignment.Center
         ) {
             Image(
                 painter = imagePainter,
                 contentDescription = name,
-                contentScale = ContentScale.FillBounds,
+                // استخدام ContentScale.Fit لكي يحافظ الشعار على أبعاده الهندسية الأصلية داخل الدائرة
+                contentScale = ContentScale.Fit,
                 modifier = Modifier
+                    .size(42.dp) // حجم الشعار الداخلي ليعطي مساحة تنفس (Padding) داخل الدائرة
             )
         }
 
         Spacer(modifier = Modifier.height(8.dp))
 
+        // اسم البراند أسفل الدائرة
         BasicText(
             text = name,
             style = Theme.typography.body.medium.copy(
                 color = Theme.colors.primaryFont,
-                fontWeight = FontWeight.SemiBold,
+                fontWeight = FontWeight.Normal, // خط ناعم وانسيابي مثل الصورة تماماً
                 textAlign = TextAlign.Center
             )
         )

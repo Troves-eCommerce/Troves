@@ -51,6 +51,7 @@ class HomeViewModel(
             }
             HomeIntent.SignUpPromptDismissed -> updateState { copy(showSignUpPrompt = false) }
             HomeIntent.SeeAllBrandsClicked -> sendEffect(HomeEffect.NavigateToAllBrands)
+            HomeIntent.ViewAllCategoriesClicked -> sendEffect(HomeEffect.NavigateToAllCategories)
             is HomeIntent.AdClicked -> {
                 if (intent.ad.buttonText == "Copy code") {
                     sendEffect(HomeEffect.ShowToast("Copied ${intent.ad.titleTop} to clipboard"))
