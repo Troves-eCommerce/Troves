@@ -6,7 +6,27 @@ query GetOrders(
 
         orders(first: 20, reverse: true) {
             nodes {
-                ...OrderCoreFields
+                id
+                orderNumber
+                processedAt
+                financialStatus
+                fulfillmentStatus
+                
+                currentTotalPrice {
+                    amount
+                    currencyCode
+                }
+
+                lineItems(first: 250) {
+                    nodes {
+                        quantity
+                        variant {
+                            image {
+                                url
+                            }
+                        }
+                    }
+                }
             }
         }
     }

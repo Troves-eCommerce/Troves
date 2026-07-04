@@ -32,6 +32,7 @@ import com.troves.data.source.remote.service.apollo.mapper.toDomainCart
 import com.troves.data.source.remote.service.apollo.mapper.toDomainAddress
 import com.troves.data.source.remote.service.apollo.mapper.toDomainLineItem
 import com.troves.data.source.remote.service.apollo.mapper.toDomainOrder
+import com.troves.data.source.remote.service.apollo.mapper.toDomainOrderSummary
 import com.troves.data.source.remote.service.apollo.mapper.toStorefrontMailingAddressInput
 import com.troves.data.source.remote.service.apollo.util.runMutation
 import com.troves.data.source.remote.service.apollo.util.runQuery
@@ -39,6 +40,7 @@ import com.troves.data.source.remote.service.apollo.util.toVariantGid
 import com.troves.domain.entity.Address
 import com.troves.domain.entity.Cart
 import com.troves.domain.entity.Order
+import com.troves.domain.entity.OrderSummary
 import com.troves.domain.utils.Result
 
 class ApolloStorefrontApiServiceImpl(
@@ -240,18 +242,18 @@ class ApolloStorefrontApiServiceImpl(
             Unit
         }
 
-    override suspend fun getOrders(customerAccessToken: String): Result<List<Order>> =
+    override suspend fun getOrders(customerAccessToken: String): Result<List<OrderSummary>> =
         apolloClient.runQuery(
             GetOrdersQuery(customerAccessToken = customerAccessToken)
         ) { data ->
-            data.customer?.orders?.nodes?.map { it.orderCoreFields.toDomainOrder() }.orEmpty()
+            data.customer?.orders?.nodes?.map { it.toDomainOrderSummary() }.orEmpty()
         }
 
-    override suspend fun getOrderById(orderId: String): Result<Order?> =
-        apolloClient.runQuery(GetOrderByIdQuery(id = orderId)) { data ->
-            val order = data.node?.onOrder ?: return@runQuery null
-            order.orderCoreFields.toDomainOrder(
-                lineItems = order.lineItems.nodes.map { it.orderLineItemFields.toDomainLineItem() }
+    override suspend fun getOrderById(customerAccessToken: String, orderId: String): Result<Order?> =
+        apolloClient.runQuery(GetOrderByIdQuery(customerAccessToken = customerAccessToken)) { data ->
+            val orderNode = data.customer?.orders?.nodes?.find { it.orderCoreFields.id == orderId } ?: return@runQuery null
+            orderNode.orderCoreFields.toDomainOrder(
+                lineItems = orderNode.lineItems.nodes.map { it.orderLineItemFields.toDomainLineItem() }
             )
         }
     // endregion

@@ -3,6 +3,7 @@ package com.troves.data.source.remote.service
 import com.troves.domain.entity.Address
 import com.troves.domain.entity.Cart
 import com.troves.domain.entity.Order
+import com.troves.domain.entity.OrderSummary
 import com.troves.domain.utils.Result
 
 data class ShopifyAccessToken(
@@ -48,7 +49,7 @@ interface StorefrontApiService {
 
     suspend fun updateCartDeliveryAddress(cartId: String, address: Address): Result<Unit>
 
-    suspend fun getOrders(customerAccessToken: String): Result<List<Order>>
-    suspend fun getOrderById(orderId: String): Result<Order?>
+    suspend fun getOrders(customerAccessToken: String): Result<List<OrderSummary>>
+    suspend fun getOrderById(customerAccessToken: String, orderId: String): Result<Order?>
     // endregion
 }

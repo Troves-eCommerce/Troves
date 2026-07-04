@@ -3,10 +3,12 @@ package com.troves.data.source.remote.service.apollo.mapper
 import com.troves.data.source.remote.service.apollo.graphql.storefront.fragment.AddressFields
 import com.troves.data.source.remote.service.apollo.graphql.storefront.fragment.OrderCoreFields
 import com.troves.data.source.remote.service.apollo.graphql.storefront.fragment.OrderLineItemFields
+import com.troves.data.source.remote.service.apollo.graphql.storefront.GetOrdersQuery
 import com.troves.domain.entity.Address
 import com.troves.domain.entity.CartMoney
 import com.troves.domain.entity.Order
 import com.troves.domain.entity.OrderLineItem
+import com.troves.domain.entity.OrderSummary
 
 internal fun AddressFields.toDomainAddress(isDefault: Boolean = false): Address = Address(
     id = id,
@@ -44,7 +46,29 @@ internal fun OrderCoreFields.toDomainOrder(
     ),
     shippingAddress = shippingAddress?.addressFields?.toDomainAddress(),
     statusUrl = statusUrl.toString(),
+    shipping = CartMoney(
+        amount = currentTotalShippingPrice.moneyFields.amount.toString(),
+        currencyCode = currentTotalShippingPrice.moneyFields.currencyCode.rawValue,
+    ),
+    tax = CartMoney(
+        amount = currentTotalTax.moneyFields.amount.toString(),
+        currencyCode = currentTotalTax.moneyFields.currencyCode.rawValue,
+    ),
     lineItems = lineItems,
+)
+
+internal fun GetOrdersQuery.Node.toDomainOrderSummary(): OrderSummary = OrderSummary(
+    id = id,
+    number = orderNumber,
+    processedAt = processedAt.toString(),
+    financialStatus = financialStatus?.rawValue,
+    fulfillmentStatus = fulfillmentStatus.rawValue,
+    total = CartMoney(
+        amount = currentTotalPrice.amount.toString(),
+        currencyCode = currentTotalPrice.currencyCode.rawValue,
+    ),
+    itemCount = lineItems.nodes.sumOf { it.quantity },
+    thumbnailUrl = lineItems.nodes.firstOrNull()?.variant?.image?.url?.toString(),
 )
 
 internal fun OrderLineItemFields.toDomainLineItem(): OrderLineItem = OrderLineItem(
