@@ -8,6 +8,7 @@ import com.troves.data.network.provideStorefrontApolloClient
 import com.troves.data.network.provideHttpClient
 import com.troves.data.network.provideLocationHttpClient
 import com.troves.data.repository.AddressRepositoryImpl
+import com.troves.data.repository.CurrencyRepositoryImpl
 import com.troves.data.repository.LocationRepositoryImpl
 import com.troves.data.repository.PaymentRepositoryImpl
 import com.troves.data.repository.TrovesRepositoryImpl
@@ -15,6 +16,7 @@ import com.troves.data.repository.WishlistRepositoryImpl
 import com.troves.data.repository.createAuthenticationRepository
 import com.troves.data.source.local.preferenceses.TrovesPreferences
 import com.troves.data.source.local.preferenceses.TrovesPreferencesImpl
+import com.troves.data.source.remote.CurrencyRemoteDataSource
 import com.troves.data.source.remote.RemoteDatasource
 import com.troves.data.source.remote.RemoteDatasourceImpl
 import com.troves.data.source.remote.location.LocationApiService
@@ -27,6 +29,7 @@ import com.troves.data.source.remote.service.apollo.ApolloStorefrontApiServiceIm
 import com.troves.data.source.remote.service.apollo.ApolloTrovesApiServiceImpl
 import com.troves.domain.repository.AddressRepository
 import com.troves.domain.repository.AuthenticationRepository
+import com.troves.domain.repository.CurrencyRepository
 import com.troves.domain.repository.LocationRepository
 import com.troves.domain.repository.PaymentRepository
 import com.troves.domain.repository.TrovesRepository
@@ -58,6 +61,7 @@ val dataModule = module {
 
     // ── Remote data source ────────────────────────────────────────────────────
     single<RemoteDatasource> { RemoteDatasourceImpl(get(), get()) }
+    single { CurrencyRemoteDataSource(get(named(LOCATION_CLIENT))) }
 
     // ── Local ─────────────────────────────────────────────────────────────────
     single<TrovesPreferences> { TrovesPreferencesImpl(get()) }
@@ -79,6 +83,7 @@ val dataModule = module {
     single<WishlistRepository>        { WishlistRepositoryImpl(get() , get()) }
     single<LocationRepository>        { LocationRepositoryImpl(get()) }
     single<AddressRepository>         { AddressRepositoryImpl(get(), get(), get()) }
+    single<CurrencyRepository>        { CurrencyRepositoryImpl(get(), get()) }
     single<FirebaseFirestore> { Firebase.firestore }
 }
 

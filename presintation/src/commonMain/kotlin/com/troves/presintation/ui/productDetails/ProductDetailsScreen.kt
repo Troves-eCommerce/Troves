@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.troves.designsystem.components.dialog.LoginRequiredDialog
 import com.troves.designsystem.theme.Theme
+import com.troves.designsystem.util.formatPrice
 import com.troves.presintation.core.mvi.ObserveEffect
 import com.troves.presintation.ui.productDetails.components.AddToCartButton
 import com.troves.presintation.ui.productDetails.components.CustomerReviewsSection
@@ -52,8 +53,6 @@ import com.troves.presintation.ui.productDetails.components.ProductDetailsShimme
 import com.troves.presintation.ui.productDetails.components.ProductImageCarousel
 import com.troves.presintation.ui.productDetails.components.SectionHeaderRow
 import com.troves.presintation.ui.productDetails.components.StarRatingRow
-import com.troves.presintation.utils.Currency
-import com.troves.presintation.utils.priceFormat
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -195,7 +194,7 @@ fun ProductDetailsScreenContent(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(
-                            text = uiState.displayPrice.priceFormat(Currency.USD),
+                            text = formatPrice(uiState.displayPrice),
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color(0xFF4A5D4E),

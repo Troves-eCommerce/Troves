@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import coil3.compose.rememberAsyncImagePainter
 import com.troves.designsystem.components.cards.MainCard
+import com.troves.designsystem.util.formatPrice
 import com.troves.domain.entity.Product
 import org.jetbrains.compose.resources.painterResource
 import troves.designsystem.generated.resources.Res
@@ -51,8 +52,8 @@ fun WishlistGrid(
 
             MainCard(
                 title = product.title,
-                price = "$${product.price}",
-                rating =4.5,
+                price = formatPrice(product.price),
+                rating = 4.5,
                 imagePainter = rememberAsyncImagePainter(
                     model = product.imageUrl,
                     placeholder = placeholder,

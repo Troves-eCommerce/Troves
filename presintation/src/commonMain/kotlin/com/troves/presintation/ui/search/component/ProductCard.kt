@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.troves.designsystem.theme.Theme
+import com.troves.designsystem.util.formatPrice
 import com.troves.domain.entity.Product
 import org.jetbrains.compose.resources.painterResource
 import troves.designsystem.generated.resources.Res
@@ -65,13 +66,9 @@ fun ProductCard(
 ) {
     val parsedPrice = product.price.toDoubleOrNull() ?: 0.0
     val discountPercent = if (product.id % 3 == 0L) 28 else 30
-    val compareAtPriceStr: String? = if (parsedPrice > 0.0) {
+    val compareAtPrice: Double? = if (parsedPrice > 0.0) {
         val factor = if (discountPercent == 28) 0.712 else 0.7065
-        val raw = parsedPrice / factor
-        val rounded = ((raw + 0.005) * 100).toLong() / 100.0
-        val parts = rounded.toString().split(".")
-        val decimals = if (parts.size > 1) parts[1].padEnd(2, '0').take(2) else "00"
-        "${parts[0]}.$decimals"
+        parsedPrice / factor
     } else null
 
     val showDiscountBadge = product.id % 3 == 0L
@@ -173,16 +170,16 @@ fun ProductCard(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 BasicText(
-                    text = "$${product.price}",
+                    text = formatPrice(parsedPrice),
                     style = Theme.typography.body.large.copy(
                         color = Theme.colors.primaryFont,
                         fontWeight = FontWeight.Bold,
                     ),
                 )
 
-                compareAtPriceStr?.let { compareAt ->
+                compareAtPrice?.let { compareAt ->
                     BasicText(
-                        text = "$$compareAt",
+                        text = formatPrice(compareAt),
                         style = Theme.typography.body.small.copy(
                             color = Theme.colors.hint,
                             textDecoration = TextDecoration.LineThrough,

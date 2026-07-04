@@ -46,6 +46,15 @@ class TrovesPreferencesImpl(
             .catchIOException()
             .map { it[AppPreferencesKeys.SHOPIFY_CART_ID] }
 
+    override val exchangeRatesJson: Flow<String?>
+        get() = dataStore.data
+            .catchIOException()
+            .map { it[AppPreferencesKeys.EXCHANGE_RATES_JSON] }
+
+    override suspend fun setExchangeRatesJson(json: String) {
+        dataStore.edit { it[AppPreferencesKeys.EXCHANGE_RATES_JSON] = json }
+    }
+
     override suspend fun setShopifyCustomerAccessToken(accessToken: String) {
         dataStore.edit {
             it[AppPreferencesKeys.SHOPIFY_ACCESS_TOKEN_KEY] = accessToken

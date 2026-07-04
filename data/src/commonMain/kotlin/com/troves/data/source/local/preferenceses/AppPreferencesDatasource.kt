@@ -19,7 +19,9 @@ interface TrovesPreferences {
 
     val cartId: Flow<String?>
 
+    val exchangeRatesJson: Flow<String?>
 
+    suspend fun setExchangeRatesJson(json: String)
 
     suspend fun setShopifyCustomerAccessToken(accessToken: String)
     suspend fun clearShopifyCustomerAccessToken()

@@ -36,6 +36,7 @@ import com.troves.designsystem.components.topbar.BaseTopAppBar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import com.troves.designsystem.theme.Theme
+import com.troves.designsystem.util.formatPrice
 import com.troves.presintation.core.mvi.ObserveEffect
 import com.troves.presintation.ui.cart.components.CartItemCard
 import org.jetbrains.compose.resources.painterResource
@@ -271,7 +272,7 @@ private fun CartBottomBar(
                 style = Theme.typography.body.small.copy(color = Theme.colors.secondaryFont),
             )
             BasicText(
-                text = totalFormatted,
+                text = formatPrice(totalFormatted),
                 style = Theme.typography.body.large.copy(
                     color = Theme.colors.primaryFont,
                     fontWeight = FontWeight.Bold,

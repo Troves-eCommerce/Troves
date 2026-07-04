@@ -39,6 +39,7 @@ import com.troves.designsystem.components.chip.AppChip
 import com.troves.designsystem.components.shimmer.shimmerEffect
 import com.troves.designsystem.components.topbar.IconBox
 import com.troves.designsystem.theme.Theme
+import com.troves.designsystem.util.formatPrice
 import com.troves.domain.entity.Product
 import com.troves.presintation.core.mvi.ObserveEffect
 import com.troves.presintation.ui.components.FilterBottomSheet
@@ -244,7 +245,7 @@ private fun ProductsGrid(
         items(products, key = { it.id }) { product ->
             MainCard(
                 title = product.title,
-                price = "$${product.price}",
+                price = formatPrice(product.price),
                 rating = product.rating.toDouble(),
                 imagePainter = rememberAsyncImagePainter(
                     model = product.imageUrl,

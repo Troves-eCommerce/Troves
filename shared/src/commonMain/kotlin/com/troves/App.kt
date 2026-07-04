@@ -10,6 +10,8 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
 import com.troves.designsystem.theme.SpTheme
+import com.troves.designsystem.util.CurrencyState
+import com.troves.designsystem.util.LocalCurrency
 
 import com.troves.presintation.navigation.AppNav
 import com.troves.presintation.ui.MainViewModel
@@ -31,11 +33,19 @@ fun App() {
 
         val layoutDirection = if (appState.language == "ar") LayoutDirection.Rtl else LayoutDirection.Ltr
 
+        val currencyState = CurrencyState(
+            selectedCurrency = appState.currency,
+            exchangeRate = appState.exchangeRate
+        )
+
         SpTheme(
             isDarkTheme = isDark,
             languageCode = appState.language
         ) {
-            CompositionLocalProvider(LocalLayoutDirection provides layoutDirection) {
+            CompositionLocalProvider(
+                LocalLayoutDirection provides layoutDirection,
+                LocalCurrency provides currencyState
+            ) {
                 val apiService = koinInject<TrovesApiService>()
                 LaunchedEffect(key1 = Unit) {
                     apiService.getAllProducts()

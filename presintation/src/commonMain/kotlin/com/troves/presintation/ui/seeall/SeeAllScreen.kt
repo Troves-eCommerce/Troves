@@ -22,6 +22,7 @@ import com.troves.designsystem.components.cards.MainCard
 import com.troves.designsystem.components.shimmer.shimmerEffect
 import com.troves.designsystem.components.topbar.IconBox
 import com.troves.designsystem.theme.Theme
+import com.troves.designsystem.util.formatPrice
 import com.troves.presintation.core.mvi.ObserveEffect
 import com.troves.presintation.navigation.AppRoute
 import com.troves.presintation.ui.allbrands.components.BrandCard
@@ -168,7 +169,7 @@ private fun SeeAllContent(
                 items(state.products) { product ->
                     MainCard(
                         title = product.title,
-                        price = "$${product.price}",
+                        price = formatPrice(product.price),
                         rating = product.rating.toDouble(),
                         imagePainter = rememberAsyncImagePainter(product.imageUrl),
                         ratingIconPainter = painterResource(DesignRes.drawable.ic_star),

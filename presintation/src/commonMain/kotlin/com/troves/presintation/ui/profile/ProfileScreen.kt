@@ -150,7 +150,11 @@ fun ProfileScreen(
                     }
 
                     ProfileSection(title = stringResource(Res.string.profile_market_preferences)) {
-                        LiveRatesRow()
+                        LiveRatesRow(
+                            exchangeRate = uiState.exchangeRate,
+                            selectedCurrency = uiState.selectedCurrency,
+                            onCurrencySelected = { viewModel.onIntent(ProfileIntent.CurrencySelected(it)) }
+                        )
                     }
 
                     ProfileSection(title = stringResource(Res.string.profile_application)) {

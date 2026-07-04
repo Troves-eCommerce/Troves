@@ -33,6 +33,7 @@ import com.troves.designsystem.components.stepper.HorizontalStepper
 import com.troves.designsystem.components.textfield.CustomTextField
 import com.troves.designsystem.theme.SpTheme
 import com.troves.designsystem.theme.Theme
+import com.troves.designsystem.util.formatPrice
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import troves.designsystem.generated.resources.Res
@@ -129,7 +130,7 @@ fun OrderSummaryStepContent(
                 name = item.name,
                 specs = item.specs,
                 quantity = item.quantity,
-                priceFormatted = item.priceFormatted,
+                priceFormatted = formatPrice(item.priceFormatted),
             )
             Box(
                 modifier = Modifier
@@ -141,11 +142,11 @@ fun OrderSummaryStepContent(
 
         OrderSummaryInfoCard(
             subtotalLabel = stringResource(StringRes.string.checkout_subtotal_items, itemCount),
-            subtotalFormatted = subtotalFormatted,
+            subtotalFormatted = formatPrice(subtotalFormatted),
             totalLabel = stringResource(StringRes.string.checkout_total),
-            totalFormatted = totalFormatted,
+            totalFormatted = formatPrice(totalFormatted),
             discountLabel = discountCode?.let { stringResource(StringRes.string.checkout_discount_code, it) },
-            discountValueFormatted = discountValueFormatted,
+            discountValueFormatted = discountValueFormatted?.let { formatPrice(it) },
         )
     }
 }

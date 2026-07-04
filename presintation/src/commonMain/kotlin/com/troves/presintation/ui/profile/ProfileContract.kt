@@ -1,5 +1,7 @@
 package com.troves.presintation.ui.profile
 
+import com.troves.domain.entity.ExchangeRate
+
 data class ProfileState(
     val isLoading: Boolean = false,
     val isGuest: Boolean = true,
@@ -8,6 +10,7 @@ data class ProfileState(
     val selectedLanguage: String = "en",
     val themeMode: String = "system",
     val selectedCurrency: String = "USD",
+    val exchangeRate: ExchangeRate? = null,
     val showLogoutDialog: Boolean = false,
     val errorMessage: String? = null
 )

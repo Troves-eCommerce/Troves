@@ -27,10 +27,14 @@ import troves.designsystem.generated.resources.Res
 import troves.designsystem.generated.resources.ic_live_rate
 
 
-@Composable
-fun LiveRatesRow() {
-    var selectedCurrency by remember { mutableStateOf("GBP") }
+import com.troves.domain.entity.ExchangeRate
 
+@Composable
+fun LiveRatesRow(
+    exchangeRate: ExchangeRate?,
+    selectedCurrency: String,
+    onCurrencySelected: (String) -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -67,7 +71,7 @@ fun LiveRatesRow() {
                         .weight(1f)
                         .clip(RoundedCornerShape(8.dp))
                         .background(if (isSelected) Theme.colors.surface else Color.Transparent)
-                        .clickable { selectedCurrency = code }
+                        .clickable { onCurrencySelected(code) }
                         .padding(vertical = 8.dp),
                     contentAlignment = Alignment.Center
                 ) {
@@ -80,6 +84,17 @@ fun LiveRatesRow() {
                         }
                     )
                 }
+            }
+        }
+
+        if (exchangeRate != null) {
+            val rate = exchangeRate.rates[selectedCurrency]
+            if (rate != null) {
+                Text(
+                    text = "1 ${exchangeRate.base} = $rate $selectedCurrency",
+                    style = Theme.typography.body.medium.copy(color = Theme.colors.secondaryFont),
+                    modifier = Modifier.padding(top = 8.dp)
+                )
             }
         }
     }

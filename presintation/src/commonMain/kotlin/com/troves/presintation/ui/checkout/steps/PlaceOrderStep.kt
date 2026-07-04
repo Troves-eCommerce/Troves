@@ -29,6 +29,7 @@ import com.troves.designsystem.components.cards.SectionCard
 import com.troves.designsystem.components.stepper.HorizontalStepper
 import com.troves.designsystem.theme.SpTheme
 import com.troves.designsystem.theme.Theme
+import com.troves.designsystem.util.formatPrice
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import troves.designsystem.generated.resources.Res
@@ -205,13 +206,13 @@ fun PlaceOrderStepContent(
 
             SummaryRow(
                 label = stringResource(StringRes.string.checkout_subtotal_items, itemCount),
-                value = subtotalFormatted,
+                value = formatPrice(subtotalFormatted),
                 color = Theme.colors.primaryFont,
             )
             if (discountCode != null && discountValueFormatted != null) {
                 SummaryRow(
                     label = stringResource(StringRes.string.checkout_discount_code, discountCode),
-                    value = discountValueFormatted,
+                    value = formatPrice(discountValueFormatted),
                     color = Theme.colors.success,
                 )
             }
@@ -220,7 +221,7 @@ fun PlaceOrderStepContent(
 
             SummaryRow(
                 label = stringResource(StringRes.string.checkout_total),
-                value = totalFormatted,
+                value = formatPrice(totalFormatted),
                 color = Theme.colors.primaryFont,
                 style = Theme.typography.body.large,
                 fontWeight = FontWeight.Bold,

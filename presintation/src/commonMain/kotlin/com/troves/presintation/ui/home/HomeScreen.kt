@@ -46,6 +46,7 @@ import com.troves.designsystem.components.shimmer.shimmerEffect
 import com.troves.designsystem.components.topbar.TrovesTopBar
 import com.troves.designsystem.theme.SpTheme
 import com.troves.designsystem.theme.Theme
+import com.troves.designsystem.util.formatPrice
 import com.troves.designsystem.util.autoMirror
 import com.troves.domain.entity.Ad
 import com.troves.domain.entity.Brand
@@ -316,7 +317,7 @@ private fun ProductRow(
         items(products, key = { it.id }) { product ->
             MainCard(
                 title = product.title,
-                price = "$${product.price}",
+                price = formatPrice(product.price),
                 rating = PLACEHOLDER_RATING,
                 imagePainter = rememberAsyncImagePainter(
                     model = product.imageUrl,
