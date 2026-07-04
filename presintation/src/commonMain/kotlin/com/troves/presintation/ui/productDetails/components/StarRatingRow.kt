@@ -30,18 +30,18 @@ fun StarRatingRow(
             painter = painterResource(Res.drawable.ic_star),
             contentDescription = null,
             tint = Theme.colors.warning,
-            modifier = Modifier.size(16.dp),
+            modifier = Modifier.size(14.dp),
         )
         Text(
             text = rating.toString(),
             style = Theme.typography.body.medium,
-            fontWeight = FontWeight.SemiBold,
-            color = Theme.colors.amber
+            fontWeight = FontWeight.Bold,
+            color = Theme.colors.primaryFont
         )
         Text(
             text = "($reviewCount reviews)",
             style = Theme.typography.body.small,
-            color = Theme.colors.amber,
+            color = Theme.colors.hint,
         )
     }
 }

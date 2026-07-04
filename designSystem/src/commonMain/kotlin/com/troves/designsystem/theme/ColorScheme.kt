@@ -27,7 +27,6 @@ data class ColorScheme(
     val disable: Color,
     val onDisable: Color,
 )
-
 val lightColors = ColorScheme(
     primary = Color(0xFFA9B6A1),         // Green primary color
     primaryVariant = Color(0xFF8E9B86),  // A slightly darker variant of the green for light mode

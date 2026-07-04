@@ -1,56 +1,84 @@
 package com.troves.presintation.ui.checkout
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil3.compose.rememberAsyncImagePainter
 import com.troves.designsystem.components.button.PrimaryButton
-import com.troves.designsystem.components.button.SecondaryButton
+import com.troves.designsystem.components.dialog.LoginRequiredDialog
 import com.troves.designsystem.components.topbar.BaseTopAppBar
 import com.troves.designsystem.theme.Theme
+import com.troves.domain.entity.Address
+import com.troves.domain.entity.AddressIcon
 import com.troves.presintation.core.mvi.ObserveEffect
+import com.troves.presintation.navigation.AppRoute
+import com.troves.presintation.ui.checkout.steps.AddressStepContent
+import com.troves.presintation.ui.checkout.steps.AddressUi
+import com.troves.presintation.ui.checkout.steps.OrderSummaryItemUi
+import com.troves.presintation.ui.checkout.steps.OrderSummaryStepContent
+import com.troves.presintation.ui.checkout.steps.PaymentOption
+import com.troves.presintation.ui.checkout.steps.PaymentStepContent
+import com.troves.presintation.ui.checkout.steps.PlaceOrderStepContent
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import troves.designsystem.generated.resources.Res
 import troves.designsystem.generated.resources.ic_arrow_back
+import troves.designsystem.generated.resources.ic_home
+import troves.designsystem.generated.resources.ic_location
+import troves.designsystem.generated.resources.ic_payment_method
+import troves.presintation.generated.resources.Res as StringRes
+import troves.presintation.generated.resources.checkout_continue
+import troves.presintation.generated.resources.checkout_login_required
+import troves.presintation.generated.resources.checkout_order_summary
+import troves.presintation.generated.resources.checkout_payment_cod_desc
+import troves.presintation.generated.resources.checkout_payment_cod_limit
+import troves.presintation.generated.resources.checkout_payment_cod_title
+import troves.presintation.generated.resources.checkout_payment_online_desc
+import troves.presintation.generated.resources.checkout_payment_online_title
+import troves.presintation.generated.resources.checkout_place_order
+import troves.presintation.generated.resources.checkout_title_confirm_order
+import troves.presintation.generated.resources.checkout_title_delivery_address
+import troves.presintation.generated.resources.checkout_title_payment
 
 @Composable
 fun CheckoutScreen(
     onNavigateBack: () -> Unit,
-    onOrderPlaced: () -> Unit,
+    onNavigateToCart: () -> Unit,
     onNavigateToLogin: () -> Unit,
-    onNavigateToAddresses: () -> Unit,
+    onNavigateToNewAddress: (String?) -> Unit,
+    onNavigateToOrderResult: (AppRoute.OrderResult) -> Unit,
     viewModel: CheckoutViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val snackBarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val checkout = rememberCheckout(viewModel)
+    var showLoginDialog by remember { mutableStateOf(false) }
 
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {
@@ -64,17 +92,24 @@ fun CheckoutScreen(
     ObserveEffect(viewModel.effect) { effect ->
         when (effect) {
             CheckoutEffect.NavigateBack -> onNavigateBack()
-            CheckoutEffect.NavigateToAddresses -> onNavigateToAddresses()
-            is CheckoutEffect.OrderPlaced -> {
-                scope.launch { snackBarHostState.showSnackbar("Order ${effect.orderName} placed") }
-                onOrderPlaced()
-            }
-            is CheckoutEffect.OpenCheckoutUrl -> {
-                checkout.presentCheckout(effect.url)
-            }
+            CheckoutEffect.NavigateToCart -> onNavigateToCart()
+            is CheckoutEffect.NavigateToNewAddress -> onNavigateToNewAddress(effect.addressId)
+            is CheckoutEffect.PresentCheckoutSheet -> checkout.presentCheckout(effect.url)
+            is CheckoutEffect.NavigateToOrderResult -> onNavigateToOrderResult(effect.args)
             is CheckoutEffect.ShowToast -> scope.launch { snackBarHostState.showSnackbar(effect.message) }
-            CheckoutEffect.ShowLoginRequiredDialog -> onNavigateToLogin()
+            CheckoutEffect.ShowLoginRequiredDialog -> showLoginDialog = true
         }
+    }
+
+    if (showLoginDialog) {
+        LoginRequiredDialog(
+            message = stringResource(StringRes.string.checkout_login_required),
+            onLoginClick = {
+                showLoginDialog = false
+                onNavigateToLogin()
+            },
+            onDismiss = { showLoginDialog = false },
+        )
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -83,59 +118,99 @@ fun CheckoutScreen(
             containerColor = Theme.colors.backGround,
             topBar = {
                 BaseTopAppBar(
-                    title = "Checkout",
+                    title = titleFor(state.step),
                     leadingIcon = painterResource(Res.drawable.ic_arrow_back),
                     onLeadingClick = { viewModel.onIntent(CheckoutIntent.OnBack) },
                     modifier = Modifier.background(Theme.colors.backGround),
                 )
             },
             bottomBar = {
-                CheckoutActions(
-                    state = state,
-                    onPlaceCod = { viewModel.onIntent(CheckoutIntent.OnPlaceCodOrder) },
-                    onPayByCard = { viewModel.onIntent(CheckoutIntent.OnPayByCard) },
+                CheckoutBottomBar(
+                    isPlaceOrderStep = state.step == CheckoutStep.PlaceOrder,
+                    enabled = state.canContinue,
+                    isBusy = state.isBusy,
+                    onClick = {
+                        viewModel.onIntent(
+                            if (state.step == CheckoutStep.PlaceOrder) CheckoutIntent.OnPlaceOrder
+                            else CheckoutIntent.OnNext
+                        )
+                    },
                 )
             },
         ) { innerPadding ->
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)
-                    .padding(Theme.spacing.medium),
-                verticalArrangement = Arrangement.spacedBy(Theme.spacing.medium),
-            ) {
-                SectionCard(title = "Shipping address") {
-                    if (state.hasAddress) {
-                        if (state.recipientName.isNotBlank()) {
-                            BasicText(
-                                text = state.recipientName,
-                                style = Theme.typography.body.large.copy(
-                                    color = Theme.colors.primaryFont,
-                                    fontWeight = FontWeight.SemiBold,
-                                ),
+            AnimatedContent(
+                targetState = state.step,
+                modifier = Modifier.fillMaxSize().padding(innerPadding),
+                label = "checkoutStep",
+            ) { step ->
+                when (step) {
+                    CheckoutStep.Review -> OrderSummaryStepContent(
+                        couponInput = state.couponInput,
+                        onCouponChange = { viewModel.onIntent(CheckoutIntent.OnCouponChange(it)) },
+                        onApplyCoupon = { viewModel.onIntent(CheckoutIntent.OnApplyCoupon) },
+                        items = state.lines.map {
+                            OrderSummaryItemUi(
+                                imagePainter = rememberAsyncImagePainter(it.imageUrl),
+                                name = it.title,
+                                specs = it.specs,
+                                quantity = it.quantity,
+                                priceFormatted = it.priceFormatted,
                             )
-                        }
-                        BasicText(
-                            text = state.addressLine,
-                            style = Theme.typography.body.medium.copy(color = Theme.colors.secondaryFont),
-                        )
-                    } else if (!state.isLoading) {
-                        BasicText(
-                            text = "Sorry you don't have an address to deliver to",
-                            style = Theme.typography.body.medium.copy(color = Theme.colors.error),
+                        },
+                        itemCount = state.itemCount,
+                        subtotalFormatted = state.subtotalFormatted,
+                        totalFormatted = state.totalFormatted,
+                        currentStep = state.stepNumber,
+                        totalSteps = state.totalSteps,
+                        discountCode = state.appliedDiscountCode,
+                        discountValueFormatted = state.discountValueFormatted,
+                        isApplyingCoupon = state.isApplyingCoupon,
+                    )
+
+                    CheckoutStep.Address -> AddressStepContent(
+                        addresses = state.addresses.map { it.toAddressUi() },
+                        selectedAddressId = state.selectedAddressId,
+                        onSelectAddress = { viewModel.onIntent(CheckoutIntent.OnSelectAddress(it)) },
+                        onEditAddress = { viewModel.onIntent(CheckoutIntent.OnEditAddress(it)) },
+                        onAddAddress = { viewModel.onIntent(CheckoutIntent.OnAddAddress) },
+                        currentStep = state.stepNumber,
+                        totalSteps = state.totalSteps,
+                    )
+
+                    CheckoutStep.Payment -> PaymentStepContent(
+                        selected = state.paymentMethod?.toOption(),
+                        onSelect = { viewModel.onIntent(CheckoutIntent.OnSelectPaymentMethod(it.toMethod())) },
+                        currentStep = state.stepNumber,
+                        totalSteps = state.totalSteps,
+                    )
+
+                    CheckoutStep.PlaceOrder -> {
+                        val address = state.selectedAddress
+                        val cod = state.paymentMethod != CheckoutPaymentMethod.Online
+                        PlaceOrderStepContent(
+                            currentStep = state.stepNumber,
+                            totalSteps = state.totalSteps,
+                            paymentIcon = painterResource(Res.drawable.ic_payment_method),
+                            paymentTitle = if (cod) stringResource(StringRes.string.checkout_payment_cod_title)
+                            else stringResource(StringRes.string.checkout_payment_online_title),
+                            paymentDescription = if (cod) stringResource(StringRes.string.checkout_payment_cod_desc)
+                            else stringResource(StringRes.string.checkout_payment_online_desc),
+                            paymentSubDescription = if (cod) stringResource(StringRes.string.checkout_payment_cod_limit) else null,
+                            addressTitle = address?.label ?: "Delivery address",
+                            recipientName = address?.recipientName.orEmpty(),
+                            addressLines = address?.lines.orEmpty(),
+                            phone = address?.phone.orEmpty(),
+                            itemImages = state.lines.map { rememberAsyncImagePainter(it.imageUrl) },
+                            itemCount = state.itemCount,
+                            subtotalFormatted = state.subtotalFormatted,
+                            totalFormatted = state.totalFormatted,
+                            discountCode = state.appliedDiscountCode,
+                            discountValueFormatted = state.discountValueFormatted,
+                            onChangePayment = { viewModel.onIntent(CheckoutIntent.OnChangePayment) },
+                            onChangeAddress = { viewModel.onIntent(CheckoutIntent.OnChangeAddress) },
+                            onEditCart = { viewModel.onIntent(CheckoutIntent.OnEditCart) },
                         )
                     }
-                    SecondaryButton(
-                        caption = if (state.hasAddress) "Change address" else "Add address",
-                        onClick = { viewModel.onIntent(CheckoutIntent.OnManageAddress) },
-                        modifier = Modifier.fillMaxWidth(),
-                    )
-                }
-
-                SectionCard(title = "Order summary") {
-                    SummaryRow("Items", state.itemCount.toString())
-                    SummaryRow("Subtotal", state.subtotalFormatted)
-                    SummaryRow("Total", state.totalFormatted, emphasize = true)
                 }
             }
         }
@@ -148,51 +223,11 @@ fun CheckoutScreen(
 }
 
 @Composable
-private fun SectionCard(title: String, content: @Composable () -> Unit) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(Theme.shapes.large)
-            .background(Theme.colors.surface)
-            .padding(Theme.spacing.medium),
-        verticalArrangement = Arrangement.spacedBy(Theme.spacing.small),
-    ) {
-        BasicText(
-            text = title,
-            style = Theme.typography.body.large.copy(
-                color = Theme.colors.primaryFont,
-                fontWeight = FontWeight.Bold,
-            ),
-        )
-        content()
-    }
-}
-
-@Composable
-private fun SummaryRow(label: String, value: String, emphasize: Boolean = false) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-    ) {
-        BasicText(
-            text = label,
-            style = Theme.typography.body.medium.copy(color = Theme.colors.secondaryFont),
-        )
-        BasicText(
-            text = value,
-            style = Theme.typography.body.medium.copy(
-                color = Theme.colors.primaryFont,
-                fontWeight = if (emphasize) FontWeight.Bold else FontWeight.Medium,
-            ),
-        )
-    }
-}
-
-@Composable
-private fun CheckoutActions(
-    state: CheckoutUiState,
-    onPlaceCod: () -> Unit,
-    onPayByCard: () -> Unit,
+private fun CheckoutBottomBar(
+    isPlaceOrderStep: Boolean,
+    enabled: Boolean,
+    isBusy: Boolean,
+    onClick: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -200,19 +235,55 @@ private fun CheckoutActions(
             .background(Theme.colors.backGround)
             .navigationBarsPadding()
             .padding(Theme.spacing.medium),
-        verticalArrangement = Arrangement.spacedBy(Theme.spacing.small),
     ) {
         PrimaryButton(
-            caption = if (state.isPlacingOrder) "Placing order..." else "Cash on Delivery",
-            onClick = onPlaceCod,
-            isDisabled = !state.canPlaceOrder,
-            modifier = Modifier.fillMaxWidth(),
-        )
-        PrimaryButton(
-            caption = "Pay by Card",
-            onClick = onPayByCard,
-            isDisabled = state.isPlacingOrder || state.isCartEmpty || !state.hasAddress,
+            caption = if (isPlaceOrderStep) stringResource(StringRes.string.checkout_place_order)
+            else stringResource(StringRes.string.checkout_continue),
+            onClick = onClick,
+            isDisabled = !enabled,
+            isLoading = isBusy,
             modifier = Modifier.fillMaxWidth(),
         )
     }
+}
+
+@Composable
+private fun titleFor(step: CheckoutStep): String = when (step) {
+    CheckoutStep.Review -> stringResource(StringRes.string.checkout_order_summary)
+    CheckoutStep.Address -> stringResource(StringRes.string.checkout_title_delivery_address)
+    CheckoutStep.Payment -> stringResource(StringRes.string.checkout_title_payment)
+    CheckoutStep.PlaceOrder -> stringResource(StringRes.string.checkout_title_confirm_order)
+}
+
+private fun CheckoutPaymentMethod.toOption(): PaymentOption = when (this) {
+    CheckoutPaymentMethod.CashOnDelivery -> PaymentOption.CashOnDelivery
+    CheckoutPaymentMethod.Online -> PaymentOption.Online
+}
+
+private fun PaymentOption.toMethod(): CheckoutPaymentMethod = when (this) {
+    PaymentOption.CashOnDelivery -> CheckoutPaymentMethod.CashOnDelivery
+    PaymentOption.Online -> CheckoutPaymentMethod.Online
+}
+
+@Composable
+private fun Address.toAddressUi(): AddressUi {
+    val iconRes = when (icon) {
+        AddressIcon.HOME -> Res.drawable.ic_home
+        AddressIcon.WORK -> Res.drawable.ic_location
+        AddressIcon.OTHER -> Res.drawable.ic_location
+    }
+    val title = label ?: when (icon) {
+        AddressIcon.HOME -> "Home"
+        AddressIcon.WORK -> "Work"
+        AddressIcon.OTHER -> "Address"
+    }
+    return AddressUi(
+        id = id,
+        title = title,
+        recipientName = recipientName,
+        addressLines = lines,
+        phone = phone.orEmpty(),
+        iconPainter = painterResource(iconRes),
+        isDefault = isDefault,
+    )
 }

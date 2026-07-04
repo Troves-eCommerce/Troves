@@ -189,18 +189,6 @@ private fun CartScreenContent(
                 )
             }
 
-            if (!state.isEmpty && !state.isLoading) {
-                item {
-                    DiscountCodeRow(
-                        value = state.discountInput,
-                        appliedCode = state.appliedDiscountCode,
-                        isApplying = state.isApplyingDiscount,
-                        onValueChange = { onIntent(CartIntent.OnDiscountInputChange(it)) },
-                        onApply = { onIntent(CartIntent.OnApplyDiscount) },
-                    )
-                }
-            }
-
             if (state.isEmpty) {
                 item {
                     Box(

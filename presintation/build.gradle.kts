@@ -104,6 +104,7 @@ kotlin {
 
                 //Shopify Checkout Android kit
                 implementation(libs.checkout.sheet.kit.android)
+                implementation(libs.compose.uiTooling)
             }
         }
 

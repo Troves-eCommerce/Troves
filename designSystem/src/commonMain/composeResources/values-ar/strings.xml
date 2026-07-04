@@ -132,4 +132,14 @@
     <string name="register_password_not_match">كلمتا المرور غير متطابقتين</string>
     <string name="login_google_failed">فشل تسجيل الدخول باستخدام جوجل</string>
     <string name="login_google_unsupported">تسجيل الدخول باستخدام جوجل غير مدعوم على هذه المنصة</string>
+
+    <!-- Home Screen -->
+    <string name="home_login_required">يرجى تسجيل الدخول للمتابعة</string>
+    <string name="home_categories_title">الفئات</string>
+    <string name="home_view_all">عرض الكل</string>
+    <string name="home_view_all_brands">عرض الكل</string>
+    <string name="home_just_for_you">مختار لك</string>
+    <string name="home_top_brands">أفضل العلامات التجارية</string>
+    <string name="home_trending_now">الأكثر رواجاً</string>
+    <string name="home_copy_code_button">نسخ الكود</string>
 </resources>

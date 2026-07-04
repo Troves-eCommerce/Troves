@@ -1,0 +1,91 @@
+<resources>
+    <!-- Common bottom sheet actions -->
+    <string name="apply">تطبيق</string>
+    <string name="reset">إعادة تعيين</string>
+    <string name="clear_all">مسح الكل</string>
+
+    <!-- Filter bottom sheet -->
+    <string name="filter_title">تصفية</string>
+    <string name="filter_categories">الفئات الرئيسية</string>
+    <string name="filter_sub_categories">الفئات الفرعية</string>
+    <string name="filter_brands">العلامات التجارية</string>
+    <string name="filter_empty_section">لا يوجد شيء لعرضه هنا بعد</string>
+
+    <!-- Products screen -->
+    <string name="products_title">المنتجات</string>
+    <string name="products_empty">لا توجد منتجات</string>
+    <string name="products_retry">إعادة المحاولة</string>
+
+    <!-- Sort bottom sheet -->
+    <string name="sort_title">ترتيب</string>
+    <string name="sort_default">افتراضي</string>
+    <string name="sort_price_low_to_high">السعر: من الأقل إلى الأعلى</string>
+    <string name="sort_price_high_to_low">السعر: من الأعلى إلى الأقل</string>
+    <string name="sort_best_seller">الأكثر مبيعًا</string>
+    <string name="sort_group_by_sub_category">تجميع حسب الفئة الفرعية</string>
+    <!-- Profile Screen -->
+    <string name="profile_title">الملف الشخصي</string>
+    <string name="profile_account_settings">إعدادات الحساب</string>
+    <string name="profile_manage_addresses">إدارة العناوين</string>
+    <string name="profile_order_history">سجل الطلبات</string>
+    <string name="profile_payment_methods">طرق الدفع</string>
+    <string name="profile_market_preferences">تفضيلات السوق</string>
+    <string name="profile_live_rates">الأسعار المباشرة</string>
+    <string name="profile_application">التطبيق</string>
+    <string name="profile_language">اللغة</string>
+    <string name="profile_dark_mode">الوضع الليلي</string>
+    <string name="profile_sign_out">تسجيل الخروج</string>
+    <string name="profile_sign_out_confirmation">هل أنت متأكد أنك تريد تسجيل الخروج؟</string>
+    <string name="profile_cancel">إلغاء</string>
+    <string name="profile_welcome">مرحباً بك في تروفز</string>
+    <string name="profile_guest_msg">سجل الدخول لتتبع طلباتك وإدارة حسابك</string>
+    <string name="profile_login_signup">تسجيل الدخول / إنشاء حساب</string>
+    <string name="profile_select_language">اختر اللغة</string>
+
+    <!-- Checkout · shared -->
+    <string name="checkout_continue">متابعة</string>
+    <string name="checkout_place_order">إتمام الطلب</string>
+    <string name="checkout_order_summary">ملخص الطلب</string>
+    <string name="checkout_title_delivery_address">عنوان التوصيل</string>
+    <string name="checkout_title_payment">الدفع</string>
+    <string name="checkout_title_confirm_order">تأكيد الطلب</string>
+    <string name="checkout_login_required">يجب تسجيل الدخول لإتمام الطلب.</string>
+
+    <!-- Checkout · Order Summary step -->
+    <string name="checkout_review_subtitle">راجع منتجاتك وطبّق كوبون الخصم.</string>
+    <string name="checkout_coupon_label">كوبون الخصم</string>
+    <string name="checkout_coupon_hint">أدخل كوبون الخصم</string>
+    <string name="checkout_subtotal_items">المجموع الفرعي (%1$d منتج)</string>
+    <string name="checkout_discount_code">خصم (%1$s)</string>
+    <string name="checkout_total">الإجمالي</string>
+
+    <!-- Checkout · Address step -->
+    <string name="checkout_address_step_title">اختر عنوان التوصيل</string>
+    <string name="checkout_address_step_subtitle">اختر المكان الذي تريد توصيل طلبك إليه.</string>
+    <string name="checkout_no_saved_addresses">لا يوجد لديك أي عناوين محفوظة بعد.</string>
+    <string name="checkout_address_default">افتراضي</string>
+    <string name="checkout_add_new_address">إضافة عنوان جديد</string>
+
+    <!-- Checkout · Payment step -->
+    <string name="checkout_payment_step_title">اختر طريقة الدفع</string>
+    <string name="checkout_payment_step_subtitle">اختر الطريقة التي تريد الدفع بها لطلبك.</string>
+    <string name="checkout_payment_cod_title">الدفع عند الاستلام</string>
+    <string name="checkout_payment_cod_desc">ادفع نقداً عند توصيل طلبك.</string>
+    <string name="checkout_payment_cod_label">عند الاستلام</string>
+    <string name="checkout_payment_cod_limit">الحد النقدي: حتى $500.00</string>
+    <string name="checkout_payment_online_title">الدفع الإلكتروني</string>
+    <string name="checkout_payment_online_desc">ادفع بأمان باستخدام بطاقتك.</string>
+    <string name="checkout_secure_title">دفع آمن</string>
+    <string name="checkout_secure_desc">معلومات الدفع الخاصة بك مشفّرة وآمنة لدينا.</string>
+
+    <!-- Checkout · Confirm &amp; Place Order step -->
+    <string name="checkout_confirm_step_title">التأكيد وإتمام الطلب</string>
+    <string name="checkout_confirm_step_subtitle">راجع تفاصيلك وأتمم طلبك.</string>
+    <string name="checkout_section_payment_method">طريقة الدفع</string>
+    <string name="checkout_change">تغيير</string>
+    <string name="checkout_section_shipping_address">عنوان الشحن</string>
+    <string name="checkout_edit_cart">تعديل السلة</string>
+    <string name="checkout_items_count">%1$d منتج</string>
+    <string name="checkout_order_confirmation_title">تأكيد الطلب</string>
+    <string name="checkout_order_confirmation_desc">ستتلقى رسالة تأكيد عبر البريد الإلكتروني بمجرد إتمام طلبك.</string>
+</resources>

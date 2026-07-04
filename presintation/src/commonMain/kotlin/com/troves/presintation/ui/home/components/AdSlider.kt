@@ -55,6 +55,7 @@ fun AdSlider(
 ) {
     val pagerState = rememberPagerState(pageCount = { ads.size })
 
+
     Box(
         modifier = modifier
             .fillMaxWidth()

@@ -32,6 +32,7 @@ import com.troves.presintation.ui.fav.WishlistScreen
 import com.troves.presintation.ui.home.AllCategoriesScreen
 import com.troves.presintation.ui.home.HomeScreen
 import com.troves.presintation.ui.onboarding.OnboardingScreen
+import com.troves.presintation.ui.orderresult.OrderResultScreen
 import com.troves.presintation.ui.orders.OrdersScreen
 import com.troves.presintation.ui.payment.PaymentMethodsScreen
 import com.troves.presintation.ui.productDetails.ProductDetailsScreen
@@ -69,6 +70,7 @@ private val navSavedStateConfiguration = SavedStateConfiguration {
             subclass(AppRoute.ManageAddresses::class, AppRoute.ManageAddresses.serializer())
             subclass(AppRoute.NewAddress::class, AppRoute.NewAddress.serializer())
             subclass(AppRoute.PaymentMethods::class, AppRoute.PaymentMethods.serializer())
+            subclass(AppRoute.OrderResult::class, AppRoute.OrderResult.serializer())
         }
     }
 }
@@ -235,9 +237,22 @@ fun AppNav() {
         entry<AppRoute.Checkout> {
             CheckoutScreen(
                 onNavigateBack = { backStack.removeLastOrNull() },
-                onOrderPlaced = { replaceWith(AppRoute.Home) },
+                onNavigateToCart = { backStack.removeLastOrNull() },
                 onNavigateToLogin = { backStack.add(AppRoute.Login) },
-                onNavigateToAddresses = { backStack.add(AppRoute.ManageAddresses) },
+                onNavigateToNewAddress = { addressId -> backStack.add(AppRoute.NewAddress(addressId)) },
+                onNavigateToOrderResult = { args ->
+                    Snapshot.withMutableSnapshot {
+                        backStack.clear()
+                        backStack.add(AppRoute.Home)
+                        backStack.add(args)
+                    }
+                },
+            )
+        }
+        entry<AppRoute.OrderResult> { key ->
+            OrderResultScreen(
+                args = key,
+                onGoHome = { replaceWith(AppRoute.Home) },
             )
         }
         entry<AppRoute.Orders> {

@@ -59,4 +59,23 @@ sealed interface AppRoute : NavKey {
 
     @Serializable
     data class NewAddress(val addressId: String? = null) : AppRoute
+
+
+    @Serializable
+    data class OrderResult(
+        val success: Boolean,
+        val orderName: String? = null,
+        val errorMessage: String? = null,
+        val paymentLabel: String = "",
+        val recipientName: String = "",
+        val addressLines: List<String> = emptyList(),
+        val phone: String = "",
+        val itemImageUrls: List<String> = emptyList(),
+        val itemCount: Int = 0,
+        val subtotalFormatted: String = "",
+        val discountLabel: String? = null,
+        val discountValueFormatted: String? = null,
+        val totalFormatted: String = "",
+        val statusUrl: String? = null,
+    ) : AppRoute
 }

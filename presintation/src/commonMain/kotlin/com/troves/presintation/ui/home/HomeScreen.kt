@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.platform.LocalClipboardManager
@@ -37,9 +36,6 @@ import kotlinx.coroutines.launch
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.BrushPainter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -61,16 +57,10 @@ import com.troves.presintation.ui.home.components.AdSlider
 import com.troves.presintation.ui.home.components.BrandItem
 import com.troves.presintation.ui.home.components.CategoryItem
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import troves.designsystem.generated.resources.Res
-import troves.designsystem.generated.resources.ads_placholder
-import troves.designsystem.generated.resources.ic_chevron_right
-import troves.designsystem.generated.resources.ic_heart
-import troves.designsystem.generated.resources.ic_star
-import troves.designsystem.generated.resources.img_onboarding1
-import troves.designsystem.generated.resources.ic_eye
-import troves.designsystem.generated.resources.ic_full_heart
-import troves.designsystem.generated.resources.ic_solid_heart
+import troves.designsystem.generated.resources.*
 
 @Composable
 fun HomeScreen(
@@ -87,6 +77,8 @@ fun HomeScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
+    val loginRequiredText = stringResource(Res.string.home_login_required)
+
     ObserveEffect(viewModel.effect) { effect ->
         when (effect) {
             is HomeEffect.NavigateToProduct -> onNavigateToProduct(effect.productId)
@@ -102,7 +94,7 @@ fun HomeScreen(
             is HomeEffect.ShowToast -> scope.launch { snackbarHostState.showSnackbar(effect.message) }
             is HomeEffect.NavigateToSearch -> onNavigateToSearch()
             is HomeEffect.ShowLoginRequiredDialog -> scope.launch {
-                snackbarHostState.showSnackbar("Please login to continue")
+                snackbarHostState.showSnackbar(loginRequiredText)
             }
         }
     }
@@ -169,6 +161,7 @@ private fun HomeContent(
     val adImage = painterResource(Res.drawable.ads_placholder)
 
     val clipboardManager = LocalClipboardManager.current
+    val copyCodeButtonText = stringResource(Res.string.home_copy_code_button)
 
     if (state.ads.isNotEmpty()) {
         AdSlider(
@@ -185,7 +178,7 @@ private fun HomeContent(
             onShopNowClick = { clicked ->
                 val ad = state.ads.firstOrNull { it.titleTop == clicked.titleTop }
                 if (ad != null) {
-                    if (ad.buttonText == "Copy code") {
+                    if (ad.buttonText == copyCodeButtonText) {
                         clipboardManager.setText(AnnotatedString(ad.titleTop))
                     }
                     onIntent(HomeIntent.AdClicked(ad))
@@ -196,9 +189,9 @@ private fun HomeContent(
 
     if (state.categories.isNotEmpty()) {
         SectionHeader(
-            title = "Categories",
+            title = stringResource(Res.string.home_categories_title),
             actionIcon = chevron,
-            actionLabel = "View all",
+            actionLabel = stringResource(Res.string.home_view_all),
             onAction = { onIntent(HomeIntent.ViewAllCategoriesClicked) }
         )
         LazyRow(
@@ -228,7 +221,7 @@ private fun HomeContent(
     }
 
     if (state.justForYou.isNotEmpty()) {
-        SectionHeader(title = "Just For You")
+        SectionHeader(title = stringResource(Res.string.home_just_for_you))
         ProductRow(
             products = state.justForYou,
             favoriteIds = state.favoriteProductIds,
@@ -240,8 +233,8 @@ private fun HomeContent(
     }
     if (state.brands.isNotEmpty()) {
         SectionHeader(
-            title = "Top Brands",
-            actionLabel = "View All",
+            title = stringResource(Res.string.home_top_brands),
+            actionLabel = stringResource(Res.string.home_view_all_brands),
             actionIcon = chevron,
             onAction = { onIntent(HomeIntent.SeeAllBrandsClicked) },
         )
@@ -264,7 +257,7 @@ private fun HomeContent(
     }
 
     if (state.trending.isNotEmpty()) {
-        SectionHeader(title = "Trending Now")
+        SectionHeader(title = stringResource(Res.string.home_trending_now))
         ProductRow(
             products = state.trending,
             favoriteIds = state.favoriteProductIds,

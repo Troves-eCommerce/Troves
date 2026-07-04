@@ -1,17 +1,14 @@
 package com.troves.presintation.ui.productDetails.components
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.troves.designsystem.theme.Theme
-
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -21,24 +18,41 @@ fun OptionSelectorRow(
     onValueSelected: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    FlowRow(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        values.forEach { value ->
-            FilterChip(
-                selected = value == selectedValue,
-                onClick = { onValueSelected(value) },
-                colors = FilterChipDefaults.filterChipColors(),
-                label = {
-                    Text(
-                        text = value,
-                        style = Theme.typography.body.medium,
-                        fontWeight = FontWeight.SemiBold,
-                    )
-                },
-            )
+
+    val colorMap = mapOf(
+        "Black" to Color(0xFF111111),
+        "Green" to Color(0xFFA3B19B),
+        "Beige" to Color(0xFFE6D5BC)
+    )
+
+    val isColorOption = values.any { colorMap.containsKey(it) }
+
+    if (isColorOption) {
+        Row(
+            modifier = modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            values.forEach { value ->
+                ColorCircle(
+                    color = colorMap[value] ?: Color.Gray,
+                    isSelected = value == selectedValue,
+                    onClick = { onValueSelected(value) }
+                )
+            }
+        }
+    } else {
+        Row(
+            modifier = modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            values.forEach { value ->
+                SizeChip(
+                    label = value,
+                    isSelected = value == selectedValue,
+                    onClick = { onValueSelected(value) },
+                    modifier = Modifier.weight(1f)
+                )
+            }
         }
     }
 }

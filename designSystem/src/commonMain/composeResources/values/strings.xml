@@ -133,4 +133,14 @@
     <string name="register_password_not_match">Passwords do not match</string>
     <string name="login_google_failed">Google Sign-In failed</string>
     <string name="login_google_unsupported">Google Sign-In is not supported on this platform</string>
+
+    <!-- Home Screen -->
+    <string name="home_login_required">Please login to continue</string>
+    <string name="home_categories_title">Categories</string>
+    <string name="home_view_all">View all</string>
+    <string name="home_view_all_brands">View All</string>
+    <string name="home_just_for_you">Just For You</string>
+    <string name="home_top_brands">Top Brands</string>
+    <string name="home_trending_now">Trending Now</string>
+    <string name="home_copy_code_button">Copy code</string>
 </resources>
