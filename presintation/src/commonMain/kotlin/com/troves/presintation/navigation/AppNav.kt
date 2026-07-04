@@ -4,9 +4,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.Snapshot
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -80,17 +83,7 @@ fun AppNav() {
     val mainViewModel: MainViewModel = koinViewModel()
     val uiState by mainViewModel.uiState.collectAsState()
 
-    if (uiState.isLoading) {
-        SplashScreen(onNavigateToOnboarding = {})
-        return
-    }
-
-
-
-    val initialRoute: NavKey = when (uiState.startDestination) {
-        StartDestination.Onboarding -> AppRoute.Onboarding
-        StartDestination.Home -> AppRoute.Home
-    }
+    val initialRoute: NavKey = AppRoute.Splash
 
     val backStack = rememberNavBackStack(navSavedStateConfiguration, initialRoute)
     val currentRoute = backStack.lastOrNull()
@@ -167,9 +160,27 @@ fun AppNav() {
             )
         }
         entry<AppRoute.Splash> {
+            var splashFinished by remember { mutableStateOf(false) }
+
+            val destination = remember(uiState.isLoading, uiState.startDestination) {
+                if (uiState.isLoading) null
+                else when (uiState.startDestination) {
+                    StartDestination.Onboarding -> AppRoute.Onboarding
+                    StartDestination.Home -> AppRoute.Home
+                }
+            }
+
             SplashScreen(
-                onNavigateToOnboarding = { replaceWith(AppRoute.Onboarding) }
+                onNavigateToOnboarding = {
+                    splashFinished = true
+                }
             )
+
+            LaunchedEffect(splashFinished, destination) {
+                if (splashFinished && destination != null) {
+                    replaceWith(destination)
+                }
+            }
         }
         entry<AppRoute.Login> {
             LoginScreen(
