@@ -23,6 +23,8 @@ sealed interface ProfileEffect {
 
     data object NavigateToEditProfile : ProfileEffect
 
+    data object NavigateToAiAssistant : ProfileEffect
+
     data class ShowError(
         val message: String
     ) : ProfileEffect
@@ -39,6 +41,8 @@ sealed interface ProfileIntent {
     data object OrderHistoryClicked : ProfileIntent
 
     data object PaymentMethodsClicked : ProfileIntent
+
+    data object AiAssistantClicked : ProfileIntent
 
     data object LanguageClicked : ProfileIntent
 

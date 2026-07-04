@@ -17,6 +17,7 @@ import com.troves.presintation.ui.profile.ProfileViewModel
 import com.troves.presintation.ui.orderdetails.OrderDetailsViewModel
 import com.troves.presintation.ui.address.ManageSavedAddressesViewModel
 import com.troves.presintation.ui.address.NewAddressViewModel
+import com.troves.presintation.ui.aichat.AiChatViewModel
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
@@ -38,4 +39,5 @@ val presentationModule = module {
     viewModelOf(::ProfileViewModel)
     viewModelOf(::ManageSavedAddressesViewModel)
     viewModelOf(::NewAddressViewModel)
+    viewModelOf(::AiChatViewModel)
 }
