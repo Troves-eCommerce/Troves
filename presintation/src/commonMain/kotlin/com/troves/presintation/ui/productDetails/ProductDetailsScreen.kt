@@ -11,15 +11,27 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.border
+import androidx.compose.ui.draw.clip
+import com.troves.designsystem.components.button.PrimaryButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -57,6 +69,7 @@ fun ProductDetailsScreen(
     productId: String,
     onNavigateBack: () -> Unit,
     onNavigateToLogin: () -> Unit,
+    onNavigateToCart: () -> Unit,
     viewModel: ProductDetailsViewModel = koinViewModel(),
 ) {
 
@@ -75,6 +88,7 @@ fun ProductDetailsScreen(
             is ProductDetailsEffect.ShowToast ->
                 scope.launch { snackBarHostState.showSnackbar(newEffect.message) }
             ProductDetailsEffect.ShowLoginRequiredDialog -> showLoginRequiredDialog = true
+            ProductDetailsEffect.NavigateToCart -> onNavigateToCart()
         }
     }
 
@@ -134,8 +148,98 @@ fun ProductDetailsScreen(
                 .navigationBarsPadding()
                 .padding(16.dp),
         )
+
+        AnimatedVisibility(
+            visible = uiState.showCartConfirmation,
+            enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
+            exit = slideOutVertically(targetOffsetY = { it }) + fadeOut(),
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .navigationBarsPadding()
+                .padding(16.dp)
+        ) {
+            CartConfirmationBar(
+                quantity = uiState.productCartQuantity,
+                onViewCartClick = { viewModel.onIntent(ProductDetailsIntent.OnViewCartClick) },
+                onDismissClick = { viewModel.onIntent(ProductDetailsIntent.OnDismissCartConfirmation) }
+            )
+        }
     }
 
+}
+
+@Composable
+fun CartConfirmationBar(
+    quantity: Int,
+    onViewCartClick: () -> Unit,
+    onDismissClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(Theme.shapes.medium)
+            .background(Theme.colors.surface)
+            .border(1.dp, Theme.colors.surfaceVariant, Theme.shapes.medium)
+            .padding(16.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text(
+                    text = "✓",
+                    style = Theme.typography.title,
+                    fontWeight = FontWeight.Bold,
+                    color = Theme.colors.primary
+                )
+                Column {
+                    Text(
+                        text = "Added to Cart",
+                        style = Theme.typography.title,
+                        fontWeight = FontWeight.Bold,
+                        color = Theme.colors.primaryFont
+                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = "Quantity in cart: ",
+                            style = Theme.typography.body.small,
+                            color = Theme.colors.secondaryFont
+                        )
+                        AnimatedContent(
+                            targetState = quantity,
+                            label = "quantityAnimation"
+                        ) { targetCount ->
+                            Text(
+                                text = targetCount.toString(),
+                                style = Theme.typography.body.medium,
+                                fontWeight = FontWeight.Bold,
+                                color = Theme.colors.primaryFont
+                            )
+                        }
+                    }
+                }
+            }
+            TextButton(onClick = onDismissClick) {
+                Text(
+                    text = "Continue",
+                    style = Theme.typography.body.medium,
+                    color = Theme.colors.secondaryFont
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        PrimaryButton(
+            caption = "View Cart",
+            onClick = onViewCartClick,
+            modifier = Modifier.fillMaxWidth()
+        )
+    }
 }
 
 @Composable

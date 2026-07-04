@@ -22,11 +22,14 @@ class ProductDetailsViewModel(
     private val addToCartUseCase: AddToCartUseCase,
     private val isProductFavorite: IsProductFavoritedUseCase,
     private val toggleFavoriteUseCase: ToggleFavoriteUseCase,
+    private val getCartStreamUseCase: com.troves.domain.usecase.cart.GetCartStreamUseCase,
 ) : ViewModel(),
     StateHolder<ProductDetailUiState> by DefaultStateHolder(ProductDetailUiState()),
     EffectPublisher<ProductDetailsEffect> by DefaultEffectPublisher() {
 
     private var favoriteJob: Job? = null
+    private var cartJob: Job? = null
+    private var bannerDismissJob: Job? = null
 
     fun onIntent(intent: ProductDetailsIntent) {
         when (intent) {
@@ -50,6 +53,14 @@ class ProductDetailsViewModel(
 
             is ProductDetailsIntent.Retry -> fetchProduct(intent.productId)
             is ProductDetailsIntent.Load -> fetchProduct(intent.productId)
+
+            ProductDetailsIntent.OnViewCartClick ->
+                sendEffect(ProductDetailsEffect.NavigateToCart)
+
+            ProductDetailsIntent.OnDismissCartConfirmation -> {
+                bannerDismissJob?.cancel()
+                updateState { copy(showCartConfirmation = false) }
+            }
         }
     }
 
@@ -80,6 +91,7 @@ class ProductDetailsViewModel(
                         )
                     }
                     observeFavoriteStatus(productId)
+                    observeCartStatus(productId)
                 }
             }
         }
@@ -90,6 +102,18 @@ class ProductDetailsViewModel(
         favoriteJob = viewModelScope.launch {
             isProductFavorite(productId).collect { favorited ->
                 updateState { copy(isFavorite = favorited) }
+            }
+        }
+    }
+
+    private fun observeCartStatus(productId: String) {
+        cartJob?.cancel()
+        cartJob = viewModelScope.launch {
+            getCartStreamUseCase().collect { cart ->
+                val quantity = cart?.lines
+                    ?.filter { it.productId.toString() == productId }
+                    ?.sumOf { it.quantity } ?: 0
+                updateState { copy(productCartQuantity = quantity) }
             }
         }
     }
@@ -137,8 +161,7 @@ class ProductDetailsViewModel(
             val result = addToCartUseCase(variantId = variant.variantId, quantity = 1)
             updateState { copy(isAddingToCart = false) }
             when (result) {
-                CartOperationResult.Success ->
-                    sendEffect(ProductDetailsEffect.ShowToast("Added to cart"))
+                CartOperationResult.Success -> showCartConfirmationBar()
 
                 CartOperationResult.RequiresLogin ->
                     sendEffect(ProductDetailsEffect.ShowLoginRequiredDialog)
@@ -146,6 +169,15 @@ class ProductDetailsViewModel(
                 is CartOperationResult.Error ->
                     sendEffect(ProductDetailsEffect.ShowToast("Couldn't add to cart"))
             }
+        }
+    }
+
+    private fun showCartConfirmationBar() {
+        updateState { copy(showCartConfirmation = true) }
+        bannerDismissJob?.cancel()
+        bannerDismissJob = viewModelScope.launch {
+            kotlinx.coroutines.delay(4000)
+            updateState { copy(showCartConfirmation = false) }
         }
     }
 }
