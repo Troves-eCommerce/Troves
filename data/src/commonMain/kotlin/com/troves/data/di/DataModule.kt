@@ -7,6 +7,13 @@ import com.troves.data.network.provideApolloClient
 import com.troves.data.network.provideStorefrontApolloClient
 import com.troves.data.network.provideHttpClient
 import com.troves.data.network.provideLocationHttpClient
+import com.troves.data.network.provideAiHttpClient
+import com.troves.data.repository.AiAssistantRepositoryImpl
+import com.troves.data.source.remote.ai.AiApiService
+import com.troves.data.source.remote.ai.AiApiServiceImpl
+import com.troves.data.source.remote.ai.AiDataSource
+import com.troves.data.source.remote.ai.AiDataSourceImpl
+import com.troves.domain.repository.AiAssistantRepository
 import com.troves.data.repository.AddressRepositoryImpl
 import com.troves.data.repository.LocationRepositoryImpl
 import com.troves.data.repository.PaymentRepositoryImpl
@@ -56,6 +63,11 @@ val dataModule = module {
     single<LocationApiService> { LocationApiServiceImpl(get(named(LOCATION_CLIENT))) }
     single<LocationDataSource> { LocationDataSourceImpl(get()) }
 
+    // AI assistant — dedicated client (no Shopify auth) → service (swap seam) → data source.
+    single<HttpClient>(named(AI_CLIENT)) { provideAiHttpClient() }
+    single<AiApiService> { AiApiServiceImpl(get(named(AI_CLIENT))) }
+    single<AiDataSource> { AiDataSourceImpl(get()) }
+
     // ── Remote data source ────────────────────────────────────────────────────
     single<RemoteDatasource> { RemoteDatasourceImpl(get(), get()) }
 
@@ -79,9 +91,11 @@ val dataModule = module {
     single<WishlistRepository>        { WishlistRepositoryImpl(get() , get()) }
     single<LocationRepository>        { LocationRepositoryImpl(get()) }
     single<AddressRepository>         { AddressRepositoryImpl(get(), get(), get()) }
+    single<AiAssistantRepository>     { AiAssistantRepositoryImpl(get(), get()) }
     single<FirebaseFirestore> { Firebase.firestore }
 }
 
 private const val ADMIN_CLIENT = "admin"
 private const val STORE_CLIENT = "store"
 private const val LOCATION_CLIENT = "location"
+private const val AI_CLIENT = "ai"
