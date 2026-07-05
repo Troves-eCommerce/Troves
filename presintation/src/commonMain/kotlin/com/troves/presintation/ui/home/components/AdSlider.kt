@@ -1,5 +1,7 @@
 package com.troves.presintation.ui.home.components
 
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -16,12 +18,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,6 +39,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.troves.designsystem.theme.Theme
 import com.troves.designsystem.util.autoMirror
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 
 data class AdData(
     val titleTop: String,
@@ -47,15 +54,42 @@ data class AdData(
     val getButtonTextColor: @Composable () -> Color = { Theme.colors.surface }
 )
 
+private const val VIRTUAL_PAGE_MULTIPLIER = 1000
+
 @Composable
 fun AdSlider(
     ads: List<AdData>,
     arrowIconPainter: Painter? = null,
     onShopNowClick: (AdData) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    autoScrollDurationMillis: Long = 4000L
 ) {
-    val pagerState = rememberPagerState(pageCount = { ads.size })
+    if (ads.isEmpty()) return
 
+    val realCount = ads.size
+    val virtualCount = realCount * VIRTUAL_PAGE_MULTIPLIER
+    val startPage = virtualCount / 2 - (virtualCount / 2) % realCount
+
+    val pagerState = rememberPagerState(
+        initialPage = startPage,
+        pageCount = { virtualCount }
+    )
+    LaunchedEffect(pagerState, ads.size) {
+        if (realCount <= 1) return@LaunchedEffect
+        while (isActive) {
+            delay(autoScrollDurationMillis)
+            if (!pagerState.isScrollInProgress) {
+                val nextPage = pagerState.currentPage + 1
+                pagerState.animateScrollToPage(
+                    page = nextPage,
+                    animationSpec = tween(
+                        durationMillis = 600,
+                        easing = androidx.compose.animation.core.FastOutSlowInEasing
+                    )
+                )
+            }
+        }
+    }
 
     Box(
         modifier = modifier
@@ -66,7 +100,8 @@ fun AdSlider(
             state = pagerState,
             modifier = Modifier.fillMaxSize()
         ) { page ->
-            val ad = ads[page]
+            val realIndex = page % realCount
+            val ad = ads[realIndex]
             AdBannerItem(
                 ad = ad,
                 arrowIconPainter = arrowIconPainter,
@@ -82,14 +117,25 @@ fun AdSlider(
             horizontalArrangement = Arrangement.spacedBy(6.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            repeat(ads.size) { index ->
-                val isSelected = pagerState.currentPage == index
+            val currentRealPage = pagerState.currentPage % realCount
+            repeat(realCount) { index ->
+                val isSelected = currentRealPage == index
+                val width by animateDpAsState(
+                    targetValue = if (isSelected) 20.dp else 6.dp,
+                    animationSpec = tween(durationMillis = 300),
+                    label = "dotWidth"
+                )
+                val height by animateDpAsState(
+                    targetValue = 6.dp,
+                    animationSpec = tween(durationMillis = 300),
+                    label = "dotHeight"
+                )
                 Box(
                     modifier = Modifier
-                        .size(if (isSelected) 8.dp else 6.dp)
+                        .size(width = width, height = height)
                         .clip(CircleShape)
                         .background(
-                            if (isSelected) Color.White else Color.White.copy(alpha = 0.6f)
+                            if (isSelected) Color.White else Color.White.copy(alpha = 0.5f)
                         )
                 )
             }
