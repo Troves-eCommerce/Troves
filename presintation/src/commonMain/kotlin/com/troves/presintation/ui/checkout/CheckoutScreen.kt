@@ -51,7 +51,6 @@ import troves.designsystem.generated.resources.ic_arrow_back
 import troves.designsystem.generated.resources.ic_home
 import troves.designsystem.generated.resources.ic_location
 import troves.designsystem.generated.resources.ic_payment_method
-import troves.presintation.generated.resources.Res as StringRes
 import troves.presintation.generated.resources.checkout_continue
 import troves.presintation.generated.resources.checkout_login_required
 import troves.presintation.generated.resources.checkout_order_summary
@@ -64,6 +63,7 @@ import troves.presintation.generated.resources.checkout_place_order
 import troves.presintation.generated.resources.checkout_title_confirm_order
 import troves.presintation.generated.resources.checkout_title_delivery_address
 import troves.presintation.generated.resources.checkout_title_payment
+import troves.presintation.generated.resources.Res as StringRes
 
 @Composable
 fun CheckoutScreen(
@@ -78,6 +78,8 @@ fun CheckoutScreen(
     val snackBarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val checkout = rememberCheckout(viewModel)
+    val paymobCheckout = rememberPaymobCheckout(viewModel)
+
     var showLoginDialog by remember { mutableStateOf(false) }
 
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -98,6 +100,11 @@ fun CheckoutScreen(
             is CheckoutEffect.NavigateToOrderResult -> onNavigateToOrderResult(effect.args)
             is CheckoutEffect.ShowToast -> scope.launch { snackBarHostState.showSnackbar(effect.message) }
             CheckoutEffect.ShowLoginRequiredDialog -> showLoginDialog = true
+            is CheckoutEffect.OpenPayMobSheet -> {
+                paymobCheckout.pay(
+                    clientSecret = effect.clientSecret,
+                )
+            }
         }
     }
 
@@ -258,11 +265,13 @@ private fun titleFor(step: CheckoutStep): String = when (step) {
 private fun CheckoutPaymentMethod.toOption(): PaymentOption = when (this) {
     CheckoutPaymentMethod.CashOnDelivery -> PaymentOption.CashOnDelivery
     CheckoutPaymentMethod.Online -> PaymentOption.Online
+    CheckoutPaymentMethod.PayMob -> PaymentOption.PayMob
 }
 
 private fun PaymentOption.toMethod(): CheckoutPaymentMethod = when (this) {
     PaymentOption.CashOnDelivery -> CheckoutPaymentMethod.CashOnDelivery
     PaymentOption.Online -> CheckoutPaymentMethod.Online
+    PaymentOption.PayMob -> CheckoutPaymentMethod.PayMob
 }
 
 @Composable
