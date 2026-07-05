@@ -6,7 +6,6 @@ import androidx.compose.ui.uikit.LocalUIViewController
 import platform.Foundation.NSURL
 import platform.SafariServices.SFSafariViewController
 import platform.UIKit.UIApplication
-import platform.UIKit.UIViewController
 
 @Composable
 actual fun rememberCheckout(checkoutEvent: CheckoutEvent): Checkout {
@@ -32,28 +31,32 @@ class iOSCheckout(): Checkout{
     }
 
 }
-
 interface PaymobNativeBridge{
-    fun startPayment(clientSecret: String,publicKey: String, listener: PaymobListener)
+    fun startPayment(clientSecret: String,publicKey: String,listener: PaymobListener)
 }
 
 object PaymobBridgeHolder{
     lateinit var bridge: PaymobNativeBridge
 }
 
+class iOSPaymobCheckout(
+    private val paymobListener: PaymobListener
+): PaymobCheckout{
+    override fun pay(clientSecret: String, publicKey: String){
+        val bridge = PaymobBridgeHolder.bridge
+        bridge.startPayment(
+            clientSecret = clientSecret,
+            publicKey = publicKey,
+            listener = paymobListener
+        )
+    }
+
+}
+
 @Composable
 actual fun rememberPaymobCheckout(paymobSdkListener: PaymobListener): PaymobCheckout {
     val viewController = LocalUIViewController.current
     return remember(viewController,paymobSdkListener) {
-        iOSPaymobCheckout(viewController,paymobSdkListener)
-    }
-}
-
-class iOSPaymobCheckout(
-    private val viewController: UIViewController,
-    private val paymobListener: PaymobListener
-):PaymobCheckout{
-    override fun pay(clientSecret: String, publicKey: String) {
-        PaymobBridgeHolder.bridge.startPayment(clientSecret, publicKey,paymobListener)
+        iOSPaymobCheckout(paymobSdkListener)
     }
 }
