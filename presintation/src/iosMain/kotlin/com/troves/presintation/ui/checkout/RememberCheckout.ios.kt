@@ -2,9 +2,11 @@ package com.troves.presintation.ui.checkout
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.uikit.LocalUIViewController
 import platform.Foundation.NSURL
 import platform.SafariServices.SFSafariViewController
 import platform.UIKit.UIApplication
+import platform.UIKit.UIViewController
 
 @Composable
 actual fun rememberCheckout(checkoutEvent: CheckoutEvent): Checkout {
@@ -31,7 +33,27 @@ class iOSCheckout(): Checkout{
 
 }
 
+interface PaymobNativeBridge{
+    fun startPayment(clientSecret: String,publicKey: String, listener: PaymobListener)
+}
+
+object PaymobBridgeHolder{
+    lateinit var bridge: PaymobNativeBridge
+}
+
 @Composable
 actual fun rememberPaymobCheckout(paymobSdkListener: PaymobListener): PaymobCheckout {
-    TODO("Not yet implemented")
+    val viewController = LocalUIViewController.current
+    return remember(viewController,paymobSdkListener) {
+        iOSPaymobCheckout(viewController,paymobSdkListener)
+    }
+}
+
+class iOSPaymobCheckout(
+    private val viewController: UIViewController,
+    private val paymobListener: PaymobListener
+):PaymobCheckout{
+    override fun pay(clientSecret: String, publicKey: String) {
+        PaymobBridgeHolder.bridge.startPayment(clientSecret, publicKey,paymobListener)
+    }
 }

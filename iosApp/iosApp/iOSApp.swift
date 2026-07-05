@@ -12,6 +12,7 @@ struct iOSApp: App {
         configureGoogleSignIn()
         
         KoinInitKt.doInitKoin()
+        PaymobBridgeHolder.shared.bridge = PaymobBridgeImpl()
     }
     
     var body: some Scene {
