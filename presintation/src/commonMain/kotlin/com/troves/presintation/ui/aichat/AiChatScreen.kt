@@ -34,10 +34,12 @@ import com.troves.presintation.ui.aichat.components.AiChatHeader
 import com.troves.presintation.ui.aichat.components.AssistantMessageBubble
 import com.troves.presintation.ui.aichat.components.ChatInputBar
 import com.troves.presintation.ui.aichat.components.ErrorRetryBar
+import com.troves.presintation.ui.aichat.components.PendingImagePreview
 import com.troves.presintation.ui.aichat.components.RateLimitBanner
 import com.troves.presintation.ui.aichat.components.TypingIndicator
 import com.troves.presintation.ui.aichat.components.UserMessageBubble
 import com.troves.presintation.ui.aichat.components.VoiceWaveAnimation
+import com.troves.presintation.ui.aichat.image.rememberImagePicker
 import com.troves.presintation.ui.aichat.voice.VoiceError
 import com.troves.presintation.ui.aichat.voice.rememberVoiceInputController
 import kotlinx.coroutines.flow.Flow
@@ -72,6 +74,7 @@ fun AiChatScreen(
     val snackBarState = remember { SnackbarHostState() }
     val listState = rememberLazyListState()
     val voiceController = rememberVoiceInputController()
+    val imagePicker = rememberImagePicker { bytes -> onIntent(AiChatIntent.ImagePicked(bytes)) }
 
     val suggestionHeader = stringResource(Res.string.ai_suggestion_header)
     val viewAllLabel = stringResource(Res.string.ai_view_all_recommendations)
@@ -111,6 +114,8 @@ fun AiChatScreen(
             }
 
             AiChatEffect.StopVoiceCapture -> voiceController.stop()
+
+            AiChatEffect.PickImage -> imagePicker.pick()
         }
     }
 
@@ -173,6 +178,13 @@ fun AiChatScreen(
                     }
                 }
 
+                state.pendingImage?.let { pending ->
+                    PendingImagePreview(
+                        image = pending,
+                        onRemove = { onIntent(AiChatIntent.RemovePendingImage) },
+                    )
+                }
+
                 ChatInputBar(
                     value = state.input,
                     hint = stringResource(Res.string.ai_input_hint),
@@ -181,7 +193,7 @@ fun AiChatScreen(
                     isListening = state.isListening,
                     onValueChange = { onIntent(AiChatIntent.InputChanged(it)) },
                     onSend = { onIntent(AiChatIntent.Send) },
-                    onAttachImage = { /* Phase E */ },
+                    onAttachImage = { onIntent(AiChatIntent.AttachImageClicked) },
                     onMic = { onIntent(AiChatIntent.MicClicked) },
                 )
 
@@ -208,7 +220,7 @@ fun AiChatScreen(
         ) {
             items(state.messages, key = { it.id }) { msg ->
                 when (msg.sender) {
-                    AiSender.USER -> UserMessageBubble(text = msg.text)
+                    AiSender.USER -> UserMessageBubble(text = msg.text, image = msg.image)
                     AiSender.ASSISTANT -> AssistantMessageBubble(
                         text = msg.text,
                         products = msg.products,
