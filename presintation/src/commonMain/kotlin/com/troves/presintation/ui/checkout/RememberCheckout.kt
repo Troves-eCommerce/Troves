@@ -27,3 +27,8 @@ import androidx.compose.runtime.remember
 expect fun rememberCheckout(
     checkoutEvent: CheckoutEvent
 ): Checkout
+
+@Composable
+expect fun rememberPaymobCheckout(
+    paymobSdkListener:PaymobListener
+): PaymobCheckout

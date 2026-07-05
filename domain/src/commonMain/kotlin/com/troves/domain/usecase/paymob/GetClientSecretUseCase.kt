@@ -1,4 +1,7 @@
-package com.troves.presintation.ui.checkout
+package com.troves.domain.usecase.paymob
+
+import com.troves.domain.repository.PaymentRepository
+import com.troves.domain.repository.TrovesRepository
 
 /**
  * Copyright (c) 2026 Wahid Ali Wahid Hussien.
@@ -18,23 +21,10 @@ package com.troves.presintation.ui.checkout
 
 /**
  * Author: Wahid Ali Wahid Hussien
- * Created: 03/07/2026
+ * Created: 05/07/2026
  */
-interface Checkout {
-    fun presentCheckout(checkoutUrl: String)
-}
-
-interface CheckoutEvent{
-    fun onCheckoutCanceled()
-
-    fun onCheckoutCompleted(checkoutCompletedEvent: CheckoutCompletedEvent)
-
-    fun onCheckoutFailed(error: Exception)
-}
-
-interface PaymobCheckout{
-    fun pay(
-        clientSecret: String,
-        publicKey: String = "egy_pk_test_VBZ7riZpmX3bTucv8DwMqfB9MJCDxVxE",
-        )
+class GetClientSecretUseCase(
+    private val repository: PaymentRepository
+) {
+     suspend operator fun invoke(cartId: String) = repository.getClientSecret(cartId = cartId)
 }

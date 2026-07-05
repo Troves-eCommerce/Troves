@@ -1,9 +1,4 @@
-package com.troves.data.source.remote.service
-
-import com.troves.data.source.remote.service.shopify_dtos.AccessTokenResponse
-import com.troves.data.source.remote.service.shopify_dtos.ShopifyUserResponse
-import com.troves.domain.entity.Customer
-import com.troves.domain.utils.Result
+package com.troves.domain.entity
 
 /**
  * Copyright (c) 2026 Wahid Ali Wahid Hussien.
@@ -23,10 +18,11 @@ import com.troves.domain.utils.Result
 
 /**
  * Author: Wahid Ali Wahid Hussien
- * Created: 03/07/2026
+ * Created: 05/07/2026
  */
-interface ShopifyApiService {
-
-    suspend fun createCustomer(customer: Customer): Result<ShopifyUserResponse>
-    suspend fun getCustomerAccessToken(email: String, password: String): Result<AccessTokenResponse>
-}
+data class ClientSecret(
+    val clientSecret: String?,
+    val draftOrderId: Long?,
+    val draftOrderName: String?,
+    val fxRateUsed: Double?
+)

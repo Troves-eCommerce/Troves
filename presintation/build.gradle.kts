@@ -100,6 +100,10 @@ kotlin {
             dependencies {
                 // Add Android-specific dependencies here.
 
+                // Paymob
+                api(libs.paymob.sdk)
+
+
                 //Shopify Checkout Android kit
                 implementation(libs.checkout.sheet.kit.android)
                 implementation(libs.compose.uiTooling)
@@ -115,4 +119,4 @@ kotlin {
         }
     }
 }
-
+
