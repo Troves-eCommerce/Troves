@@ -11,7 +11,15 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import coil3.compose.rememberAsyncImagePainter
+import com.troves.designsystem.components.cards.MainCard
+import com.troves.designsystem.util.formatPrice
 import com.troves.domain.entity.Product
+import org.jetbrains.compose.resources.painterResource
+import troves.designsystem.generated.resources.Res
+import troves.designsystem.generated.resources.ic_heart
+import troves.designsystem.generated.resources.ic_star
+import troves.designsystem.generated.resources.img_onboarding1
 
 /**
  * Copyright (c) 2026 Wahid Ali Wahid Hussien.
@@ -41,7 +49,12 @@ fun ProductGrid(
     contentPadding: PaddingValues = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 16.dp),
     onProductClick: (Product) -> Unit,
     onFavoriteClick: (Product) -> Unit = {},
+    favoriteProductIds: Set<String> = emptySet(),
 ) {
+    val placeholder = painterResource(Res.drawable.img_onboarding1)
+    val starIcon = painterResource(Res.drawable.ic_star)
+    val heartIcon = painterResource(Res.drawable.ic_heart)
+
     LazyVerticalGrid(
         modifier = modifier.fillMaxSize(),
         columns = GridCells.Fixed(2),
@@ -59,11 +72,21 @@ fun ProductGrid(
             items = products,
             key = { it.id }
         ) { product ->
-            ProductCard(
-                product = product,
+            MainCard(
+                title = product.title,
+                price = formatPrice(product.price),
+                rating = product.rating.toDouble(),
+                imagePainter = rememberAsyncImagePainter(
+                    model = product.imageUrl,
+                    placeholder = placeholder,
+                    error = placeholder,
+                ),
+                ratingIconPainter = starIcon,
+                favoriteIconPainter = heartIcon,
+                isFavorite = product.id.toString() in favoriteProductIds,
                 modifier = Modifier.fillMaxWidth(),
-                onClick = onProductClick,
-                onFavoriteClick = onFavoriteClick,
+                onClick = { onProductClick(product) },
+                onFavoriteClick = { onFavoriteClick(product) },
             )
         }
     }

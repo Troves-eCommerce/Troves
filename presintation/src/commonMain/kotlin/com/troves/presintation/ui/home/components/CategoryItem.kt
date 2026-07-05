@@ -34,7 +34,7 @@ fun CategoryItem(
     modifier: Modifier = Modifier,
 ) {
     val iconAndTextColor = Theme.colors.primaryFont
-    val shape = Theme.shapes.medium
+    val shape = Theme.shapes.large
 
     Column(
         modifier = modifier

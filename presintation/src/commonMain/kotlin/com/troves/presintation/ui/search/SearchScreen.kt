@@ -27,21 +27,28 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import com.troves.designsystem.components.cards.MainCard
 import com.troves.designsystem.components.shimmer.shimmerEffect
 import com.troves.designsystem.theme.Theme
+import com.troves.designsystem.util.formatPrice
 import com.troves.presintation.core.mvi.ObserveEffect
 import com.troves.presintation.ui.components.FilterBottomSheet
 import com.troves.presintation.ui.components.FilterOption
 import com.troves.presintation.ui.search.component.BrandRow
 import com.troves.presintation.ui.search.component.EmptySearchResult
 import com.troves.presintation.ui.search.component.ErrorView
-import com.troves.presintation.ui.search.component.ProductCard
 import com.troves.presintation.ui.search.component.ProductCardSkeleton
 import com.troves.presintation.ui.search.component.RecentSearchSection
 import com.troves.presintation.ui.search.component.SearchBarSection
 //import com.troves.presintation.ui.search.component.TrendingSection
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
+import coil3.compose.rememberAsyncImagePainter
+import org.jetbrains.compose.resources.painterResource
+import troves.designsystem.generated.resources.Res
+import troves.designsystem.generated.resources.ic_star
+import troves.designsystem.generated.resources.ic_heart
+import troves.designsystem.generated.resources.img_onboarding1
 
 /**
  * Copyright (c) 2026 Wahid Ali Wahid Hussien.
@@ -76,6 +83,9 @@ fun SearchScreen(
 ) {
     val coroutineScope = rememberCoroutineScope()
     val snackBarState = remember { SnackbarHostState() }
+    val placeholder = painterResource(Res.drawable.img_onboarding1)
+    val starIcon = painterResource(Res.drawable.ic_star)
+    val heartIcon = painterResource(Res.drawable.ic_heart)
 
     LaunchedEffect(Unit) {
         onIntent(SearchIntent.Load)
@@ -183,10 +193,19 @@ fun SearchScreen(
                             items = state.products,
                             key = { it.id }
                         ) { product ->
-                            ProductCard(
-                                product = product,
-                                onClick = { onIntent(SearchIntent.OnProductClick(it.id.toString())) },
-                                onFavoriteClick = { onIntent(SearchIntent.ToggleFavorite(it.id.toString())) },
+                            MainCard(
+                                title = product.title,
+                                price = formatPrice(product.price),
+                                rating = product.rating.toDouble(),
+                                imagePainter = rememberAsyncImagePainter(
+                                    model = product.imageUrl,
+                                    placeholder = placeholder,
+                                    error = placeholder,
+                                ),
+                                ratingIconPainter = starIcon,
+                                favoriteIconPainter = heartIcon,
+                                onClick = { onIntent(SearchIntent.OnProductClick(product.id.toString())) },
+                                onFavoriteClick = { onIntent(SearchIntent.ToggleFavorite(product.id.toString())) },
                                 isFavorite = product.id.toString() in state.favoriteProductIds,
                                 modifier = Modifier.fillMaxWidth()
                             )

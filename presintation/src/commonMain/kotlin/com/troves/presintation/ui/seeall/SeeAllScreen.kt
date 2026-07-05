@@ -176,7 +176,7 @@ private fun SeeAllContent(
         }
         AppRoute.SeeAllType.BRANDS -> {
             LazyVerticalGrid(
-                columns = GridCells.Fixed(3), // شبكة من 3 أعمدة تطابق الكاتيجوري تماماً
+                columns = GridCells.Fixed(3),
                 contentPadding = PaddingValues(Theme.spacing.medium),
                 horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small),
                 verticalArrangement = Arrangement.spacedBy(Theme.spacing.medium)
@@ -238,7 +238,8 @@ private fun SeeAllContent(
                         ratingIconPainter = starIcon,
                         favoriteIconPainter = heartIcon,
                         onClick = { onIntent(SeeAllIntent.ProductClicked(product)) },
-                        onFavoriteClick = {},
+                        onFavoriteClick = { onIntent(SeeAllIntent.ToggleFavorite(product)) },
+                        isFavorite = product.id.toString() in state.favoriteProductIds,
                         modifier = Modifier
                             .fillMaxWidth()
                             .animateItem()

@@ -121,7 +121,9 @@ fun ProductsScreen(
 
                 else -> ProductsGrid(
                     products = state.displayedProducts,
+                    favoriteProductIds = state.favoriteProductIds,
                     onProductClick = { viewModel.onIntent(ProductsIntent.ProductClicked(it)) },
+                    onFavoriteClick = { viewModel.onIntent(ProductsIntent.ToggleFavorite(it)) },
                 )
             }
         }
@@ -212,7 +214,9 @@ private fun ProductsToolbar(
 @Composable
 private fun ProductsGrid(
     products: List<Product>,
+    favoriteProductIds: Set<String>,
     onProductClick: (Product) -> Unit,
+    onFavoriteClick: (Product) -> Unit,
 ) {
     if (products.isEmpty()) {
         Box(
@@ -255,7 +259,8 @@ private fun ProductsGrid(
                 ratingIconPainter = starIcon,
                 favoriteIconPainter = heartIcon,
                 onClick = { onProductClick(product) },
-                onFavoriteClick = { onProductClick(product) },
+                onFavoriteClick = { onFavoriteClick(product) },
+                isFavorite = product.id.toString() in favoriteProductIds,
                 containerColor = Theme.colors.backGround,
             )
         }

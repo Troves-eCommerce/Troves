@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
@@ -28,6 +27,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.troves.designsystem.components.button.FavoriteButton
 import com.troves.designsystem.theme.Theme
 
 @Composable
@@ -37,23 +37,22 @@ fun MainCard(
     rating: Double,
     imagePainter: Painter,
     ratingIconPainter: Painter,
-    favoriteIconPainter: Painter,
+    favoriteIconPainter: Painter, // Keep for backward compatibility if needed, but we'll use FavoriteButton
     onClick: () -> Unit,
     onFavoriteClick: () -> Unit,
     modifier: Modifier = Modifier,
     isFavorite: Boolean = false,
     containerColor: Color = Color.Transparent,
 ) {
-    val cardShape = Theme.shapes.medium
+    val cardShape = Theme.shapes.large // Updated to large to match main card requirement
 
     Column(
         modifier = modifier
             .clip(cardShape)
             .background(containerColor)
-            .border(1.dp, Theme.colors.onPrimary, cardShape)
+            .border(1.dp, Theme.colors.onPrimary.copy(alpha = 0.5f), cardShape)
             .clickable(onClick = onClick)
     ) {
-        // 1. قسم الصورة ثابت النسبة
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -66,23 +65,14 @@ fun MainCard(
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop
             )
-            Box(
+
+            FavoriteButton(
+                isFavorite = isFavorite,
+                onClick = onFavoriteClick,
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(12.dp)
-                    .size(36.dp)
-                    .shadow(elevation = 2.dp, shape = CircleShape)
-                    .background(Color.White, CircleShape)
-                    .clickable(onClick = onFavoriteClick),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    painter = favoriteIconPainter,
-                    contentDescription = if (isFavorite) "Remove from favorites" else "Add to favorites",
-                    tint = if (isFavorite) Color(0xFFE54848) else Theme.colors.primaryFont,
-                    modifier = Modifier.size(20.dp)
-                )
-            }
+            )
         }
 
         Column(

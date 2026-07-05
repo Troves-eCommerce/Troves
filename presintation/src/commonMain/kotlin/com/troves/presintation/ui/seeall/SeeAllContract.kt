@@ -12,6 +12,7 @@ data class SeeAllUiState(
     val brands: List<Brand> = emptyList(),
     val categories: List<Category> = emptyList(),
     val products: List<Product> = emptyList(),
+    val favoriteProductIds: Set<String> = emptySet(),
     val errorMessage: String? = null,
 ) {
     val hasError: Boolean get() = errorMessage != null
@@ -31,4 +32,5 @@ sealed interface SeeAllIntent {
     data class BrandClicked(val brand: Brand) : SeeAllIntent
     data class CategoryClicked(val category: Category) : SeeAllIntent
     data class ProductClicked(val product: Product) : SeeAllIntent
+    data class ToggleFavorite(val product: Product) : SeeAllIntent
 }

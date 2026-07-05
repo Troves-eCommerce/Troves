@@ -25,12 +25,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import com.troves.designsystem.components.button.FavoriteButton
 import com.troves.designsystem.theme.Theme
 import com.troves.designsystem.util.autoMirror
 import org.jetbrains.compose.resources.painterResource
 import troves.designsystem.generated.resources.Res
 import troves.designsystem.generated.resources.ic_arrow_back
-import troves.designsystem.generated.resources.ic_heart
 import troves.designsystem.generated.resources.img_onboarding1
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -86,23 +86,16 @@ fun ProductImageCarousel(
             )
         }
 
-        IconButton(
+        FavoriteButton(
+            isFavorite = isFavorite,
             onClick = onFavoriteClick,
+            size = 46.dp,
+            iconSize = 24.dp,
             modifier = Modifier
                 .align(Alignment.TopEnd)
                 .statusBarsPadding()
                 .padding(end = 16.dp, top = 16.dp)
-                .size(46.dp)
-                .clip(RoundedCornerShape(12.dp))
-                .background(Color.White),
-        ) {
-            Icon(
-                painter = painterResource(Res.drawable.ic_heart),
-                contentDescription = if (isFavorite) "Remove from favourites" else "Add to favourites",
-                tint = if (isFavorite) Theme.colors.amber else Color.Black.copy(alpha = 0.8f),
-                modifier = Modifier.size(20.dp),
-            )
-        }
+        )
 
         Row(
             modifier = Modifier

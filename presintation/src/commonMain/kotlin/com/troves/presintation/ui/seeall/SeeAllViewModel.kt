@@ -6,12 +6,16 @@ import com.troves.domain.usecase.home.GetBrandsUseCase
 import com.troves.domain.usecase.home.GetCategoriesUseCase
 import com.troves.domain.usecase.home.GetJustForYouProductsUseCase
 import com.troves.domain.usecase.home.GetTrendingProductsUseCase
+import com.troves.domain.usecase.wishlist.GetWishlistUseCase
+import com.troves.domain.usecase.wishlist.ToggleFavoriteUseCase
 import com.troves.domain.utils.getOrElse
 import com.troves.presintation.core.mvi.DefaultEffectPublisher
 import com.troves.presintation.core.mvi.DefaultStateHolder
 import com.troves.presintation.core.mvi.EffectPublisher
 import com.troves.presintation.core.mvi.StateHolder
 import com.troves.presintation.navigation.AppRoute
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 class SeeAllViewModel(
@@ -19,9 +23,19 @@ class SeeAllViewModel(
     private val getCategories: GetCategoriesUseCase,
     private val getJustForYou: GetJustForYouProductsUseCase,
     private val getTrending: GetTrendingProductsUseCase,
+    private val getWishlistUseCase: GetWishlistUseCase,
+    private val toggleFavoriteUseCase: ToggleFavoriteUseCase,
 ) : ViewModel(),
     StateHolder<SeeAllUiState> by DefaultStateHolder(SeeAllUiState()),
     EffectPublisher<SeeAllEffect> by DefaultEffectPublisher() {
+
+    init {
+        getWishlistUseCase()
+            .onEach { wishlist ->
+                updateState { copy(favoriteProductIds = wishlist.map { it.id.toString() }.toSet()) }
+            }
+            .launchIn(viewModelScope)
+    }
 
     fun onIntent(intent: SeeAllIntent) {
         when (intent) {
@@ -48,6 +62,24 @@ class SeeAllViewModel(
             is SeeAllIntent.ProductClicked -> sendEffect(
                 SeeAllEffect.NavigateToProductDetails(intent.product.id.toString())
             )
+            is SeeAllIntent.ToggleFavorite -> {
+                viewModelScope.launch {
+                    when (val result = toggleFavoriteUseCase(intent.product)) {
+                        is com.troves.domain.usecase.wishlist.ToggleFavoriteResult.RequiresLogin -> {
+                            sendEffect(SeeAllEffect.ShowToast("Please login to add to wishlist"))
+                        }
+                        is com.troves.domain.usecase.wishlist.ToggleFavoriteResult.Error -> {
+                            sendEffect(SeeAllEffect.ShowToast(result.throwable.message ?: "An error occurred"))
+                        }
+                        com.troves.domain.usecase.wishlist.ToggleFavoriteResult.Added -> {
+                            sendEffect(SeeAllEffect.ShowToast("Added to wishlist"))
+                        }
+                        com.troves.domain.usecase.wishlist.ToggleFavoriteResult.Removed -> {
+                            sendEffect(SeeAllEffect.ShowToast("Removed from wishlist"))
+                        }
+                    }
+                }
+            }
         }
     }
 

@@ -32,12 +32,12 @@ fun BrandCard(
 ) {
     Column(
         modifier = modifier
-            .clip(Theme.shapes.medium)
-            .background(Theme.colors.surface) // خلفية الكارد البيضاء النظيفة
+            .clip(Theme.shapes.large)
+            .background(Theme.colors.surface)
             .border(
                 width = 1.dp,
-                color = Theme.colors.primaryFont.copy(alpha = 0.05f), // إطار خفيف جداً
-                shape = Theme.shapes.medium
+                color = Theme.colors.primaryFont.copy(alpha = 0.05f),
+                shape = Theme.shapes.large
             )
             .clickable(onClick = onClick)
             .padding(Theme.spacing.small),
@@ -49,8 +49,8 @@ fun BrandCard(
             painter = imagePainter,
             contentDescription = name,
             contentScale = ContentScale.Fit,
-            colorFilter = ColorFilter.tint(Theme.colors.primaryFont), // تلوين الأيقونة بلون خط التطبيق الأساسي لتوحيد الشكل
-            modifier = Modifier.size(36.dp) // حجم متناسق داخل الكارد المربع
+            colorFilter = ColorFilter.tint(Theme.colors.primaryFont),
+            modifier = Modifier.size(36.dp)
         )
 
         Spacer(modifier = Modifier.height(Theme.spacing.small))
