@@ -100,4 +100,9 @@
     <string name="ai_retry">إعادة المحاولة</string>
     <string name="ai_rate_limited">لقد وصلت إلى حد المحادثة. حاول مرة أخرى خلال %1$s.</string>
     <string name="ai_profile_entry">Troves AI</string>
+    <string name="ai_voice_unavailable">الإدخال الصوتي غير متاح على هذا الجهاز.</string>
+    <string name="ai_voice_permission_denied">يلزم إذن الميكروفون للإدخال الصوتي. فعّله من الإعدادات.</string>
+    <string name="ai_voice_no_speech">لم أسمع ذلك جيداً. حاول مرة أخرى.</string>
+    <string name="ai_voice_error">فشل الإدخال الصوتي. حاول مرة أخرى.</string>
+    <string name="ai_voice_listening">يتم الاستماع… اضغط الميكروفون للإيقاف</string>
 </resources>
