@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -224,17 +225,22 @@ private fun AdBannerItem(
 
             Row(
                 modifier = Modifier
+                    .height(48.dp)
+                    .defaultMinSize(minWidth = 130.dp)
                     .clip(RoundedCornerShape(14.dp))
                     .background(ad.getButtonBackgroundColor())
-                    .padding(horizontal = 20.dp, vertical = 12.dp),
-                verticalAlignment = Alignment.CenterVertically
+                    .padding(horizontal = 20.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
             ) {
                 BasicText(
                     text = ad.buttonText,
                     style = Theme.typography.body.medium.copy(
                         color = ad.getButtonTextColor(),
                         fontWeight = FontWeight.SemiBold
-                    )
+                    ),
+
+                    maxLines = 1
                 )
                 if (arrowIconPainter != null) {
                     Spacer(modifier = Modifier.width(6.dp))

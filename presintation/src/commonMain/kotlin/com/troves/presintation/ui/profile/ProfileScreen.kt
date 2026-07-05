@@ -150,13 +150,13 @@ fun ProfileScreen(
                                 onClick = { viewModel.onIntent(ProfileIntent.OrderHistoryClicked) },
                                 iconColor = Theme.colors.primary
                             )
-                            HorizontalDivider(color = Theme.colors.backGround, thickness = 1.dp)
+                           /* HorizontalDivider(color = Theme.colors.backGround, thickness = 1.dp)
                             ProfileRowItem(
                                 icon = Res.drawable.ic_payment_method,
                                 title = stringResource(Res.string.profile_payment_methods),
                                 onClick = { viewModel.onIntent(ProfileIntent.PaymentMethodsClicked) },
                                 iconColor = Theme.colors.primary
-                            )
+                            )*/
                         }
                     }
 
