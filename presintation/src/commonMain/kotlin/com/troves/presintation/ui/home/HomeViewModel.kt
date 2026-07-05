@@ -67,8 +67,20 @@ class HomeViewModel(
                 ),
             )
             is HomeIntent.AdClicked -> {
+                val targetType = intent.ad.targetType
+                val targetId = intent.ad.targetId
+                val targetName = intent.ad.targetName
+                
                 if (intent.ad.buttonText == "Copy code") {
                     sendEffect(HomeEffect.ShowToast("Copied ${intent.ad.titleTop} to clipboard"))
+                } else if (targetType != null && targetId != null && targetName != null) {
+                    sendEffect(
+                        HomeEffect.NavigateToProducts(
+                            sourceType = targetType,
+                            sourceId = targetId,
+                            sourceName = targetName,
+                        )
+                    )
                 } else {
                     sendEffect(HomeEffect.ShowToast(intent.ad.titleTop))
                 }

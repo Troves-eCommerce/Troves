@@ -26,6 +26,8 @@ import com.troves.presintation.ui.MainViewModel
 import com.troves.presintation.ui.StartDestination
 import com.troves.presintation.ui.address.ManageSavedAddressesScreen
 import com.troves.presintation.ui.address.NewAddressScreen
+import com.troves.presintation.ui.aichat.AiChatScreen
+import com.troves.presintation.ui.aichat.AiChatViewModel
 import com.troves.presintation.ui.auth.LoginScreen
 import com.troves.presintation.ui.auth.RegisterScreen
 import com.troves.presintation.ui.cart.CartScreen
@@ -64,6 +66,7 @@ private val navSavedStateConfiguration = SavedStateConfiguration {
             subclass(AppRoute.SeeAll::class, AppRoute.SeeAll.serializer())
             subclass(AppRoute.Favorites::class, AppRoute.Favorites.serializer())
             subclass(AppRoute.Profile::class, AppRoute.Profile.serializer())
+            subclass(AppRoute.AiChat::class, AppRoute.AiChat.serializer())
             subclass(AppRoute.ProductDetails::class, AppRoute.ProductDetails.serializer())
             subclass(AppRoute.Cart::class, AppRoute.Cart.serializer())
             subclass(AppRoute.Checkout::class, AppRoute.Checkout.serializer())
@@ -155,6 +158,7 @@ fun AppNav() {
                 productId = key.productId,
                 onNavigateBack = { backStack.removeLastOrNull() },
                 onNavigateToLogin = { backStack.add(AppRoute.Login) },
+                onNavigateToCart = { backStack.add(AppRoute.Cart) },
             )
         }
         entry<AppRoute.Onboarding> {
@@ -232,7 +236,20 @@ fun AppNav() {
                 onNavigateToAddresses = { backStack.add(AppRoute.ManageAddresses) },
                 onNavigateToOrders = { backStack.add(AppRoute.Orders) },
                 onNavigateToPaymentMethods = { backStack.add(AppRoute.PaymentMethods) },
-                onNavigateToEditProfile = { /* Navigate to Edit Profile screen if it exists */ }
+                onNavigateToEditProfile = { /* Navigate to Edit Profile screen if it exists */ },
+                onNavigateToAiAssistant = { backStack.add(AppRoute.AiChat) },
+            )
+        }
+        entry<AppRoute.AiChat> {
+            val viewModel: AiChatViewModel = koinViewModel()
+            val state by viewModel.state.collectAsStateWithLifecycle()
+            AiChatScreen(
+                state = state,
+                effect = viewModel.effect,
+                onIntent = viewModel::onIntent,
+                onNavigateBack = { backStack.removeLastOrNull() },
+                onNavigateToProduct = { productId -> backStack.add(AppRoute.ProductDetails(productId)) },
+                onNavigateToSearch = { backStack.add(AppRoute.Search) },
             )
         }
         entry<AppRoute.PaymentMethods> {

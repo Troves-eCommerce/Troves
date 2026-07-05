@@ -1,5 +1,4 @@
 [versions]
-androidx-core-splashscreen = "1.0.1"
 agp = "9.2.1"
 android-compileSdk = "37"
 android-minSdk = "24"
@@ -24,6 +23,7 @@ ktor = "3.5.0"
 kotlinxSerializationPlugin = "2.4.0"
 kotlinSeralization = "1.11.0"
 ksp = "2.3.9"
+paymobSdk = "1.9.2"
 room = "2.8.4"
 sqlite = "2.6.2"
 kermit = "2.0.5"
@@ -48,7 +48,6 @@ googleid = "1.1.0"
 apollo = "5.0.1"
 
 [libraries]
-androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "androidx-core-splashscreen" }
 # Koin
 androidx-datastore = { module = "androidx.datastore:datastore", version.ref = "datastore" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
@@ -125,6 +124,7 @@ kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-c
 apollo-runtime = { module = "com.apollographql.apollo:apollo-runtime", version.ref = "apollo" }
 apollo-normalized-cache = { module = "com.apollographql.apollo:apollo-normalized-cache", version.ref = "apollo" }
 apollo-normalized-cache-sqlite = { module = "com.apollographql.apollo:apollo-normalized-cache-sqlite", version.ref = "apollo" }
+paymob-sdk = { module = "com.paymob.sdk:Paymob-SDK", version.ref = "paymobSdk" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

@@ -15,17 +15,23 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.TextButton
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.ui.draw.clip
+import com.troves.designsystem.components.button.PrimaryButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -57,14 +63,13 @@ import com.troves.presintation.ui.productDetails.components.StarRatingRow
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
-import troves.designsystem.generated.resources.Res
-import troves.designsystem.generated.resources.ic_cart
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ProductDetailsScreen(
     productId: String,
     onNavigateBack: () -> Unit,
     onNavigateToLogin: () -> Unit,
+    onNavigateToCart: () -> Unit,
     viewModel: ProductDetailsViewModel = koinViewModel(),
 ) {
     val uiState by viewModel.state.collectAsStateWithLifecycle()
@@ -82,6 +87,7 @@ fun ProductDetailsScreen(
             is ProductDetailsEffect.ShowToast ->
                 scope.launch { snackBarHostState.showSnackbar(newEffect.message) }
             ProductDetailsEffect.ShowLoginRequiredDialog -> showLoginRequiredDialog = true
+            ProductDetailsEffect.NavigateToCart -> onNavigateToCart()
         }
     }
 
@@ -133,6 +139,96 @@ fun ProductDetailsScreen(
                 .align(Alignment.BottomCenter)
                 .navigationBarsPadding()
                 .padding(16.dp),
+        )
+
+        AnimatedVisibility(
+            visible = uiState.showCartConfirmation,
+            enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
+            exit = slideOutVertically(targetOffsetY = { it }) + fadeOut(),
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .navigationBarsPadding()
+                .padding(16.dp)
+        ) {
+            CartConfirmationBar(
+                quantity = uiState.productCartQuantity,
+                onViewCartClick = { viewModel.onIntent(ProductDetailsIntent.OnViewCartClick) },
+                onDismissClick = { viewModel.onIntent(ProductDetailsIntent.OnDismissCartConfirmation) }
+            )
+        }
+    }
+}
+
+@Composable
+fun CartConfirmationBar(
+    quantity: Int,
+    onViewCartClick: () -> Unit,
+    onDismissClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(Theme.shapes.medium)
+            .background(Theme.colors.surface)
+            .border(1.dp, Theme.colors.surfaceVariant, Theme.shapes.medium)
+            .padding(16.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text(
+                    text = "✓",
+                    style = Theme.typography.title,
+                    fontWeight = FontWeight.Bold,
+                    color = Theme.colors.primary
+                )
+                Column {
+                    Text(
+                        text = "Added to Cart",
+                        style = Theme.typography.title,
+                        fontWeight = FontWeight.Bold,
+                        color = Theme.colors.primaryFont
+                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = "Quantity in cart: ",
+                            style = Theme.typography.body.small,
+                            color = Theme.colors.secondaryFont
+                        )
+                        AnimatedContent(
+                            targetState = quantity,
+                            label = "quantityAnimation"
+                        ) { targetCount ->
+                            Text(
+                                text = targetCount.toString(),
+                                style = Theme.typography.body.medium,
+                                fontWeight = FontWeight.Bold,
+                                color = Theme.colors.primaryFont
+                            )
+                        }
+                    }
+                }
+            }
+            TextButton(onClick = onDismissClick) {
+                Text(
+                    text = "Continue",
+                    style = Theme.typography.body.medium,
+                    color = Theme.colors.secondaryFont
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        PrimaryButton(
+            caption = "View Cart",
+            onClick = onViewCartClick,
+            modifier = Modifier.fillMaxWidth()
         )
     }
 }
@@ -256,7 +352,6 @@ fun ProductDetailsScreenContent(
                         }
                     }
 
-                    // قسم الوصف (Description)
                     Spacer(Modifier.height(16.dp))
                     HorizontalDivider(color = Color(0xFFECECEC), thickness = 1.dp)
                     Spacer(Modifier.height(16.dp))
@@ -302,8 +397,6 @@ fun ProductDetailsScreenContent(
                 }
             }
         }
-
-        // 2. البار السفلي الثابت النظيف تماماً (بدون السعر وبدون الفاليديتورز التحذيرية المزعجة)
         Column(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
@@ -336,19 +429,19 @@ fun String.toColorOrGray(): Color {
         val cleanedInput = this.trim().lowercase()
 
         when {
-            cleanedInput.startsWith("bla") -> return Color(0xFF1A1A1A)     // أسود داكن
-            cleanedInput.startsWith("whi") -> return Color(0xFFFFFFFF)     // أبيض صافي
-            cleanedInput.startsWith("nav") -> return Color(0xFF1D3557)     // كحلي
-            cleanedInput.startsWith("red") -> return Color(0xFFD32F2F)     // أحمر
-            cleanedInput.startsWith("oli") -> return Color(0xFF4A5D4E)     // زيتوني (براند التطبيق)
-            cleanedInput.startsWith("gre") || cleanedInput.startsWith("gra") -> return Color(0xFF888888) // رمادي
-            cleanedInput.startsWith("bei") -> return Color(0xFFE6D5BC)     // بيج دافئ
-            cleanedInput.startsWith("pin") -> return Color(0xFFE8A7A1)     // وردي ناعم
-            cleanedInput.startsWith("bro") -> return Color(0xFF6D4C41)     // بني
-            cleanedInput.startsWith("yel") -> return Color(0xFFFBC02D)     // أصفر دافئ
-            cleanedInput.startsWith("pur") -> return Color(0xFF7B1FA2)     // بنفسجي
-            cleanedInput.startsWith("ora") -> return Color(0xFFF57C00)     // برتقالي
-            cleanedInput.startsWith("khi") || cleanedInput.startsWith("kha") -> return Color(0xFFC3B091) // كاكي
+            cleanedInput.startsWith("bla") -> return Color(0xFF1A1A1A)
+            cleanedInput.startsWith("whi") -> return Color(0xFFFFFFFF)
+            cleanedInput.startsWith("nav") -> return Color(0xFF1D3557)
+            cleanedInput.startsWith("red") -> return Color(0xFFD32F2F)
+            cleanedInput.startsWith("oli") -> return Color(0xFF4A5D4E)
+            cleanedInput.startsWith("gre") || cleanedInput.startsWith("gra") -> return Color(0xFF888888)
+            cleanedInput.startsWith("bei") -> return Color(0xFFE6D5BC)
+            cleanedInput.startsWith("pin") -> return Color(0xFFE8A7A1)
+            cleanedInput.startsWith("bro") -> return Color(0xFF6D4C41)
+            cleanedInput.startsWith("yel") -> return Color(0xFFFBC02D)
+            cleanedInput.startsWith("pur") -> return Color(0xFF7B1FA2)
+            cleanedInput.startsWith("ora") -> return Color(0xFFF57C00)
+            cleanedInput.startsWith("khi") || cleanedInput.startsWith("kha") -> return Color(0xFFC3B091)
         }
 
         val hexString = cleanedInput.replace("#", "")

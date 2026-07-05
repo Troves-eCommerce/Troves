@@ -14,7 +14,8 @@ import com.troves.designsystem.theme.Theme
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import troves.designsystem.generated.resources.*
-
+import troves.designsystem.generated.resources.Res
+import troves.designsystem.generated.resources.ic_arrow_back
 import org.koin.compose.viewmodel.koinViewModel
 import com.troves.presintation.core.mvi.ObserveEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -162,6 +163,7 @@ fun NewAddressScreenContent(
                         onTextChange = {},
                         title = stringResource(Res.string.address_country_title),
                         readOnly = true,
+                        trailingIcon = painterResource(Res.drawable.ic_arrow_drop_down),
                         modifier = Modifier.fillMaxWidth(),
                         onClickTrailingIcon = { expanded = !expanded }
                     )
@@ -215,6 +217,7 @@ fun NewAddressScreenContent(
                         title = stringResource(Res.string.address_city_title),
                         hint = if (state.country.isBlank()) stringResource(Res.string.address_city_no_country_hint) else stringResource(Res.string.address_city_hint),
                         readOnly = false,
+                        trailingIcon = painterResource(Res.drawable.ic_arrow_drop_down),
                         modifier = Modifier.fillMaxWidth(),
                         onClickTrailingIcon = { if (state.country.isNotBlank()) cityExpanded = !cityExpanded }
                     )

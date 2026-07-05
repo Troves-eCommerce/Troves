@@ -4,7 +4,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -47,6 +46,7 @@ import com.troves.designsystem.components.button.PrimaryButton
 import com.troves.designsystem.components.textfield.CustomTextField
 import com.troves.designsystem.components.toast.TrovesToast
 import com.troves.designsystem.theme.Theme
+import com.troves.designsystem.util.bounceClick
 import com.troves.presintation.core.mvi.ObserveEffect
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -178,7 +178,11 @@ fun LoginScreen(
                         fontWeight = FontWeight.Medium,
                         fontSize = 15.sp
                     ),
-                    modifier = Modifier.clickable { onNavigateToForgotPassword() }
+                    modifier = Modifier.bounceClick(
+                        shape = RoundedCornerShape(4.dp),
+                        maxPadding = 2.dp,
+                        onClick = onNavigateToForgotPassword
+                    )
                 )
             }
 
@@ -234,19 +238,22 @@ fun LoginScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(58.dp)
-                    .clip(customBorderShape)
-                    .background(Color.White)
+                    .background(Color.White, customBorderShape)
                     .border(1.dp, Theme.colors.hint.copy(alpha = 0.4f), customBorderShape)
-                    .clickable {
-                        googleAuthHandler?.signIn(
-                            onSuccess = { idToken, accessToken ->
-                                viewModel.onIntent(AuthIntent.GoogleSignIn(idToken, accessToken))
-                            },
-                            onError = { error ->
-                                toastError = error.message ?: "Google Sign-In failed"
-                            }
-                        ) ?: run { toastError = "Google Sign-In is not supported on this platform" }
-                    },
+                    .bounceClick(
+                        shape = customBorderShape,
+                        maxPadding = 4.dp,
+                        onClick = {
+                            googleAuthHandler?.signIn(
+                                onSuccess = { idToken, accessToken ->
+                                    viewModel.onIntent(AuthIntent.GoogleSignIn(idToken, accessToken))
+                                },
+                                onError = { error ->
+                                    toastError = error.message ?: "Google Sign-In failed"
+                                }
+                            ) ?: run { toastError = "Google Sign-In is not supported on this platform" }
+                        }
+                    ),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -283,7 +290,11 @@ fun LoginScreen(
                     }
                 },
                 style = Theme.typography.body.large.copy(textAlign = TextAlign.Center),
-                modifier = Modifier.clickable(onClick = onNavigateToRegister)
+                modifier = Modifier.bounceClick(
+                    shape = RoundedCornerShape(4.dp),
+                    maxPadding = 2.dp,
+                    onClick = onNavigateToRegister
+                )
             )
         }
 

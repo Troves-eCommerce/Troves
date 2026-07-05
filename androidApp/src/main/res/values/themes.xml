@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.App.Starting" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:windowBackground">@color/splash_background</item>
-        <item name="android:windowNoTitle">true</item>
+    <style name="Theme.Troves" parent="Theme.MaterialComponents.Light.NoActionBar">
     </style>
 </resources>

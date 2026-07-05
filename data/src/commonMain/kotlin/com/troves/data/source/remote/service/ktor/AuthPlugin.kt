@@ -11,3 +11,13 @@ val AuthPlugin = createClientPlugin("authPlugin") {
         }
     }
 }
+
+val PaymobPlugin = createClientPlugin("PaymobPlugin"){
+    onRequest { request, content ->
+        request.headers{
+            append("apikey",ShopifyConfig.SUPABASE_API_KEY)
+            append("Authorization","Bearer ${ShopifyConfig.SUPABASE_API_KEY}")
+            append("Content-Type","application/json")
+        }
+    }
+}

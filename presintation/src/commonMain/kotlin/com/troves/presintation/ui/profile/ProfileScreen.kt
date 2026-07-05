@@ -24,6 +24,8 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import troves.designsystem.generated.resources.*
 import troves.designsystem.generated.resources.Res
+import troves.presintation.generated.resources.Res as ResP
+import troves.presintation.generated.resources.*
 
 @Composable
 fun ProfileScreen(
@@ -32,6 +34,7 @@ fun ProfileScreen(
     onNavigateToOrders: () -> Unit,
     onNavigateToPaymentMethods: () -> Unit,
     onNavigateToEditProfile: () -> Unit,
+    onNavigateToAiAssistant: () -> Unit,
     viewModel: ProfileViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -53,6 +56,7 @@ fun ProfileScreen(
                 is ProfileEffect.NavigateToOrders -> onNavigateToOrders()
                 is ProfileEffect.NavigateToPaymentMethods -> onNavigateToPaymentMethods()
                 is ProfileEffect.NavigateToEditProfile -> onNavigateToEditProfile()
+                is ProfileEffect.NavigateToAiAssistant -> onNavigateToAiAssistant()
                 is ProfileEffect.ShowError -> {
                     snackbarHostState.showSnackbar(effect.message)
                 }
@@ -126,6 +130,13 @@ fun ProfileScreen(
 
                     if (!uiState.isGuest) {
                         ProfileSection(title = stringResource(Res.string.profile_account_settings)) {
+                            ProfileRowItem(
+                                icon = Res.drawable.ic_ai_sparkles,
+                                title = stringResource(ResP.string.ai_profile_entry),
+                                onClick = { viewModel.onIntent(ProfileIntent.AiAssistantClicked) },
+                                iconColor = Theme.colors.primary
+                            )
+                            HorizontalDivider(color = Theme.colors.backGround, thickness = 1.dp)
                             ProfileRowItem(
                                 icon = Res.drawable.ic_location,
                                 title = stringResource(Res.string.profile_manage_addresses),

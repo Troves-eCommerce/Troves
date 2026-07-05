@@ -13,11 +13,13 @@ import com.troves.domain.usecase.order.AttachAddressToCartUseCase
 import com.troves.domain.usecase.order.ClearCartUseCase
 import com.troves.domain.usecase.order.PlaceCodOrderUseCase
 import com.troves.domain.usecase.order.PlaceOrderResult
+import com.troves.domain.usecase.paymob.GetClientSecretUseCase
 import com.troves.presintation.core.mvi.DefaultEffectPublisher
 import com.troves.presintation.core.mvi.DefaultStateHolder
 import com.troves.presintation.core.mvi.EffectPublisher
 import com.troves.presintation.core.mvi.StateHolder
 import com.troves.presintation.navigation.AppRoute
+import com.troves.presintation.ui.checkout.CheckoutEffect.ShowToast
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -30,10 +32,12 @@ class CheckoutViewModel(
     private val attachAddressToCart: AttachAddressToCartUseCase,
     private val placeCodOrder: PlaceCodOrderUseCase,
     private val clearCart: ClearCartUseCase,
-) : ViewModel(), CheckoutEvent,
+    private val getClientSecretUseCase: GetClientSecretUseCase,
+) : ViewModel(), CheckoutEvent, PaymobListener,
     StateHolder<CheckoutUiState> by DefaultStateHolder(CheckoutUiState()),
     EffectPublisher<CheckoutEffect> by DefaultEffectPublisher() {
 
+    private var isPaymentHandled = false
     private var cart: Cart? = null
 
     init {
@@ -98,27 +102,68 @@ class CheckoutViewModel(
         }
     }
 
+    private fun doPaymobPayment() {
+        val address = currentState.selectedAddress
+        if (address?.isDeliverable != true) {
+            sendEffect(ShowToast("Select a delivery address"))
+            updateState { copy(step = CheckoutStep.Address) }
+            return
+        }
+
+        val currentCart = cart
+        val url = currentCart?.checkoutUrl
+        if (currentCart == null || url.isNullOrBlank()) {
+            sendEffect(CheckoutEffect.ShowToast("Checkout is unavailable right now"))
+            return
+        }
+        isPaymentHandled = false
+        updateState { copy(isBusy = true) }
+        viewModelScope.launch {
+            val attached = attachAddressToCart(currentCart.cartId, address)
+            updateState { copy(isBusy = false) }
+            if (attached.isSuccess) {
+                require(cart?.cartId?.isNotBlank() == true) {
+                    sendEffect(ShowToast("Couldn't start payment, cart ID is empty. Please try again."))
+                    return@launch
+                }
+                val clientSecret = getClientSecretUseCase(cartId = cart!!.cartId)
+                sendEffect(CheckoutEffect.OpenPayMobSheet(clientSecret = clientSecret.clientSecret ?: ""))
+            } else {
+                sendEffect(CheckoutEffect.ShowToast("Couldn't start payment. Please try again."))
+            }
+        }
+
+
+    }
+
     private fun onNext() {
         when (currentState.step) {
             CheckoutStep.Review -> {
                 if (currentState.itemCount == 0) {
-                    sendEffect(CheckoutEffect.ShowToast("Your cart is empty"))
+                    sendEffect(ShowToast("Your cart is empty"))
                 } else {
                     updateState { copy(step = CheckoutStep.Address) }
                 }
             }
+
             CheckoutStep.Address -> {
                 if (currentState.selectedAddress?.isDeliverable != true) {
-                    sendEffect(CheckoutEffect.ShowToast("Select a delivery address"))
+                    sendEffect(ShowToast("Select a delivery address"))
                 } else {
                     updateState { copy(step = CheckoutStep.Payment) }
                 }
             }
+
             CheckoutStep.Payment -> when (currentState.paymentMethod) {
                 CheckoutPaymentMethod.CashOnDelivery -> updateState { copy(step = CheckoutStep.PlaceOrder) }
                 CheckoutPaymentMethod.Online -> startOnlinePayment()
-                null -> sendEffect(CheckoutEffect.ShowToast("Choose a payment method"))
+                CheckoutPaymentMethod.PayMob -> {
+                    doPaymobPayment()
+                }
+
+                null -> sendEffect(ShowToast("Choose a payment method"))
             }
+
             CheckoutStep.PlaceOrder -> Unit // handled by OnPlaceOrder
         }
     }
@@ -126,7 +171,7 @@ class CheckoutViewModel(
     private fun startOnlinePayment() {
         val address = currentState.selectedAddress
         if (address?.isDeliverable != true) {
-            sendEffect(CheckoutEffect.ShowToast("Select a delivery address"))
+            sendEffect(ShowToast("Select a delivery address"))
             updateState { copy(step = CheckoutStep.Address) }
             return
         }
@@ -169,38 +214,45 @@ class CheckoutViewModel(
             when (result) {
                 is PlaceOrderResult.Success -> {
                     resetCheckoutProgress()
-                    sendEffect(CheckoutEffect.NavigateToOrderResult(
-                        buildResultFromState(
-                            state = snapshot,
-                            address = address,
-                            success = true,
-                            orderName = result.orderName,
-                            errorMessage = null,
-                            paymentLabel = "Cash on Delivery (COD)",
+                    sendEffect(
+                        CheckoutEffect.NavigateToOrderResult(
+                            buildResultFromState(
+                                state = snapshot,
+                                address = address,
+                                success = true,
+                                orderName = result.orderName,
+                                errorMessage = null,
+                                paymentLabel = "Cash on Delivery (COD)",
+                            )
                         )
-                    ))
+                    )
                 }
+
                 PlaceOrderResult.RequiresLogin -> sendEffect(CheckoutEffect.ShowLoginRequiredDialog)
                 PlaceOrderResult.NoAddress -> {
                     sendEffect(CheckoutEffect.ShowToast("Sorry you don't have an address to deliver to"))
                     updateState { copy(step = CheckoutStep.Address) }
                 }
+
                 PlaceOrderResult.EmptyCart -> {
                     sendEffect(CheckoutEffect.ShowToast("Your cart is empty"))
                     sendEffect(CheckoutEffect.NavigateToCart)
                 }
+
                 is PlaceOrderResult.Error -> {
                     resetCheckoutProgress()
-                    sendEffect(CheckoutEffect.NavigateToOrderResult(
-                        buildResultFromState(
-                            state = snapshot,
-                            address = address,
-                            success = false,
-                            orderName = null,
-                            errorMessage = "We couldn't place your order. Please try again.",
-                            paymentLabel = "Cash on Delivery (COD)",
+                    sendEffect(
+                        CheckoutEffect.NavigateToOrderResult(
+                            buildResultFromState(
+                                state = snapshot,
+                                address = address,
+                                success = false,
+                                orderName = null,
+                                errorMessage = "We couldn't place your order. Please try again.",
+                                paymentLabel = "Cash on Delivery (COD)",
+                            )
                         )
-                    ))
+                    )
                 }
             }
         }
@@ -218,7 +270,12 @@ class CheckoutViewModel(
             updateState { copy(isApplyingCoupon = false) }
             when (result) {
                 is ApplyDiscountResult.Success -> {
-                    val applied = result.cart.discountCodes.firstOrNull { it.code.equals(code, ignoreCase = true) }
+                    val applied = result.cart.discountCodes.firstOrNull {
+                        it.code.equals(
+                            code,
+                            ignoreCase = true
+                        )
+                    }
                     if (applied?.applicable == true) {
                         sendEffect(CheckoutEffect.ShowToast("Discount applied"))
                     } else {
@@ -226,6 +283,7 @@ class CheckoutViewModel(
                     }
                     // The cart stream re-emits with updated totals + discountCodes.
                 }
+
                 ApplyDiscountResult.RequiresLogin -> sendEffect(CheckoutEffect.ShowLoginRequiredDialog)
                 is ApplyDiscountResult.Error -> sendEffect(CheckoutEffect.ShowToast("Couldn't apply discount"))
             }
@@ -333,14 +391,19 @@ class CheckoutViewModel(
         val recipient = listOfNotNull(delivery?.firstName, delivery?.lastName)
             .filter { it.isNotBlank() }.joinToString(" ")
         val addressLines = listOfNotNull(
-            delivery?.address1, delivery?.address2, delivery?.city, delivery?.zoneCode, delivery?.countryCode,
+            delivery?.address1,
+            delivery?.address2,
+            delivery?.city,
+            delivery?.zoneCode,
+            delivery?.countryCode,
         ).filter { it.isNotBlank() }
         val savings = savings(subtotal?.amount, total?.amount, subtotal?.currencyCode)
         return AppRoute.OrderResult(
             success = true,
             orderName = null,
             errorMessage = null,
-            paymentLabel = paymentMethods.firstOrNull()?.type?.ifBlank { "Online Payment" } ?: "Online Payment",
+            paymentLabel = paymentMethods.firstOrNull()?.type?.ifBlank { "Online Payment" }
+                ?: "Online Payment",
             recipientName = recipient,
             addressLines = addressLines,
             phone = phone.orEmpty(),
@@ -351,5 +414,52 @@ class CheckoutViewModel(
             discountValueFormatted = savings,
             totalFormatted = formatMoney(total?.amount, total?.currencyCode),
         )
+    }
+
+    override fun onSuccess(payResponse: HashMap<String, String?>) {
+        if (isPaymentHandled) return
+        isPaymentHandled = true
+        val isSuccess = payResponse["success"]?.toBooleanStrictOrNull() ?: true
+        val snapshot = currentState
+        val address = currentState.selectedAddress
+        viewModelScope.launch { clearCart() }
+        resetCheckoutProgress()
+        sendEffect(
+            CheckoutEffect.NavigateToOrderResult(
+                buildResultFromState(
+                    state = snapshot,
+                    address = address,
+                    success = isSuccess,
+                    orderName = payResponse["order"]?.toString() ?: payResponse["id"]?.toString(),
+                    errorMessage = if (isSuccess) null else "Payment failed. Please try again.",
+                    paymentLabel = "Card Payment",
+                )
+            )
+        )
+    }
+
+    override fun onFailure(msg: String?) {
+        if (isPaymentHandled) return
+        isPaymentHandled = true
+        val snapshot = currentState
+        val address = currentState.selectedAddress
+        resetCheckoutProgress()
+        sendEffect(
+            CheckoutEffect.NavigateToOrderResult(
+                buildResultFromState(
+                    state = snapshot,
+                    address = address,
+                    success = false,
+                    orderName = null,
+                    errorMessage = msg ?: "Payment failed. Please try again.",
+                    paymentLabel = "Card Payment",
+                )
+            )
+        )
+    }
+
+    override fun onPending() {
+        if (isPaymentHandled) return
+        sendEffect(CheckoutEffect.ShowToast("Pending"))
     }
 }

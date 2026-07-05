@@ -32,14 +32,6 @@ fun Modifier.autoMirror(): Modifier = composed {
     }
 }
 
-/**
- * يضيف تأثير هوفر/انكماش تفاعلي ناعم عند الضغط مع ريبل مخصص وحواف دائرية مقصوصة.
- *
- * @param shape شكل الحواف الدائرية المقصوصة (مثل الـ RoundedCornerShape)
- * @param maxPadding مقدار الانكماش للداخل عند الضغط (مثلاً 6.dp للكروت الكبيرة أو 2.dp للنصوص)
- * @param rippleColor لون تأثير الـ Ripple التفاعلي، افتراضياً يستخدم لون النص الأساسي مع شفافية
- * @param onClick الأكشن اللي هيتنفذ عند الضغط
- */
 fun Modifier.bounceClick(
     shape: Shape,
     maxPadding: Dp = 6.dp,
@@ -50,10 +42,8 @@ fun Modifier.bounceClick(
         val interactionSource = remember { MutableInteractionSource() }
         val isPressed by interactionSource.collectIsPressedAsState()
         
-        // استخدام لون الـ tint من الثيم كخيار افتراضي للريبل لضمان التوافق مع الوضع الليلي والنهاري
-        val finalRippleColor = rippleColor ?: Theme.colors.primaryFont.copy(alpha = 0.1f)
-
-        // عمل أنيميشن ناعم للـ Padding التفاعلي بناءً على الضغط
+        val finalRippleColor = rippleColor ?: Theme.colors.primaryFont.copy(alpha = 0.2f)
+        
         val animatedPadding by animateDpAsState(
             targetValue = if (isPressed) maxPadding else 0.dp,
             label = "bounceClickPadding"

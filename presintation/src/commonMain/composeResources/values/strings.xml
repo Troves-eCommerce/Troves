@@ -68,13 +68,15 @@
 
     <!-- Checkout · Payment step -->
     <string name="checkout_payment_step_title">Select Payment Method</string>
-    <string name="checkout_payment_step_subtitle">Choose how you\'d like to pay for your order.</string>
+    <string name="checkout_payment_step_subtitle">Choose how you'd like to pay for your order.</string>
     <string name="checkout_payment_cod_title">Cash on Delivery (COD)</string>
+    <string name="checkout_paymob_cod_title">Paymob</string>
+    <string name="checkout_paymob_cod_desc">Pay securely in-app using Paymob </string>
     <string name="checkout_payment_cod_desc">Pay with cash when your order is delivered.</string>
     <string name="checkout_payment_cod_label">COD</string>
     <string name="checkout_payment_cod_limit">Cash limit: up to $500.00</string>
     <string name="checkout_payment_online_title">Online Payment</string>
-    <string name="checkout_payment_online_desc">Pay securely using your card.</string>
+    <string name="checkout_payment_online_desc">Pay securely using your card via Shpoify.</string>
     <string name="checkout_secure_title">Secure Checkout</string>
     <string name="checkout_secure_desc">Your payment information is encrypted and safe with us.</string>
 
@@ -88,4 +90,16 @@
     <string name="checkout_items_count">%1$d items</string>
     <string name="checkout_order_confirmation_title">Order Confirmation</string>
     <string name="checkout_order_confirmation_desc">You will receive an email confirmation once your order is placed.</string>
+
+    <!-- AI Assistant -->
+    <string name="ai_assistant_name">Troves AI</string>
+    <string name="ai_assistant_subtitle">Your smart shopping assistant</string>
+    <string name="ai_input_hint">Ask anything…</string>
+    <string name="ai_suggestion_header">You might also like</string>
+    <string name="ai_view_all_recommendations">View all recommendations</string>
+    <string name="ai_disclaimer">Troves AI can make mistakes. Please double-check important info.</string>
+    <string name="ai_error_generic">Something went wrong. Please try again.</string>
+    <string name="ai_retry">Retry</string>
+    <string name="ai_rate_limited">You\'ve reached the chat limit. Try again in %1$s.</string>
+    <string name="ai_profile_entry">Troves AI</string>
 </resources>

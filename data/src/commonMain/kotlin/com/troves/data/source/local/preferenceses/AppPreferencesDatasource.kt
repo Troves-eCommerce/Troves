@@ -39,4 +39,6 @@ interface TrovesPreferences {
     suspend fun clearAuthToken()
     suspend fun setNewsRefreshInterval(minutes: Int)
     suspend fun clearAll()
+
+    suspend fun getOrCreateDeviceId(): String
 }

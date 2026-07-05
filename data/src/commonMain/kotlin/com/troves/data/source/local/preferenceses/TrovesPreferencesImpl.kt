@@ -8,7 +8,10 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 class TrovesPreferencesImpl(
     private val dataStore: DataStore<Preferences>,
@@ -150,6 +153,18 @@ class TrovesPreferencesImpl(
 
     override suspend fun clearAll() {
         dataStore.edit { it.clear() }
+    }
+
+    @OptIn(ExperimentalUuidApi::class)
+    override suspend fun getOrCreateDeviceId(): String {
+        val existing = dataStore.data
+            .catchIOException()
+            .map { it[AppPreferencesKeys.AI_DEVICE_ID] }
+            .first()
+        if (existing != null) return existing
+        val generated = Uuid.random().toString()
+        dataStore.edit { it[AppPreferencesKeys.AI_DEVICE_ID] = generated }
+        return generated
     }
 
     private fun Flow<Preferences>.catchIOException() =
