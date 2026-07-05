@@ -58,6 +58,7 @@ val dataModule = module {
     // ── Network ───────────────────────────────────────────────────────────────
     // Ktor client kept registered for easy rollback to the REST implementation.
     single<HttpClient> { provideHttpClient() }
+    single<HttpClient>(named(PAYMOB)) { providePaymobClient() }
     // Dedicated client for public location APIs — no Shopify auth/base URL leaks to third parties.
     single<HttpClient>(named(LOCATION_CLIENT)) { provideLocationHttpClient() }
     // Admin GraphQL client (product catalogue) and Storefront client (cart/checkout/customer/orders).
