@@ -89,11 +89,11 @@ class SeeAllViewModel(
             when (type) {
                 AppRoute.SeeAllType.BRANDS -> {
                     val result = getBrands()
-                    updateState { copy(isLoading = false, brands = result.getOrElse(emptyList())) }
+                    updateState { copy(isLoading = false, brands = result.getOrElse(emptyList()).take(12)) }
                 }
                 AppRoute.SeeAllType.CATEGORIES -> {
                     val result = getCategories()
-                    updateState { copy(isLoading = false, categories = result.getOrElse(emptyList())) }
+                    updateState { copy(isLoading = false, categories = result.getOrElse(emptyList()).take(9)) }
                 }
                 AppRoute.SeeAllType.PRODUCTS -> {
                     // Handle Just For You or Trending based on id/name
