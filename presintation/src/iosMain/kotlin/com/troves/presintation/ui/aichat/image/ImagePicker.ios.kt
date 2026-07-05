@@ -46,10 +46,10 @@ private class PhotoPickerDelegate(
     private val onImagePicked: (ByteArray) -> Unit,
 ) : NSObject(), PHPickerViewControllerDelegateProtocol {
 
-    override fun picker(picker: PHPickerViewController, didFinishPicking results: List<*>) {
+    override fun picker(picker: PHPickerViewController, didFinishPicking: List<*>) {
         picker.dismissViewControllerAnimated(true, completion = null)
 
-        val result = results.firstOrNull() as? PHPickerResult ?: return
+        val result = didFinishPicking.firstOrNull() as? PHPickerResult ?: return
         val provider: NSItemProvider = result.itemProvider
 
         if (!provider.hasItemConformingToTypeIdentifier(IMAGE_UTI)) return

@@ -16,10 +16,7 @@ import platform.UIKit.UIImage
 import platform.UIKit.UIImageJPEGRepresentation
 import platform.posix.memcpy
 
-/**
- * NOTE: Kotlin/Native iOS targets only compile on macOS. Verify the interop
- * (`UIImage.size` via `useContents`, `NSData` bridging) there.
- */
+
 @OptIn(ExperimentalForeignApi::class)
 actual fun processImageForUpload(raw: ByteArray): ByteArray {
     if (raw.isEmpty()) return raw

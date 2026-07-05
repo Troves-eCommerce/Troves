@@ -8,7 +8,6 @@ import kotlin.math.max
 import androidx.core.graphics.scale
 
 actual fun processImageForUpload(raw: ByteArray): ByteArray {
-    // 1) Read bounds only, to pick a power-of-two subsample close to the target.
     val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
     BitmapFactory.decodeByteArray(raw, 0, raw.size, bounds)
     val longestEdge = max(bounds.outWidth, bounds.outHeight)
