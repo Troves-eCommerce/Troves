@@ -18,6 +18,7 @@ kotlin {
         iosTarget.binaries.framework {
             baseName = "Shared"
             isStatic = true
+            export(project(":presintation"))
         }
     }
     
@@ -53,7 +54,7 @@ kotlin {
             implementation(project(":domain"))
             implementation(project(":data"))
             implementation(project(":designSystem"))
-            implementation(project(":presintation"))
+            api(project(":presintation"))
             implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)
             implementation(libs.compose.material3)

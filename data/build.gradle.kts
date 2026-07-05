@@ -182,11 +182,11 @@ buildkonfig {
         )
         buildConfigField(
             STRING, "SUPABASE_API_KEY",
-            localProperties.getProperty("SUPABASE_API_KEY") ?: "troves-shopify-oauth-salt-v1"
+            localProperties.getProperty("SUPABASE_API_KEY") ?: ""
         )
         buildConfigField(
             STRING, "SUPABASE_API_URL",
-            localProperties.getProperty("SUPABASE_API_URL") ?: "troves-shopify-oauth-salt-v1"
+            localProperties.getProperty("SUPABASE_API_URL") ?: "http://127.0.0.1:54321/"
         )
         buildConfigField(
             STRING, "AI_ASSISTANT_BASE_URL",
