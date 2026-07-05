@@ -3,6 +3,7 @@ package com.troves.presintation.ui.aichat
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -35,6 +37,9 @@ import com.troves.presintation.ui.aichat.components.ErrorRetryBar
 import com.troves.presintation.ui.aichat.components.RateLimitBanner
 import com.troves.presintation.ui.aichat.components.TypingIndicator
 import com.troves.presintation.ui.aichat.components.UserMessageBubble
+import com.troves.presintation.ui.aichat.components.VoiceWaveAnimation
+import com.troves.presintation.ui.aichat.voice.VoiceError
+import com.troves.presintation.ui.aichat.voice.rememberVoiceInputController
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
@@ -47,6 +52,11 @@ import troves.presintation.generated.resources.ai_rate_limited
 import troves.presintation.generated.resources.ai_retry
 import troves.presintation.generated.resources.ai_suggestion_header
 import troves.presintation.generated.resources.ai_view_all_recommendations
+import troves.presintation.generated.resources.ai_voice_error
+import troves.presintation.generated.resources.ai_voice_listening
+import troves.presintation.generated.resources.ai_voice_no_speech
+import troves.presintation.generated.resources.ai_voice_permission_denied
+import troves.presintation.generated.resources.ai_voice_unavailable
 
 @Composable
 fun AiChatScreen(
@@ -61,10 +71,24 @@ fun AiChatScreen(
     val coroutineScope = rememberCoroutineScope()
     val snackBarState = remember { SnackbarHostState() }
     val listState = rememberLazyListState()
+    val voiceController = rememberVoiceInputController()
 
     val suggestionHeader = stringResource(Res.string.ai_suggestion_header)
     val viewAllLabel = stringResource(Res.string.ai_view_all_recommendations)
     val retryLabel = stringResource(Res.string.ai_retry)
+
+    val voiceUnavailableMsg = stringResource(Res.string.ai_voice_unavailable)
+    val voicePermissionMsg = stringResource(Res.string.ai_voice_permission_denied)
+    val voiceNoSpeechMsg = stringResource(Res.string.ai_voice_no_speech)
+    val voiceErrorMsg = stringResource(Res.string.ai_voice_error)
+    val voiceErrorMessage: (VoiceError) -> String = { err ->
+        when (err) {
+            VoiceError.PERMISSION_DENIED -> voicePermissionMsg
+            VoiceError.NO_SPEECH -> voiceNoSpeechMsg
+            VoiceError.UNAVAILABLE -> voiceUnavailableMsg
+            VoiceError.INTERRUPTED -> voiceErrorMsg
+        }
+    }
 
     ObserveEffect(effect) { eff ->
         when (eff) {
@@ -74,6 +98,19 @@ fun AiChatScreen(
             is AiChatEffect.ShowMessage -> coroutineScope.launch {
                 snackBarState.showSnackbar(eff.message)
             }
+
+            AiChatEffect.StartVoiceCapture -> {
+                if (voiceController.isAvailable) {
+                    voiceController.start(
+                        onResult = { onIntent(AiChatIntent.VoiceTranscript(it)) },
+                        onError = { err -> onIntent(AiChatIntent.VoiceFailed(voiceErrorMessage(err))) },
+                    )
+                } else {
+                    onIntent(AiChatIntent.VoiceFailed(voiceUnavailableMsg))
+                }
+            }
+
+            AiChatEffect.StopVoiceCapture -> voiceController.stop()
         }
     }
 
@@ -119,15 +156,33 @@ fun AiChatScreen(
                     )
                 }
 
+                if (state.isListening) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 20.dp, vertical = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    ) {
+                        VoiceWaveAnimation()
+                        Text(
+                            text = stringResource(Res.string.ai_voice_listening),
+                            style = Theme.typography.hint.medium,
+                            color = Theme.colors.primary,
+                        )
+                    }
+                }
+
                 ChatInputBar(
                     value = state.input,
                     hint = stringResource(Res.string.ai_input_hint),
                     canSend = state.canSend,
                     enabled = state.rateLimitedSeconds == null,
+                    isListening = state.isListening,
                     onValueChange = { onIntent(AiChatIntent.InputChanged(it)) },
                     onSend = { onIntent(AiChatIntent.Send) },
                     onAttachImage = { /* Phase E */ },
-                    onMic = { /* Phase D */ },
+                    onMic = { onIntent(AiChatIntent.MicClicked) },
                 )
 
                 Text(

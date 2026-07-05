@@ -36,9 +36,13 @@ data class AiChatUiState(
     val errorMessage: String? = null,
     val rateLimitedSeconds: Int? = null,
     val favoriteProductIds: Set<String> = emptySet(),
+    val isListening: Boolean = false,
 ) {
     val canSend: Boolean
         get() = !isSending && rateLimitedSeconds == null && input.isNotBlank()
+
+    val canUseVoice: Boolean
+        get() = !isSending && rateLimitedSeconds == null
 
     val isEmpty: Boolean get() = messages.isEmpty()
 }
@@ -52,6 +56,10 @@ sealed interface AiChatIntent {
     data class ProductClicked(val product: AiProductUi) : AiChatIntent
     data object ViewAllRecommendations : AiChatIntent
     data class ToggleFavorite(val product: AiProductUi) : AiChatIntent
+
+    data object MicClicked : AiChatIntent
+    data class VoiceTranscript(val text: String) : AiChatIntent
+    data class VoiceFailed(val message: String) : AiChatIntent
 }
 
 sealed interface AiChatEffect {
@@ -59,4 +67,7 @@ sealed interface AiChatEffect {
     data class NavigateToProduct(val productId: String) : AiChatEffect
     data object NavigateToSearch : AiChatEffect
     data class ShowMessage(val message: String) : AiChatEffect
+
+    data object StartVoiceCapture : AiChatEffect
+    data object StopVoiceCapture : AiChatEffect
 }

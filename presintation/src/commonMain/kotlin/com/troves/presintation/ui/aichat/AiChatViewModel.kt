@@ -29,7 +29,7 @@ class AiChatViewModel(
 
     private var seq = 0
     private fun nextId() = "m${seq++}"
-    private var lastUserText: String? = null // for Retry
+    private var lastUserText: String? = null
 
     init {
         getWishlist()
@@ -43,7 +43,7 @@ class AiChatViewModel(
     fun onIntent(intent: AiChatIntent) {
         when (intent) {
             is AiChatIntent.InputChanged -> updateState { copy(input = intent.value) }
-            AiChatIntent.Send -> send(currentState.input.trim())
+            AiChatIntent.Send -> onSendClicked()
             AiChatIntent.Retry -> lastUserText?.let { send(it, isRetry = true) }
             AiChatIntent.DismissError -> updateState { copy(errorMessage = null) }
             AiChatIntent.OnBack -> sendEffect(AiChatEffect.NavigateBack)
@@ -51,7 +51,35 @@ class AiChatViewModel(
                 sendEffect(AiChatEffect.NavigateToProduct(intent.product.id))
             AiChatIntent.ViewAllRecommendations -> sendEffect(AiChatEffect.NavigateToSearch)
             is AiChatIntent.ToggleFavorite -> onToggleFavorite(intent.product)
+            AiChatIntent.MicClicked -> onMicClicked()
+            is AiChatIntent.VoiceTranscript ->
+                if (currentState.isListening) updateState { copy(input = intent.text) }
+            is AiChatIntent.VoiceFailed -> {
+                updateState { copy(isListening = false) }
+                sendEffect(AiChatEffect.ShowMessage(intent.message))
+            }
         }
+    }
+
+    private fun onMicClicked() {
+        if (currentState.isListening) {
+            stopListening()
+            return
+        }
+        if (!currentState.canUseVoice) return
+        updateState { copy(isListening = true, errorMessage = null) }
+        sendEffect(AiChatEffect.StartVoiceCapture)
+    }
+
+    private fun stopListening() {
+        if (!currentState.isListening) return
+        updateState { copy(isListening = false) }
+        sendEffect(AiChatEffect.StopVoiceCapture)
+    }
+
+    private fun onSendClicked() {
+        stopListening()
+        send(currentState.input.trim())
     }
 
     private fun onToggleFavorite(product: AiProductUi) {
