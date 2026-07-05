@@ -48,6 +48,8 @@ import com.troves.designsystem.theme.SpTheme
 import com.troves.designsystem.theme.Theme
 import com.troves.designsystem.util.formatPrice
 import com.troves.designsystem.util.autoMirror
+import kotlin.math.abs
+
 import com.troves.domain.entity.Ad
 import com.troves.domain.entity.Brand
 import com.troves.domain.entity.Category
@@ -160,19 +162,27 @@ private fun HomeContent(
     val chevron = painterResource(Res.drawable.ic_chevron_right)
     val starIcon = painterResource(Res.drawable.ic_star)
     val heartIcon = painterResource(Res.drawable.ic_solid_heart)
-    val adImage = painterResource(Res.drawable.ads_placholder)
+    
+    val adImages = listOf(
+        Res.drawable.random_1,
+        Res.drawable.random_2,
+        Res.drawable.random_3,
+        Res.drawable.random_4,
+        Res.drawable.random_5
+    )
 
     val clipboardManager = LocalClipboardManager.current
     val copyCodeButtonText = stringResource(Res.string.home_copy_code_button)
 
     if (state.ads.isNotEmpty()) {
         AdSlider(
-            ads = state.ads.map { ad ->
+            ads = state.ads.mapIndexed { index, ad ->
+                val imageRes = adImages[index % adImages.size]
                 AdData(
                     titleTop = ad.titleTop,
                     titleBottom = ad.titleBottom,
                     description = ad.description,
-                    imagePainter = adImage,
+                    imagePainter = painterResource(imageRes),
                     buttonText = ad.buttonText,
                 )
             },

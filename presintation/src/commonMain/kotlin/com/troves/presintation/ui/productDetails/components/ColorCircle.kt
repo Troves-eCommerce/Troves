@@ -31,7 +31,7 @@ fun ColorCircle(
             .then(
                 if (isSelected) Modifier.border(1.5.dp, Color.Black, CircleShape) else Modifier
             )
-            .padding(4.dp) // لإنشاء المسافة البيضاء الفاصلة بين الدائرة والـ Border الأسود
+            .padding(4.dp)
     ) {
         Box(
             modifier = Modifier

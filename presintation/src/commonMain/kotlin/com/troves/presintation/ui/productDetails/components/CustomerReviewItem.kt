@@ -30,7 +30,7 @@ fun CustomerReviewItem(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(14.dp))
-            .background(Color(0xFFF9F9F9)) // خلفية ناعمة جداً للكارت
+            .background(Color(0xFFF9F9F9))
             .padding(16.dp),
         verticalArrangement = Arrangement.Top,
     ) {
@@ -45,7 +45,6 @@ fun CustomerReviewItem(
                 fontWeight = FontWeight.Bold,
                 color = Color(0xFF1A1A1A),
             )
-            // استخدام الـ StarRatingRow المطور محلياً هنا بشكل مصغر
             StarRatingRow(rating = review.rating.toFloat(), reviewCount = 0)
         }
 
