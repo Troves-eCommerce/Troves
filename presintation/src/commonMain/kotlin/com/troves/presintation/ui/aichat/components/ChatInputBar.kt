@@ -25,6 +25,7 @@ import com.composables.icons.lucide.ArrowUp
 import com.composables.icons.lucide.Image
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Mic
+import com.composables.icons.lucide.MicOff
 import com.troves.designsystem.components.textfield.TextField
 import com.troves.designsystem.theme.Theme
 
@@ -34,6 +35,7 @@ fun ChatInputBar(
     hint: String,
     canSend: Boolean,
     enabled: Boolean,
+    isListening: Boolean,
     onValueChange: (String) -> Unit,
     onSend: () -> Unit,
     onAttachImage: () -> Unit,
@@ -65,8 +67,8 @@ fun ChatInputBar(
             leadingIcon = rememberVectorPainter(Lucide.Image),
             leadingIconColor = Theme.colors.secondaryFont,
             onClickLeadingIcon = onAttachImage,
-            trailingIcon = rememberVectorPainter(Lucide.Mic),
-            trailingIconColor = Theme.colors.secondaryFont,
+            trailingIcon = rememberVectorPainter(if (isListening) Lucide.MicOff else Lucide.Mic),
+            trailingIconColor = if (isListening) Theme.colors.primary else Theme.colors.secondaryFont,
             onClickTrailingIcon = onMic,
         )
 
