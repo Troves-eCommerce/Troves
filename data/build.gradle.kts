@@ -180,6 +180,14 @@ buildkonfig {
             STRING, "SHOPIFY_CUSTOMER_PASSWORD_SECRET",
             localProperties.getProperty("SHOPIFY_CUSTOMER_PASSWORD_SECRET") ?: "troves-shopify-oauth-salt-v1"
         )
+        buildConfigField(
+            STRING, "SUPABASE_API_KEY",
+            localProperties.getProperty("SUPABASE_API_KEY") ?: "troves-shopify-oauth-salt-v1"
+        )
+        buildConfigField(
+            STRING, "SUPABASE_API_URL",
+            localProperties.getProperty("SUPABASE_API_URL") ?: "troves-shopify-oauth-salt-v1"
+        )
     }
 }
 apollo {

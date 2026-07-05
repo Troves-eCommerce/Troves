@@ -24,6 +24,9 @@ dependencyResolutionManagement {
                 includeGroupAndSubgroups("com.google")
             }
         }
+        maven {
+            url = rootProject.projectDir.toURI().resolve("androidApp/libs/PaymobAndroidSDK1.9.2/")
+        }
         mavenCentral()
         maven(url = "https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven")
         // GitLive Firebase KMP SDK
