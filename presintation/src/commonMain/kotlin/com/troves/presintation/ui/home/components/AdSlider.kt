@@ -60,7 +60,7 @@ fun AdSlider(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(250.dp)
+            .height(260.dp)
     ) {
         HorizontalPager(
             state = pagerState,

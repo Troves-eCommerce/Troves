@@ -165,9 +165,8 @@ private fun SeeAllContent(
         }
         AppRoute.SeeAllType.BRANDS -> {
             LazyVerticalGrid(
-                columns = GridCells.Fixed(3),
+                columns = GridCells.Fixed(1),
                 contentPadding = PaddingValues(Theme.spacing.medium),
-                horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small),
                 verticalArrangement = Arrangement.spacedBy(Theme.spacing.medium)
             ) {
                 items(state.brands, key = { it.id }) { brand ->
@@ -192,7 +191,8 @@ private fun SeeAllContent(
                         imagePainter = painterResource(brandIconRes),
                         onClick = { onIntent(SeeAllIntent.BrandClicked(brand)) },
                         modifier = Modifier
-                            .height(100.dp)
+                            .fillMaxWidth()
+                            .height(140.dp)
                             .animateItem()
                     )
                 }
@@ -272,16 +272,16 @@ private fun SeeAllShimmer(type: AppRoute.SeeAllType) {
         }
         AppRoute.SeeAllType.BRANDS -> {
             LazyVerticalGrid(
-                columns = GridCells.Fixed(3),
+                columns = GridCells.Fixed(1),
                 contentPadding = PaddingValues(Theme.spacing.medium),
-                horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small),
                 verticalArrangement = Arrangement.spacedBy(Theme.spacing.medium),
                 userScrollEnabled = false
             ) {
-                items(9) {
+                items(5) {
                     Box(
                         modifier = Modifier
-                            .height(100.dp)
+                            .fillMaxWidth()
+                            .height(140.dp)
                             .clip(Theme.shapes.medium)
                             .shimmerEffect()
                     )
