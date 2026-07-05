@@ -15,9 +15,13 @@ import com.troves.presintation.core.mvi.DefaultEffectPublisher
 import com.troves.presintation.core.mvi.DefaultStateHolder
 import com.troves.presintation.core.mvi.EffectPublisher
 import com.troves.presintation.core.mvi.StateHolder
+import com.troves.presintation.ui.aichat.image.encodeBase64
+import com.troves.presintation.ui.aichat.image.processImageForUpload
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class AiChatViewModel(
     private val sendAiMessage: SendAiMessageUseCase,
@@ -30,6 +34,7 @@ class AiChatViewModel(
     private var seq = 0
     private fun nextId() = "m${seq++}"
     private var lastUserText: String? = null
+    private var lastImageBase64: String? = null // for Retry with an attached image
 
     init {
         getWishlist()
@@ -58,6 +63,22 @@ class AiChatViewModel(
                 updateState { copy(isListening = false) }
                 sendEffect(AiChatEffect.ShowMessage(intent.message))
             }
+            AiChatIntent.AttachImageClicked -> onAttachImageClicked()
+            is AiChatIntent.ImagePicked -> onImagePicked(intent.bytes)
+            AiChatIntent.RemovePendingImage -> updateState { copy(pendingImage = null) }
+        }
+    }
+
+    private fun onAttachImageClicked() {
+        val s = currentState
+        if (s.isSending || s.rateLimitedSeconds != null) return
+        sendEffect(AiChatEffect.PickImage)
+    }
+
+    private fun onImagePicked(raw: ByteArray) {
+        viewModelScope.launch {
+            val processed = withContext(Dispatchers.Default) { processImageForUpload(raw) }
+            updateState { copy(pendingImage = PendingImageUi(nextId(), processed)) }
         }
     }
 
@@ -106,13 +127,25 @@ class AiChatViewModel(
     private fun send(text: String, isRetry: Boolean = false) {
         val s = currentState
         if (s.isSending || s.rateLimitedSeconds != null) return
-        if (text.isBlank()) return
+        val pending = s.pendingImage
+        if (!isRetry && text.isBlank() && pending == null) return
         lastUserText = text
 
         if (!isRetry) {
-            val userMsg = ChatMessageUi(id = nextId(), sender = AiSender.USER, text = text)
+            val userMsg = ChatMessageUi(
+                id = nextId(),
+                sender = AiSender.USER,
+                text = text,
+                image = pending,
+            )
             updateState {
-                copy(messages = messages + userMsg, input = "", isSending = true, errorMessage = null)
+                copy(
+                    messages = messages + userMsg,
+                    input = "",
+                    isSending = true,
+                    errorMessage = null,
+                    pendingImage = null,
+                )
             }
         } else {
             updateState { copy(isSending = true, errorMessage = null) }
@@ -120,7 +153,13 @@ class AiChatViewModel(
 
         val history = buildHistory()
         viewModelScope.launch {
-            when (val r = sendAiMessage(text, imageBase64 = null, history = history)) {
+            val imageBase64 = if (isRetry) {
+                lastImageBase64
+            } else {
+                pending?.let { withContext(Dispatchers.Default) { encodeBase64(it.bytes) } }
+                    .also { lastImageBase64 = it }
+            }
+            when (val r = sendAiMessage(text, imageBase64 = imageBase64, history = history)) {
                 is Result.Success -> appendAssistant(r.value)
                 is Result.Error -> handleError(r.throwable)
                 Result.Loading -> Unit
