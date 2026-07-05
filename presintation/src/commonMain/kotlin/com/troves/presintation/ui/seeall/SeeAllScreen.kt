@@ -147,19 +147,8 @@ private fun SeeAllContent(
                         "new arrivals" -> Res.drawable.ic_category_sales
                         "best sellers" -> Res.drawable.ic_star
                         "men" -> Res.drawable.ic_category_man
+                        "kid" -> Res.drawable.ic_category_kids
                         "women" -> Res.drawable.ic_category_women
-                        "dr martens" -> Res.drawable.ic_brand_dr_martens
-                        "herschel" -> Res.drawable.ic_brand_herschel
-                        "flex fit" -> Res.drawable.ic_brand_flexfit
-                        "puma" -> Res.drawable.ic_brand_puma
-                        "supra" -> Res.drawable.ic_brand_supra
-                        "timberland" -> Res.drawable.ic_brand_timberland
-                        "converse" -> Res.drawable.ic_brand_converse
-                        "asics tiger" -> Res.drawable.ic_brand_asics_tiger
-                        "palladuim" -> Res.drawable.ic_brand_palladium
-                        "vans" -> Res.drawable.ic_brand_vans
-                        "adidas" -> Res.drawable.ic_brand_adidas
-                        "nike" -> Res.drawable.ic_brand_nike
                         else -> Res.drawable.ic_star
                     }
 
@@ -183,14 +172,6 @@ private fun SeeAllContent(
             ) {
                 items(state.brands, key = { it.id }) { brand ->
                     val brandIconRes = when (brand.name.lowercase().trim()) {
-                        "footwear" -> Res.drawable.ic_category_footwear
-                        "outerwear" -> Res.drawable.ic_category_man
-                        "accessories" -> Res.drawable.ic_category_accessories
-                        "sale" -> Res.drawable.ic_category_sales
-                        "new arrivals" -> Res.drawable.ic_category_sales
-                        "best sellers" -> Res.drawable.ic_star
-                        "men" -> Res.drawable.ic_category_man
-                        "women" -> Res.drawable.ic_category_women
                         "dr martens" -> Res.drawable.ic_brand_dr_martens
                         "herschel" -> Res.drawable.ic_brand_herschel
                         "flex fit" -> Res.drawable.ic_brand_flexfit
@@ -203,7 +184,6 @@ private fun SeeAllContent(
                         "vans" -> Res.drawable.ic_brand_vans
                         "adidas" -> Res.drawable.ic_brand_adidas
                         "nike" -> Res.drawable.ic_brand_nike
-                        "kids" -> Res.drawable.ic_category_kids
                         else -> Res.drawable.ic_star
                     }
 

@@ -37,7 +37,7 @@ import com.troves.designsystem.util.formatPrice
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import troves.designsystem.generated.resources.Res
-import troves.designsystem.generated.resources.product_card
+import troves.designsystem.generated.resources.img_placeholder
 import troves.presintation.generated.resources.Res as StringRes
 import troves.presintation.generated.resources.apply
 import troves.presintation.generated.resources.checkout_coupon_hint
@@ -156,7 +156,7 @@ fun OrderSummaryStepContent(
 private fun OrderSummaryStepPreview() {
     SpTheme(isDarkTheme = false, languageCode = "en") {
         var coupon by remember { mutableStateOf("WELCOME10") }
-        val image = painterResource(Res.drawable.product_card)
+        val image = painterResource(Res.drawable.img_placeholder)
         Column(
             modifier = Modifier
                 .fillMaxSize()

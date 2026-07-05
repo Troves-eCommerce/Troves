@@ -35,7 +35,7 @@ import org.jetbrains.compose.resources.stringResource
 import troves.designsystem.generated.resources.Res
 import troves.designsystem.generated.resources.ic_order
 import troves.designsystem.generated.resources.ic_payment_method
-import troves.designsystem.generated.resources.product_card
+import troves.designsystem.generated.resources.img_placeholder
 import troves.presintation.generated.resources.Res as StringRes
 import troves.presintation.generated.resources.checkout_change
 import troves.presintation.generated.resources.checkout_confirm_step_subtitle
@@ -298,7 +298,7 @@ private fun OrderConfirmationNote() {
 @Composable
 private fun PlaceOrderStepPreview() {
     SpTheme(isDarkTheme = false, languageCode = "en") {
-        val image = painterResource(Res.drawable.product_card)
+        val image = painterResource(Res.drawable.img_placeholder)
         Column(
             modifier = Modifier
                 .fillMaxSize()
