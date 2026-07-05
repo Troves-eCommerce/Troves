@@ -3,7 +3,6 @@ package com.troves.designsystem.components.topbar
 import androidx.compose.foundation.BorderStroke // Added
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border     // Added
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -21,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import com.troves.designsystem.theme.SpTheme
 import com.troves.designsystem.theme.Theme
 import com.troves.designsystem.util.autoMirror
+import com.troves.designsystem.util.bounceClick
 
 @Composable
 fun IconBox(
@@ -38,11 +38,17 @@ fun IconBox(
         modifier = modifier
             .size(BOX_SIZE)
             .then(if (border != null) Modifier.border(border, shape) else Modifier)
-            .clip(shape)
-            .background(backgroundColor)
             .then(
-                if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier,
-            ),
+                if (onClick != null) {
+                    Modifier.bounceClick(
+                        shape = RoundedCornerShape(10.dp),
+                        onClick = onClick
+                    )
+                } else {
+                    Modifier.clip(shape)
+                }
+            )
+            .background(backgroundColor),
         contentAlignment = Alignment.Center,
     ) {
         Icon(

@@ -1,9 +1,9 @@
 package com.troves.designsystem.components.button
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -12,6 +12,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.troves.designsystem.theme.Theme
+import com.troves.designsystem.util.bounceClick
 import org.jetbrains.compose.resources.painterResource
 import troves.designsystem.generated.resources.Res
 import troves.designsystem.generated.resources.ic_full_heart
@@ -41,9 +42,11 @@ fun FavoriteButton(
     Box(
         modifier = modifier
             .size(size)
-            .clip(shape)
-            .background(backgroundColor)
-            .clickable { onClick() },
+            .bounceClick(
+                shape = RoundedCornerShape(10.dp),
+                onClick = onClick
+            )
+            .background(backgroundColor, shape = shape),
         contentAlignment = Alignment.Center
     ) {
         Icon(

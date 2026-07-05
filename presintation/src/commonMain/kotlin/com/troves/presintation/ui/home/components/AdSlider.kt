@@ -4,7 +4,6 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,6 +26,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.troves.designsystem.theme.Theme
 import com.troves.designsystem.util.autoMirror
+import com.troves.designsystem.util.bounceClick
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 
@@ -154,8 +155,10 @@ private fun AdBannerItem(
         modifier = modifier
             .fillMaxWidth()
             .fillMaxHeight()
-            .clip(RoundedCornerShape(24.dp))
-            .clickable(onClick = onClick)
+            .bounceClick(
+                shape = RoundedCornerShape(10.dp),
+                onClick = onClick
+            )
     ) {
         Image(
             painter = ad.imagePainter,

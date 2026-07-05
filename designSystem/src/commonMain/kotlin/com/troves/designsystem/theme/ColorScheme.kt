@@ -26,6 +26,7 @@ data class ColorScheme(
     val onAmber: Color,
     val disable: Color,
     val onDisable: Color,
+    val tint: Color
 )
 val lightColors = ColorScheme(
     primary = Color(0xFFA9B6A1),         // Green primary color
@@ -50,6 +51,7 @@ val lightColors = ColorScheme(
     onAmber = Color(0xFFFFFFFF),
     disable = Color(0xF1FAFAFA),
     onDisable = Color(0xFFBDBDBD),
+    tint = Color(0xFF3E4A3C),
 )
 
 val darkColors = ColorScheme(
@@ -75,6 +77,7 @@ val darkColors = ColorScheme(
     onAmber = Color(0xFFFFFFFF),
     disable = Color(0xFF333333),
     onDisable = Color(0xFF555555),
+    tint = Color(0xFF97A594),
 )
 
 internal val localSPColorScheme = staticCompositionLocalOf { darkColors }

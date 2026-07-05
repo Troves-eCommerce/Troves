@@ -2,7 +2,6 @@ package com.troves.presintation.ui.home
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,6 +19,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.platform.LocalClipboardManager
@@ -48,6 +48,7 @@ import com.troves.designsystem.theme.SpTheme
 import com.troves.designsystem.theme.Theme
 import com.troves.designsystem.util.formatPrice
 import com.troves.designsystem.util.autoMirror
+import com.troves.designsystem.util.bounceClick
 import kotlin.math.abs
 
 import com.troves.domain.entity.Ad
@@ -162,7 +163,7 @@ private fun HomeContent(
     val chevron = painterResource(Res.drawable.ic_chevron_right)
     val starIcon = painterResource(Res.drawable.ic_star)
     val heartIcon = painterResource(Res.drawable.ic_solid_heart)
-    
+
     val adImages = listOf(
         Res.drawable.random_1,
         Res.drawable.random_2,
@@ -369,7 +370,7 @@ private fun SectionHeader(
     ) {
         BasicText(
             text = title,
-            style = Theme.typography.hint.large.copy(
+            style = Theme.typography.title.copy(
                 color = Theme.colors.primaryFont,
                 fontWeight = FontWeight.Bold,
             ),
@@ -377,7 +378,10 @@ private fun SectionHeader(
         if (actionLabel != null && onAction != null) {
             Spacer(Modifier.weight(1f))
             Row(
-                modifier = Modifier.clickable(onClick = onAction),
+                modifier = Modifier.bounceClick(
+                    shape = RoundedCornerShape(10.dp),
+                    onClick = onAction
+                ),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 BasicText(

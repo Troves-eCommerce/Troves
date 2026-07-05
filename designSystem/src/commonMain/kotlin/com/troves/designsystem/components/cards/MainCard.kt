@@ -3,7 +3,6 @@ package com.troves.designsystem.components.cards
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
@@ -29,6 +29,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.troves.designsystem.components.button.FavoriteButton
 import com.troves.designsystem.theme.Theme
+import com.troves.designsystem.util.bounceClick
 
 @Composable
 fun MainCard(
@@ -48,10 +49,12 @@ fun MainCard(
 
     Column(
         modifier = modifier
-            .clip(cardShape)
-            .background(containerColor)
+            .bounceClick(
+                shape = RoundedCornerShape(10.dp),
+                onClick = onClick
+            )
+            .background(containerColor, shape = cardShape)
             .border(1.dp, Theme.colors.onPrimary.copy(alpha = 0.5f), cardShape)
-            .clickable(onClick = onClick)
     ) {
         Box(
             modifier = Modifier
