@@ -121,8 +121,8 @@ class HomeViewModel(
                 copy(
                     isLoading = false,
                     ads = adsResult.getOrElse(emptyList()),
-                    brands = brandsResult.getOrElse(emptyList()).take(5),
-                    categories = categoriesResult.getOrElse(emptyList()),
+                    brands = brandsResult.getOrElse(emptyList()).take(12),
+                    categories = categoriesResult.getOrElse(emptyList()).take(9),
                     justForYou = justForYouResult.getOrElse(emptyList()),
                     trending = trendingResult.getOrElse(emptyList()),
                     errorMessage = firstError?.message,

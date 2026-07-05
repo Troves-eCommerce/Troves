@@ -126,7 +126,7 @@ private fun SeeAllContent(
     state: SeeAllUiState,
     onIntent: (SeeAllIntent) -> Unit,
 ) {
-    val defaultPlaceholder = painterResource(Res.drawable.img_onboarding1)
+    val defaultPlaceholder = painterResource(Res.drawable.img_placeholder)
     val starIcon = painterResource(Res.drawable.ic_star)
     val heartIcon = painterResource(Res.drawable.ic_heart)
 

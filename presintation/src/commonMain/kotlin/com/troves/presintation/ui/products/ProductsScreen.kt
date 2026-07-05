@@ -52,9 +52,9 @@ import troves.designsystem.generated.resources.Res as DesignRes
 import troves.designsystem.generated.resources.ic_arrow_back
 import troves.designsystem.generated.resources.ic_heart
 import troves.designsystem.generated.resources.ic_star
-import troves.designsystem.generated.resources.img_onboarding1
 import troves.designsystem.generated.resources.Res
 import troves.designsystem.generated.resources.filter_title
+import troves.designsystem.generated.resources.img_placeholder
 import troves.designsystem.generated.resources.products_empty
 import troves.designsystem.generated.resources.products_retry
 import troves.designsystem.generated.resources.sort_title
@@ -231,7 +231,7 @@ private fun ProductsGrid(
         return
     }
 
-    val placeholder = painterResource(DesignRes.drawable.img_onboarding1)
+    val placeholder = painterResource(DesignRes.drawable.img_placeholder)
     val starIcon = painterResource(DesignRes.drawable.ic_star)
     val heartIcon = painterResource(DesignRes.drawable.ic_heart)
 

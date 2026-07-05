@@ -18,7 +18,7 @@ import org.jetbrains.compose.resources.painterResource
 import troves.designsystem.generated.resources.Res
 import troves.designsystem.generated.resources.ic_heart
 import troves.designsystem.generated.resources.ic_star
-import troves.designsystem.generated.resources.img_onboarding1
+import troves.designsystem.generated.resources.img_placeholder
 
 
 @Composable
@@ -33,7 +33,7 @@ fun WishlistGrid(
     ),
 ) {
 
-    val placeholder = painterResource(Res.drawable.img_onboarding1)
+    val placeholder = painterResource(Res.drawable.img_placeholder)
     val starIcon = painterResource(Res.drawable.ic_star)
     val heartIcon = painterResource(Res.drawable.ic_heart)
 

@@ -157,8 +157,8 @@ private fun HomeContent(
     state: HomeUiState,
     onIntent: (HomeIntent) -> Unit,
 ) {
-    val brandImage = painterResource(Res.drawable.img_onboarding1)
-    val productImage = painterResource(Res.drawable.img_onboarding1)
+    val brandImage = painterResource(Res.drawable.img_placeholder)
+    val productImage = painterResource(Res.drawable.img_placeholder)
     val chevron = painterResource(Res.drawable.ic_chevron_right)
     val starIcon = painterResource(Res.drawable.ic_star)
     val heartIcon = painterResource(Res.drawable.ic_solid_heart)
@@ -276,7 +276,7 @@ private fun HomeContent(
             contentPadding = PaddingValues(horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            items(state.brands, key = { it.id }) { brand ->
+            items(state.brands.take(5), key = { it.id }) { brand ->
 
                 val localBrandImage = when (brand.name.trim().lowercase()) {
                     "footwear" -> Res.drawable.ic_category_footwear

@@ -31,7 +31,7 @@ import com.troves.designsystem.util.autoMirror
 import org.jetbrains.compose.resources.painterResource
 import troves.designsystem.generated.resources.Res
 import troves.designsystem.generated.resources.ic_arrow_back
-import troves.designsystem.generated.resources.img_onboarding1
+import troves.designsystem.generated.resources.img_placeholder
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -61,8 +61,8 @@ fun ProductImageCarousel(
                 contentDescription = "Product image $page",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize(),
-                placeholder = painterResource(Res.drawable.img_onboarding1),
-                error = painterResource(Res.drawable.img_onboarding1),
+                placeholder = painterResource(Res.drawable.img_placeholder),
+                error = painterResource(Res.drawable.img_placeholder),
             )
         }
 
