@@ -369,7 +369,7 @@ private fun SectionHeader(
     ) {
         BasicText(
             text = title,
-            style = Theme.typography.title.copy(
+            style = Theme.typography.hint.large.copy(
                 color = Theme.colors.primaryFont,
                 fontWeight = FontWeight.Bold,
             ),

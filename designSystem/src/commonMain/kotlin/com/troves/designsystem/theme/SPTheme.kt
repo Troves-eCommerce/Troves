@@ -29,7 +29,7 @@ fun SpTheme(
         if (isRtlLanguage(languageCode)) LayoutDirection.Rtl else LayoutDirection.Ltr
     }
 
-    val fontFamily = if (languageCode == "ar") arabicFontFamily else defaultFontFamily
+    val fontFamily =  defaultFontFamily
 
     CompositionLocalProvider(
         LocalLayoutDirection provides layoutDirection,
