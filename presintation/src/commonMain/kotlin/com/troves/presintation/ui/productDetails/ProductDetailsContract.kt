@@ -20,6 +20,8 @@ data class ProductDetailUiState(
     val isAddingToCart: Boolean = false,
     val errorMessage: String? = null,
     val product: Product? = null,
+    val showCartConfirmation: Boolean = false,
+    val productCartQuantity: Int = 0,
 ) {
     val hasError = errorMessage != null
 
@@ -66,6 +68,7 @@ sealed interface ProductDetailsEffect {
     data object NavigateBack : ProductDetailsEffect
     data class ShowToast(val message: String) : ProductDetailsEffect
     data object ShowLoginRequiredDialog : ProductDetailsEffect
+    data object NavigateToCart : ProductDetailsEffect
 }
 
 sealed interface ProductDetailsIntent {
@@ -77,4 +80,6 @@ sealed interface ProductDetailsIntent {
     data class OnOptionSelected(val optionName: String, val value: String) : ProductDetailsIntent
     data object OnAddToCart : ProductDetailsIntent
     data object OnFavoriteClick : ProductDetailsIntent
+    data object OnViewCartClick : ProductDetailsIntent
+    data object OnDismissCartConfirmation : ProductDetailsIntent
 }

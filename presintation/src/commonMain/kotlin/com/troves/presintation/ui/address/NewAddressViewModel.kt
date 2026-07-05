@@ -172,6 +172,14 @@ class NewAddressViewModel(
             sendEffect(NewAddressEffect.ShowToast("Please fill all required fields"))
             return
         }
+        
+        if (!com.troves.domain.utils.PhoneUtils.isValidEgyptianPhone(state.phone)) {
+            sendEffect(NewAddressEffect.ShowToast("Please enter a valid Egyptian phone number"))
+            return
+        }
+        
+        val normalizedPhone = com.troves.domain.utils.PhoneUtils.normalizeEgyptianPhone(state.phone)
+
         updateState { copy(isSaving = true) }
         viewModelScope.launch {
             val address = Address(
@@ -184,7 +192,7 @@ class NewAddressViewModel(
                 country = state.country,
                 countryCode = null,
                 zip = state.zip.ifBlank { null },
-                phone = state.phone,
+                phone = normalizedPhone,
                 firstName = state.recipientName.substringBefore(" ").ifBlank { null },
                 lastName = state.recipientName.substringAfter(" ", "").ifBlank { null },
                 company = null,

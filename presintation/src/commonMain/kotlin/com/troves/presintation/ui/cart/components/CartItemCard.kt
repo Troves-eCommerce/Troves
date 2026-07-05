@@ -30,7 +30,6 @@ fun CartItemCard(
     item: CartLineUi,
     onIncrement: () -> Unit,
     onDecrement: () -> Unit,
-    onRemove: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -70,12 +69,6 @@ fun CartItemCard(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.weight(1f),
-                )
-                // Remove this entire line from the cart.
-                BasicText(
-                    text = "Remove",
-                    style = Theme.typography.body.small.copy(color = Theme.colors.error),
-                    modifier = Modifier.clickable(onClick = onRemove).padding(start = 8.dp),
                 )
             }
 
@@ -126,7 +119,7 @@ private fun QuantityStepper(
         StepperButton(label = "\u2212", enabled = true, onClick = onDecrement)
 
         BasicText(
-            text = quantity.toString().padStart(2, '0'),
+            text = quantity.toString(),
             style = Theme.typography.body.medium.copy(
                 color = Theme.colors.primaryFont,
                 fontWeight = FontWeight.Medium,

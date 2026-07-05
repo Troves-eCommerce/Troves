@@ -118,4 +118,7 @@ val domainModule = module {
     factory { SetCurrencyUseCase(get()) }
     factory { SetThemeModeUseCase(get()) }
     factory { ObserveProfilePreferencesUseCase(get(), get()) }
+
+    // AI assistant
+    factory { com.troves.domain.usecase.ai.SendAiMessageUseCase(get()) }
 }

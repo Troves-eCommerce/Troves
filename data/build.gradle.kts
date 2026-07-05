@@ -163,7 +163,7 @@ buildkonfig {
         )
         buildConfigField(
             STRING, "SHOPIFY_REST_URL",
-            localProperties.getProperty("SHOPIFY_REST_URL") ?: error("SHOPIFY_HOSTNAME not set in local.properties")
+            localProperties.getProperty("SHOPIFY_REST_URL") ?: error("SHOPIFY_REST_URL not set in local.properties")
         )
         buildConfigField(
             STRING, "SHOPIFY_STOREFRONT_URL",
@@ -187,6 +187,11 @@ buildkonfig {
         buildConfigField(
             STRING, "SUPABASE_API_URL",
             localProperties.getProperty("SUPABASE_API_URL") ?: "troves-shopify-oauth-salt-v1"
+        )
+        buildConfigField(
+            STRING, "AI_ASSISTANT_BASE_URL",
+            localProperties.getProperty("AI_ASSISTANT_BASE_URL")
+                ?: "https://ai-shopping-assistant.trovess.workers.dev/"
         )
     }
 }
