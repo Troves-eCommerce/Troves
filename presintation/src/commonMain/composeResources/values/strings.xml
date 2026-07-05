@@ -68,13 +68,15 @@
 
     <!-- Checkout · Payment step -->
     <string name="checkout_payment_step_title">Select Payment Method</string>
-    <string name="checkout_payment_step_subtitle">Choose how you\'d like to pay for your order.</string>
+    <string name="checkout_payment_step_subtitle">Choose how you'd like to pay for your order.</string>
     <string name="checkout_payment_cod_title">Cash on Delivery (COD)</string>
+    <string name="checkout_paymob_cod_title">Paymob</string>
+    <string name="checkout_paymob_cod_desc">Pay securely in-app using Paymob </string>
     <string name="checkout_payment_cod_desc">Pay with cash when your order is delivered.</string>
     <string name="checkout_payment_cod_label">COD</string>
     <string name="checkout_payment_cod_limit">Cash limit: up to $500.00</string>
     <string name="checkout_payment_online_title">Online Payment</string>
-    <string name="checkout_payment_online_desc">Pay securely using your card.</string>
+    <string name="checkout_payment_online_desc">Pay securely using your card via Shpoify.</string>
     <string name="checkout_secure_title">Secure Checkout</string>
     <string name="checkout_secure_desc">Your payment information is encrypted and safe with us.</string>
 
