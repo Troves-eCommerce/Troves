@@ -100,4 +100,9 @@
     <string name="ai_retry">Retry</string>
     <string name="ai_rate_limited">You\'ve reached the chat limit. Try again in %1$s.</string>
     <string name="ai_profile_entry">Troves AI</string>
+    <string name="ai_voice_unavailable">Voice input isn\'t available on this device.</string>
+    <string name="ai_voice_permission_denied">Microphone permission is needed for voice input. Enable it in Settings.</string>
+    <string name="ai_voice_no_speech">Didn\'t catch that. Please try again.</string>
+    <string name="ai_voice_error">Voice input failed. Please try again.</string>
+    <string name="ai_voice_listening">Listening… tap the mic to stop</string>
 </resources>
