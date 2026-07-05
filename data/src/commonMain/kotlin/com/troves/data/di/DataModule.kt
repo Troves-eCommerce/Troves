@@ -7,6 +7,7 @@ import com.troves.data.network.provideApolloClient
 import com.troves.data.network.provideStorefrontApolloClient
 import com.troves.data.network.provideHttpClient
 import com.troves.data.network.provideLocationHttpClient
+import com.troves.data.network.providePaymobClient
 import com.troves.data.repository.AddressRepositoryImpl
 import com.troves.data.repository.LocationRepositoryImpl
 import com.troves.data.repository.PaymentRepositoryImpl
@@ -25,6 +26,8 @@ import com.troves.data.source.remote.service.TrovesApiService
 import com.troves.data.source.remote.service.StorefrontApiService
 import com.troves.data.source.remote.service.apollo.ApolloStorefrontApiServiceImpl
 import com.troves.data.source.remote.service.apollo.ApolloTrovesApiServiceImpl
+import com.troves.data.source.remote.service.paymob.PaymobApiService
+import com.troves.data.source.remote.service.paymob.PaymobServiceImpl
 import com.troves.domain.repository.AddressRepository
 import com.troves.domain.repository.AuthenticationRepository
 import com.troves.domain.repository.LocationRepository
@@ -43,6 +46,7 @@ val dataModule = module {
     // ── Network ───────────────────────────────────────────────────────────────
     // Ktor client kept registered for easy rollback to the REST implementation.
     single<HttpClient> { provideHttpClient() }
+    single<HttpClient>(named(PAYMOB)) { providePaymobClient() }
     // Dedicated client for public location APIs — no Shopify auth/base URL leaks to third parties.
     single<HttpClient>(named(LOCATION_CLIENT)) { provideLocationHttpClient() }
     // Admin GraphQL client (product catalogue) and Storefront client (cart/checkout/customer/orders).
@@ -52,6 +56,7 @@ val dataModule = module {
     single<TrovesApiService> { ApolloTrovesApiServiceImpl(get(named(ADMIN_CLIENT))) }
     single<StorefrontApiService> { ApolloStorefrontApiServiceImpl(get(named(STORE_CLIENT))) }
 
+    single<PaymobApiService> { PaymobServiceImpl(get(named(PAYMOB))) }
     // Location (countries/cities) — dedicated service → data source → repository.
     single<LocationApiService> { LocationApiServiceImpl(get(named(LOCATION_CLIENT))) }
     single<LocationDataSource> { LocationDataSourceImpl(get()) }
@@ -75,7 +80,7 @@ val dataModule = module {
     // ── Repositories ──────────────────────────────────────────────────────────
     single<TrovesRepository>          { TrovesRepositoryImpl(get(), get(), get(), get(), get()) }
     single<AuthenticationRepository>  { createAuthenticationRepository(get(), get()) }
-    single<PaymentRepository>         { PaymentRepositoryImpl() }
+    single<PaymentRepository>         { PaymentRepositoryImpl(get()) }
     single<WishlistRepository>        { WishlistRepositoryImpl(get() , get()) }
     single<LocationRepository>        { LocationRepositoryImpl(get()) }
     single<AddressRepository>         { AddressRepositoryImpl(get(), get(), get()) }
@@ -85,3 +90,4 @@ val dataModule = module {
 private const val ADMIN_CLIENT = "admin"
 private const val STORE_CLIENT = "store"
 private const val LOCATION_CLIENT = "location"
+private const val PAYMOB = "paymob"
