@@ -27,6 +27,7 @@ import com.troves.domain.usecase.order.GetDefaultAddressUseCase
 import com.troves.domain.usecase.order.GetOrderByIdUseCase
 import com.troves.domain.usecase.order.GetOrdersUseCase
 import com.troves.domain.usecase.order.PlaceCodOrderUseCase
+import com.troves.domain.usecase.paymob.GetClientSecretUseCase
 import com.troves.domain.usecase.products.FilterProductsUseCase
 import com.troves.domain.usecase.products.GetProductsByBrandUseCase
 import com.troves.domain.usecase.products.GetProductsByCategoryUseCase
@@ -97,6 +98,7 @@ val domainModule = module {
     factory { PlaceCodOrderUseCase(get(), get()) }
     factory { com.troves.domain.usecase.order.AttachAddressToCartUseCase(get()) }
     factory { ClearCartUseCase(get()) }
+    factory { GetClientSecretUseCase(get()) }
     single { SyncWishlistUseCase(get(),get()) }
 
     // Address

@@ -1,4 +1,7 @@
-package com.troves.presintation.ui.checkout
+package com.troves.data.source.remote.service.paymob
+
+import com.troves.data.source.remote.service.shopify_dtos.ShopifyUserResponse
+import com.troves.domain.utils.Result
 
 /**
  * Copyright (c) 2026 Wahid Ali Wahid Hussien.
@@ -20,21 +23,7 @@ package com.troves.presintation.ui.checkout
  * Author: Wahid Ali Wahid Hussien
  * Created: 03/07/2026
  */
-interface Checkout {
-    fun presentCheckout(checkoutUrl: String)
-}
+interface PaymobApiService {
 
-interface CheckoutEvent{
-    fun onCheckoutCanceled()
-
-    fun onCheckoutCompleted(checkoutCompletedEvent: CheckoutCompletedEvent)
-
-    fun onCheckoutFailed(error: Exception)
-}
-
-interface PaymobCheckout{
-    fun pay(
-        clientSecret: String,
-        publicKey: String = "egy_pk_test_VBZ7riZpmX3bTucv8DwMqfB9MJCDxVxE",
-        )
+    suspend fun getClientSecret(cartId: String): Result<ClientSecretResponse>
 }

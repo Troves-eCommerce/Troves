@@ -74,7 +74,7 @@
     <string name="checkout_payment_cod_label">عند الاستلام</string>
     <string name="checkout_payment_cod_limit">الحد النقدي: حتى $500.00</string>
     <string name="checkout_payment_online_title">الدفع الإلكتروني</string>
-    <string name="checkout_payment_online_desc">ادفع بأمان باستخدام بطاقتك.</string>
+    <string name="checkout_payment_online_desc">ادفع بأمان باستخدام بطاقتك من خلال شوبيفاي.</string>
     <string name="checkout_secure_title">دفع آمن</string>
     <string name="checkout_secure_desc">معلومات الدفع الخاصة بك مشفّرة وآمنة لدينا.</string>
 

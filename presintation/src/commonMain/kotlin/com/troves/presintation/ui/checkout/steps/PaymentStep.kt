@@ -24,7 +24,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.troves.designsystem.components.button.PrimaryButton
 import com.troves.designsystem.components.cards.PaymentMethodCard
 import com.troves.designsystem.components.stepper.HorizontalStepper
@@ -33,8 +32,10 @@ import com.troves.designsystem.theme.Theme
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import troves.designsystem.generated.resources.Res
+import troves.designsystem.generated.resources.card
+import troves.designsystem.generated.resources.cod
 import troves.designsystem.generated.resources.ic_payment_method
-import troves.presintation.generated.resources.Res as StringRes
+import troves.designsystem.generated.resources.paymob_filled
 import troves.presintation.generated.resources.checkout_payment_cod_desc
 import troves.presintation.generated.resources.checkout_payment_cod_label
 import troves.presintation.generated.resources.checkout_payment_cod_limit
@@ -43,11 +44,14 @@ import troves.presintation.generated.resources.checkout_payment_online_desc
 import troves.presintation.generated.resources.checkout_payment_online_title
 import troves.presintation.generated.resources.checkout_payment_step_subtitle
 import troves.presintation.generated.resources.checkout_payment_step_title
+import troves.presintation.generated.resources.checkout_paymob_cod_desc
+import troves.presintation.generated.resources.checkout_paymob_cod_title
 import troves.presintation.generated.resources.checkout_secure_desc
 import troves.presintation.generated.resources.checkout_secure_title
+import troves.presintation.generated.resources.Res as StringRes
 
 
-enum class PaymentOption { CashOnDelivery, Online }
+enum class PaymentOption { CashOnDelivery, Online, PayMob }
 
 
 @Composable
@@ -82,7 +86,7 @@ fun PaymentStepContent(
         PaymentMethodCard(
             title = stringResource(StringRes.string.checkout_payment_cod_title),
             description = stringResource(StringRes.string.checkout_payment_cod_desc),
-            icon = painterResource(Res.drawable.ic_payment_method),
+            painter = painterResource(Res.drawable.cod),
             selected = selected == PaymentOption.CashOnDelivery,
             onClick = { onSelect(PaymentOption.CashOnDelivery) },
             label = stringResource(StringRes.string.checkout_payment_cod_label),
@@ -91,7 +95,7 @@ fun PaymentStepContent(
         PaymentMethodCard(
             title = stringResource(StringRes.string.checkout_payment_online_title),
             description = stringResource(StringRes.string.checkout_payment_online_desc),
-            icon = painterResource(Res.drawable.ic_payment_method),
+            painter = painterResource(Res.drawable.card),
             selected = selected == PaymentOption.Online,
             onClick = { onSelect(PaymentOption.Online) },
             trailingContent = {
@@ -107,6 +111,13 @@ fun PaymentStepContent(
                     }
                 }
             },
+        )
+        PaymentMethodCard(
+            title = stringResource(StringRes.string.checkout_paymob_cod_title),
+            description = stringResource(StringRes.string.checkout_paymob_cod_desc),
+            painter = painterResource(Res.drawable.paymob_filled),
+            selected = selected == PaymentOption.PayMob,
+            onClick = { onSelect(PaymentOption.PayMob) },
         )
 
         Spacer(modifier = Modifier.weight(1f))
@@ -132,7 +143,10 @@ private fun SecureCheckoutNote() {
             tint = Theme.colors.primaryFont,
             modifier = Modifier.size(Theme.size.iconMedium),
         )
-        Column(verticalArrangement = Arrangement.spacedBy(Theme.spacing.extraSmall), modifier = Modifier.background(Theme.colors.surface)) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(Theme.spacing.extraSmall),
+            modifier = Modifier.background(Theme.colors.surface)
+        ) {
             BasicText(
                 text = stringResource(StringRes.string.checkout_secure_title),
                 style = Theme.typography.body.medium.copy(
