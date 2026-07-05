@@ -18,6 +18,7 @@ import platform.darwin.dispatch_async
 import platform.darwin.dispatch_get_main_queue
 import platform.posix.memcpy
 
+private const val IMAGE_UTI = "public.image"
 
 @OptIn(ExperimentalForeignApi::class)
 @Composable
@@ -69,9 +70,5 @@ private class PhotoPickerDelegate(
             memcpy(pinned.addressOf(0), bytes, length)
         }
         return result
-    }
-
-    private companion object {
-        const val IMAGE_UTI = "public.image"
     }
 }
