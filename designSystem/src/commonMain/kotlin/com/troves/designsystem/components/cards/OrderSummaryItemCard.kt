@@ -25,7 +25,7 @@ import com.troves.designsystem.theme.SpTheme
 import com.troves.designsystem.theme.Theme
 import org.jetbrains.compose.resources.painterResource
 import troves.designsystem.generated.resources.Res
-import troves.designsystem.generated.resources.product_card
+import troves.designsystem.generated.resources.img_placeholder
 
 /**
  * A read-only order line-item card: a 128dp-wide image spanning the full card
@@ -109,7 +109,7 @@ private fun OrderSummaryItemCardPreview() {
             verticalArrangement = Arrangement.spacedBy(Theme.spacing.medium),
         ) {
             OrderSummaryItemCard(
-                imagePainter = painterResource(Res.drawable.product_card),
+                imagePainter = painterResource(Res.drawable.img_placeholder),
                 name = "Soft Knit Sweater",
                 specs = "Cream / M",
                 quantity = 2,

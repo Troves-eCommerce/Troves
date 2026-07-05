@@ -30,13 +30,14 @@ import com.troves.designsystem.components.button.PrimaryButton
 import com.troves.designsystem.components.cards.OrderSummaryInfoCard
 import com.troves.designsystem.components.cards.OrderSummaryItemCard
 import com.troves.designsystem.components.stepper.HorizontalStepper
-import com.troves.designsystem.components.textfield.TextField
+import com.troves.designsystem.components.textfield.CustomTextField
 import com.troves.designsystem.theme.SpTheme
 import com.troves.designsystem.theme.Theme
+import com.troves.designsystem.util.formatPrice
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import troves.designsystem.generated.resources.Res
-import troves.designsystem.generated.resources.product_card
+import troves.designsystem.generated.resources.img_placeholder
 import troves.presintation.generated.resources.Res as StringRes
 import troves.presintation.generated.resources.apply
 import troves.presintation.generated.resources.checkout_coupon_hint
@@ -104,7 +105,7 @@ fun OrderSummaryStepContent(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.Bottom,
             ) {
-                TextField(
+                CustomTextField(
                     text = couponInput,
                     onTextChange = onCouponChange,
                     hint = stringResource(StringRes.string.checkout_coupon_hint),
@@ -129,7 +130,7 @@ fun OrderSummaryStepContent(
                 name = item.name,
                 specs = item.specs,
                 quantity = item.quantity,
-                priceFormatted = item.priceFormatted,
+                priceFormatted = formatPrice(item.priceFormatted),
             )
             Box(
                 modifier = Modifier
@@ -141,11 +142,11 @@ fun OrderSummaryStepContent(
 
         OrderSummaryInfoCard(
             subtotalLabel = stringResource(StringRes.string.checkout_subtotal_items, itemCount),
-            subtotalFormatted = subtotalFormatted,
+            subtotalFormatted = formatPrice(subtotalFormatted),
             totalLabel = stringResource(StringRes.string.checkout_total),
-            totalFormatted = totalFormatted,
+            totalFormatted = formatPrice(totalFormatted),
             discountLabel = discountCode?.let { stringResource(StringRes.string.checkout_discount_code, it) },
-            discountValueFormatted = discountValueFormatted,
+            discountValueFormatted = discountValueFormatted?.let { formatPrice(it) },
         )
     }
 }
@@ -155,7 +156,7 @@ fun OrderSummaryStepContent(
 private fun OrderSummaryStepPreview() {
     SpTheme(isDarkTheme = false, languageCode = "en") {
         var coupon by remember { mutableStateOf("WELCOME10") }
-        val image = painterResource(Res.drawable.product_card)
+        val image = painterResource(Res.drawable.img_placeholder)
         Column(
             modifier = Modifier
                 .fillMaxSize()

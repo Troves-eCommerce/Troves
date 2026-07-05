@@ -27,42 +27,29 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import com.troves.designsystem.components.cards.MainCard
 import com.troves.designsystem.components.shimmer.shimmerEffect
 import com.troves.designsystem.theme.Theme
+import com.troves.designsystem.util.formatPrice
 import com.troves.presintation.core.mvi.ObserveEffect
 import com.troves.presintation.ui.components.FilterBottomSheet
 import com.troves.presintation.ui.components.FilterOption
 import com.troves.presintation.ui.search.component.BrandRow
 import com.troves.presintation.ui.search.component.EmptySearchResult
 import com.troves.presintation.ui.search.component.ErrorView
-import com.troves.presintation.ui.search.component.ProductCard
 import com.troves.presintation.ui.search.component.ProductCardSkeleton
 import com.troves.presintation.ui.search.component.RecentSearchSection
 import com.troves.presintation.ui.search.component.SearchBarSection
-import com.troves.presintation.ui.search.component.TrendingSection
+//import com.troves.presintation.ui.search.component.TrendingSection
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
+import coil3.compose.rememberAsyncImagePainter
+import org.jetbrains.compose.resources.painterResource
+import troves.designsystem.generated.resources.Res
+import troves.designsystem.generated.resources.ic_star
+import troves.designsystem.generated.resources.ic_heart
+import troves.designsystem.generated.resources.img_placeholder
 
-/**
- * Copyright (c) 2026 Wahid Ali Wahid Hussien.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-/**
- * Author: Wahid Ali Wahid Hussien
- * Created: 30/06/2026
- */
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -76,6 +63,9 @@ fun SearchScreen(
 ) {
     val coroutineScope = rememberCoroutineScope()
     val snackBarState = remember { SnackbarHostState() }
+    val placeholder = painterResource(Res.drawable.img_placeholder)
+    val starIcon = painterResource(Res.drawable.ic_star)
+    val heartIcon = painterResource(Res.drawable.ic_heart)
 
     LaunchedEffect(Unit) {
         onIntent(SearchIntent.Load)
@@ -136,14 +126,14 @@ fun SearchScreen(
                             onClearAllClick = { onIntent(SearchIntent.ClearRecentSearches) }
                         )
 
-                        if (!state.isLoading && !state.hasError && !state.isEmpty) {
+                       /* if (!state.isLoading && !state.hasError && !state.isEmpty) {
                             TrendingSection(
                                 onTrendingChipClick = {
                                     onIntent(SearchIntent.SearchQueryChange(it))
                                     onIntent(SearchIntent.OnSearch(it))
                                 }
                             )
-                        }
+                        }*/
                     }
                 }
 
@@ -183,10 +173,19 @@ fun SearchScreen(
                             items = state.products,
                             key = { it.id }
                         ) { product ->
-                            ProductCard(
-                                product = product,
-                                onClick = { onIntent(SearchIntent.OnProductClick(it.id.toString())) },
-                                onFavoriteClick = { onIntent(SearchIntent.ToggleFavorite(it.id.toString())) },
+                            MainCard(
+                                title = product.title,
+                                price = formatPrice(product.price),
+                                rating = product.rating.toDouble(),
+                                imagePainter = rememberAsyncImagePainter(
+                                    model = product.imageUrl,
+                                    placeholder = placeholder,
+                                    error = placeholder,
+                                ),
+                                ratingIconPainter = starIcon,
+                                favoriteIconPainter = heartIcon,
+                                onClick = { onIntent(SearchIntent.OnProductClick(product.id.toString())) },
+                                onFavoriteClick = { onIntent(SearchIntent.ToggleFavorite(product.id.toString())) },
                                 isFavorite = product.id.toString() in state.favoriteProductIds,
                                 modifier = Modifier.fillMaxWidth()
                             )

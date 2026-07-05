@@ -77,6 +77,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(libs.kotlin.stdlib)
+                implementation(libs.kotlinx.coroutines.core)
                 implementation(libs.ktor.serialization.kotlinx.json)
                 implementation(libs.ktor.client.core)
                 implementation(libs.ktor.logging)
@@ -102,6 +103,7 @@ kotlin {
                 implementation(libs.apollo.runtime)
                 // Memory Cache
                 implementation(libs.apollo.normalized.cache)
+                implementation(libs.kermit)
             }
         }
 
@@ -117,6 +119,8 @@ kotlin {
                 implementation(project.dependencies.platform(libs.firebase.bom))
                 implementation(libs.androidx.sqlite.bundled)
                 implementation(libs.androidx.room.runtime)
+                implementation(libs.androidx.appcompat)
+                implementation(libs.androidx.core.ktx)
             }
         }
 
@@ -175,6 +179,10 @@ buildkonfig {
                 ?: localProperties.getProperty("SHOPIFY_STOREFRONT_ACCESS_TOKEN")
                 ?: localProperties.getProperty("STORE_ACCESS_TOKEN")
                 ?: ""
+        )
+        buildConfigField(
+            STRING, "SHOPIFY_REST_URL",
+            localProperties.getProperty("SHOPIFY_REST_URL") ?: ""
         )
         buildConfigField(
             STRING, "SHOPIFY_CUSTOMER_PASSWORD_SECRET",

@@ -25,14 +25,14 @@ import com.troves.designsystem.components.button.PrimaryButton
 import com.troves.designsystem.components.bottomsheet.BaseBottomSheet
 import com.troves.designsystem.theme.Theme
 import com.troves.domain.usecase.products.ProductSortOption
-import troves.presintation.generated.resources.Res
-import troves.presintation.generated.resources.apply
-import troves.presintation.generated.resources.sort_best_seller
-import troves.presintation.generated.resources.sort_default
-import troves.presintation.generated.resources.sort_group_by_sub_category
-import troves.presintation.generated.resources.sort_price_high_to_low
-import troves.presintation.generated.resources.sort_price_low_to_high
-import troves.presintation.generated.resources.sort_title
+import troves.designsystem.generated.resources.Res
+import troves.designsystem.generated.resources.apply
+import troves.designsystem.generated.resources.sort_best_seller
+import troves.designsystem.generated.resources.sort_default
+import troves.designsystem.generated.resources.sort_group_by_sub_category
+import troves.designsystem.generated.resources.sort_price_high_to_low
+import troves.designsystem.generated.resources.sort_price_low_to_high
+import troves.designsystem.generated.resources.sort_title
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 

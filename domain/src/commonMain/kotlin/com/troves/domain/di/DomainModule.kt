@@ -1,5 +1,6 @@
 package com.troves.domain.di
 
+import com.troves.domain.usecase.ai.SendAiMessageUseCase
 import com.troves.domain.usecase.auth.IsLoggedInUseCase
 import com.troves.domain.usecase.auth.LoginUseCase
 import com.troves.domain.usecase.auth.LogoutUseCase
@@ -34,6 +35,8 @@ import com.troves.domain.usecase.products.GetProductsByCategoryUseCase
 import com.troves.domain.usecase.products.SortProductsUseCase
 import com.troves.domain.usecase.search.FilterProductsByQueryUseCase
 import com.troves.domain.usecase.search.SearchProductsUseCase
+import com.troves.domain.usecase.settings.FetchLatestRatesUseCase
+import com.troves.domain.usecase.settings.GetExchangeRatesUseCase
 import com.troves.domain.usecase.settings.ObserveProfilePreferencesUseCase
 import com.troves.domain.usecase.settings.SetCurrencyUseCase
 import com.troves.domain.usecase.settings.SetLanguageUseCase
@@ -118,7 +121,9 @@ val domainModule = module {
     factory { SetCurrencyUseCase(get()) }
     factory { SetThemeModeUseCase(get()) }
     factory { ObserveProfilePreferencesUseCase(get(), get()) }
+    factory { GetExchangeRatesUseCase(get()) }
+    factory { FetchLatestRatesUseCase(get()) }
 
     // AI assistant
-    factory { com.troves.domain.usecase.ai.SendAiMessageUseCase(get()) }
+    factory { SendAiMessageUseCase(get()) }
 }

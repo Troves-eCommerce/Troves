@@ -1,5 +1,4 @@
 [versions]
-androidx-core-splashscreen = "1.0.1"
 agp = "9.2.1"
 android-compileSdk = "37"
 android-minSdk = "24"
@@ -49,7 +48,6 @@ googleid = "1.1.0"
 apollo = "5.0.1"
 
 [libraries]
-androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "androidx-core-splashscreen" }
 # Koin
 androidx-datastore = { module = "androidx.datastore:datastore", version.ref = "datastore" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }

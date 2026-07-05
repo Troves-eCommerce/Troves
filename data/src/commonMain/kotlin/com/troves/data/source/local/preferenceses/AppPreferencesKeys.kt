@@ -14,6 +14,7 @@ internal object AppPreferencesKeys {
     val LAST_SYNCED_AT        = stringPreferencesKey("last_synced_at")
     val REFRESH_INTERVAL = intPreferencesKey("news_refresh_interval_minutes")
     val SELECTED_CURRENCY = stringPreferencesKey("selected_currency")
+    val EXCHANGE_RATES_JSON = stringPreferencesKey("exchange_rates_json")
 
     val SHOPIFY_ACCESS_TOKEN_KEY            = stringPreferencesKey("SHOPIFY_ACCESS_TOKEN_KEY")
     val SHOPIFY_ACCESS_TOKEN_KEY_EXPIRING   = longPreferencesKey("SHOPIFY_ACCESS_TOKEN_KEY_EXPIRING")

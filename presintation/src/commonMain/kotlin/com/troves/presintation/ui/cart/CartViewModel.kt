@@ -141,7 +141,5 @@ class CartViewModel(
 }
 
 private fun format(money: CartMoney?): String {
-    if (money == null) return "$0.00"
-    val symbol = if (money.currencyCode == "USD") "$" else ""
-    return if (symbol.isNotEmpty()) "$symbol${money.amount}" else "${money.amount} ${money.currencyCode}"
+    return money?.amount ?: "0.00"
 }

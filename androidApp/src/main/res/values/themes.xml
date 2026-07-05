@@ -2,9 +2,4 @@
 <resources>
     <style name="Theme.Troves" parent="Theme.MaterialComponents.Light.NoActionBar">
     </style>
-    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
-        <item name="windowSplashScreenBackground">@color/splash_background</item>
-        <item name="windowSplashScreenAnimatedIcon">@drawable/troves_logo</item>
-        <item name="postSplashScreenTheme">@style/Theme.Troves</item>
-    </style>
 </resources>

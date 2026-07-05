@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidMultiplatformLibrary)
     alias(libs.plugins.android.lint)
+    alias(libs.plugins.kotlinx.serialization)
 }
 
 kotlin {
@@ -56,8 +57,9 @@ kotlin {
             dependencies {
                 implementation(libs.kotlin.stdlib)
                 implementation(libs.kotlinx.coroutines.core)
+                implementation(libs.kotlinx.serialization)
                 implementation("io.insert-koin:koin-core:3.5.3")
-                implementation(libs.kotlinx.coroutines.core)
+                implementation(libs.kermit)
                 // Add KMP dependencies here
             }
         }

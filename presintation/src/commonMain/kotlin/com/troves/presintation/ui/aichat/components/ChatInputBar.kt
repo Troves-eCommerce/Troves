@@ -25,8 +25,8 @@ import com.composables.icons.lucide.ArrowUp
 import com.composables.icons.lucide.Image
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Mic
+import com.troves.designsystem.components.textfield.CustomTextField
 import com.composables.icons.lucide.MicOff
-import com.troves.designsystem.components.textfield.TextField
 import com.troves.designsystem.theme.Theme
 
 @Composable
@@ -50,7 +50,7 @@ fun ChatInputBar(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        TextField(
+        CustomTextField(
             text = value,
             onTextChange = onValueChange,
             modifier = Modifier.weight(1f),

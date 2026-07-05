@@ -1,26 +1,35 @@
 package com.troves.presintation.ui.auth
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -32,18 +41,19 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.troves.designsystem.components.button.PrimaryButton
-import com.troves.designsystem.components.textfield.TextField
+import com.troves.designsystem.components.textfield.CustomTextField
 import com.troves.designsystem.components.toast.TrovesToast
 import com.troves.designsystem.theme.Theme
+import com.troves.designsystem.util.bounceClick
 import com.troves.presintation.core.mvi.ObserveEffect
+import com.troves.presintation.ui.auth.google.LocalGoogleAuthHandler
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import troves.designsystem.generated.resources.Res
-import troves.designsystem.generated.resources.ic_eye
-import troves.designsystem.generated.resources.ic_eye_off
-
-import com.troves.presintation.ui.auth.google.LocalGoogleAuthHandler
+import troves.designsystem.generated.resources.*
 
 @Composable
 fun RegisterScreen(
@@ -58,14 +68,17 @@ fun RegisterScreen(
     var successMessage by remember { mutableStateOf<String?>(null) }
     var toastError by remember { mutableStateOf<String?>(null) }
 
+    // Pre-resolve strings that are referenced inside lambdas / non-composable scopes
+    val googleSignInFailedText = stringResource(Res.string.login_google_failed)
+    val googleSignInUnsupportedText = stringResource(Res.string.login_google_unsupported)
+    val passwordsDoNotMatchText = stringResource(Res.string.register_password_not_match)
+
     ObserveEffect(viewModel.effect) { effect ->
         when (effect) {
             is AuthEffect.ShowMessage -> successMessage = effect.message
             is AuthEffect.ShowError -> toastError = effect.message
             AuthEffect.NavigateToHome -> onRegisterSuccess()
-            is AuthEffect.OnRegistered -> {
-                onRegistered()
-            }
+            is AuthEffect.OnRegistered -> onRegistered()
         }
     }
 
@@ -80,96 +93,106 @@ fun RegisterScreen(
     val eyeIcon = Res.drawable.ic_eye
     val eyeOffIcon = Res.drawable.ic_eye_off
 
-    val pageBg = Color(0xFFF0F2F5)
+    val customBorderShape = RoundedCornerShape(14.dp)
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(pageBg)
+            .background(Theme.colors.backGround)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 24.dp, vertical = 48.dp),
+                .padding(horizontal = 24.dp, vertical = 40.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
+            Spacer(Modifier.height(16.dp))
+
             BasicText(
-                text = "Sign Up",
-                style = Theme.typography.display.copy(
+                text = stringResource(Res.string.register_title),
+                style = Theme.typography.displayMedium.copy(
                     color = Theme.colors.primaryFont,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center
                 )
             )
 
-            Spacer(Modifier.height(32.dp))
+            Spacer(Modifier.height(8.dp))
 
-            TextField(
+            BasicText(
+                text = stringResource(Res.string.register_desc),
+                style = Theme.typography.body.large.copy(
+                    color = Theme.colors.secondaryFont,
+                    textAlign = TextAlign.Center
+                )
+            )
+
+            Spacer(Modifier.height(36.dp))
+
+            CustomTextField(
                 text = email,
                 onTextChange = { viewModel.onIntent(AuthIntent.EmailChanged(it)) },
-                title = "Email",
-                hint = "Enter your email",
+                title = stringResource(Res.string.login_email_title),
+                hint = stringResource(Res.string.login_email_hint),
                 singleLine = true,
-                containerColor = Theme.colors.surface,
-                borderColor = Color.Transparent,
+                borderColor = Theme.colors.hint.copy(alpha = 0.4f),
                 onFocusBorderColor = Theme.colors.primary,
+                leadingIcon = painterResource(Res.drawable.ic_outline_email),
+                leadingIconColor = Theme.colors.primaryFont.copy(alpha = 0.7f),
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Email,
                     imeAction = ImeAction.Next
                 ),
                 isError = errorMessage != null && email.isBlank(),
+                modifier = Modifier.fillMaxWidth()
             )
 
             Spacer(Modifier.height(20.dp))
 
-            TextField(
+            CustomTextField(
                 text = password,
                 onTextChange = { viewModel.onIntent(AuthIntent.PasswordChanged(it)) },
-                title = "Your Password",
-                hint = "••••••••",
+                title = stringResource(Res.string.register_password_title),
+                hint = stringResource(Res.string.login_password_hint),
                 singleLine = true,
-                containerColor = Theme.colors.surface,
-                borderColor = Color.Transparent,
+                borderColor = Theme.colors.hint.copy(alpha = 0.4f),
                 onFocusBorderColor = Theme.colors.primary,
-                visualTransformation = if (passwordVisible)
-                    VisualTransformation.None
-                else
-                    PasswordVisualTransformation(),
+                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Password,
                     imeAction = ImeAction.Next
                 ),
                 trailingIcon = if (passwordVisible) painterResource(eyeIcon) else painterResource(eyeOffIcon),
-                trailingIconColor = Theme.colors.hint,
+                trailingIconColor = Theme.colors.primaryFont.copy(alpha = 0.7f),
                 onClickTrailingIcon = { viewModel.onIntent(AuthIntent.TogglePasswordVisibility) },
                 isError = errorMessage != null && password.isBlank(),
+                modifier = Modifier.fillMaxWidth()
             )
 
             Spacer(Modifier.height(20.dp))
 
-            TextField(
+            CustomTextField(
                 text = confirmPassword,
                 onTextChange = { viewModel.onIntent(AuthIntent.ConfirmPasswordChanged(it)) },
-                title = "Confirm Password",
-                hint = "••••••••",
+                title = stringResource(Res.string.register_confirm_password_title),
+                hint = stringResource(Res.string.login_password_hint),
                 singleLine = true,
-                containerColor = Theme.colors.surface,
-                borderColor = Color.Transparent,
+                borderColor = Theme.colors.hint.copy(alpha = 0.4f),
                 onFocusBorderColor = Theme.colors.primary,
-                visualTransformation = if (confirmPasswordVisible)
-                    VisualTransformation.None
-                else
-                    PasswordVisualTransformation(),
+                visualTransformation = if (confirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Password,
                     imeAction = ImeAction.Done
                 ),
                 trailingIcon = if (confirmPasswordVisible) painterResource(eyeIcon) else painterResource(eyeOffIcon),
-                trailingIconColor = Theme.colors.hint,
+                trailingIconColor = Theme.colors.primaryFont.copy(alpha = 0.7f),
                 onClickTrailingIcon = { viewModel.onIntent(AuthIntent.ToggleConfirmPasswordVisibility) },
                 isError = confirmPassword.isNotBlank() && confirmPassword != password,
-                errorMessage = if (confirmPassword.isNotBlank() && confirmPassword != password)
-                    "Passwords do not match" else null,
+                errorMessage = if (confirmPassword.isNotBlank() && confirmPassword != password) passwordsDoNotMatchText else null,
+                modifier = Modifier.fillMaxWidth()
             )
 
             AnimatedVisibility(visible = errorMessage != null) {
@@ -190,41 +213,84 @@ fun RegisterScreen(
                 }
             }
 
-            Spacer(Modifier.height(28.dp))
+            Spacer(Modifier.height(32.dp))
 
             PrimaryButton(
-                caption = "Sign Up",
+                caption = stringResource(Res.string.register_button),
                 onClick = { viewModel.onIntent(AuthIntent.Register) },
                 modifier = Modifier.fillMaxWidth(),
                 isLoading = isLoading,
                 isDisabled = isLoading,
             )
 
-            Spacer(Modifier.height(24.dp))
-
-            AuthDivider()
-
-            Spacer(Modifier.height(24.dp))
-
-            SocialLoginSection(
-                onGoogleClick = {
-                    googleAuthHandler?.signIn(
-                        onSuccess = { idToken, accessToken ->
-                            viewModel.onIntent(AuthIntent.GoogleSignIn(idToken, accessToken))
-                        },
-                        onError = { error ->
-                            toastError = error.message ?: "Google Sign-In failed"
-                        }
-                    ) ?: run { toastError = "Google Sign-In is not supported on this platform" }
-                }
-            )
-
             Spacer(Modifier.height(32.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                HorizontalDivider(modifier = Modifier.weight(1f), color = Theme.colors.secondary)
+                BasicText(
+                    text = "  ${stringResource(Res.string.login_or_continue)}  ",
+                    style = Theme.typography.body.medium.copy(
+                        color = Theme.colors.secondaryFont,
+                        fontSize = 14.sp
+                    )
+                )
+                HorizontalDivider(modifier = Modifier.weight(1f), color = Theme.colors.secondary)
+            }
+
+            Spacer(Modifier.height(28.dp))
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(58.dp)
+                    .background(Color.White, customBorderShape)
+                    .border(1.dp, Theme.colors.hint.copy(alpha = 0.4f), customBorderShape)
+                    .bounceClick(
+                        shape = customBorderShape,
+                        maxPadding = 4.dp,
+                        onClick = {
+                            googleAuthHandler?.signIn(
+                                onSuccess = { idToken, accessToken ->
+                                    viewModel.onIntent(AuthIntent.GoogleSignIn(idToken, accessToken))
+                                },
+                                onError = { error ->
+                                    toastError = error.message ?: googleSignInFailedText
+                                }
+                            ) ?: run { toastError = googleSignInUnsupportedText }
+                        }
+                    ),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    painter = painterResource(Res.drawable.ic_google),
+                    contentDescription = "Google Icon",
+                    modifier = Modifier.size(22.dp)
+                )
+                Spacer(Modifier.width(12.dp))
+                BasicText(
+                    text = stringResource(Res.string.login_google),
+                    style = Theme.typography.body.large.copy(
+                        color = Theme.colors.primaryFont.copy(alpha = 0.8f),
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 16.sp
+                    )
+                )
+            }
+
+            Spacer(Modifier.height(42.dp))
+
+            val alreadyHaveAccountText = stringResource(Res.string.register_already_have_account)
+            val loginNowText = stringResource(Res.string.register_login_now)
 
             BasicText(
                 text = buildAnnotatedString {
                     withStyle(SpanStyle(color = Theme.colors.secondaryFont)) {
-                        append("Already have an account?  ")
+                        append(alreadyHaveAccountText)
                     }
                     withStyle(
                         SpanStyle(
@@ -232,13 +298,15 @@ fun RegisterScreen(
                             fontWeight = FontWeight.SemiBold
                         )
                     ) {
-                        append("Sign In")
+                        append(loginNowText)
                     }
                 },
-                style = Theme.typography.body.medium.copy(textAlign = TextAlign.Center),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable(onClick = onNavigateToLogin)
+                style = Theme.typography.body.large.copy(textAlign = TextAlign.Center),
+                modifier = Modifier.bounceClick(
+                    shape = RoundedCornerShape(4.dp),
+                    maxPadding = 2.dp,
+                    onClick = onNavigateToLogin
+                )
             )
         }
 

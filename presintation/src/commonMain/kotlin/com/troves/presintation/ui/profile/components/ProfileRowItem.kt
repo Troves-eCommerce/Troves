@@ -21,6 +21,8 @@ import troves.designsystem.generated.resources.Res
 import troves.designsystem.generated.resources.ic_arrow
 
 
+import com.troves.designsystem.util.autoMirror
+
 @Composable
 fun ProfileRowItem(
     icon: DrawableResource,
@@ -60,7 +62,9 @@ fun ProfileRowItem(
                 painter = painterResource(Res.drawable.ic_arrow),
                 contentDescription = "Navigate",
                 tint = Theme.colors.hint,
-                modifier = Modifier.size(16.dp)
+                modifier = Modifier
+                    .size(16.dp)
+                    .autoMirror()
             )
         }
     }

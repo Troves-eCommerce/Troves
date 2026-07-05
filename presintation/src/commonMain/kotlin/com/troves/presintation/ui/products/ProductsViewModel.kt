@@ -9,6 +9,8 @@ import com.troves.domain.usecase.products.GetProductsByBrandUseCase
 import com.troves.domain.usecase.products.GetProductsByCategoryUseCase
 import com.troves.domain.usecase.products.SortProductsUseCase
 import com.troves.domain.usecase.shared.GetProductsUseCase
+import com.troves.domain.usecase.wishlist.GetWishlistUseCase
+import com.troves.domain.usecase.wishlist.ToggleFavoriteUseCase
 import com.troves.presintation.core.mvi.DefaultEffectPublisher
 import com.troves.presintation.core.mvi.DefaultStateHolder
 import com.troves.presintation.core.mvi.EffectPublisher
@@ -16,6 +18,8 @@ import com.troves.presintation.core.mvi.StateHolder
 import com.troves.presintation.ui.components.FilterOption
 import com.troves.presintation.ui.components.SortOption
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import com.troves.domain.utils.Result
 
@@ -26,11 +30,21 @@ class ProductsViewModel(
     private val getCategories: GetCategoriesUseCase,
     private val filterProducts: FilterProductsUseCase,
     private val sortProducts: SortProductsUseCase,
+    private val getWishlistUseCase: GetWishlistUseCase,
+    private val toggleFavoriteUseCase: ToggleFavoriteUseCase,
 ) : ViewModel(),
     StateHolder<ProductsUiState> by DefaultStateHolder(ProductsUiState()),
     EffectPublisher<ProductsEffect> by DefaultEffectPublisher() {
 
     private var pendingInit: ProductsIntent.Init? = null
+
+    init {
+        getWishlistUseCase()
+            .onEach { wishlist ->
+                updateState { copy(favoriteProductIds = wishlist.map { it.id.toString() }.toSet()) }
+            }
+            .launchIn(viewModelScope)
+    }
 
     fun onIntent(intent: ProductsIntent) {
         when (intent) {
@@ -104,6 +118,32 @@ class ProductsViewModel(
 
             is ProductsIntent.ProductClicked ->
                 sendEffect(ProductsEffect.NavigateToProduct(intent.product.id.toString()))
+
+            is ProductsIntent.ToggleFavorite -> {
+                viewModelScope.launch {
+                    when (val result = toggleFavoriteUseCase(intent.product)) {
+                        is com.troves.domain.usecase.wishlist.ToggleFavoriteResult.RequiresLogin -> {
+                            sendEffect(ProductsEffect.ShowToast("Please login to add to wishlist"))
+                        }
+
+                        is com.troves.domain.usecase.wishlist.ToggleFavoriteResult.Error -> {
+                            sendEffect(
+                                ProductsEffect.ShowToast(
+                                    result.throwable.message ?: "An error occurred"
+                                )
+                            )
+                        }
+
+                        com.troves.domain.usecase.wishlist.ToggleFavoriteResult.Added -> {
+                            sendEffect(ProductsEffect.ShowToast("Added to wishlist"))
+                        }
+
+                        com.troves.domain.usecase.wishlist.ToggleFavoriteResult.Removed -> {
+                            sendEffect(ProductsEffect.ShowToast("Removed from wishlist"))
+                        }
+                    }
+                }
+            }
         }
     }
 
