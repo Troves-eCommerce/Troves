@@ -51,6 +51,7 @@ fun OrderDetailsScreen(
     orderId: String,
     viewModel: OrderDetailsViewModel = koinViewModel(),
     onNavigateBack: () -> Unit,
+    onNavigateToSupport: () -> Unit = {},
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -62,7 +63,7 @@ fun OrderDetailsScreen(
         viewModel.effect.collect { effect ->
             when (effect) {
                 OrderDetailsEffect.NavigateBack -> onNavigateBack()
-                OrderDetailsEffect.NavigateToSupport -> { /* Handle Support Navigation */ }
+                OrderDetailsEffect.NavigateToSupport -> onNavigateToSupport()
             }
         }
     }

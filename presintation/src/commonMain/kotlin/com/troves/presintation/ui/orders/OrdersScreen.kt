@@ -57,6 +57,10 @@ fun OrdersScreen(
         }
     }
 
+    LaunchedEffect(Unit) {
+        viewModel.onIntent(OrdersIntent.Load)
+    }
+
     Scaffold(
         modifier = Modifier.fillMaxSize().statusBarsPadding(),
         containerColor = Theme.colors.backGround,
