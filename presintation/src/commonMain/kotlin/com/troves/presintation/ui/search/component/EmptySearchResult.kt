@@ -38,7 +38,7 @@ import com.troves.designsystem.theme.Theme
 @Composable
 fun EmptySearchResult(
     modifier: Modifier = Modifier,
-    title: String = "No products found",
+    title: String = "No products",
     message: String = "Try another keyword or adjust your filters."
 ) {
     Column(

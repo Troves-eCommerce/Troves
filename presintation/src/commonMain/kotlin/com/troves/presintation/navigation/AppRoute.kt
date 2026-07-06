@@ -54,6 +54,9 @@ sealed interface AppRoute : NavKey {
     data object AiChat : AppRoute
 
     @Serializable
+    data object Survey : AppRoute
+
+    @Serializable
     data class ProductDetails(val productId: String) : AppRoute
 
     @Serializable

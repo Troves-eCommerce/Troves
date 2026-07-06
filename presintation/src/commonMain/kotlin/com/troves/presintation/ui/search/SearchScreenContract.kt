@@ -66,12 +66,6 @@ data class SearchUiState(
         }
 }
 
-@Immutable
-data class RecentSearchUi(
-    val id: String,
-    val query: String
-)
-
 sealed interface SearchIntent {
     data object Load : SearchIntent
     data object Retry : SearchIntent
@@ -81,10 +75,10 @@ sealed interface SearchIntent {
     data class OnProductClick(val productId: String) : SearchIntent
     data class ApplyFilters(val sheetFilterOptions: SheetFilterOptions) : SearchIntent
     data class SearchQueryChange(val newQuery: String) : SearchIntent
+    data object ClearSearches : SearchIntent
     data class OnSearch(val query: String) : SearchIntent
     data class CategoriesChange(val newCategory: List<String>) : SearchIntent
     data class BrandsChange(val newBrands: List<String>) : SearchIntent
-    data class BrandChange(val newBrand: String) : SearchIntent
     data class RemoveRecentSearch(val query: String) : SearchIntent
     data object ClearRecentSearches : SearchIntent
     data class ToggleFavorite(val productId: String) : SearchIntent
