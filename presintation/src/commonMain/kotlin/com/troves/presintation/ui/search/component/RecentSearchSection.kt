@@ -30,7 +30,6 @@ import com.composables.icons.lucide.History
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.X
 import com.troves.designsystem.theme.Theme
-import com.troves.presintation.ui.search.RecentSearchUi
 
 /**
  * Copyright (c) 2026 Wahid Ali Wahid Hussien.
