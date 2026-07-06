@@ -84,10 +84,6 @@ fun AiChatHeader(
             iconTint = Theme.colors.primaryFont,
             backgroundColor = Theme.colors.backGround,
         )
-        IconBox(
-            icon = rememberVectorPainter(Lucide.Ellipsis),
-            iconTint = Theme.colors.primaryFont,
-            backgroundColor = Theme.colors.backGround,
-        )
+
     }
 }

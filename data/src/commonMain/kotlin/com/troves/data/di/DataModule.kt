@@ -40,7 +40,6 @@ import com.troves.data.source.remote.service.apollo.ApolloTrovesApiServiceImpl
 import com.troves.data.source.remote.service.paymob.PaymobApiService
 import com.troves.data.source.remote.service.paymob.PaymobServiceImpl
 import com.troves.domain.repository.AddressRepository
-import com.troves.domain.repository.AiChatHistoryRepository
 import com.troves.domain.repository.AuthenticationRepository
 import com.troves.domain.repository.CurrencyRepository
 import com.troves.domain.repository.LocationRepository
@@ -106,7 +105,6 @@ val dataModule = module {
     single<AddressRepository>         { AddressRepositoryImpl(get(), get(), get()) }
     single { AiAssistantRepositoryImpl(get(), get(), get()) }
     single<AiAssistantRepository>     { get<AiAssistantRepositoryImpl>() }
-    single<AiChatHistoryRepository>   { get<AiAssistantRepositoryImpl>() }
     single<CurrencyRepository>        { CurrencyRepositoryImpl(get(), get()) }
     single<FirebaseFirestore> { Firebase.firestore }
 }
