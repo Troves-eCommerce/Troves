@@ -7,6 +7,7 @@ import com.troves.data.source.local.preferenceses.TrovesPreferences
 import com.troves.data.source.remote.RemoteDatasource
 import com.troves.data.source.remote.service.StorefrontApiService
 import com.troves.data.source.remote.service.TrovesApiService
+import com.troves.data.util.applyAppLocale
 import com.troves.domain.entity.Ad
 import com.troves.domain.entity.Address
 import com.troves.domain.entity.Brand
@@ -26,13 +27,13 @@ import com.troves.domain.utils.map
 import com.troves.data.source.local.ads.LocalAdsDataSource
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import kotlinx.io.IOException
+import kotlinx.coroutines.IO
 
 class TrovesRepositoryImpl(
     private val remoteDataSource: RemoteDatasource,
@@ -43,6 +44,8 @@ class TrovesRepositoryImpl(
     private val authenticationRepository: AuthenticationRepository,
     private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : TrovesRepository {
+
+    // ── Catalogue ───────────────────────────────────────────────────────────
 
     override suspend fun getAllProducts(): Result<List<Product>> {
         return withContext(coroutineDispatcher) {
@@ -78,7 +81,7 @@ class TrovesRepositoryImpl(
                         vendors.contains(it.vendor)
                     }
                 }
-                
+
                 val productTypes = params.productTypes
                 if (!productTypes.isNullOrEmpty()) {
                     products = products.filter { product ->
@@ -132,13 +135,27 @@ class TrovesRepositoryImpl(
         }
     }
 
+
+    override suspend fun getDiscountCodes(): Result<List<DiscountCode>> {
+        return withContext(coroutineDispatcher) {
+            remoteDataSource.getDiscountCodes()
+        }
+    }
+
+    // ── Settings ────────────────────────────────────────────────────────────
+
     override suspend fun getAds(): Result<List<Ad>> = Result.Success(localAdsDataSource.getAds())
     override val selectedLanguage: Flow<String> = dataSource.selectedLanguage
     override val themeMode: Flow<String> = dataSource.themeMode
     override val selectedCurrency: Flow<String> = dataSource.selectedCurrency
 
-    override suspend fun setSelectedLanguage(language: String) =
+    override suspend fun setSelectedLanguage(language: String) {
         dataSource.setSelectedLanguage(language)
+
+        withContext(Dispatchers.Main) {
+            applyAppLocale(language)
+        }
+    }
 
     override suspend fun setThemeMode(mode: String) =
         dataSource.setThemeMode(mode)
@@ -146,11 +163,6 @@ class TrovesRepositoryImpl(
     override suspend fun setSelectedCurrency(currency: String) =
         dataSource.setSelectedCurrency(currency)
 
-    override suspend fun getDiscountCodes(): Result<List<DiscountCode>> {
-        return withContext(coroutineDispatcher) {
-            remoteDataSource.getDiscountCodes()
-        }
-    }
 
     // ── Cart (Shopify = source of truth) ─────────────────────────────────────
 

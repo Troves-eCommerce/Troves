@@ -51,6 +51,21 @@ class HomeViewModel(
             }
             HomeIntent.SignUpPromptDismissed -> updateState { copy(showSignUpPrompt = false) }
             HomeIntent.SeeAllBrandsClicked -> sendEffect(HomeEffect.NavigateToAllBrands)
+            HomeIntent.ViewAllCategoriesClicked -> sendEffect(HomeEffect.NavigateToAllCategories)
+            HomeIntent.ViewAllJustForYouClicked -> sendEffect(
+                HomeEffect.NavigateToProducts(
+                    sourceType = "collection",
+                    sourceId = "just-for-you",
+                    sourceName = "Just For You",
+                ),
+            )
+            HomeIntent.ViewAllTrendingClicked -> sendEffect(
+                HomeEffect.NavigateToProducts(
+                    sourceType = "collection",
+                    sourceId = "trending",
+                    sourceName = "Trending Now",
+                ),
+            )
             is HomeIntent.AdClicked -> {
                 val targetType = intent.ad.targetType
                 val targetId = intent.ad.targetId
@@ -118,8 +133,8 @@ class HomeViewModel(
                 copy(
                     isLoading = false,
                     ads = adsResult.getOrElse(emptyList()),
-                    brands = brandsResult.getOrElse(emptyList()).take(5),
-                    categories = categoriesResult.getOrElse(emptyList()),
+                    brands = brandsResult.getOrElse(emptyList()).take(12),
+                    categories = categoriesResult.getOrElse(emptyList()).take(9),
                     justForYou = justForYouResult.getOrElse(emptyList()),
                     trending = trendingResult.getOrElse(emptyList()),
                     errorMessage = firstError?.message,

@@ -8,12 +8,30 @@
 
 /* Begin PBXBuildFile section */
 		8F15B5EB2FF442DE003370E3 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 8F15B5EA2FF442DE003370E3 /* GoogleSignIn */; };
+		8FC6B81F2FF6B3BA00F0FB86 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 8FC6B81E2FF6B3BA00F0FB86 /* FirebaseFirestore */; };
+		8FD333122FFA726B00E404F4 /* PaymobSDK.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD333112FFA726B00E404F4 /* PaymobSDK.xcframework */; };
+		8FD333132FFA726B00E404F4 /* PaymobSDK.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD333112FFA726B00E404F4 /* PaymobSDK.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A1B2C3D4E5F600000000FB04 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = A1B2C3D4E5F600000000FB02 /* FirebaseCore */; };
 		A1B2C3D4E5F600000000FB05 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = A1B2C3D4E5F600000000FB03 /* FirebaseAuth */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		8FD333142FFA726B00E404F4 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				8FD333132FFA726B00E404F4 /* PaymobSDK.xcframework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		39C6066C41D1F01C81012DF5 /* Troves.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Troves.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8FD333112FFA726B00E404F4 /* PaymobSDK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = PaymobSDK.xcframework; path = "PaymobSDK 1.0.23/PaymobSDK.xcframework"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -48,8 +66,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				A1B2C3D4E5F600000000FB04 /* FirebaseCore in Frameworks */,
+				8FC6B81F2FF6B3BA00F0FB86 /* FirebaseFirestore in Frameworks */,
 				A1B2C3D4E5F600000000FB05 /* FirebaseAuth in Frameworks */,
 				8F15B5EB2FF442DE003370E3 /* GoogleSignIn in Frameworks */,
+				8FD333122FFA726B00E404F4 /* PaymobSDK.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -77,6 +97,7 @@
 		8F15B5E92FF442DE003370E3 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8FD333112FFA726B00E404F4 /* PaymobSDK.xcframework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -92,6 +113,7 @@
 				AEA19502225CEFA95013D1A4 /* Sources */,
 				E175CFBEA19B0F1B890705CF /* Frameworks */,
 				B9C48D9A4D767B3E266F3D71 /* Resources */,
+				8FD333142FFA726B00E404F4 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -105,6 +127,7 @@
 				A1B2C3D4E5F600000000FB02 /* FirebaseCore */,
 				A1B2C3D4E5F600000000FB03 /* FirebaseAuth */,
 				8F15B5EA2FF442DE003370E3 /* GoogleSignIn */,
+				8FC6B81E2FF6B3BA00F0FB86 /* FirebaseFirestore */,
 			);
 			productName = iosApp;
 			productReference = 39C6066C41D1F01C81012DF5 /* Troves.app */;
@@ -206,7 +229,7 @@
 				INFOPLIST_FILE = iosApp/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = NO;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
@@ -293,7 +316,7 @@
 				INFOPLIST_FILE = iosApp/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = NO;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
@@ -419,6 +442,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 077A6B3E2FF42251000BA1E0 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
 			productName = GoogleSignIn;
+		};
+		8FC6B81E2FF6B3BA00F0FB86 /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A1B2C3D4E5F600000000FB01 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
 		};
 		A1B2C3D4E5F600000000FB02 /* FirebaseCore */ = {
 			isa = XCSwiftPackageProductDependency;

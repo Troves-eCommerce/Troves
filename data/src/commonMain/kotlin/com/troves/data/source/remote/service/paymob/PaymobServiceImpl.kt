@@ -1,13 +1,10 @@
 package com.troves.data.source.remote.service.paymob
 
 import com.troves.data.source.remote.service.ktor.getResults
-import com.troves.data.source.remote.service.shopify_dtos.ShopifyUserResponse
 import com.troves.domain.utils.Result
 import io.ktor.client.HttpClient
 import io.ktor.client.request.setBody
-import io.ktor.client.request.url
 import io.ktor.http.ContentType
-import io.ktor.http.HttpHeaders.From
 import io.ktor.http.HttpMethod
 import io.ktor.http.contentType
 import io.ktor.http.path

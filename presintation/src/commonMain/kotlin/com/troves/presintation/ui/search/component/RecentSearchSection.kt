@@ -54,7 +54,7 @@ import com.troves.presintation.ui.search.RecentSearchUi
  */
 @Composable
 fun RecentSearchSection(
-    recentSearches: List<RecentSearchUi>,
+    recentSearches: List<String>,
     modifier: Modifier = Modifier,
     onSearchClick: (String) -> Unit,
     onRemoveClick: (String) -> Unit,
@@ -92,9 +92,9 @@ fun RecentSearchSection(
             ) {
                 recentSearches.forEach { query ->
                     RecentSearchItem(
-                        query = query.query,
-                        onClick = { onSearchClick(query.query) },
-                        onRemoveClick = { onRemoveClick(query.query) }
+                        query = query,
+                        onClick = { onSearchClick(query) },
+                        onRemoveClick = { onRemoveClick(query) }
                     )
                 }
             }

@@ -30,7 +30,7 @@ fun provideAiHttpClient(): HttpClient = HttpClient {
                 println(message)
             }
         }
-        level = LogLevel.INFO
+        level = LogLevel.ALL
     }
     defaultRequest {
         url(AiConfig.BASE_URL)

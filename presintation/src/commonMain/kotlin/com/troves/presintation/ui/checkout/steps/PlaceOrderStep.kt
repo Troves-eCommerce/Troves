@@ -29,12 +29,13 @@ import com.troves.designsystem.components.cards.SectionCard
 import com.troves.designsystem.components.stepper.HorizontalStepper
 import com.troves.designsystem.theme.SpTheme
 import com.troves.designsystem.theme.Theme
+import com.troves.designsystem.util.formatPrice
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import troves.designsystem.generated.resources.Res
 import troves.designsystem.generated.resources.ic_order
 import troves.designsystem.generated.resources.ic_payment_method
-import troves.designsystem.generated.resources.product_card
+import troves.designsystem.generated.resources.img_placeholder
 import troves.presintation.generated.resources.Res as StringRes
 import troves.presintation.generated.resources.checkout_change
 import troves.presintation.generated.resources.checkout_confirm_step_subtitle
@@ -205,13 +206,13 @@ fun PlaceOrderStepContent(
 
             SummaryRow(
                 label = stringResource(StringRes.string.checkout_subtotal_items, itemCount),
-                value = subtotalFormatted,
+                value = formatPrice(subtotalFormatted),
                 color = Theme.colors.primaryFont,
             )
             if (discountCode != null && discountValueFormatted != null) {
                 SummaryRow(
                     label = stringResource(StringRes.string.checkout_discount_code, discountCode),
-                    value = discountValueFormatted,
+                    value = formatPrice(discountValueFormatted),
                     color = Theme.colors.success,
                 )
             }
@@ -220,7 +221,7 @@ fun PlaceOrderStepContent(
 
             SummaryRow(
                 label = stringResource(StringRes.string.checkout_total),
-                value = totalFormatted,
+                value = formatPrice(totalFormatted),
                 color = Theme.colors.primaryFont,
                 style = Theme.typography.body.large,
                 fontWeight = FontWeight.Bold,
@@ -297,7 +298,7 @@ private fun OrderConfirmationNote() {
 @Composable
 private fun PlaceOrderStepPreview() {
     SpTheme(isDarkTheme = false, languageCode = "en") {
-        val image = painterResource(Res.drawable.product_card)
+        val image = painterResource(Res.drawable.img_placeholder)
         Column(
             modifier = Modifier
                 .fillMaxSize()

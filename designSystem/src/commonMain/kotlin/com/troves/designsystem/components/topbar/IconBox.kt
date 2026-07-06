@@ -1,7 +1,8 @@
 package com.troves.designsystem.components.topbar
 
+import androidx.compose.foundation.BorderStroke // Added
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.border     // Added
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -18,14 +19,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.troves.designsystem.theme.SpTheme
 import com.troves.designsystem.theme.Theme
+import com.troves.designsystem.util.autoMirror
+import com.troves.designsystem.util.bounceClick
 
-/**
- * Reusable square icon chip used across the app (top bars, action rows, …).
- *
- * A 40×40 box with a 12dp corner radius and [surface] background, holding a
- * 20dp icon tinted with the primary text color in the center. Pass [onClick]
- * to make it tappable.
- */
 @Composable
 fun IconBox(
     icon: Painter,
@@ -35,22 +31,33 @@ fun IconBox(
     backgroundColor: Color = Theme.colors.surface,
     iconTint: Color = Theme.colors.primaryFont,
     shape: Shape = RoundedCornerShape(CORNER_RADIUS),
+    border: BorderStroke? = null,
+    autoMirror: Boolean = false,
 ) {
     Box(
         modifier = modifier
             .size(BOX_SIZE)
-            .clip(shape)
-            .background(backgroundColor)
+            .then(if (border != null) Modifier.border(border, shape) else Modifier)
             .then(
-                if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier,
-            ),
+                if (onClick != null) {
+                    Modifier.bounceClick(
+                        shape = RoundedCornerShape(10.dp),
+                        onClick = onClick
+                    )
+                } else {
+                    Modifier.clip(shape)
+                }
+            )
+            .background(backgroundColor),
         contentAlignment = Alignment.Center,
     ) {
         Icon(
             painter = icon,
             contentDescription = contentDescription,
             tint = iconTint,
-            modifier = Modifier.size(ICON_SIZE),
+            modifier = Modifier
+                .size(ICON_SIZE)
+                .then(if (autoMirror) Modifier.autoMirror() else Modifier),
         )
     }
 }
@@ -63,6 +70,10 @@ private val ICON_SIZE = 20.dp
 @Composable
 private fun IconBoxPreview() {
     SpTheme {
-        IconBox(icon = ColorPainter(Color.Black), onClick = {})
+        IconBox(
+            icon = ColorPainter(Color.Black),
+            onClick = {},
+            border = BorderStroke(1.dp, Color.LightGray)
+        )
     }
 }

@@ -129,6 +129,7 @@ fun CheckoutScreen(
                     leadingIcon = painterResource(Res.drawable.ic_arrow_back),
                     onLeadingClick = { viewModel.onIntent(CheckoutIntent.OnBack) },
                     modifier = Modifier.background(Theme.colors.backGround),
+                    autoMirrorLeadingIcon = true
                 )
             },
             bottomBar = {

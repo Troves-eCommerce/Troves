@@ -77,6 +77,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(libs.kotlin.stdlib)
+                implementation(libs.kotlinx.coroutines.core)
                 implementation(libs.ktor.serialization.kotlinx.json)
                 implementation(libs.ktor.client.core)
                 implementation(libs.ktor.logging)
@@ -102,6 +103,7 @@ kotlin {
                 implementation(libs.apollo.runtime)
                 // Memory Cache
                 implementation(libs.apollo.normalized.cache)
+                implementation(libs.kermit)
             }
         }
 
@@ -117,6 +119,8 @@ kotlin {
                 implementation(project.dependencies.platform(libs.firebase.bom))
                 implementation(libs.androidx.sqlite.bundled)
                 implementation(libs.androidx.room.runtime)
+                implementation(libs.androidx.appcompat)
+                implementation(libs.androidx.core.ktx)
             }
         }
 
@@ -169,16 +173,20 @@ buildkonfig {
                 ?: ""
         )
         buildConfigField(
+            STRING, "SHOPIFY_REST_URL",
+            localProperties.getProperty("SHOPIFY_REST_URL") ?: ""
+        )
+        buildConfigField(
             STRING, "SHOPIFY_CUSTOMER_PASSWORD_SECRET",
             localProperties.getProperty("SHOPIFY_CUSTOMER_PASSWORD_SECRET") ?: "troves-shopify-oauth-salt-v1"
         )
         buildConfigField(
             STRING, "SUPABASE_API_KEY",
-            localProperties.getProperty("SUPABASE_API_KEY") ?: "troves-shopify-oauth-salt-v1"
+            localProperties.getProperty("SUPABASE_API_KEY") ?: ""
         )
         buildConfigField(
             STRING, "SUPABASE_API_URL",
-            localProperties.getProperty("SUPABASE_API_URL") ?: "troves-shopify-oauth-salt-v1"
+            localProperties.getProperty("SUPABASE_API_URL") ?: "http://127.0.0.1:54321/"
         )
         buildConfigField(
             STRING, "AI_ASSISTANT_BASE_URL",

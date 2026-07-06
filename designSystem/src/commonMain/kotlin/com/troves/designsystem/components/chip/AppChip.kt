@@ -4,7 +4,6 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -22,6 +21,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.troves.designsystem.theme.Theme
+import com.troves.designsystem.util.bounceClick
 
 
 @Composable
@@ -60,10 +60,18 @@ fun AppChip(
 
     Row(
         modifier = modifier
-            .clip(shape)
+            .then(
+                if (enabled) {
+                    Modifier.bounceClick(
+                        shape = RoundedCornerShape(10.dp),
+                        onClick = onClick
+                    )
+                } else {
+                    Modifier.clip(shape)
+                }
+            )
             .background(containerColor)
             .border(BorderStroke(1.dp, borderColor), shape)
-            .clickable(enabled = enabled, onClick = onClick)
             .padding(horizontal = Theme.spacing.medium, vertical = Theme.spacing.small),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(Theme.spacing.extraSmall),
