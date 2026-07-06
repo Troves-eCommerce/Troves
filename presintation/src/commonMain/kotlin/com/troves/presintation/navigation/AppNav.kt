@@ -304,7 +304,8 @@ fun AppNav() {
         entry<AppRoute.OrderDetails> { key ->
             OrderDetailsScreen(
                 orderId = key.orderId,
-                onNavigateBack = { backStack.removeLastOrNull() }
+                onNavigateBack = { backStack.removeLastOrNull() },
+                onNavigateToSupport = { backStack.add(AppRoute.AiChat) }
             )
         }
         entry<AppRoute.Search> {

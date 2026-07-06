@@ -148,6 +148,7 @@ fun NewAddressScreenContent(
                 title = stringResource(Res.string.address_phone_title),
                 hint = stringResource(Res.string.address_phone_hint),
                 singleLine = true,
+                keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = androidx.compose.ui.text.input.KeyboardType.Phone),
                 modifier = Modifier.fillMaxWidth()
             )
 

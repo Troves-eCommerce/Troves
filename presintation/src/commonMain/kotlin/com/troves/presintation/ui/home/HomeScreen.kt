@@ -29,8 +29,10 @@ import androidx.compose.material3.SnackbarHostState
 import com.troves.designsystem.components.toast.TrovesSnackbarHost
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.launch
 import androidx.compose.ui.Alignment
@@ -84,6 +86,7 @@ fun HomeScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+    var showSurveySheet by remember { mutableStateOf(false) }
 
     val loginRequiredText = stringResource(Res.string.home_login_required)
 
@@ -99,7 +102,7 @@ fun HomeScreen(
             is HomeEffect.NavigateToRegister -> onNavigateToRegister()
             is HomeEffect.NavigateToAllCategories -> onNavigateToAllCategories()
             is HomeEffect.NavigateToCart -> onNavigateToCart()
-            is HomeEffect.NavigateToSurvey -> onNavigateToSurvey()
+            is HomeEffect.NavigateToSurvey -> showSurveySheet = true
             is HomeEffect.ShowToast -> scope.launch { snackbarHostState.showSnackbar(effect.message) }
             is HomeEffect.NavigateToSearch -> onNavigateToSearch()
             is HomeEffect.ShowLoginRequiredDialog -> scope.launch {
@@ -108,6 +111,12 @@ fun HomeScreen(
 
             HomeEffect.NavigateToAiChat -> onNavigateToAiChat()
         }
+    }
+
+    if (showSurveySheet) {
+        com.troves.presintation.ui.survey.SurveyBottomSheet(
+            onDismiss = { showSurveySheet = false },
+        )
     }
 
     if (state.showSignUpPrompt) {

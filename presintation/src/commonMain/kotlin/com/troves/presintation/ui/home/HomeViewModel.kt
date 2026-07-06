@@ -171,7 +171,7 @@ class HomeViewModel(
     private fun observeCartCount() {
         viewModelScope.launch {
             getCartStream().collect { cart ->
-                updateState { copy(cartItemCount = cart?.totalQuantity ?: 0) }
+                updateState { copy(cartItemCount = cart?.lines?.size ?: 0) }
             }
         }
     }
