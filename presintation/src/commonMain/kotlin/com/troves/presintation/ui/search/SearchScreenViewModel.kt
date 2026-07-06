@@ -273,7 +273,6 @@ class SearchScreenViewModel(
             updateState {
                 copy(
                     isInitializing = false,
-                    allProducts = loadedProducts,
                     brands = brandsResult.getOrElse { emptyList() },
                     categories = categoryResult.getOrElse { emptyList() },
                     errorMessage = hasError?.message,
