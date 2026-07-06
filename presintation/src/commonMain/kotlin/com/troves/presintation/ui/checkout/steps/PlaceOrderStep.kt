@@ -1,0 +1,338 @@
+package com.troves.presintation.ui.checkout.steps
+
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.BasicText
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Icon
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.troves.designsystem.components.button.PrimaryButton
+import com.troves.designsystem.components.cards.SectionCard
+import com.troves.designsystem.components.stepper.HorizontalStepper
+import com.troves.designsystem.theme.SpTheme
+import com.troves.designsystem.theme.Theme
+import com.troves.designsystem.util.formatPrice
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
+import troves.designsystem.generated.resources.Res
+import troves.designsystem.generated.resources.ic_order
+import troves.designsystem.generated.resources.ic_payment_method
+import troves.designsystem.generated.resources.img_placeholder
+import troves.presintation.generated.resources.Res as StringRes
+import troves.presintation.generated.resources.checkout_change
+import troves.presintation.generated.resources.checkout_confirm_step_subtitle
+import troves.presintation.generated.resources.checkout_confirm_step_title
+import troves.presintation.generated.resources.checkout_discount_code
+import troves.presintation.generated.resources.checkout_edit_cart
+import troves.presintation.generated.resources.checkout_items_count
+import troves.presintation.generated.resources.checkout_order_confirmation_desc
+import troves.presintation.generated.resources.checkout_order_confirmation_title
+import troves.presintation.generated.resources.checkout_order_summary
+import troves.presintation.generated.resources.checkout_section_payment_method
+import troves.presintation.generated.resources.checkout_section_shipping_address
+import troves.presintation.generated.resources.checkout_subtotal_items
+import troves.presintation.generated.resources.checkout_total
+
+/**
+ * Body of the "Confirm & Place Order" checkout step: read-only recap of the chosen
+ * payment method, shipping address, and order summary (item thumbnails + totals),
+ * each with a link back to the relevant step. No tax/shipping rows (not modeled).
+ * No top app bar in this pass.
+ */
+@Composable
+fun PlaceOrderStepContent(
+    currentStep: Int,
+    paymentIcon: Painter,
+    paymentTitle: String,
+    paymentDescription: String,
+    addressTitle: String,
+    recipientName: String,
+    addressLines: List<String>,
+    phone: String,
+    itemImages: List<Painter>,
+    itemCount: Int,
+    subtotalFormatted: String,
+    totalFormatted: String,
+    onChangePayment: () -> Unit,
+    onChangeAddress: () -> Unit,
+    onEditCart: () -> Unit,
+    modifier: Modifier = Modifier,
+    totalSteps: Int = 4,
+    paymentSubDescription: String? = null,
+    discountCode: String? = null,
+    discountValueFormatted: String? = null,
+) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(Theme.spacing.medium),
+        verticalArrangement = Arrangement.spacedBy(Theme.spacing.medium),
+    ) {
+        HorizontalStepper(currentStep = currentStep, totalSteps = totalSteps)
+
+        BasicText(
+            text = stringResource(StringRes.string.checkout_confirm_step_title),
+            style = Theme.typography.title.copy(
+                color = Theme.colors.primaryFont,
+                fontWeight = FontWeight.Bold,
+            ),
+        )
+        BasicText(
+            text = stringResource(StringRes.string.checkout_confirm_step_subtitle),
+            style = Theme.typography.body.medium.copy(color = Theme.colors.secondaryFont),
+        )
+
+        SectionCard(
+            title = stringResource(StringRes.string.checkout_section_payment_method),
+            actionText = stringResource(StringRes.string.checkout_change),
+            onActionClick = onChangePayment,
+        ) {
+            Row(horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small)) {
+                Box(
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clip(Theme.shapes.medium)
+                        .background(Theme.colors.surfaceVariant),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Icon(
+                        painter = paymentIcon,
+                        contentDescription = null,
+                        tint = Theme.colors.primaryFont,
+                        modifier = Modifier.size(Theme.size.iconMedium),
+                    )
+                }
+                Column(verticalArrangement = Arrangement.spacedBy(Theme.spacing.extraSmall)) {
+                    BasicText(
+                        text = paymentTitle,
+                        style = Theme.typography.body.large.copy(
+                            color = Theme.colors.primaryFont,
+                            fontWeight = FontWeight.SemiBold,
+                        ),
+                    )
+                    BasicText(
+                        text = paymentDescription,
+                        style = Theme.typography.body.medium.copy(color = Theme.colors.secondaryFont),
+                    )
+                    if (paymentSubDescription != null) {
+                        BasicText(
+                            text = paymentSubDescription,
+                            style = Theme.typography.body.medium.copy(
+                                color = Theme.colors.success,
+                                fontWeight = FontWeight.Medium,
+                            ),
+                        )
+                    }
+                }
+            }
+        }
+
+        SectionCard(
+            title = stringResource(StringRes.string.checkout_section_shipping_address),
+            actionText = stringResource(StringRes.string.checkout_change),
+            onActionClick = onChangeAddress,
+        ) {
+            BasicText(
+                text = addressTitle,
+                style = Theme.typography.body.medium.copy(
+                    color = Theme.colors.primaryFont,
+                    fontWeight = FontWeight.SemiBold,
+                ),
+            )
+            BasicText(
+                text = recipientName,
+                style = Theme.typography.body.medium.copy(color = Theme.colors.secondaryFont),
+            )
+            addressLines.forEach { line ->
+                BasicText(
+                    text = line,
+                    style = Theme.typography.body.medium.copy(color = Theme.colors.secondaryFont),
+                )
+            }
+            BasicText(
+                text = phone,
+                style = Theme.typography.body.medium.copy(color = Theme.colors.secondaryFont),
+            )
+        }
+
+        SectionCard(
+            title = stringResource(StringRes.string.checkout_order_summary),
+            actionText = stringResource(StringRes.string.checkout_edit_cart),
+            onActionClick = onEditCart,
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Row(horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small)) {
+                    itemImages.forEach { image ->
+                        Image(
+                            painter = image,
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .size(48.dp)
+                                .clip(Theme.shapes.medium),
+                        )
+                    }
+                }
+                BasicText(
+                    text = stringResource(StringRes.string.checkout_items_count, itemCount),
+                    style = Theme.typography.body.medium.copy(color = Theme.colors.secondaryFont),
+                )
+            }
+
+            Divider()
+
+            SummaryRow(
+                label = stringResource(StringRes.string.checkout_subtotal_items, itemCount),
+                value = formatPrice(subtotalFormatted),
+                color = Theme.colors.primaryFont,
+            )
+            if (discountCode != null && discountValueFormatted != null) {
+                SummaryRow(
+                    label = stringResource(StringRes.string.checkout_discount_code, discountCode),
+                    value = formatPrice(discountValueFormatted),
+                    color = Theme.colors.success,
+                )
+            }
+
+            Divider()
+
+            SummaryRow(
+                label = stringResource(StringRes.string.checkout_total),
+                value = formatPrice(totalFormatted),
+                color = Theme.colors.primaryFont,
+                style = Theme.typography.body.large,
+                fontWeight = FontWeight.Bold,
+            )
+        }
+
+        OrderConfirmationNote()
+    }
+}
+
+@Composable
+private fun Divider() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = Theme.spacing.extraSmall)
+            .height(1.dp)
+            .background(Theme.colors.surfaceVariant),
+    )
+}
+
+@Composable
+private fun SummaryRow(
+    label: String,
+    value: String,
+    color: androidx.compose.ui.graphics.Color,
+    style: androidx.compose.ui.text.TextStyle = Theme.typography.body.medium,
+    fontWeight: FontWeight = FontWeight.Medium,
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+    ) {
+        BasicText(text = label, style = style.copy(color = color, fontWeight = fontWeight))
+        BasicText(text = value, style = style.copy(color = color, fontWeight = fontWeight))
+    }
+}
+
+@Composable
+private fun OrderConfirmationNote() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(Theme.shapes.medium)
+            .background(Theme.colors.surfaceVariant)
+            .padding(Theme.spacing.medium),
+        horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        // Placeholder glyph until a dedicated mail icon asset exists.
+        Icon(
+            painter = painterResource(Res.drawable.ic_order),
+            contentDescription = null,
+            tint = Theme.colors.primaryFont,
+            modifier = Modifier.size(Theme.size.iconMedium),
+        )
+        Column(verticalArrangement = Arrangement.spacedBy(Theme.spacing.extraSmall)) {
+            BasicText(
+                text = stringResource(StringRes.string.checkout_order_confirmation_title),
+                style = Theme.typography.body.medium.copy(
+                    color = Theme.colors.primaryFont,
+                    fontWeight = FontWeight.SemiBold,
+                ),
+            )
+            BasicText(
+                text = stringResource(StringRes.string.checkout_order_confirmation_desc),
+                style = Theme.typography.body.small.copy(color = Theme.colors.secondaryFont),
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun PlaceOrderStepPreview() {
+    SpTheme(isDarkTheme = false, languageCode = "en") {
+        val image = painterResource(Res.drawable.img_placeholder)
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Theme.colors.backGround),
+        ) {
+            PlaceOrderStepContent(
+                currentStep = 4,
+                paymentIcon = painterResource(Res.drawable.ic_payment_method),
+                paymentTitle = "Cash on Delivery (COD)",
+                paymentDescription = "Pay with cash when your order is delivered.",
+                paymentSubDescription = "Cash limit: up to \$500.00",
+                addressTitle = "Home",
+                recipientName = "Sophia Johnson",
+                addressLines = listOf("123 Maple Street, Apartment 4B", "San Francisco, CA 94107", "United States"),
+                phone = "+1 415 555 0123",
+                itemImages = listOf(image, image, image),
+                itemCount = 3,
+                subtotalFormatted = "\$246.00",
+                totalFormatted = "\$221.40",
+                discountCode = "WELCOME10",
+                discountValueFormatted = "- \$24.60",
+                onChangePayment = {},
+                onChangeAddress = {},
+                onEditCart = {},
+                modifier = Modifier.weight(1f),
+            )
+            // Temporary CTA — moves to a shared sticky bottom bar in a later phase.
+            PrimaryButton(
+                caption = "Place Order",
+                onClick = {},
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(Theme.spacing.medium),
+            )
+        }
+    }
+}

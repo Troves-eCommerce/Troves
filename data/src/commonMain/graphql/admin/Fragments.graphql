@@ -1,0 +1,41 @@
+# Shared product selection (Shopify Admin API) used by every product query so a single
+# Kotlin mapper (ProductCard.toProductDto) can populate the REST-shaped ProductDto.
+fragment ProductCard on Product {
+    id
+    title
+    vendor
+    status
+    descriptionHtml
+    featuredImage {
+        url
+    }
+    priceRangeV2 {
+        minVariantPrice {
+            amount
+        }
+    }
+    images(first: 10) {
+        edges {
+            node {
+                url
+            }
+        }
+    }
+    options {
+        name
+        values
+    }
+    variants(first: 100) {
+        nodes {
+            id
+            title
+            price
+            availableForSale
+            inventoryQuantity
+            selectedOptions {
+                name
+                value
+            }
+        }
+    }
+}

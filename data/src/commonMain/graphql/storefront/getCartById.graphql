@@ -1,0 +1,5 @@
+query GetCart($cartId: ID!) {
+    cart(id: $cartId) {
+        ...CartFields
+    }
+}

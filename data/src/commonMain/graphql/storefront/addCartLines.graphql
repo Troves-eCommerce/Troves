@@ -1,0 +1,18 @@
+mutation AddCartLines(
+    $cartId: ID!,
+    $lines: [CartLineInput!]!
+) {
+    cartLinesAdd(
+        cartId: $cartId,
+        lines: $lines
+    ) {
+        cart {
+            ...CartFields
+        }
+
+        userErrors {
+            field
+            message
+        }
+    }
+}
