@@ -44,11 +44,6 @@ class ProductDetailsViewModel(
             ProductDetailsIntent.OnBackClick ->
                 sendEffect(ProductDetailsEffect.NavigateBack)
 
-            ProductDetailsIntent.OnSeeAllReviews ->
-                viewModelScope.launch {
-                    sendEffect(ProductDetailsEffect.ShowToast(getString(Res.string.product_details_coming_soon)))
-                }
-
             ProductDetailsIntent.OnSizeGuide ->
                 sendEffect(ProductDetailsEffect.NavigateBack)
 
@@ -71,6 +66,8 @@ class ProductDetailsViewModel(
                 bannerDismissJob?.cancel()
                 updateState { copy(showCartConfirmation = false) }
             }
+
+            else -> {}
         }
     }
 

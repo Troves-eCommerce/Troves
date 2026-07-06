@@ -1,11 +1,13 @@
 package com.troves.presintation.ui.products
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -28,14 +31,16 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.rememberAsyncImagePainter
+import com.composables.icons.lucide.Lucide
+import com.composables.icons.lucide.SlidersHorizontal
 import com.troves.designsystem.components.button.PrimaryButton
 import com.troves.designsystem.components.cards.MainCard
-import com.troves.designsystem.components.chip.AppChip
 import com.troves.designsystem.components.shimmer.shimmerEffect
 import com.troves.designsystem.components.topbar.IconBox
 import com.troves.designsystem.theme.Theme
@@ -48,11 +53,8 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import troves.designsystem.generated.resources.*
 import troves.designsystem.generated.resources.Res as DesignRes
-import troves.designsystem.generated.resources.ic_arrow_back
-import troves.designsystem.generated.resources.ic_heart
-import troves.designsystem.generated.resources.ic_star
-import troves.designsystem.generated.resources.Res
 import troves.designsystem.generated.resources.filter_title
 import troves.designsystem.generated.resources.img_placeholder
 import troves.designsystem.generated.resources.products_empty
@@ -176,16 +178,17 @@ private fun ProductsToolbar(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(Theme.spacing.medium),
+            .padding(horizontal = Theme.spacing.medium, vertical = Theme.spacing.small),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small),
     ) {
         IconBox(
             icon = painterResource(DesignRes.drawable.ic_arrow_back),
-            contentDescription = "Navigate up",
+            contentDescription = "Back",
             onClick = onBackClick,
             autoMirror = true,
+            border = BorderStroke(1.dp, Theme.colors.onPrimary)
         )
+        Spacer(Modifier.width(Theme.spacing.medium))
         BasicText(
             text = title,
             modifier = Modifier.weight(1f),
@@ -197,15 +200,21 @@ private fun ProductsToolbar(
             overflow = TextOverflow.Ellipsis,
         )
         Row(horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small)) {
-            AppChip(
-                label = stringResource(Res.string.filter_title),
-                selected = filterActive,
+            IconBox(
+                icon = rememberVectorPainter(Lucide.SlidersHorizontal),
+                contentDescription = "Filter",
                 onClick = onFilterClick,
+                backgroundColor = if (filterActive) Theme.colors.primary else Theme.colors.surface,
+                iconTint = if (filterActive) Theme.colors.onPrimary else Theme.colors.primaryFont,
+                border = BorderStroke(1.dp, Theme.colors.onPrimary)
             )
-            AppChip(
-                label = stringResource(Res.string.sort_title),
-                selected = sortActive,
+            IconBox(
+                icon = painterResource(DesignRes.drawable.ic_arrow_drop_down),
+                contentDescription = "Sort",
                 onClick = onSortClick,
+                backgroundColor = if (sortActive) Theme.colors.primary else Theme.colors.surface,
+                iconTint = if (sortActive) Theme.colors.onPrimary else Theme.colors.primaryFont,
+                border = BorderStroke(1.dp, Theme.colors.onPrimary)
             )
         }
     }
@@ -224,7 +233,7 @@ private fun ProductsGrid(
             contentAlignment = Alignment.Center,
         ) {
             BasicText(
-                text = stringResource(Res.string.products_empty),
+                text = stringResource(DesignRes.string.products_empty),
                 style = Theme.typography.body.large.copy(color = Theme.colors.secondaryFont),
             )
         }
@@ -331,7 +340,7 @@ private fun ProductsError(
             style = Theme.typography.body.large.copy(color = Theme.colors.error),
         )
         PrimaryButton(
-            caption = stringResource(Res.string.products_retry),
+            caption = stringResource(DesignRes.string.products_retry),
             onClick = onRetry,
         )
     }

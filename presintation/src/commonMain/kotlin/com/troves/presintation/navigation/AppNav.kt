@@ -136,10 +136,10 @@ fun AppNav() {
                 },
                 onNavigateToProducts = { sourceType, sourceId, sourceName ->
                     backStack.add(
-                        AppRoute.SeeAll(
-                            type = AppRoute.SeeAllType.PRODUCTS,
-                            id = sourceId,
-                            name = sourceName,
+                        AppRoute.Products(
+                            sourceType = sourceType,
+                            sourceId = sourceId,
+                            sourceName = sourceName,
                         ),
                     )
                 },
@@ -212,7 +212,13 @@ fun AppNav() {
                 name = key.name,
                 onNavigateBack = { backStack.removeLastOrNull() },
                 onNavigateToProducts = { sourceType, sourceId, sourceName ->
-                    backStack.add(AppRoute.SeeAll(AppRoute.SeeAllType.PRODUCTS, sourceId, sourceName))
+                    backStack.add(
+                        AppRoute.Products(
+                            sourceType = sourceType,
+                            sourceId = sourceId,
+                            sourceName = sourceName,
+                        )
+                    )
                 },
                 onNavigateToProductDetails = { productId ->
                     backStack.add(AppRoute.ProductDetails(productId))
