@@ -72,8 +72,10 @@ class SearchScreenViewModel(
                 runSearch(q)
                 updateState {
                     val searches = recentSearches.toMutableList()
-                    searches.add(q)
-                    copy(recentSearches = searches)
+                    if (!searches.contains(q)) {
+                        searches.add(0, q)
+                    }
+                    copy(recentSearches = searches.take(10))
                 }
             }
             .launchIn(viewModelScope)
@@ -102,6 +104,7 @@ class SearchScreenViewModel(
                         )
                     )
                 }
+                viewModelScope.launch { runSearch(state.value.query) }
             }
 
             is SearchIntent.CategoriesChange -> {
@@ -115,15 +118,17 @@ class SearchScreenViewModel(
                         )
                     )
                 }
+                viewModelScope.launch { runSearch(state.value.query) }
             }
 
             is SearchIntent.SearchQueryChange -> {
                 if (intent.newQuery.isBlank()) {
                     viewModelScope.launch {
-                        runSearch(intent.newQuery)
+                        updateState { copy(query = intent.newQuery, products = emptyList()) }
                     }
+                } else {
+                    updateState { copy(query = intent.newQuery) }
                 }
-                updateState { copy(query = intent.newQuery) }
                 searchQueryFlow.value = intent.newQuery
             }
 
@@ -139,7 +144,18 @@ class SearchScreenViewModel(
             SearchIntent.OnBottomSheetDismiss -> updateState { copy(showFilterSheet = false) }
 
             is SearchIntent.OnSearch -> {
-                viewModelScope.launch { runSearch(query = intent.query) }
+                updateState { copy(query = intent.query) }
+                searchQueryFlow.value = intent.query
+                viewModelScope.launch { 
+                    runSearch(query = intent.query) 
+                    updateState {
+                        val searches = recentSearches.toMutableList()
+                        if (intent.query.isNotBlank() && !searches.contains(intent.query)) {
+                            searches.add(0, intent.query)
+                        }
+                        copy(recentSearches = searches.take(10))
+                    }
+                }
             }
 
             is SearchIntent.BrandChange -> {
@@ -243,7 +259,7 @@ class SearchScreenViewModel(
 
     private fun load() {
         viewModelScope.launch {
-            updateState { copy(isLoading = true, errorMessage = null) }
+            updateState { copy(isInitializing = true, errorMessage = null) }
             val categories = async { getCategoriesUseCase() }
             val brands = async { getBrandsUseCase() }
             val products = async { getProductsUseCase() }
@@ -259,9 +275,8 @@ class SearchScreenViewModel(
 
             updateState {
                 copy(
-                    isLoading = false,
+                    isInitializing = false,
                     allProducts = loadedProducts,
-                    products = loadedProducts,
                     brands = brandsResult.getOrElse { emptyList() },
                     categories = categoryResult.getOrElse { emptyList() },
                     errorMessage = hasError?.message,
