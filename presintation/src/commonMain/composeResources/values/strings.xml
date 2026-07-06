@@ -57,6 +57,8 @@
     <string name="checkout_coupon_hint">Enter coupon code</string>
     <string name="checkout_subtotal_items">Subtotal (%1$d items)</string>
     <string name="checkout_discount_code">Discount (%1$s)</string>
+    <string name="checkout_coupon_applied">Discount applied</string>
+    <string name="checkout_remove_coupon">Remove coupon</string>
     <string name="checkout_total">Total</string>
 
     <!-- Checkout · Address step -->

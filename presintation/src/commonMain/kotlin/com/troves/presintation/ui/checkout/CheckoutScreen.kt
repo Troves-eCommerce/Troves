@@ -156,6 +156,7 @@ fun CheckoutScreen(
                         couponInput = state.couponInput,
                         onCouponChange = { viewModel.onIntent(CheckoutIntent.OnCouponChange(it)) },
                         onApplyCoupon = { viewModel.onIntent(CheckoutIntent.OnApplyCoupon) },
+                        onRemoveCoupon = { viewModel.onIntent(CheckoutIntent.OnRemoveCoupon) },
                         items = state.lines.map {
                             OrderSummaryItemUi(
                                 imagePainter = rememberAsyncImagePainter(it.imageUrl),

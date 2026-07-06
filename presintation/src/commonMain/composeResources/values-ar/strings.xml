@@ -57,6 +57,8 @@
     <string name="checkout_coupon_hint">أدخل كوبون الخصم</string>
     <string name="checkout_subtotal_items">المجموع الفرعي (%1$d منتج)</string>
     <string name="checkout_discount_code">خصم (%1$s)</string>
+    <string name="checkout_coupon_applied">تم تطبيق الخصم</string>
+    <string name="checkout_remove_coupon">إزالة الكوبون</string>
     <string name="checkout_total">الإجمالي</string>
 
     <!-- Checkout · Address step -->
