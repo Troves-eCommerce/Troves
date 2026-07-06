@@ -2,12 +2,14 @@ package com.troves.presintation.ui.auth
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.troves.domain.repository.AuthenticationRepository
 import com.troves.domain.usecase.auth.LoginUseCase
 import com.troves.domain.usecase.auth.RegisterUseCase
-import com.troves.domain.utils.Result
+import com.troves.domain.usecase.auth.SendEmailVerificationUseCase
 import com.troves.domain.usecase.auth.SignInWithGoogleUseCase
 import com.troves.domain.usecase.wishlist.SyncWishlistUseCase
 import com.troves.domain.usecase.cart.SyncCartUseCase
+import com.troves.domain.utils.Result
 import com.troves.presintation.core.mvi.DefaultEffectPublisher
 import com.troves.presintation.core.mvi.DefaultStateHolder
 import com.troves.presintation.core.mvi.EffectPublisher
@@ -22,7 +24,9 @@ class AuthViewModel(
     private val registerUseCase: RegisterUseCase,
     private val signInWithGoogleUseCase: SignInWithGoogleUseCase,
     private val syncWishlistUseCase: SyncWishlistUseCase,
-    private val syncCartUseCase: SyncCartUseCase
+    private val syncCartUseCase: SyncCartUseCase,
+    private val sendEmailVerificationUseCase: SendEmailVerificationUseCase,
+    private val authenticationRepository: AuthenticationRepository
 ) : ViewModel(),
     StateHolder<AuthState> by DefaultStateHolder(AuthState()),
     EffectPublisher<AuthEffect> by DefaultEffectPublisher() {
@@ -84,7 +88,10 @@ class AuthViewModel(
         viewModelScope.launch {
             updateState { copy(isLoading = true, errorMessage = null) }
             when (val result = registerUseCase(email, password)) {
-                is Result.Success -> onAuthenticated("Account created successfully")
+                is Result.Success -> {
+                    runCatching { sendEmailVerificationUseCase() }
+                    onAuthenticated("Account created successfully")
+                }
                 is Result.Error -> updateState {
                     copy(
                         isLoading = false,
@@ -116,6 +123,16 @@ class AuthViewModel(
         }
     }
 
+    /**
+     * Routing depends on the freshly-read `isEmailVerified` flag, never on
+     * whether this was login/register/google. That single check is what makes
+     * Google sign-ins (already verified by Google) go straight to Home, and
+     * makes any unverified email/password account always land on the
+     * verification screen — whether it just registered or is logging back in
+     * later without ever confirming its email. Shopify provisioning already
+     * happened inside the repository's login/register/signInWithGoogle calls
+     * above; nothing about that is touched here.
+     */
     private suspend fun onAuthenticated(message: String) {
         runCatching { syncWishlistUseCase() }
         runCatching { syncCartUseCase() }
@@ -123,7 +140,13 @@ class AuthViewModel(
         sendEffect(AuthEffect.ShowMessage(message))
         delay(SUCCESS_NAV_DELAY_MS.milliseconds)
         sendEffect(AuthEffect.OnRegistered)
-        sendEffect(AuthEffect.NavigateToHome)
+
+        val isVerified = authenticationRepository.getCurrentUserProfile()?.isEmailVerified ?: false
+        if (isVerified) {
+            sendEffect(AuthEffect.NavigateToHome)
+        } else {
+            sendEffect(AuthEffect.NavigateToEmailVerification)
+        }
     }
 
     private fun validateInputs(email: String, password: String): Boolean {

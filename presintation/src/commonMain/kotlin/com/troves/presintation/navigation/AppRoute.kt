@@ -32,6 +32,9 @@ sealed interface AppRoute : NavKey {
     data object Register : AppRoute
 
     @Serializable
+    data object EmailVerification : AppRoute
+
+    @Serializable
     data object Home : AppRoute
 
     @Serializable

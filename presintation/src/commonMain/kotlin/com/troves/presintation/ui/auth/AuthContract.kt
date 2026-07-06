@@ -11,12 +11,12 @@ data class AuthState(
 )
 
 sealed interface AuthEffect {
-
     data class ShowMessage(val message: String) : AuthEffect
     data class ShowError(val message: String) : AuthEffect
     data object OnRegistered : AuthEffect
 
     data object NavigateToHome : AuthEffect
+    data object NavigateToEmailVerification : AuthEffect
 }
 
 sealed interface AuthIntent {

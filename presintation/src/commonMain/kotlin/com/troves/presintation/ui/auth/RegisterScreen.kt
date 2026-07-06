@@ -59,6 +59,7 @@ import troves.designsystem.generated.resources.*
 fun RegisterScreen(
     onNavigateToLogin: () -> Unit,
     onRegisterSuccess: () -> Unit,
+    onNavigateToEmailVerification: () -> Unit,
     viewModel: AuthViewModel = koinViewModel(),
     onRegistered: () -> Unit,
 ) {
@@ -79,6 +80,7 @@ fun RegisterScreen(
             is AuthEffect.ShowError -> toastError = effect.message
             AuthEffect.NavigateToHome -> onRegisterSuccess()
             is AuthEffect.OnRegistered -> onRegistered()
+            AuthEffect.NavigateToEmailVerification -> onNavigateToEmailVerification()
         }
     }
 

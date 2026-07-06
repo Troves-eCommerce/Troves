@@ -107,4 +107,12 @@
     <string name="ai_voice_no_speech">Didn\'t catch that. Please try again.</string>
     <string name="ai_voice_error">Voice input failed. Please try again.</string>
     <string name="ai_voice_listening">Listening… tap the mic to stop</string>
+
+    <!-- Email Verification -->
+    <string name="verify_email_title">Verify your email</string>
+    <string name="verify_email_desc">We've sent a verification email to %1$s. Please check your inbox and click the link to verify your account.</string>
+    <string name="verify_email_resend_button">Resend Email</string>
+    <string name="verify_email_check_status_button">I've verified my email</string>
+    <string name="verify_email_not_received">Didn't receive the email?</string>
+    <string name="verify_email_continue_as_guest">Continue as Guest</string>
 </resources>

@@ -5,6 +5,6 @@ import com.troves.data.source.remote.service.StorefrontApiService
 
 actual fun createAuthenticationRepository(
     preferences: TrovesPreferences,
-    storefront: StorefrontApiService,
+   storefront: StorefrontApiService,
 ): PlatformAuthenticationRepository =
-    AuthenticationRepositoryFirebaseImpl(preferences, storefront)
+    AuthenticationRepositoryFirebaseImpl(preferences , storefront)

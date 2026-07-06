@@ -1,8 +1,8 @@
 package com.troves.domain.repository
+
 import com.troves.domain.entity.UserProfile
 import com.troves.domain.utils.Result
 import kotlinx.coroutines.flow.Flow
-
 
 interface AuthenticationRepository {
     suspend fun login(email: String, password: String): Result<Unit>
@@ -25,4 +25,10 @@ interface AuthenticationRepository {
     fun getCurrentUserId(): String?
 
     fun getCurrentUserEmail(): String?
+
+    suspend fun sendEmailVerification(): Result<Unit>
+
+    suspend fun reloadUser(): Result<Unit>
+
+    suspend fun getCurrentUserProfile(): UserProfile?
 }

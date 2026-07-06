@@ -98,7 +98,7 @@ val dataModule = module {
 
     // ── Repositories ──────────────────────────────────────────────────────────
     single<TrovesRepository>          { TrovesRepositoryImpl(get(), get(), get(), get(), get(), get()) }
-    single<AuthenticationRepository>  { createAuthenticationRepository(get(), get()) }
+    single<AuthenticationRepository>  { createAuthenticationRepository(get() , get()) }
     single<PaymentRepository>         { PaymentRepositoryImpl(get()) }
     single<WishlistRepository>        { WishlistRepositoryImpl(get() , get()) }
     single<LocationRepository>        { LocationRepositoryImpl(get()) }

@@ -5,6 +5,8 @@ import com.troves.domain.usecase.auth.IsLoggedInUseCase
 import com.troves.domain.usecase.auth.LoginUseCase
 import com.troves.domain.usecase.auth.LogoutUseCase
 import com.troves.domain.usecase.auth.RegisterUseCase
+import com.troves.domain.usecase.auth.ReloadUserUseCase
+import com.troves.domain.usecase.auth.SendEmailVerificationUseCase
 import com.troves.domain.usecase.auth.SignInWithGoogleUseCase
 import com.troves.domain.usecase.cart.AddToCartUseCase
 import com.troves.domain.usecase.cart.ApplyDiscountUseCase
@@ -81,6 +83,8 @@ val domainModule = module {
     // Authentication
     factory { LoginUseCase(get()) }
     factory { RegisterUseCase(get()) }
+    factory { SendEmailVerificationUseCase(get()) }
+    factory { ReloadUserUseCase(get()) }
     factory { SignInWithGoogleUseCase(get()) }
     factory { IsLoggedInUseCase(get()) }
     factory { LogoutUseCase(get(), get(), get()) }
