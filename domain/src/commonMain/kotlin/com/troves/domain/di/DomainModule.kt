@@ -1,5 +1,8 @@
 package com.troves.domain.di
 
+import com.troves.domain.usecase.ai.DeleteAiConversationUseCase
+import com.troves.domain.usecase.ai.GetAiConversationsUseCase
+import com.troves.domain.usecase.ai.SaveAiConversationUseCase
 import com.troves.domain.usecase.ai.SendAiMessageUseCase
 import com.troves.domain.usecase.auth.IsLoggedInUseCase
 import com.troves.domain.usecase.auth.LoginUseCase
@@ -126,4 +129,7 @@ val domainModule = module {
 
     // AI assistant
     factory { SendAiMessageUseCase(get()) }
+    factory { GetAiConversationsUseCase(get(), get()) }
+    factory { SaveAiConversationUseCase(get(), get()) }
+    factory { DeleteAiConversationUseCase(get(), get()) }
 }
