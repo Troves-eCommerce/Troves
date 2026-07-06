@@ -44,7 +44,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.troves.designsystem.components.button.PrimaryButton
 import com.troves.designsystem.components.textfield.CustomTextField
-import com.troves.designsystem.components.toast.TrovesToast
+import com.troves.designsystem.components.toast.ToastType
+import com.troves.designsystem.components.toast.TrovesToastHost
+import com.troves.designsystem.components.toast.rememberTrovesToastState
 import com.troves.designsystem.theme.Theme
 import com.troves.designsystem.util.bounceClick
 import com.troves.presintation.core.mvi.ObserveEffect
@@ -66,13 +68,12 @@ fun LoginScreen(
     val googleAuthHandler = LocalGoogleAuthHandler.current
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    var successMessage by remember { mutableStateOf<String?>(null) }
-    var toastError by remember { mutableStateOf<String?>(null) }
+    val toast = rememberTrovesToastState()
 
     ObserveEffect(viewModel.effect) { effect ->
         when (effect) {
-            is AuthEffect.ShowMessage -> successMessage = effect.message
-            is AuthEffect.ShowError -> toastError = effect.message
+            is AuthEffect.ShowMessage -> toast.show(effect.message, ToastType.Success)
+            is AuthEffect.ShowError -> toast.show(effect.message, ToastType.Error)
             AuthEffect.NavigateToHome -> onLoginSuccess()
             is AuthEffect.OnRegistered -> onLoggedIn()
         }
@@ -249,9 +250,9 @@ fun LoginScreen(
                                     viewModel.onIntent(AuthIntent.GoogleSignIn(idToken, accessToken))
                                 },
                                 onError = { error ->
-                                    toastError = error.message ?: "Google Sign-In failed"
+                                    toast.show(error.message ?: "Google Sign-In failed", ToastType.Error)
                                 }
-                            ) ?: run { toastError = "Google Sign-In is not supported on this platform" }
+                            ) ?: run { toast.show("Google Sign-In is not supported on this platform", ToastType.Error) }
                         }
                     ),
                 horizontalArrangement = Arrangement.Center,
@@ -298,12 +299,6 @@ fun LoginScreen(
             )
         }
 
-        TrovesToast(
-            message = successMessage ?: toastError,
-            onDismiss = {
-                successMessage = null
-                toastError = null
-            },
-        )
+        TrovesToastHost(state = toast)
     }
 }

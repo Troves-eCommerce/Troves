@@ -17,8 +17,8 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import com.troves.designsystem.components.toast.TrovesSnackbarHost
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -189,11 +189,10 @@ fun SearchScreen(
                     onToggleBrand = { onIntent(SearchIntent.BrandsChange(listOf(it))) },
                 )
             }
-            SnackbarHost(
+            TrovesSnackbarHost(
                 hostState = snackBarState,
                 modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .navigationBarsPadding()
+                    .align(Alignment.TopCenter)
                     .padding(16.dp),
             )
         }
