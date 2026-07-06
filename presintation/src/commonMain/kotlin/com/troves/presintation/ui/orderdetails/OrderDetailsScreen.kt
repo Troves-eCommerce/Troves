@@ -44,7 +44,6 @@ import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
 import troves.designsystem.generated.resources.Res
 import troves.designsystem.generated.resources.ic_arrow_back
-import troves.designsystem.generated.resources.product_card
 
 @Composable
 fun OrderDetailsScreen(
