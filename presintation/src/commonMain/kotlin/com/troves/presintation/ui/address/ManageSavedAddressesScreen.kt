@@ -30,8 +30,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import com.troves.designsystem.components.toast.TrovesSnackbarHost
 import com.troves.domain.entity.Address
 import com.troves.domain.entity.AddressIcon
 import kotlinx.coroutines.launch
@@ -115,10 +115,10 @@ fun ManageSavedAddressesScreenContent(
         )
     }
 
+    Box(modifier = Modifier.fillMaxSize()) {
     Scaffold(
         modifier = Modifier.fillMaxSize().statusBarsPadding(),
         containerColor = Theme.colors.backGround,
-        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             BaseTopAppBar(
                 title = stringResource(Res.string.address_manage_title),
@@ -173,6 +173,11 @@ fun ManageSavedAddressesScreenContent(
                 item { Spacer(Modifier.height(80.dp)) } // Room for bottom button if scrolling overlaps
             }
         }
+    }
+        TrovesSnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier.align(Alignment.TopCenter).statusBarsPadding().padding(16.dp),
+        )
     }
 }
 

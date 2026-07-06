@@ -2,7 +2,6 @@ package com.troves.designsystem.components.cards
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -19,6 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.troves.designsystem.theme.SpTheme
 import com.troves.designsystem.theme.Theme
+import com.troves.designsystem.util.noRippleClickable
 
 /**
  * A generic titled surface card: a header row (title + optional trailing action
@@ -63,7 +63,7 @@ fun SectionCard(
                         color = Theme.colors.primaryVariant,
                         fontWeight = FontWeight.Medium,
                     ),
-                    modifier = Modifier.clickable(onClick = onActionClick),
+                    modifier = Modifier.noRippleClickable(onClick = onActionClick),
                 )
             }
         }

@@ -39,8 +39,8 @@ import com.troves.designsystem.components.button.PrimaryButton
 import com.troves.designsystem.components.dialog.LoginRequiredDialog
 import com.troves.designsystem.components.dialog.TrovesDialog
 import com.troves.designsystem.components.topbar.BaseTopAppBar
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import com.troves.designsystem.components.toast.TrovesSnackbarHost
 import com.troves.designsystem.theme.Theme
 import com.troves.presintation.core.mvi.ObserveEffect
 import com.troves.presintation.ui.cart.components.CartItemCard
@@ -124,11 +124,11 @@ fun CartScreen(
                 .statusBarsPadding(),
         )
 
-        SnackbarHost(
+        TrovesSnackbarHost(
             hostState = snackBarHostState,
             modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .navigationBarsPadding()
+                .align(Alignment.TopCenter)
+                .statusBarsPadding()
                 .padding(16.dp),
         )
     }

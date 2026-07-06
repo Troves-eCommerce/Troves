@@ -14,6 +14,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
+import com.troves.designsystem.components.toast.TrovesSnackbarHost
 import com.troves.designsystem.theme.Theme
 import com.troves.presintation.ui.profile.components.LiveRatesRow
 import com.troves.presintation.ui.profile.components.ProfileHeaderCard
@@ -98,7 +100,6 @@ fun ProfileScreen(
     }
 
     Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) },
         containerColor = Theme.colors.backGround
     ) { paddingValues ->
         Box(
@@ -106,6 +107,10 @@ fun ProfileScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
+            TrovesSnackbarHost(
+                hostState = snackbarHostState,
+                modifier = Modifier.align(Alignment.TopCenter).zIndex(1f).padding(16.dp),
+            )
             if (uiState.isLoading) {
                 CircularProgressIndicator(
                     modifier = Modifier.align(Alignment.Center),

@@ -3,7 +3,6 @@ package com.troves.designsystem.components.textfield
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -40,6 +39,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.troves.designsystem.theme.Theme
+import com.troves.designsystem.util.noRippleClickable
 
 @Composable
 fun CustomTextField(
@@ -136,11 +136,8 @@ fun CustomTextField(
                     contentDescription = "leading icon",
                     modifier = Modifier
                         .padding(end = 12.dp) // مسافة كافية بعد الأيقونة
-                        .size(22.dp) // حجم الأيقونة مناسب ومطابق
-                        .clickable(
-                            enabled = onClickLeadingIcon != null,
-                            onClick = { onClickLeadingIcon?.invoke() }
-                        ),
+                        .size(22.dp)
+                        .noRippleClickable(onClick = { onClickLeadingIcon?.invoke() }),
                 )
             }
             Box(
@@ -194,10 +191,7 @@ fun CustomTextField(
                     modifier = Modifier
                         .padding(start = 12.dp)
                         .size(22.dp)
-                        .clickable(
-                            enabled = onClickTrailingIcon != null,
-                            onClick = { onClickTrailingIcon?.invoke() }
-                        ),
+                        .noRippleClickable(onClick = { onClickTrailingIcon?.invoke() }),
                 )
             }
         }
