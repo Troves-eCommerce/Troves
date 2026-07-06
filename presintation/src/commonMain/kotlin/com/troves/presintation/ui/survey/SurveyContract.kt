@@ -81,23 +81,21 @@ sealed interface SurveyEffect {
 }
 
 fun buildSurveyQuestions(): List<SurveyQuestion> = listOf(
+    // Step 0 — Categories
     SurveyQuestion.MultiChip(
         title = "What do you love to shop?",
-        subtitle = "Pick all categories that match your style",
+        subtitle = "Pick everything that matches your style",
         options = listOf("Shoes", "T-Shirts", "Hoodies", "Jackets", "Accessories", "Pants", "Dresses", "Bags"),
     ),
-    SurveyQuestion.MultiChip(
-        title = "Your favorite brands?",
-        subtitle = "Select the brands you love",
-        options = listOf("Nike", "Adidas", "Puma", "Zara", "H&M", "New Balance", "Vans", "Converse"),
-    ),
+    // Step 1 — Price Range
     SurveyQuestion.SingleChip(
-        title = "What's your price range?",
-        subtitle = "We'll personalise recommendations to fit your budget",
+        title = "What's your budget?",
+        subtitle = "We'll personalise picks to fit your wallet",
         options = listOf("Budget", "Mid-range", "Premium", "Luxury"),
     ),
+    // Step 2 — Style
     SurveyQuestion.StyleCards(
-        title = "How would you describe your style?",
+        title = "Describe your style",
         subtitle = "Pick the vibe that fits you best",
         options = listOf(
             StyleOption(StyleIcon.Casual, "Casual", "Everyday comfort and ease"),
@@ -108,35 +106,10 @@ fun buildSurveyQuestions(): List<SurveyQuestion> = listOf(
             StyleOption(StyleIcon.Formal, "Formal", "Sharp and professional"),
         ),
     ),
-    SurveyQuestion.ColorPicker(
-        title = "Favourite colours?",
-        subtitle = "Select the tones you wear most",
-        colors = listOf(
-            ColorOption("Black", Color(0xFF111111)),
-            ColorOption("White", Color(0xFFF5F5F5)),
-            ColorOption("Navy", Color(0xFF1A237E)),
-            ColorOption("Olive", Color(0xFF558B2F)),
-            ColorOption("Beige", Color(0xFFD7CCC8)),
-            ColorOption("Burgundy", Color(0xFF6D1B1B)),
-            ColorOption("Grey", Color(0xFF757575)),
-            ColorOption("Camel", Color(0xFFC8A96E)),
-            ColorOption("Sky Blue", Color(0xFF4FC3F7)),
-            ColorOption("Rust", Color(0xFFBF360C)),
-        ),
-    ),
+    // Step 3 — Gender
     SurveyQuestion.SingleChip(
         title = "Shop for …",
         subtitle = null,
         options = listOf("Men", "Women", "Unisex"),
-    ),
-    SurveyQuestion.SingleChip(
-        title = "Your age group?",
-        subtitle = null,
-        options = listOf("Under 18", "18–24", "25–34", "35–44", "45+"),
-    ),
-    SurveyQuestion.SingleChip(
-        title = "How often do you shop?",
-        subtitle = "This helps us time our recommendations",
-        options = listOf("Weekly", "Monthly", "Occasionally"),
     ),
 )
