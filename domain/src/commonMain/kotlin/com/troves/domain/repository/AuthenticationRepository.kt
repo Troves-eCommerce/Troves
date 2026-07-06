@@ -22,6 +22,11 @@ interface AuthenticationRepository {
     suspend fun isOnboardingDone(): Boolean
 
     suspend fun setOnboardingDone()
+
+    suspend fun isSurveyDone(): Boolean
+
+    suspend fun setSurveyDone()
+
     fun getCurrentUserId(): String?
 
     fun getCurrentUserEmail(): String?

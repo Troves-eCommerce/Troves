@@ -37,6 +37,7 @@ fun ProfileScreen(
     onNavigateToPaymentMethods: () -> Unit,
     onNavigateToEditProfile: () -> Unit,
     onNavigateToAiAssistant: () -> Unit,
+    onNavigateToSurvey: () -> Unit,
     viewModel: ProfileViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -59,6 +60,7 @@ fun ProfileScreen(
                 is ProfileEffect.NavigateToPaymentMethods -> onNavigateToPaymentMethods()
                 is ProfileEffect.NavigateToEditProfile -> onNavigateToEditProfile()
                 is ProfileEffect.NavigateToAiAssistant -> onNavigateToAiAssistant()
+                is ProfileEffect.NavigateToSurvey -> onNavigateToSurvey()
                 is ProfileEffect.ShowError -> {
                     snackbarHostState.showSnackbar(effect.message)
                 }
@@ -139,6 +141,13 @@ fun ProfileScreen(
                                 icon = Res.drawable.ic_ai_sparkles,
                                 title = stringResource(ResP.string.ai_profile_entry),
                                 onClick = { viewModel.onIntent(ProfileIntent.AiAssistantClicked) },
+                                iconColor = Theme.colors.primary
+                            )
+                            HorizontalDivider(color = Theme.colors.backGround, thickness = 1.dp)
+                            ProfileRowItem(
+                                icon = Res.drawable.ic_explore, // Using ic_explore for Survey
+                                title = stringResource(ResP.string.profile_style_survey),
+                                onClick = { viewModel.onIntent(ProfileIntent.SurveyClicked) },
                                 iconColor = Theme.colors.primary
                             )
                             HorizontalDivider(color = Theme.colors.backGround, thickness = 1.dp)

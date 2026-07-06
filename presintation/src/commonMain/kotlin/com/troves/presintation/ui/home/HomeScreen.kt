@@ -61,6 +61,7 @@ import com.troves.presintation.ui.home.components.AdData
 import com.troves.presintation.ui.home.components.AdSlider
 import com.troves.presintation.ui.home.components.BrandItem
 import com.troves.presintation.ui.home.components.CategoryItem
+import com.troves.presintation.ui.survey.components.SurveyBannerCard
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -76,6 +77,7 @@ fun HomeScreen(
     onNavigateToSearch: () -> Unit,
     onNavigateToCart: () -> Unit,
     onNavigateToAllCategories: () -> Unit,
+    onNavigateToSurvey: () -> Unit,
     viewModel: HomeViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -96,6 +98,7 @@ fun HomeScreen(
             is HomeEffect.NavigateToRegister -> onNavigateToRegister()
             is HomeEffect.NavigateToAllCategories -> onNavigateToAllCategories()
             is HomeEffect.NavigateToCart -> onNavigateToCart()
+            is HomeEffect.NavigateToSurvey -> onNavigateToSurvey()
             is HomeEffect.ShowToast -> scope.launch { snackbarHostState.showSnackbar(effect.message) }
             is HomeEffect.NavigateToSearch -> onNavigateToSearch()
             is HomeEffect.ShowLoginRequiredDialog -> scope.launch {
@@ -174,6 +177,13 @@ private fun HomeContent(
 
     val clipboardManager = LocalClipboardManager.current
     val copyCodeButtonText = stringResource(Res.string.home_copy_code_button)
+
+    if (!state.isSurveyDone) {
+        SurveyBannerCard(
+            onStartSurvey = { onIntent(HomeIntent.SurveyBannerClicked) },
+            modifier = Modifier.padding(horizontal = Theme.spacing.medium),
+        )
+    }
 
     if (state.ads.isNotEmpty()) {
         AdSlider(

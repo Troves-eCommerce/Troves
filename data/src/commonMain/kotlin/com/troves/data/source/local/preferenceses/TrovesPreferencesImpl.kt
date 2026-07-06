@@ -69,6 +69,11 @@ class TrovesPreferencesImpl(
             .catchIOException()
             .map { it[AppPreferencesKeys.IS_ONBOARDING_DONE] ?: false }
 
+    override val isSurveyDone: Flow<Boolean>
+        get() = dataStore.data
+            .catchIOException()
+            .map { it[AppPreferencesKeys.IS_SURVEY_DONE] ?: false }
+
     override val isLoggedIn: Flow<Boolean>
         get() = dataStore.data
             .catchIOException()
@@ -119,6 +124,10 @@ class TrovesPreferencesImpl(
 
     override suspend fun setOnboardingDone(done: Boolean) {
         dataStore.edit { it[AppPreferencesKeys.IS_ONBOARDING_DONE] = done }
+    }
+
+    override suspend fun setSurveyDone(done: Boolean) {
+        dataStore.edit { it[AppPreferencesKeys.IS_SURVEY_DONE] = done }
     }
 
     override suspend fun setLoggedIn(loggedIn: Boolean) {

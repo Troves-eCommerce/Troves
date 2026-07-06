@@ -1,0 +1,85 @@
+package com.troves.presintation.ui.survey.components
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.text.BasicText
+import androidx.compose.material3.Icon
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import com.troves.designsystem.components.button.PrimaryButton
+import com.troves.designsystem.theme.Theme
+import org.jetbrains.compose.resources.painterResource
+import troves.designsystem.generated.resources.Res
+import troves.designsystem.generated.resources.ic_ai_sparkles
+
+@Composable
+fun SurveyBannerCard(
+    onStartSurvey: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val shape = Theme.shapes.large
+
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .shadow(elevation = 4.dp, shape = shape, clip = false)
+            .clip(shape)
+            .background(Theme.colors.surface)
+            .padding(Theme.spacing.large),
+        verticalArrangement = Arrangement.spacedBy(Theme.spacing.medium),
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small),
+        ) {
+            Icon(
+                painter = painterResource(Res.drawable.ic_ai_sparkles),
+                contentDescription = null,
+                tint = Theme.colors.primary,
+                modifier = Modifier.size(20.dp),
+            )
+            BasicText(
+                text = "Personalised for you",
+                style = Theme.typography.body.small.copy(
+                    color = Theme.colors.primary,
+                    fontWeight = FontWeight.SemiBold,
+                ),
+            )
+        }
+
+        BasicText(
+            text = "Help us know your style",
+            style = Theme.typography.title.copy(
+                color = Theme.colors.primaryFont,
+                fontWeight = FontWeight.Bold,
+            ),
+        )
+
+        BasicText(
+            text = "Answer a few quick questions and we'll personalise your shopping experience.",
+            style = Theme.typography.body.medium.copy(
+                color = Theme.colors.secondaryFont,
+            ),
+        )
+
+        Spacer(Modifier.height(Theme.spacing.extraSmall))
+
+        PrimaryButton(
+            caption = "Start Survey",
+            onClick = onStartSurvey,
+            modifier = Modifier.fillMaxWidth(),
+        )
+    }
+}
