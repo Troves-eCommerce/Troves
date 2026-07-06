@@ -51,6 +51,7 @@ fun SurveyScreen(
         when (effect) {
             SurveyEffect.SurveyCompleted -> Unit
             SurveyEffect.NavigateBack -> onNavigateBack()
+            is SurveyEffect.ShowError -> Unit // Handle error here if needed
         }
     }
 
