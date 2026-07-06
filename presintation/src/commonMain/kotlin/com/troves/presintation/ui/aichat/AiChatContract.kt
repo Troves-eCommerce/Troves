@@ -37,6 +37,14 @@ data class AiProductUi(
 )
 
 @Immutable
+data class ConversationSummaryUi(
+    val id: String,
+    val title: String,
+    val timeLabel: String,
+    val isActive: Boolean = false,
+)
+
+@Immutable
 data class AiChatUiState(
     val messages: List<ChatMessageUi> = emptyList(),
     val input: String = "",
@@ -46,6 +54,11 @@ data class AiChatUiState(
     val favoriteProductIds: Set<String> = emptySet(),
     val isListening: Boolean = false,
     val pendingImage: PendingImageUi? = null,
+    val showHistory: Boolean = false,
+    val historyLoading: Boolean = false,
+    val historyError: String? = null,
+    val historyRequiresLogin: Boolean = false,
+    val conversations: List<ConversationSummaryUi> = emptyList(),
 ) {
     val canSend: Boolean
         get() = !isSending && rateLimitedSeconds == null &&
@@ -74,6 +87,12 @@ sealed interface AiChatIntent {
     data object AttachImageClicked : AiChatIntent
     class ImagePicked(val bytes: ByteArray) : AiChatIntent
     data object RemovePendingImage : AiChatIntent
+
+    data object OpenHistory : AiChatIntent
+    data object CloseHistory : AiChatIntent
+    data class LoadConversation(val id: String) : AiChatIntent
+    data class DeleteConversation(val id: String) : AiChatIntent
+    data object NewChat : AiChatIntent
 }
 
 sealed interface AiChatEffect {
