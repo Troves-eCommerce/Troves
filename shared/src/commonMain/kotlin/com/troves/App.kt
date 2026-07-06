@@ -23,35 +23,32 @@ fun App() {
     val mainViewModel: MainViewModel = koinViewModel()
     val appState by mainViewModel.uiState.collectAsState()
 
-    if (!appState.isLoading) {
+    val isDark = when (appState.themeMode) {
+        "dark" -> true
+        "light" -> false
+        else -> isSystemInDarkTheme()
+    }
 
-        val isDark = when (appState.themeMode) {
-            "dark" -> true
-            "light" -> false
-            else -> isSystemInDarkTheme()
-        }
+    val layoutDirection = if (appState.language == "ar") LayoutDirection.Rtl else LayoutDirection.Ltr
 
-        val layoutDirection = if (appState.language == "ar") LayoutDirection.Rtl else LayoutDirection.Ltr
+    val currencyState = CurrencyState(
+        selectedCurrency = appState.currency,
+        exchangeRate = appState.exchangeRate
+    )
 
-        val currencyState = CurrencyState(
-            selectedCurrency = appState.currency,
-            exchangeRate = appState.exchangeRate
-        )
-
-        SpTheme(
-            isDarkTheme = isDark,
-            languageCode = appState.language
+    SpTheme(
+        isDarkTheme = isDark,
+        languageCode = appState.language
+    ) {
+        CompositionLocalProvider(
+            LocalLayoutDirection provides layoutDirection,
+            LocalCurrency provides currencyState
         ) {
-            CompositionLocalProvider(
-                LocalLayoutDirection provides layoutDirection,
-                LocalCurrency provides currencyState
-            ) {
-                val apiService = koinInject<TrovesApiService>()
-                LaunchedEffect(key1 = Unit) {
-                    apiService.getAllProducts()
-                }
-                AppNav()
+            val apiService = koinInject<TrovesApiService>()
+            LaunchedEffect(key1 = Unit) {
+                apiService.getAllProducts()
             }
+            AppNav()
         }
     }
 }
