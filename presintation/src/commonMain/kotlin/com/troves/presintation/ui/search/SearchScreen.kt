@@ -108,7 +108,8 @@ fun SearchScreen(
                             onSearch = { onIntent(SearchIntent.OnSearch(it)) },
                             onBackClick = { onNavigateBack() },
                             onFilterClick = { onIntent(SearchIntent.OnFilterClick) },
-                            modifier = Modifier.padding(horizontal = 0.dp, vertical = 0.dp)
+                            modifier = Modifier.padding(horizontal = 0.dp, vertical = 0.dp),
+                            onClearSearches = {onIntent(SearchIntent.ClearSearches)}
                         )
 
                         RecentSearchSection(
