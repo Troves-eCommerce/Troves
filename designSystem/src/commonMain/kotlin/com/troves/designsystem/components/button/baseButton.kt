@@ -3,7 +3,6 @@ package com.troves.designsystem.components.button
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -22,6 +21,7 @@ import androidx.compose.ui.graphics.painter.Painter
 
 import androidx.compose.ui.unit.dp
 import com.troves.designsystem.theme.Theme
+import com.troves.designsystem.util.noRippleClickable
 
 enum class ButtonIconPosition { Start, End }
 
@@ -54,10 +54,7 @@ internal fun BaseButton(
             )
             .clip(RoundedCornerShape(14.dp))
             .background(backGroundColor)
-            .clickable(
-                enabled = !isDisabled && !isLoading,
-                onClick = onClick
-            ),
+            .noRippleClickable(onClick = { if (!isDisabled && !isLoading) onClick() }),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {

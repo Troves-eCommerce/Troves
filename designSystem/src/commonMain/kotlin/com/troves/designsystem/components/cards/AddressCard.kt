@@ -3,7 +3,6 @@ package com.troves.designsystem.components.cards
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,6 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.troves.designsystem.theme.SpTheme
 import com.troves.designsystem.theme.Theme
+import com.troves.designsystem.util.noRippleClickable
 
 /**
  * A selectable saved-address card: leading radio + icon + a title row
@@ -74,7 +74,7 @@ fun AddressCard(
             .clip(Theme.shapes.medium)
             .background(containerColor)
             .border(1.dp, borderColor, Theme.shapes.medium)
-            .clickable(enabled = enabled, onClick = onClick)
+            .noRippleClickable(onClick = { if (enabled) onClick() })
             .padding(Theme.spacing.medium),
         horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small),
         verticalAlignment = Alignment.Top,
@@ -123,7 +123,7 @@ fun AddressCard(
                             color = Theme.colors.primaryVariant,
                             fontWeight = FontWeight.Medium,
                         ),
-                        modifier = Modifier.clickable(enabled = enabled, onClick = onEditClick),
+                        modifier = Modifier.noRippleClickable(onClick = { if (enabled) onEditClick() }),
                     )
                 }
             }

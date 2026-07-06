@@ -4,7 +4,6 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,6 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.troves.designsystem.theme.SpTheme
 import com.troves.designsystem.theme.Theme
+import com.troves.designsystem.util.noRippleClickable
 import org.jetbrains.compose.resources.painterResource
 import troves.designsystem.generated.resources.Res
 import troves.designsystem.generated.resources.paymob_filled
@@ -64,7 +64,7 @@ fun PaymentMethodCard(
             .clip(Theme.shapes.medium)
             .background(containerColor)
             .border(1.dp, borderColor, Theme.shapes.medium)
-            .clickable(enabled = enabled, onClick = onClick)
+            .noRippleClickable(onClick = { if (enabled) onClick() })
             .padding(Theme.spacing.medium),
         horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small),
         verticalAlignment = Alignment.Top,

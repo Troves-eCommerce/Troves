@@ -1,6 +1,5 @@
 package com.troves.designsystem.components.bottomsheet
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,6 +25,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.troves.designsystem.theme.Theme
+import com.troves.designsystem.util.noRippleClickable
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -100,7 +100,7 @@ private fun BottomSheetHeader(
             Box(
                 modifier = Modifier
                     .clip(Theme.shapes.medium)
-                    .clickable(onClick = onClose)
+                    .noRippleClickable(onClick = onClose)
                     .size(Theme.size.iconMedium),
                 contentAlignment = Alignment.Center,
             ) {
