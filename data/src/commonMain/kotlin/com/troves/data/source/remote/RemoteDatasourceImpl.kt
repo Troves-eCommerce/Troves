@@ -164,6 +164,15 @@ class RemoteDatasourceImpl(
         userDoc(userId).set(UserProfileDto(cartId = null), merge = true)
     }
 
+    override suspend fun saveSurveyAnswers(userId: String, answers: com.troves.data.source.remote.dto.SurveyAnswersDto): Result<Unit> {
+        return try {
+            userDoc(userId).set(UserProfileDto(survey = answers), merge = true)
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
     override suspend fun getDiscountCodes(): Result<List<com.troves.domain.entity.DiscountCode>> {
         return trovesApiService.getDiscountCodes()
     }

@@ -22,6 +22,7 @@ fun TrovesTopBar(
     onCartClick: () -> Unit,
     modifier: Modifier = Modifier,
     title: String = "Troves",
+    cartBadgeCount: Int = 0,
     border: BorderStroke? = null,
 ) {
     BaseTopAppBar(
@@ -37,6 +38,7 @@ fun TrovesTopBar(
             TopBarAction(
                 icon = painterResource(Res.drawable.ic_cart),
                 contentDescription = "Cart",
+                badgeCount = cartBadgeCount,
                 onClick = onCartClick,
             ),
         ),
