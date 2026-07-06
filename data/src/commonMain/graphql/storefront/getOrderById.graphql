@@ -1,11 +1,13 @@
-query GetOrderById($id: ID!) {
-    node(id: $id) {
-        ... on Order {
-            ...OrderCoreFields
-
-            lineItems(first: 100) {
-                nodes {
-                    ...OrderLineItemFields
+query GetOrderById($customerAccessToken: String!) {
+    customer(customerAccessToken: $customerAccessToken) {
+        id
+        orders(first: 250, reverse: true) {
+            nodes {
+                ...OrderCoreFields
+                lineItems(first: 100) {
+                    nodes {
+                        ...OrderLineItemFields
+                    }
                 }
             }
         }

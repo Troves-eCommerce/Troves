@@ -12,6 +12,8 @@ data class Order(
     val total: CartMoney,
     val shippingAddress: Address?,
     val statusUrl: String,
+    val shipping: CartMoney? = null,
+    val tax: CartMoney? = null,
     val lineItems: List<OrderLineItem> = emptyList(),
 )
 
