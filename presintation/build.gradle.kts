@@ -98,6 +98,10 @@ kotlin {
             }
         }
 
+        iosMain.dependencies {
+            implementation(libs.ktor.client.darwin)
+        }
+
         androidMain {
             dependencies {
                 // Add Android-specific dependencies here.

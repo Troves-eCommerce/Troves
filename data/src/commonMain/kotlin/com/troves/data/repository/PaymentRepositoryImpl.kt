@@ -4,7 +4,8 @@ import com.troves.data.source.remote.service.paymob.PaymobApiService
 import com.troves.data.source.remote.service.paymob.toDomain
 import com.troves.domain.entity.ClientSecret
 import com.troves.domain.repository.PaymentRepository
-import com.troves.domain.utils.getOrThrow
+import com.troves.domain.utils.Result
+import com.troves.domain.utils.map
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -14,11 +15,11 @@ class PaymentRepositoryImpl(
     private val paymobApiService: PaymobApiService,
     private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : PaymentRepository {
-    override suspend fun getClientSecret(cartId: String): ClientSecret {
+    override suspend fun getClientSecret(cartId: String): Result<ClientSecret> {
         return withContext(
             coroutineDispatcher
         ) {
-            paymobApiService.getClientSecret(cartId = cartId).getOrThrow().toDomain()
+            paymobApiService.getClientSecret(cartId = cartId).map { it.toDomain() }
         }
 
     }

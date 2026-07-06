@@ -14,6 +14,7 @@ import com.troves.domain.usecase.order.ClearCartUseCase
 import com.troves.domain.usecase.order.PlaceCodOrderUseCase
 import com.troves.domain.usecase.order.PlaceOrderResult
 import com.troves.domain.usecase.paymob.GetClientSecretUseCase
+import com.troves.domain.utils.Result
 import com.troves.presintation.core.mvi.DefaultEffectPublisher
 import com.troves.presintation.core.mvi.DefaultStateHolder
 import com.troves.presintation.core.mvi.EffectPublisher
@@ -126,8 +127,20 @@ class CheckoutViewModel(
                     sendEffect(ShowToast("Couldn't start payment, cart ID is empty. Please try again."))
                     return@launch
                 }
-                val clientSecret = getClientSecretUseCase(cartId = cart!!.cartId)
-                sendEffect(CheckoutEffect.OpenPayMobSheet(clientSecret = clientSecret.clientSecret ?: ""))
+                when (val clientSecret = getClientSecretUseCase(cartId = cart!!.cartId)) {
+                    is Result.Success -> {
+                        val secret = clientSecret.value.clientSecret
+                        if (secret.isNullOrBlank()) {
+                            onFailure("Couldn't start payment. Please try again.")
+                        } else {
+                            sendEffect(CheckoutEffect.OpenPayMobSheet(clientSecret = secret))
+                        }
+                    }
+                    is Result.Error -> onFailure(
+                        clientSecret.throwable.message ?: "Couldn't start payment. Please try again."
+                    )
+                    Result.Loading -> Unit
+                }
             } else {
                 sendEffect(CheckoutEffect.ShowToast("Couldn't start payment. Please try again."))
             }
