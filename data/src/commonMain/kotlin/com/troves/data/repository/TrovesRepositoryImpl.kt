@@ -15,6 +15,7 @@ import com.troves.domain.entity.Cart
 import com.troves.domain.entity.Category
 import com.troves.domain.entity.DiscountCode
 import com.troves.domain.entity.Order
+import com.troves.domain.entity.OrderSummary
 import com.troves.domain.entity.Product
 import com.troves.domain.entity.ProductSearchParams
 import com.troves.domain.repository.AuthenticationRepository
@@ -276,13 +277,15 @@ class TrovesRepositoryImpl(
         return storefront.getDefaultAddress(token).getOrNull()
     }
 
-    override suspend fun getOrders(): List<Order> {
+    override suspend fun getOrders(): List<OrderSummary> {
         val token = dataSource.shopifyCustomerAccessTokenOrNull.first() ?: return emptyList()
         return storefront.getOrders(token).getOrElse { emptyList() }
     }
 
-    override suspend fun getOrderById(orderId: String): Order? =
-        storefront.getOrderById(orderId).getOrNull()
+    override suspend fun getOrderById(orderId: String): Order? {
+        val token = dataSource.shopifyCustomerAccessTokenOrNull.first() ?: return null
+        return storefront.getOrderById(token, orderId).getOrNull()
+    }
 
     override suspend fun placeCodOrder(cart: Cart, address: Address): String {
         val email = authenticationRepository.getCurrentUserEmail()

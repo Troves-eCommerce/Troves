@@ -37,6 +37,7 @@ import com.troves.presintation.ui.home.HomeScreen
 import com.troves.presintation.ui.onboarding.OnboardingScreen
 import com.troves.presintation.ui.orderresult.OrderResultScreen
 import com.troves.presintation.ui.orders.OrdersScreen
+import com.troves.presintation.ui.orderdetails.OrderDetailsScreen
 import com.troves.presintation.ui.payment.PaymentMethodsScreen
 import com.troves.presintation.ui.productDetails.ProductDetailsScreen
 import com.troves.presintation.ui.products.ProductsScreen
@@ -72,6 +73,7 @@ private val navSavedStateConfiguration = SavedStateConfiguration {
             subclass(AppRoute.Cart::class, AppRoute.Cart.serializer())
             subclass(AppRoute.Checkout::class, AppRoute.Checkout.serializer())
             subclass(AppRoute.Orders::class, AppRoute.Orders.serializer())
+            subclass(AppRoute.OrderDetails::class, AppRoute.OrderDetails.serializer())
             subclass(AppRoute.Search::class, AppRoute.Search.serializer())
             subclass(AppRoute.ManageAddresses::class, AppRoute.ManageAddresses.serializer())
             subclass(AppRoute.NewAddress::class, AppRoute.NewAddress.serializer())
@@ -288,7 +290,17 @@ fun AppNav() {
             )
         }
         entry<AppRoute.Orders> {
-            OrdersScreen()
+            OrdersScreen(
+                onNavigateToDetails = { orderId ->
+                    backStack.add(AppRoute.OrderDetails(orderId))
+                }
+            )
+        }
+        entry<AppRoute.OrderDetails> { key ->
+            OrderDetailsScreen(
+                orderId = key.orderId,
+                onNavigateBack = { backStack.removeLastOrNull() }
+            )
         }
         entry<AppRoute.Search> {
             val viewModel: SearchScreenViewModel = koinViewModel()

@@ -103,7 +103,8 @@ val dataModule = module {
     single<WishlistRepository>        { WishlistRepositoryImpl(get() , get()) }
     single<LocationRepository>        { LocationRepositoryImpl(get()) }
     single<AddressRepository>         { AddressRepositoryImpl(get(), get(), get()) }
-    single<AiAssistantRepository>     { AiAssistantRepositoryImpl(get(), get()) }
+    single { AiAssistantRepositoryImpl(get(), get(), get()) }
+    single<AiAssistantRepository>     { get<AiAssistantRepositoryImpl>() }
     single<CurrencyRepository>        { CurrencyRepositoryImpl(get(), get()) }
     single<FirebaseFirestore> { Firebase.firestore }
 }

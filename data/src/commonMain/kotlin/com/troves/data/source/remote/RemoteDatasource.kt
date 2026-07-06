@@ -1,6 +1,7 @@
 package com.troves.data.source.remote
 
 import com.troves.data.source.remote.dto.CartItemDto
+import com.troves.data.source.remote.service.ktor.dto.AiConversationDto
 import com.troves.data.source.remote.service.ktor.dto.CollectionImage
 import com.troves.data.source.remote.service.ktor.dto.Collection
 import com.troves.data.source.remote.service.ktor.dto.CustomCollectionResponse
@@ -56,6 +57,12 @@ interface RemoteDatasource {
     suspend fun setUserCartId(userId: String, cartId: String)
     suspend fun clearUserCartId(userId: String)
     suspend fun saveSurveyAnswers(userId: String, answers: com.troves.data.source.remote.dto.SurveyAnswersDto): Result<Unit>
+    //endregion
+
+    //region aiChats
+    suspend fun getAiChats(userId: String): Result<List<AiConversationDto>>
+    suspend fun saveAiChat(userId: String, chat: AiConversationDto): Result<String>
+    suspend fun deleteAiChat(userId: String, chatId: String): Result<Unit>
     //endregion
 
     suspend fun getDiscountCodes(): Result<List<com.troves.domain.entity.DiscountCode>>

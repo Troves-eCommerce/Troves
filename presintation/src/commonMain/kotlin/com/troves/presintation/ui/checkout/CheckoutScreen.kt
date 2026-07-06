@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -29,6 +28,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.rememberAsyncImagePainter
 import com.troves.designsystem.components.button.PrimaryButton
 import com.troves.designsystem.components.dialog.LoginRequiredDialog
+import com.troves.designsystem.components.toast.TrovesSnackbarHost
+import com.troves.designsystem.components.toast.ToastType
+import com.troves.designsystem.components.toast.showTroves
 import com.troves.designsystem.components.topbar.BaseTopAppBar
 import com.troves.designsystem.theme.Theme
 import com.troves.domain.entity.Address
@@ -98,7 +100,7 @@ fun CheckoutScreen(
             is CheckoutEffect.NavigateToNewAddress -> onNavigateToNewAddress(effect.addressId)
             is CheckoutEffect.PresentCheckoutSheet -> checkout.presentCheckout(effect.url)
             is CheckoutEffect.NavigateToOrderResult -> onNavigateToOrderResult(effect.args)
-            is CheckoutEffect.ShowToast -> scope.launch { snackBarHostState.showSnackbar(effect.message) }
+            is CheckoutEffect.ShowToast -> scope.launch { snackBarHostState.showTroves(effect.message, ToastType.Info) }
             CheckoutEffect.ShowLoginRequiredDialog -> showLoginDialog = true
             is CheckoutEffect.OpenPayMobSheet -> {
                 paymobCheckout.pay(
@@ -156,6 +158,7 @@ fun CheckoutScreen(
                         couponInput = state.couponInput,
                         onCouponChange = { viewModel.onIntent(CheckoutIntent.OnCouponChange(it)) },
                         onApplyCoupon = { viewModel.onIntent(CheckoutIntent.OnApplyCoupon) },
+                        onRemoveCoupon = { viewModel.onIntent(CheckoutIntent.OnRemoveCoupon) },
                         items = state.lines.map {
                             OrderSummaryItemUi(
                                 imagePainter = rememberAsyncImagePainter(it.imageUrl),
@@ -223,9 +226,9 @@ fun CheckoutScreen(
             }
         }
 
-        SnackbarHost(
+        TrovesSnackbarHost(
             hostState = snackBarHostState,
-            modifier = Modifier.align(Alignment.BottomCenter).navigationBarsPadding().padding(16.dp),
+            modifier = Modifier.align(Alignment.TopCenter).statusBarsPadding().padding(16.dp),
         )
     }
 }

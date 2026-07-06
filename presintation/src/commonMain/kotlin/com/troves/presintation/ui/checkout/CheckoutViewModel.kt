@@ -63,6 +63,7 @@ class CheckoutViewModel(
             CheckoutIntent.OnEditCart -> sendEffect(CheckoutEffect.NavigateToCart)
             is CheckoutIntent.OnCouponChange -> updateState { copy(couponInput = intent.value) }
             CheckoutIntent.OnApplyCoupon -> applyCoupon()
+            CheckoutIntent.OnRemoveCoupon -> removeCoupon()
             is CheckoutIntent.OnSelectAddress -> updateState { copy(selectedAddressId = intent.id) }
             CheckoutIntent.OnAddAddress -> sendEffect(CheckoutEffect.NavigateToNewAddress(null))
             is CheckoutIntent.OnEditAddress -> sendEffect(CheckoutEffect.NavigateToNewAddress(intent.id))
@@ -299,6 +300,23 @@ class CheckoutViewModel(
 
                 ApplyDiscountResult.RequiresLogin -> sendEffect(CheckoutEffect.ShowLoginRequiredDialog)
                 is ApplyDiscountResult.Error -> sendEffect(CheckoutEffect.ShowToast("Couldn't apply discount"))
+            }
+        }
+    }
+
+    private fun removeCoupon() {
+        updateState { copy(isApplyingCoupon = true) }
+        viewModelScope.launch {
+            val result = applyDiscount(emptyList())
+            updateState { copy(isApplyingCoupon = false) }
+            when (result) {
+                is ApplyDiscountResult.Success -> {
+                    updateState { copy(couponInput = "") }
+                    sendEffect(CheckoutEffect.ShowToast("Discount removed"))
+                }
+
+                ApplyDiscountResult.RequiresLogin -> sendEffect(CheckoutEffect.ShowLoginRequiredDialog)
+                is ApplyDiscountResult.Error -> sendEffect(CheckoutEffect.ShowToast("Couldn't remove discount"))
             }
         }
     }

@@ -7,6 +7,7 @@ import com.troves.domain.entity.Cart
 import com.troves.domain.entity.Category
 import com.troves.domain.entity.DiscountCode
 import com.troves.domain.entity.Order
+import com.troves.domain.entity.OrderSummary
 import com.troves.domain.entity.Product
 import com.troves.domain.entity.ProductSearchParams
 import com.troves.domain.utils.Result
@@ -46,7 +47,7 @@ interface TrovesRepository {
 
     // ── Checkout / orders ─────────────────────────────────────────────────────
     suspend fun getDefaultAddress(): Address?
-    suspend fun getOrders(): List<Order>
+    suspend fun getOrders(): List<OrderSummary>
     suspend fun getOrderById(orderId: String): Order?
     suspend fun placeCodOrder(cart: Cart, address: Address): String
     suspend fun attachAddressToCart(cartId: String, address: Address)
