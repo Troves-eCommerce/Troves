@@ -14,6 +14,7 @@ import com.troves.domain.usecase.wishlist.ToggleFavoriteResult
 import com.troves.domain.usecase.wishlist.ToggleFavoriteUseCase
 import com.troves.domain.utils.Result
 import com.troves.domain.utils.getOrElse
+import com.troves.domain.usecase.survey.IsSurveyDoneUseCase
 import com.troves.presintation.core.mvi.DefaultEffectPublisher
 import com.troves.presintation.core.mvi.DefaultStateHolder
 import com.troves.presintation.core.mvi.EffectPublisher
@@ -31,6 +32,7 @@ class HomeViewModel(
     private val isLoggedIn: IsLoggedInUseCase,
     private val getWishlist: GetWishlistUseCase,
     private val toggleFavoriteUseCase: ToggleFavoriteUseCase,
+    private val isSurveyDone: IsSurveyDoneUseCase,
 ) : ViewModel(),
     StateHolder<HomeUiState> by DefaultStateHolder(HomeUiState()),
     EffectPublisher<HomeEffect> by DefaultEffectPublisher() {
@@ -38,6 +40,7 @@ class HomeViewModel(
     init {
         onIntent(HomeIntent.Load)
         observeWishlist()
+        loadSurveyStatus()
     }
 
     fun onIntent(intent: HomeIntent) {
@@ -45,6 +48,7 @@ class HomeViewModel(
             HomeIntent.Load, HomeIntent.Retry -> loadHomeFeed()
             HomeIntent.SearchClicked -> sendEffect(HomeEffect.NavigateToSearch)
             HomeIntent.CartClicked -> onCartClicked()
+            HomeIntent.SurveyBannerClicked -> sendEffect(HomeEffect.NavigateToSurvey)
             HomeIntent.SignUpPromptConfirmed -> {
                 updateState { copy(showSignUpPrompt = false) }
                 sendEffect(HomeEffect.NavigateToRegister)
@@ -152,6 +156,12 @@ class HomeViewModel(
         }
     }
 
+    private fun loadSurveyStatus() {
+        viewModelScope.launch {
+            val done = isSurveyDone()
+            updateState { copy(isSurveyDone = done) }
+        }
+    }
 
     private fun onCartClicked() {
         viewModelScope.launch {

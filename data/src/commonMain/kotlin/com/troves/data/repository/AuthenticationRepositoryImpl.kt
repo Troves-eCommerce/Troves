@@ -93,6 +93,13 @@ class AuthenticationRepositoryFirebaseImpl(
         preferences.setOnboardingDone(true)
     }
 
+    override suspend fun isSurveyDone(): Boolean =
+        preferences.isSurveyDone.first()
+
+    override suspend fun setSurveyDone() {
+        preferences.setSurveyDone(true)
+    }
+
     override fun getCurrentUserId(): String? = firebaseAuth.currentUser?.uid
 
     override fun getCurrentUserEmail(): String? = firebaseAuth.currentUser?.email
