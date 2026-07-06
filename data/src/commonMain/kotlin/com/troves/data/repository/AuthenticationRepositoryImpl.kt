@@ -99,6 +99,8 @@ class AuthenticationRepositoryFirebaseImpl(
         preferences.setOnboardingDone(true)
     }
 
+    override val isSurveyDoneStream: Flow<Boolean> = preferences.isSurveyDone
+
     override suspend fun isSurveyDone(): Boolean =
         preferences.isSurveyDone.first()
 

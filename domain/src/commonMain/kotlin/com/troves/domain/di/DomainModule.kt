@@ -76,6 +76,7 @@ val domainModule = module {
     // Survey
     factory { com.troves.domain.usecase.survey.IsSurveyDoneUseCase(get()) }
     factory { com.troves.domain.usecase.survey.CompleteSurveyUseCase(get()) }
+    factory { com.troves.domain.usecase.survey.ObserveSurveyDoneUseCase(get()) }
 
 
     // Wishlist

@@ -23,6 +23,8 @@ interface AuthenticationRepository {
 
     suspend fun setOnboardingDone()
 
+    val isSurveyDoneStream: Flow<Boolean>
+
     suspend fun isSurveyDone(): Boolean
 
     suspend fun setSurveyDone()

@@ -32,7 +32,7 @@ class HomeViewModel(
     private val isLoggedIn: IsLoggedInUseCase,
     private val getWishlist: GetWishlistUseCase,
     private val toggleFavoriteUseCase: ToggleFavoriteUseCase,
-    private val isSurveyDone: IsSurveyDoneUseCase,
+    private val observeSurveyDone: com.troves.domain.usecase.survey.ObserveSurveyDoneUseCase,
 ) : ViewModel(),
     StateHolder<HomeUiState> by DefaultStateHolder(HomeUiState()),
     EffectPublisher<HomeEffect> by DefaultEffectPublisher() {
@@ -158,8 +158,9 @@ class HomeViewModel(
 
     private fun loadSurveyStatus() {
         viewModelScope.launch {
-            val done = isSurveyDone()
-            updateState { copy(isSurveyDone = done) }
+            observeSurveyDone().collect { done ->
+                updateState { copy(isSurveyDone = done) }
+            }
         }
     }
 

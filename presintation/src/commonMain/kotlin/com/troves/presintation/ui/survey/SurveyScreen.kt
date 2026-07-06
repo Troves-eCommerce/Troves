@@ -20,6 +20,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -47,12 +48,27 @@ fun SurveyScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
+    var errorMessage by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf<String?>(null) }
+
     ObserveEffect(viewModel.effect) { effect ->
         when (effect) {
             SurveyEffect.SurveyCompleted -> Unit
             SurveyEffect.NavigateBack -> onNavigateBack()
-            is SurveyEffect.ShowError -> Unit // Handle error here if needed
+            is SurveyEffect.ShowError -> errorMessage = effect.message
         }
+    }
+
+    if (errorMessage != null) {
+        androidx.compose.material3.AlertDialog(
+            onDismissRequest = { errorMessage = null },
+            title = { androidx.compose.material3.Text("Error") },
+            text = { androidx.compose.material3.Text(errorMessage!!) },
+            confirmButton = {
+                androidx.compose.material3.TextButton(onClick = { errorMessage = null }) {
+                    androidx.compose.material3.Text("OK")
+                }
+            }
+        )
     }
 
     Column(
