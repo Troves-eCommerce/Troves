@@ -27,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import coil3.compose.rememberAsyncImagePainter
 import com.troves.designsystem.components.cards.MainCard
 import com.troves.designsystem.components.shimmer.shimmerEffect
 import com.troves.designsystem.theme.Theme
@@ -34,20 +35,17 @@ import com.troves.designsystem.util.formatPrice
 import com.troves.presintation.core.mvi.ObserveEffect
 import com.troves.presintation.ui.components.FilterBottomSheet
 import com.troves.presintation.ui.components.FilterOption
-import com.troves.presintation.ui.search.component.BrandRow
 import com.troves.presintation.ui.search.component.EmptySearchResult
 import com.troves.presintation.ui.search.component.ErrorView
 import com.troves.presintation.ui.search.component.ProductCardSkeleton
 import com.troves.presintation.ui.search.component.RecentSearchSection
 import com.troves.presintation.ui.search.component.SearchBarSection
-//import com.troves.presintation.ui.search.component.TrendingSection
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
-import coil3.compose.rememberAsyncImagePainter
 import org.jetbrains.compose.resources.painterResource
 import troves.designsystem.generated.resources.Res
-import troves.designsystem.generated.resources.ic_star
 import troves.designsystem.generated.resources.ic_heart
+import troves.designsystem.generated.resources.ic_star
 import troves.designsystem.generated.resources.img_placeholder
 
 
@@ -112,28 +110,13 @@ fun SearchScreen(
                             onFilterClick = { onIntent(SearchIntent.OnFilterClick) },
                             modifier = Modifier.padding(horizontal = 0.dp, vertical = 0.dp)
                         )
-                        
-                        BrandRow(
-                            brands = state.brands,
-                            selectedBrand = state.selectedBrand,
-                            onBrandSelected = { onIntent(SearchIntent.BrandChange(it.name)) }
-                        )
 
                         RecentSearchSection(
-                            recentSearches = state.recentSearches.toList(),
+                            recentSearches = state.recentSearches,
                             onSearchClick = { onIntent(SearchIntent.OnSearch(it)) },
                             onRemoveClick = { onIntent(SearchIntent.RemoveRecentSearch(it)) },
                             onClearAllClick = { onIntent(SearchIntent.ClearRecentSearches) }
                         )
-
-                       /* if (!state.isLoading && !state.hasError && !state.isEmpty) {
-                            TrendingSection(
-                                onTrendingChipClick = {
-                                    onIntent(SearchIntent.SearchQueryChange(it))
-                                    onIntent(SearchIntent.OnSearch(it))
-                                }
-                            )
-                        }*/
                     }
                 }
 
