@@ -42,7 +42,7 @@ data class SearchUiState(
     val brands: List<Brand> = emptyList(),
     val selectedBrand: String = "",
     val sheetFilterOptions: SheetFilterOptions = SheetFilterOptions(),
-    val recentSearches: Set<RecentSearchUi> = emptySet(),
+    val recentSearches: List<String> = emptyList(),
     val errorMessage: String? = null,
     val showFilterSheet: Boolean = false,
     val favoriteProductIds: Set<String> = emptySet(),
