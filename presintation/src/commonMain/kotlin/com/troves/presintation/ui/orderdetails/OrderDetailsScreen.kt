@@ -44,6 +44,7 @@ import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
 import troves.designsystem.generated.resources.Res
 import troves.designsystem.generated.resources.ic_arrow_back
+import troves.designsystem.generated.resources.img_placeholder
 
 @Composable
 fun OrderDetailsScreen(
@@ -139,7 +140,7 @@ private fun OrderDetailsContent(
         }
 
         items(orderDetails.items, key = { it.id }) { item ->
-            val painter = if (item.imageUrl != null) null else painterResource(Res.drawable.product_card)
+            val painter = if (item.imageUrl != null) null else painterResource(Res.drawable.img_placeholder)
             
             if (item.imageUrl != null) {
                 // Async image for product

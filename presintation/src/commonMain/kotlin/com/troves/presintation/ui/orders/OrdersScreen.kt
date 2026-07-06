@@ -39,7 +39,7 @@ import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
 import troves.designsystem.generated.resources.Res
 import troves.designsystem.generated.resources.ic_chevron_right
-import troves.designsystem.generated.resources.product_card
+import troves.designsystem.generated.resources.img_placeholder
 
 @Composable
 fun OrdersScreen(
@@ -132,7 +132,7 @@ private fun OrderCard(order: OrderUi, onClick: () -> Unit) {
                 )
             } else {
                 Image(
-                    painter = painterResource(Res.drawable.product_card),
+                    painter = painterResource(Res.drawable.img_placeholder),
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
