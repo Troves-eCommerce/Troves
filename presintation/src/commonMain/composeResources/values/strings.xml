@@ -41,6 +41,7 @@
     <string name="profile_guest_msg">Login to track orders and manage your account</string>
     <string name="profile_login_signup">Login / Sign Up</string>
     <string name="profile_select_language">Select Language</string>
+    <string name="profile_style_survey">Style Survey</string>
 
     <!-- Checkout · shared -->
     <string name="checkout_continue">Continue</string>
@@ -57,6 +58,8 @@
     <string name="checkout_coupon_hint">Enter coupon code</string>
     <string name="checkout_subtotal_items">Subtotal (%1$d items)</string>
     <string name="checkout_discount_code">Discount (%1$s)</string>
+    <string name="checkout_coupon_applied">Discount applied</string>
+    <string name="checkout_remove_coupon">Remove coupon</string>
     <string name="checkout_total">Total</string>
 
     <!-- Checkout · Address step -->
@@ -68,13 +71,15 @@
 
     <!-- Checkout · Payment step -->
     <string name="checkout_payment_step_title">Select Payment Method</string>
-    <string name="checkout_payment_step_subtitle">Choose how you\'d like to pay for your order.</string>
+    <string name="checkout_payment_step_subtitle">Choose how you'd like to pay for your order.</string>
     <string name="checkout_payment_cod_title">Cash on Delivery (COD)</string>
+    <string name="checkout_paymob_cod_title">Paymob</string>
+    <string name="checkout_paymob_cod_desc">Pay securely in-app using Paymob </string>
     <string name="checkout_payment_cod_desc">Pay with cash when your order is delivered.</string>
     <string name="checkout_payment_cod_label">COD</string>
     <string name="checkout_payment_cod_limit">Cash limit: up to $500.00</string>
     <string name="checkout_payment_online_title">Online Payment</string>
-    <string name="checkout_payment_online_desc">Pay securely using your card.</string>
+    <string name="checkout_payment_online_desc">Pay securely using your card via Shpoify.</string>
     <string name="checkout_secure_title">Secure Checkout</string>
     <string name="checkout_secure_desc">Your payment information is encrypted and safe with us.</string>
 
@@ -100,4 +105,20 @@
     <string name="ai_retry">Retry</string>
     <string name="ai_rate_limited">You\'ve reached the chat limit. Try again in %1$s.</string>
     <string name="ai_profile_entry">Troves AI</string>
+    <string name="ai_voice_unavailable">Voice input isn\'t available on this device.</string>
+    <string name="ai_voice_permission_denied">Microphone permission is needed for voice input. Enable it in Settings.</string>
+    <string name="ai_voice_no_speech">Didn\'t catch that. Please try again.</string>
+    <string name="ai_voice_error">Voice input failed. Please try again.</string>
+    <string name="ai_voice_listening">Listening… tap the mic to stop</string>
+    <string name="ai_history_title">Chat history</string>
+    <string name="ai_history_new_chat">New chat</string>
+    <string name="ai_history_empty">No conversations yet</string>
+    <string name="ai_history_empty_subtitle">Your chats with Troves AI will appear here.</string>
+    <string name="ai_history_guest">Sign in to see your chat history</string>
+    <string name="ai_history_error">Couldn\'t load your chat history.</string>
+    <string name="ai_history_delete">Delete conversation</string>
+    <string name="ai_history_delete_title">Delete conversation?</string>
+    <string name="ai_history_delete_message">This conversation will be permanently removed.</string>
+    <string name="ai_history_delete_confirm">Delete</string>
+    <string name="ai_history_cancel">Cancel</string>
 </resources>

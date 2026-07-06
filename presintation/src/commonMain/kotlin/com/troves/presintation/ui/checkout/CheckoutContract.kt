@@ -5,7 +5,7 @@ import com.troves.presintation.navigation.AppRoute
 
 enum class CheckoutStep { Review, Address, Payment, PlaceOrder }
 
-enum class CheckoutPaymentMethod { CashOnDelivery, Online }
+enum class CheckoutPaymentMethod { CashOnDelivery, Online, PayMob }
 
 data class CheckoutLineUi(
     val lineId: String,
@@ -52,6 +52,7 @@ sealed interface CheckoutIntent {
     data object OnEditCart : CheckoutIntent
     data class OnCouponChange(val value: String) : CheckoutIntent
     data object OnApplyCoupon : CheckoutIntent
+    data object OnRemoveCoupon : CheckoutIntent
     data class OnSelectAddress(val id: String) : CheckoutIntent
     data object OnAddAddress : CheckoutIntent
     data class OnEditAddress(val id: String) : CheckoutIntent
@@ -67,6 +68,7 @@ sealed interface CheckoutEffect {
     data object NavigateToCart : CheckoutEffect
     data class NavigateToNewAddress(val addressId: String?) : CheckoutEffect
     data class PresentCheckoutSheet(val url: String) : CheckoutEffect
+    data class OpenPayMobSheet(val clientSecret: String): CheckoutEffect
     data class NavigateToOrderResult(val args: AppRoute.OrderResult) : CheckoutEffect
     data class ShowToast(val message: String) : CheckoutEffect
     data object ShowLoginRequiredDialog : CheckoutEffect

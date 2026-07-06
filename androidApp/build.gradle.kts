@@ -15,15 +15,17 @@ kotlin {
 dependencies {
     implementation(projects.shared)
     implementation(projects.presintation)
+    implementation(libs.paymob.sdk)
 
     implementation(libs.androidx.activity.compose)
-    implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.credentials)
     implementation(libs.androidx.credentials.play.services.auth)
     implementation(libs.googleid)
 
     implementation(libs.compose.uiToolingPreview)
     debugImplementation(libs.compose.uiTooling)
+    implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation("com.google.android.material:material:1.11.0")
     //Koin
     implementation("io.insert-koin:koin-android:3.5.3")
     implementation("io.insert-koin:koin-androidx-compose:3.5.3")
@@ -57,5 +59,9 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+    }
+
+    buildFeatures {
+        dataBinding = true
     }
 }

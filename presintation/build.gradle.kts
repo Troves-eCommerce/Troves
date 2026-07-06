@@ -87,6 +87,8 @@ kotlin {
 
                 // Coil
                 implementation(libs.bundles.coil)
+                // Kermet
+                implementation(libs.kermit)
             }
         }
 
@@ -96,9 +98,17 @@ kotlin {
             }
         }
 
+        iosMain.dependencies {
+            implementation(libs.ktor.client.darwin)
+        }
+
         androidMain {
             dependencies {
                 // Add Android-specific dependencies here.
+
+                // Paymob
+                api(libs.paymob.sdk)
+
 
                 //Shopify Checkout Android kit
                 implementation(libs.checkout.sheet.kit.android)
@@ -115,4 +125,4 @@ kotlin {
         }
     }
 }
-
+

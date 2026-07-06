@@ -26,7 +26,7 @@ class AiApiServiceImpl(
 
     override suspend fun chat(request: AiChatRequestDto): Result<AiChatResponseDto> = try {
         val response = client.post {
-            url { path("chat") } // resolves against AiConfig.BASE_URL
+            url { path("chat") }
             contentType(ContentType.Application.Json)
             setBody(request)
         }

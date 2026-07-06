@@ -31,3 +31,10 @@ interface CheckoutEvent{
 
     fun onCheckoutFailed(error: Exception)
 }
+
+interface PaymobCheckout{
+    fun pay(
+        clientSecret: String,
+        publicKey: String = "egy_pk_test_VBZ7riZpmX3bTucv8DwMqfB9MJCDxVxE",
+        )
+}

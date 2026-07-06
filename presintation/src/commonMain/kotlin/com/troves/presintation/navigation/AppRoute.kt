@@ -5,6 +5,18 @@ import kotlinx.serialization.Serializable
 
 sealed interface AppRoute : NavKey {
     @Serializable
+    data class SeeAll(
+        val type: SeeAllType,
+        val id: String? = null,
+        val name: String? = null
+    ) : AppRoute
+
+    @Serializable
+    enum class SeeAllType {
+        CATEGORIES, BRANDS, PRODUCTS
+    }
+
+    @Serializable
     data object Splash : AppRoute
 
     @Serializable
@@ -30,10 +42,8 @@ sealed interface AppRoute : NavKey {
     ) : AppRoute
 
     @Serializable
-    data object AllBrands : AppRoute
-
-    @Serializable
     data object Favorites : AppRoute
+
     @Serializable
     data object Search : AppRoute
 
@@ -42,6 +52,9 @@ sealed interface AppRoute : NavKey {
 
     @Serializable
     data object AiChat : AppRoute
+
+    @Serializable
+    data object Survey : AppRoute
 
     @Serializable
     data class ProductDetails(val productId: String) : AppRoute
@@ -53,8 +66,6 @@ sealed interface AppRoute : NavKey {
     data object Orders : AppRoute
 
     @Serializable
-    data class OrderDetails(val orderId: String) : AppRoute
-    @Serializable
     data object PaymentMethods : AppRoute
 
     @Serializable
@@ -62,7 +73,6 @@ sealed interface AppRoute : NavKey {
 
     @Serializable
     data class NewAddress(val addressId: String? = null) : AppRoute
-
 
     @Serializable
     data class OrderResult(

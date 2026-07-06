@@ -27,6 +27,7 @@ data class ProductsUiState(
 
     val showFilterSheet: Boolean = false,
     val showSortSheet: Boolean = false,
+    val favoriteProductIds: Set<String> = emptySet(),
 ) {
     val hasError: Boolean get() = errorMessage != null
 
@@ -67,4 +68,5 @@ sealed interface ProductsIntent {
     data object ApplySort : ProductsIntent
 
     data class ProductClicked(val product: Product) : ProductsIntent
+    data class ToggleFavorite(val product: Product) : ProductsIntent
 }

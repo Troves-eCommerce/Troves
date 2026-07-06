@@ -23,6 +23,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.troves.designsystem.theme.Theme
+import com.troves.designsystem.util.formatPrice
 import com.troves.presintation.ui.cart.CartLineUi
 
 @Composable
@@ -87,7 +88,7 @@ fun CartItemCard(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 BasicText(
-                    text = "$${item.price}",
+                    text = formatPrice(item.price),
                     style = Theme.typography.body.large.copy(
                         color = Theme.colors.primaryFont,
                         fontWeight = FontWeight.Bold,

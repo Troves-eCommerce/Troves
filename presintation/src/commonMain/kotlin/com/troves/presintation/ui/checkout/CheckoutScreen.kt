@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -29,6 +28,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.rememberAsyncImagePainter
 import com.troves.designsystem.components.button.PrimaryButton
 import com.troves.designsystem.components.dialog.LoginRequiredDialog
+import com.troves.designsystem.components.toast.TrovesSnackbarHost
+import com.troves.designsystem.components.toast.ToastType
+import com.troves.designsystem.components.toast.showTroves
 import com.troves.designsystem.components.topbar.BaseTopAppBar
 import com.troves.designsystem.theme.Theme
 import com.troves.domain.entity.Address
@@ -51,7 +53,6 @@ import troves.designsystem.generated.resources.ic_arrow_back
 import troves.designsystem.generated.resources.ic_home
 import troves.designsystem.generated.resources.ic_location
 import troves.designsystem.generated.resources.ic_payment_method
-import troves.presintation.generated.resources.Res as StringRes
 import troves.presintation.generated.resources.checkout_continue
 import troves.presintation.generated.resources.checkout_login_required
 import troves.presintation.generated.resources.checkout_order_summary
@@ -64,6 +65,7 @@ import troves.presintation.generated.resources.checkout_place_order
 import troves.presintation.generated.resources.checkout_title_confirm_order
 import troves.presintation.generated.resources.checkout_title_delivery_address
 import troves.presintation.generated.resources.checkout_title_payment
+import troves.presintation.generated.resources.Res as StringRes
 
 @Composable
 fun CheckoutScreen(
@@ -78,6 +80,8 @@ fun CheckoutScreen(
     val snackBarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val checkout = rememberCheckout(viewModel)
+    val paymobCheckout = rememberPaymobCheckout(viewModel)
+
     var showLoginDialog by remember { mutableStateOf(false) }
 
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -96,8 +100,13 @@ fun CheckoutScreen(
             is CheckoutEffect.NavigateToNewAddress -> onNavigateToNewAddress(effect.addressId)
             is CheckoutEffect.PresentCheckoutSheet -> checkout.presentCheckout(effect.url)
             is CheckoutEffect.NavigateToOrderResult -> onNavigateToOrderResult(effect.args)
-            is CheckoutEffect.ShowToast -> scope.launch { snackBarHostState.showSnackbar(effect.message) }
+            is CheckoutEffect.ShowToast -> scope.launch { snackBarHostState.showTroves(effect.message, ToastType.Info) }
             CheckoutEffect.ShowLoginRequiredDialog -> showLoginDialog = true
+            is CheckoutEffect.OpenPayMobSheet -> {
+                paymobCheckout.pay(
+                    clientSecret = effect.clientSecret,
+                )
+            }
         }
     }
 
@@ -122,6 +131,7 @@ fun CheckoutScreen(
                     leadingIcon = painterResource(Res.drawable.ic_arrow_back),
                     onLeadingClick = { viewModel.onIntent(CheckoutIntent.OnBack) },
                     modifier = Modifier.background(Theme.colors.backGround),
+                    autoMirrorLeadingIcon = true
                 )
             },
             bottomBar = {
@@ -148,6 +158,7 @@ fun CheckoutScreen(
                         couponInput = state.couponInput,
                         onCouponChange = { viewModel.onIntent(CheckoutIntent.OnCouponChange(it)) },
                         onApplyCoupon = { viewModel.onIntent(CheckoutIntent.OnApplyCoupon) },
+                        onRemoveCoupon = { viewModel.onIntent(CheckoutIntent.OnRemoveCoupon) },
                         items = state.lines.map {
                             OrderSummaryItemUi(
                                 imagePainter = rememberAsyncImagePainter(it.imageUrl),
@@ -215,9 +226,9 @@ fun CheckoutScreen(
             }
         }
 
-        SnackbarHost(
+        TrovesSnackbarHost(
             hostState = snackBarHostState,
-            modifier = Modifier.align(Alignment.BottomCenter).navigationBarsPadding().padding(16.dp),
+            modifier = Modifier.align(Alignment.TopCenter).statusBarsPadding().padding(16.dp),
         )
     }
 }
@@ -258,11 +269,13 @@ private fun titleFor(step: CheckoutStep): String = when (step) {
 private fun CheckoutPaymentMethod.toOption(): PaymentOption = when (this) {
     CheckoutPaymentMethod.CashOnDelivery -> PaymentOption.CashOnDelivery
     CheckoutPaymentMethod.Online -> PaymentOption.Online
+    CheckoutPaymentMethod.PayMob -> PaymentOption.PayMob
 }
 
 private fun PaymentOption.toMethod(): CheckoutPaymentMethod = when (this) {
     PaymentOption.CashOnDelivery -> CheckoutPaymentMethod.CashOnDelivery
     PaymentOption.Online -> CheckoutPaymentMethod.Online
+    PaymentOption.PayMob -> CheckoutPaymentMethod.PayMob
 }
 
 @Composable

@@ -28,11 +28,6 @@ import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.unit.dp
 import com.troves.designsystem.theme.Theme
 
-/**
- * Internal preview-only showcase. Every text field holds its own mutable state
- * so you can type freely and toggle error/disabled/readonly via chip buttons
- * when running the preview on a device.
- */
 @Composable
 internal fun TextFieldShowcaseScreen(modifier: Modifier = Modifier) {
 
@@ -68,16 +63,22 @@ internal fun TextFieldShowcaseScreen(modifier: Modifier = Modifier) {
         // Global toggles
         ShowcaseSectionHeader("Global Toggles")
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            StateChip(label = "Error",     active = isError,    onClick = { isError    = !isError })
-            StateChip(label = "Disabled",  active = isDisabled, onClick = { isDisabled = !isDisabled })
-            StateChip(label = "Read-only", active = isReadOnly, onClick = { isReadOnly = !isReadOnly })
+            StateChip(label = "Error", active = isError, onClick = { isError = !isError })
+            StateChip(
+                label = "Disabled",
+                active = isDisabled,
+                onClick = { isDisabled = !isDisabled })
+            StateChip(
+                label = "Read-only",
+                active = isReadOnly,
+                onClick = { isReadOnly = !isReadOnly })
         }
 
         ShowcaseDivider()
 
         // 1. Empty / hint only
         ShowcaseSectionHeader("1. Empty – hint only")
-        TextField(
+    CustomTextField(
             text = textEmpty, onTextChange = { textEmpty = it },
             hint = "Enter your name",
             isError = isError, enabled = !isDisabled, readOnly = isReadOnly,
@@ -89,7 +90,7 @@ internal fun TextFieldShowcaseScreen(modifier: Modifier = Modifier) {
 
         // 2. With text
         ShowcaseSectionHeader("2. With text")
-        TextField(
+        CustomTextField(
             text = textWithValue, onTextChange = { textWithValue = it },
             hint = "Enter your name",
             isError = isError, enabled = !isDisabled, readOnly = isReadOnly,
@@ -101,7 +102,7 @@ internal fun TextFieldShowcaseScreen(modifier: Modifier = Modifier) {
 
         // 3. Title + tip
         ShowcaseSectionHeader("3. Title & tip text")
-        TextField(
+        CustomTextField(
             text = textTitleTip, onTextChange = { textTitleTip = it },
             hint = "Enter your name", title = "Full Name", tipText = "Required",
             isError = isError, enabled = !isDisabled, readOnly = isReadOnly,
@@ -113,7 +114,7 @@ internal fun TextFieldShowcaseScreen(modifier: Modifier = Modifier) {
 
         // 4. Leading icon
         ShowcaseSectionHeader("4. Leading icon")
-        TextField(
+        CustomTextField(
             text = textLeading, onTextChange = { textLeading = it },
             hint = "Search…", title = "Search",
             leadingIcon = ColorPainter(Color.Black),
@@ -126,7 +127,7 @@ internal fun TextFieldShowcaseScreen(modifier: Modifier = Modifier) {
 
         // 5. Trailing icon
         ShowcaseSectionHeader("5. Trailing icon")
-        TextField(
+        CustomTextField(
             text = textTrailing, onTextChange = { textTrailing = it },
             hint = "Enter email", title = "Email",
             trailingIcon = ColorPainter(Color.Black),
@@ -140,7 +141,7 @@ internal fun TextFieldShowcaseScreen(modifier: Modifier = Modifier) {
 
         // 6. Leading + trailing icons
         ShowcaseSectionHeader("6. Leading + trailing icons")
-        TextField(
+        CustomTextField(
             text = textBothIcons, onTextChange = { textBothIcons = it },
             hint = "Password", title = "Password",
             leadingIcon  = ColorPainter(Color.Black),
@@ -155,7 +156,7 @@ internal fun TextFieldShowcaseScreen(modifier: Modifier = Modifier) {
 
         // 7. Error state (independently always shows error)
         ShowcaseSectionHeader("7. Error state (static)")
-        TextField(
+        CustomTextField(
             text = textError, onTextChange = { textError = it },
             hint = "Enter email", title = "Email",
             isError = true,
@@ -169,7 +170,7 @@ internal fun TextFieldShowcaseScreen(modifier: Modifier = Modifier) {
 
         // 8. Error – no icon
         ShowcaseSectionHeader("8. Error – no icon (static)")
-        TextField(
+        CustomTextField(
             text = textErrorNoIco, onTextChange = { textErrorNoIco = it },
             hint = "Enter email", title = "Email",
             isError = true,
@@ -182,7 +183,7 @@ internal fun TextFieldShowcaseScreen(modifier: Modifier = Modifier) {
 
         // 9. Disabled (static)
         ShowcaseSectionHeader("9. Disabled (static)")
-        TextField(
+        CustomTextField(
             text = textDisabled, onTextChange = { textDisabled = it },
             hint = "Enter text", title = "Disabled field",
             leadingIcon  = ColorPainter(Color.Black),
@@ -195,7 +196,7 @@ internal fun TextFieldShowcaseScreen(modifier: Modifier = Modifier) {
 
         // 10. Read-only (static)
         ShowcaseSectionHeader("10. Read-only (static)")
-        TextField(
+        CustomTextField(
             text = textReadOnly, onTextChange = { textReadOnly = it },
             hint = "Enter text", title = "Read-only field",
             readOnly = true,
@@ -206,7 +207,7 @@ internal fun TextFieldShowcaseScreen(modifier: Modifier = Modifier) {
 
         // 11. Single line
         ShowcaseSectionHeader("11. Single line")
-        TextField(
+        CustomTextField(
             text = textSingle, onTextChange = { textSingle = it },
             hint = "Enter text", title = "Single line",
             singleLine = true,
@@ -219,7 +220,7 @@ internal fun TextFieldShowcaseScreen(modifier: Modifier = Modifier) {
 
         // 12. Multi-line
         ShowcaseSectionHeader("12. Multi-line")
-        TextField(
+        CustomTextField(
             text = textMulti, onTextChange = { textMulti = it },
             hint = "Enter text", title = "Multi-line",
             minLines = 3, maxLines = 5,
@@ -232,7 +233,7 @@ internal fun TextFieldShowcaseScreen(modifier: Modifier = Modifier) {
 
         // 13. All features combined
         ShowcaseSectionHeader("13. All features combined")
-        TextField(
+        CustomTextField(
             text = textAll, onTextChange = { textAll = it },
             hint = "Enter email", title = "Email Address", tipText = "Required",
             leadingIcon  = ColorPainter(Color.Black),

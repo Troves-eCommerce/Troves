@@ -1,37 +1,42 @@
 package com.troves.designsystem.components.cards
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicText
-import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.troves.designsystem.theme.SpTheme
 import com.troves.designsystem.theme.Theme
+import com.troves.designsystem.util.noRippleClickable
+import org.jetbrains.compose.resources.painterResource
+import troves.designsystem.generated.resources.Res
+import troves.designsystem.generated.resources.paymob_filled
 
 
 @Composable
 fun PaymentMethodCard(
     title: String,
     description: String,
-    icon: Painter,
+    painter: Painter,
     selected: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -59,7 +64,7 @@ fun PaymentMethodCard(
             .clip(Theme.shapes.medium)
             .background(containerColor)
             .border(1.dp, borderColor, Theme.shapes.medium)
-            .clickable(enabled = enabled, onClick = onClick)
+            .noRippleClickable(onClick = { if (enabled) onClick() })
             .padding(Theme.spacing.medium),
         horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small),
         verticalAlignment = Alignment.Top,
@@ -73,11 +78,11 @@ fun PaymentMethodCard(
                 .background(Theme.colors.surfaceVariant),
             contentAlignment = Alignment.Center,
         ) {
-            Icon(
-                painter = icon,
+            Image(
+                modifier = Modifier.fillMaxSize(),
+                painter = painter,
                 contentDescription = null,
-                tint = Theme.colors.primaryFont,
-                modifier = Modifier.size(Theme.size.iconMedium),
+                contentScale = ContentScale.FillBounds,
             )
         }
 
@@ -186,7 +191,7 @@ private fun PaymentMethodCardPreview() {
             PaymentMethodCard(
                 title = "Cash on Delivery (COD)",
                 description = "Pay with cash when your order is delivered.",
-                icon = androidx.compose.ui.graphics.painter.ColorPainter(Theme.colors.primaryFont),
+                painter = androidx.compose.ui.graphics.painter.ColorPainter(Theme.colors.primaryFont),
                 selected = true,
                 onClick = {},
                 label = "COD",
@@ -195,7 +200,7 @@ private fun PaymentMethodCardPreview() {
             PaymentMethodCard(
                 title = "Online Payment",
                 description = "Pay securely using your card.",
-                icon = androidx.compose.ui.graphics.painter.ColorPainter(Theme.colors.primaryFont),
+                painter = painterResource(Res.drawable.paymob_filled),
                 selected = false,
                 onClick = {},
                 trailingContent = {

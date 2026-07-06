@@ -14,7 +14,9 @@ import com.troves.data.source.remote.ai.AiApiServiceImpl
 import com.troves.data.source.remote.ai.AiDataSource
 import com.troves.data.source.remote.ai.AiDataSourceImpl
 import com.troves.domain.repository.AiAssistantRepository
+import com.troves.data.network.providePaymobClient
 import com.troves.data.repository.AddressRepositoryImpl
+import com.troves.data.repository.CurrencyRepositoryImpl
 import com.troves.data.repository.LocationRepositoryImpl
 import com.troves.data.repository.PaymentRepositoryImpl
 import com.troves.data.repository.TrovesRepositoryImpl
@@ -24,6 +26,7 @@ import com.troves.data.source.local.ads.LocalAdsDataSource
 import com.troves.data.source.local.ads.LocalAdsDataSourceImpl
 import com.troves.data.source.local.preferenceses.TrovesPreferences
 import com.troves.data.source.local.preferenceses.TrovesPreferencesImpl
+import com.troves.data.source.remote.CurrencyRemoteDataSource
 import com.troves.data.source.remote.RemoteDatasource
 import com.troves.data.source.remote.RemoteDatasourceImpl
 import com.troves.data.source.remote.location.LocationApiService
@@ -34,8 +37,11 @@ import com.troves.data.source.remote.service.TrovesApiService
 import com.troves.data.source.remote.service.StorefrontApiService
 import com.troves.data.source.remote.service.apollo.ApolloStorefrontApiServiceImpl
 import com.troves.data.source.remote.service.apollo.ApolloTrovesApiServiceImpl
+import com.troves.data.source.remote.service.paymob.PaymobApiService
+import com.troves.data.source.remote.service.paymob.PaymobServiceImpl
 import com.troves.domain.repository.AddressRepository
 import com.troves.domain.repository.AuthenticationRepository
+import com.troves.domain.repository.CurrencyRepository
 import com.troves.domain.repository.LocationRepository
 import com.troves.domain.repository.PaymentRepository
 import com.troves.domain.repository.TrovesRepository
@@ -52,6 +58,7 @@ val dataModule = module {
     // ── Network ───────────────────────────────────────────────────────────────
     // Ktor client kept registered for easy rollback to the REST implementation.
     single<HttpClient> { provideHttpClient() }
+    single<HttpClient>(named(PAYMOB)) { providePaymobClient() }
     // Dedicated client for public location APIs — no Shopify auth/base URL leaks to third parties.
     single<HttpClient>(named(LOCATION_CLIENT)) { provideLocationHttpClient() }
     // Admin GraphQL client (product catalogue) and Storefront client (cart/checkout/customer/orders).
@@ -61,6 +68,7 @@ val dataModule = module {
     single<TrovesApiService> { ApolloTrovesApiServiceImpl(get(named(ADMIN_CLIENT))) }
     single<StorefrontApiService> { ApolloStorefrontApiServiceImpl(get(named(STORE_CLIENT))) }
 
+    single<PaymobApiService> { PaymobServiceImpl(get(named(PAYMOB))) }
     // Location (countries/cities) — dedicated service → data source → repository.
     single<LocationApiService> { LocationApiServiceImpl(get(named(LOCATION_CLIENT))) }
     single<LocationDataSource> { LocationDataSourceImpl(get()) }
@@ -72,6 +80,7 @@ val dataModule = module {
 
     // ── Remote data source ────────────────────────────────────────────────────
     single<RemoteDatasource> { RemoteDatasourceImpl(get(), get()) }
+    single { CurrencyRemoteDataSource(get(named(LOCATION_CLIENT))) }
 
     // ── Local ─────────────────────────────────────────────────────────────────
     single<TrovesPreferences> { TrovesPreferencesImpl(get()) }
@@ -89,16 +98,19 @@ val dataModule = module {
 
     // ── Repositories ──────────────────────────────────────────────────────────
     single<TrovesRepository>          { TrovesRepositoryImpl(get(), get(), get(), get(), get(), get()) }
-    single<AuthenticationRepository>  { createAuthenticationRepository(get(), get()) }
-    single<PaymentRepository>         { PaymentRepositoryImpl() }
+    single<AuthenticationRepository>  { createAuthenticationRepository(get(), get(), get()) }
+    single<PaymentRepository>         { PaymentRepositoryImpl(get()) }
     single<WishlistRepository>        { WishlistRepositoryImpl(get() , get()) }
     single<LocationRepository>        { LocationRepositoryImpl(get()) }
     single<AddressRepository>         { AddressRepositoryImpl(get(), get(), get()) }
-    single<AiAssistantRepository>     { AiAssistantRepositoryImpl(get(), get()) }
+    single { AiAssistantRepositoryImpl(get(), get(), get()) }
+    single<AiAssistantRepository>     { get<AiAssistantRepositoryImpl>() }
+    single<CurrencyRepository>        { CurrencyRepositoryImpl(get(), get()) }
     single<FirebaseFirestore> { Firebase.firestore }
 }
 
 private const val ADMIN_CLIENT = "admin"
 private const val STORE_CLIENT = "store"
 private const val LOCATION_CLIENT = "location"
+private const val PAYMOB = "paymob"
 private const val AI_CLIENT = "ai"

@@ -15,6 +15,8 @@ data class HomeUiState(
     val favoriteProductIds: Set<Long> = emptySet(),
     val errorMessage: String? = null,
     val showSignUpPrompt: Boolean = false,
+    val isSurveyDone: Boolean = false,
+    val cartItemCount: Int = 0,
 ) {
     val hasError: Boolean get() = errorMessage != null
 }
@@ -31,15 +33,21 @@ sealed interface HomeEffect {
     data object NavigateToRegister : HomeEffect
     data object NavigateToSearch : HomeEffect
     data object NavigateToCart : HomeEffect
+    data object NavigateToSurvey : HomeEffect
     data object ShowLoginRequiredDialog : HomeEffect
+    data object NavigateToAllCategories : HomeEffect
 }
 
 sealed interface HomeIntent {
     data object Load : HomeIntent
     data object Retry : HomeIntent
+    data object ViewAllCategoriesClicked : HomeIntent
+    data object ViewAllJustForYouClicked : HomeIntent
+    data object ViewAllTrendingClicked : HomeIntent
     data object SearchClicked : HomeIntent
     data object CartClicked : HomeIntent
     data object SeeAllBrandsClicked : HomeIntent
+    data object SurveyBannerClicked : HomeIntent
     data object SignUpPromptConfirmed : HomeIntent
     data object SignUpPromptDismissed : HomeIntent
     data class AdClicked(val ad: Ad) : HomeIntent

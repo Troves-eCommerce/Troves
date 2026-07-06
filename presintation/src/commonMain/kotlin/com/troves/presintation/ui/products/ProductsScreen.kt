@@ -18,8 +18,8 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import com.troves.designsystem.components.toast.TrovesSnackbarHost
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -39,6 +39,7 @@ import com.troves.designsystem.components.chip.AppChip
 import com.troves.designsystem.components.shimmer.shimmerEffect
 import com.troves.designsystem.components.topbar.IconBox
 import com.troves.designsystem.theme.Theme
+import com.troves.designsystem.util.formatPrice
 import com.troves.domain.entity.Product
 import com.troves.presintation.core.mvi.ObserveEffect
 import com.troves.presintation.ui.components.FilterBottomSheet
@@ -51,12 +52,12 @@ import troves.designsystem.generated.resources.Res as DesignRes
 import troves.designsystem.generated.resources.ic_arrow_back
 import troves.designsystem.generated.resources.ic_heart
 import troves.designsystem.generated.resources.ic_star
-import troves.designsystem.generated.resources.img_onboarding1
-import troves.presintation.generated.resources.Res
-import troves.presintation.generated.resources.filter_title
-import troves.presintation.generated.resources.products_empty
-import troves.presintation.generated.resources.products_retry
-import troves.presintation.generated.resources.sort_title
+import troves.designsystem.generated.resources.Res
+import troves.designsystem.generated.resources.filter_title
+import troves.designsystem.generated.resources.img_placeholder
+import troves.designsystem.generated.resources.products_empty
+import troves.designsystem.generated.resources.products_retry
+import troves.designsystem.generated.resources.sort_title
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -120,7 +121,9 @@ fun ProductsScreen(
 
                 else -> ProductsGrid(
                     products = state.displayedProducts,
+                    favoriteProductIds = state.favoriteProductIds,
                     onProductClick = { viewModel.onIntent(ProductsIntent.ProductClicked(it)) },
+                    onFavoriteClick = { viewModel.onIntent(ProductsIntent.ToggleFavorite(it)) },
                 )
             }
         }
@@ -151,11 +154,11 @@ fun ProductsScreen(
             )
         }
 
-        SnackbarHost(
+        TrovesSnackbarHost(
             hostState = snackbarHostState,
             modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .navigationBarsPadding()
+                .align(Alignment.TopCenter)
+                .statusBarsPadding()
                 .padding(Theme.spacing.medium),
         )
     }
@@ -181,6 +184,7 @@ private fun ProductsToolbar(
             icon = painterResource(DesignRes.drawable.ic_arrow_back),
             contentDescription = "Navigate up",
             onClick = onBackClick,
+            autoMirror = true,
         )
         BasicText(
             text = title,
@@ -210,7 +214,9 @@ private fun ProductsToolbar(
 @Composable
 private fun ProductsGrid(
     products: List<Product>,
+    favoriteProductIds: Set<String>,
     onProductClick: (Product) -> Unit,
+    onFavoriteClick: (Product) -> Unit,
 ) {
     if (products.isEmpty()) {
         Box(
@@ -225,7 +231,7 @@ private fun ProductsGrid(
         return
     }
 
-    val placeholder = painterResource(DesignRes.drawable.img_onboarding1)
+    val placeholder = painterResource(DesignRes.drawable.img_placeholder)
     val starIcon = painterResource(DesignRes.drawable.ic_star)
     val heartIcon = painterResource(DesignRes.drawable.ic_heart)
 
@@ -243,7 +249,7 @@ private fun ProductsGrid(
         items(products, key = { it.id }) { product ->
             MainCard(
                 title = product.title,
-                price = "$${product.price}",
+                price = formatPrice(product.price),
                 rating = product.rating.toDouble(),
                 imagePainter = rememberAsyncImagePainter(
                     model = product.imageUrl,
@@ -253,7 +259,8 @@ private fun ProductsGrid(
                 ratingIconPainter = starIcon,
                 favoriteIconPainter = heartIcon,
                 onClick = { onProductClick(product) },
-                onFavoriteClick = { onProductClick(product) },
+                onFavoriteClick = { onFavoriteClick(product) },
+                isFavorite = product.id.toString() in favoriteProductIds,
                 containerColor = Theme.colors.backGround,
             )
         }

@@ -1,5 +1,7 @@
 package com.troves.presintation.ui.profile
 
+import com.troves.domain.entity.ExchangeRate
+
 data class ProfileState(
     val isLoading: Boolean = false,
     val isGuest: Boolean = true,
@@ -8,6 +10,7 @@ data class ProfileState(
     val selectedLanguage: String = "en",
     val themeMode: String = "system",
     val selectedCurrency: String = "USD",
+    val exchangeRate: ExchangeRate? = null,
     val showLogoutDialog: Boolean = false,
     val errorMessage: String? = null
 )
@@ -24,6 +27,8 @@ sealed interface ProfileEffect {
     data object NavigateToEditProfile : ProfileEffect
 
     data object NavigateToAiAssistant : ProfileEffect
+
+    data object NavigateToSurvey : ProfileEffect
 
     data class ShowError(
         val message: String
@@ -43,6 +48,8 @@ sealed interface ProfileIntent {
     data object PaymentMethodsClicked : ProfileIntent
 
     data object AiAssistantClicked : ProfileIntent
+
+    data object SurveyClicked : ProfileIntent
 
     data object LanguageClicked : ProfileIntent
 

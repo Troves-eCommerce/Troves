@@ -14,6 +14,7 @@ import com.troves.domain.usecase.wishlist.ToggleFavoriteResult
 import com.troves.domain.usecase.wishlist.ToggleFavoriteUseCase
 import com.troves.domain.utils.Result
 import com.troves.domain.utils.getOrElse
+import com.troves.domain.usecase.survey.IsSurveyDoneUseCase
 import com.troves.presintation.core.mvi.DefaultEffectPublisher
 import com.troves.presintation.core.mvi.DefaultStateHolder
 import com.troves.presintation.core.mvi.EffectPublisher
@@ -31,6 +32,8 @@ class HomeViewModel(
     private val isLoggedIn: IsLoggedInUseCase,
     private val getWishlist: GetWishlistUseCase,
     private val toggleFavoriteUseCase: ToggleFavoriteUseCase,
+    private val observeSurveyDone: com.troves.domain.usecase.survey.ObserveSurveyDoneUseCase,
+    private val getCartStream: com.troves.domain.usecase.cart.GetCartStreamUseCase,
 ) : ViewModel(),
     StateHolder<HomeUiState> by DefaultStateHolder(HomeUiState()),
     EffectPublisher<HomeEffect> by DefaultEffectPublisher() {
@@ -38,6 +41,8 @@ class HomeViewModel(
     init {
         onIntent(HomeIntent.Load)
         observeWishlist()
+        loadSurveyStatus()
+        observeCartCount()
     }
 
     fun onIntent(intent: HomeIntent) {
@@ -45,12 +50,28 @@ class HomeViewModel(
             HomeIntent.Load, HomeIntent.Retry -> loadHomeFeed()
             HomeIntent.SearchClicked -> sendEffect(HomeEffect.NavigateToSearch)
             HomeIntent.CartClicked -> onCartClicked()
+            HomeIntent.SurveyBannerClicked -> sendEffect(HomeEffect.NavigateToSurvey)
             HomeIntent.SignUpPromptConfirmed -> {
                 updateState { copy(showSignUpPrompt = false) }
                 sendEffect(HomeEffect.NavigateToRegister)
             }
             HomeIntent.SignUpPromptDismissed -> updateState { copy(showSignUpPrompt = false) }
             HomeIntent.SeeAllBrandsClicked -> sendEffect(HomeEffect.NavigateToAllBrands)
+            HomeIntent.ViewAllCategoriesClicked -> sendEffect(HomeEffect.NavigateToAllCategories)
+            HomeIntent.ViewAllJustForYouClicked -> sendEffect(
+                HomeEffect.NavigateToProducts(
+                    sourceType = "collection",
+                    sourceId = "just-for-you",
+                    sourceName = "Just For You",
+                ),
+            )
+            HomeIntent.ViewAllTrendingClicked -> sendEffect(
+                HomeEffect.NavigateToProducts(
+                    sourceType = "collection",
+                    sourceId = "trending",
+                    sourceName = "Trending Now",
+                ),
+            )
             is HomeIntent.AdClicked -> {
                 val targetType = intent.ad.targetType
                 val targetId = intent.ad.targetId
@@ -118,8 +139,8 @@ class HomeViewModel(
                 copy(
                     isLoading = false,
                     ads = adsResult.getOrElse(emptyList()),
-                    brands = brandsResult.getOrElse(emptyList()).take(5),
-                    categories = categoriesResult.getOrElse(emptyList()),
+                    brands = brandsResult.getOrElse(emptyList()).take(12),
+                    categories = categoriesResult.getOrElse(emptyList()).take(9),
                     justForYou = justForYouResult.getOrElse(emptyList()),
                     trending = trendingResult.getOrElse(emptyList()),
                     errorMessage = firstError?.message,
@@ -137,6 +158,21 @@ class HomeViewModel(
         }
     }
 
+    private fun loadSurveyStatus() {
+        viewModelScope.launch {
+            observeSurveyDone().collect { done ->
+                updateState { copy(isSurveyDone = done) }
+            }
+        }
+    }
+
+    private fun observeCartCount() {
+        viewModelScope.launch {
+            getCartStream().collect { cart ->
+                updateState { copy(cartItemCount = cart?.totalQuantity ?: 0) }
+            }
+        }
+    }
 
     private fun onCartClicked() {
         viewModelScope.launch {

@@ -57,6 +57,8 @@
     <string name="checkout_coupon_hint">أدخل كوبون الخصم</string>
     <string name="checkout_subtotal_items">المجموع الفرعي (%1$d منتج)</string>
     <string name="checkout_discount_code">خصم (%1$s)</string>
+    <string name="checkout_coupon_applied">تم تطبيق الخصم</string>
+    <string name="checkout_remove_coupon">إزالة الكوبون</string>
     <string name="checkout_total">الإجمالي</string>
 
     <!-- Checkout · Address step -->
@@ -74,7 +76,7 @@
     <string name="checkout_payment_cod_label">عند الاستلام</string>
     <string name="checkout_payment_cod_limit">الحد النقدي: حتى $500.00</string>
     <string name="checkout_payment_online_title">الدفع الإلكتروني</string>
-    <string name="checkout_payment_online_desc">ادفع بأمان باستخدام بطاقتك.</string>
+    <string name="checkout_payment_online_desc">ادفع بأمان باستخدام بطاقتك من خلال شوبيفاي.</string>
     <string name="checkout_secure_title">دفع آمن</string>
     <string name="checkout_secure_desc">معلومات الدفع الخاصة بك مشفّرة وآمنة لدينا.</string>
 
@@ -100,4 +102,20 @@
     <string name="ai_retry">إعادة المحاولة</string>
     <string name="ai_rate_limited">لقد وصلت إلى حد المحادثة. حاول مرة أخرى خلال %1$s.</string>
     <string name="ai_profile_entry">Troves AI</string>
+    <string name="ai_voice_unavailable">الإدخال الصوتي غير متاح على هذا الجهاز.</string>
+    <string name="ai_voice_permission_denied">يلزم إذن الميكروفون للإدخال الصوتي. فعّله من الإعدادات.</string>
+    <string name="ai_voice_no_speech">لم أسمع ذلك جيداً. حاول مرة أخرى.</string>
+    <string name="ai_voice_error">فشل الإدخال الصوتي. حاول مرة أخرى.</string>
+    <string name="ai_voice_listening">يتم الاستماع… اضغط الميكروفون للإيقاف</string>
+    <string name="ai_history_title">سجل المحادثات</string>
+    <string name="ai_history_new_chat">محادثة جديدة</string>
+    <string name="ai_history_empty">لا توجد محادثات بعد</string>
+    <string name="ai_history_empty_subtitle">ستظهر محادثاتك مع Troves AI هنا.</string>
+    <string name="ai_history_guest">سجّل الدخول لعرض سجل محادثاتك</string>
+    <string name="ai_history_error">تعذّر تحميل سجل المحادثات.</string>
+    <string name="ai_history_delete">حذف المحادثة</string>
+    <string name="ai_history_delete_title">حذف المحادثة؟</string>
+    <string name="ai_history_delete_message">سيتم حذف هذه المحادثة نهائيًا.</string>
+    <string name="ai_history_delete_confirm">حذف</string>
+    <string name="ai_history_cancel">إلغاء</string>
 </resources>

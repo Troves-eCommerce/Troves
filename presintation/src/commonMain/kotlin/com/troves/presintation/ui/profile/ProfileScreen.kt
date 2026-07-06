@@ -5,7 +5,6 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
@@ -15,18 +14,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
+import com.troves.designsystem.components.toast.TrovesSnackbarHost
 import com.troves.designsystem.theme.Theme
 import com.troves.presintation.ui.profile.components.LiveRatesRow
 import com.troves.presintation.ui.profile.components.ProfileHeaderCard
 import com.troves.presintation.ui.profile.components.ProfileRowItem
 import com.troves.presintation.ui.profile.components.ProfileSection
-import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import troves.designsystem.generated.resources.*
+import troves.designsystem.generated.resources.Res
+import troves.presintation.generated.resources.Res as ResP
 import troves.presintation.generated.resources.*
-import troves.presintation.generated.resources.Res as PresRes
 
 @Composable
 fun ProfileScreen(
@@ -36,6 +37,7 @@ fun ProfileScreen(
     onNavigateToPaymentMethods: () -> Unit,
     onNavigateToEditProfile: () -> Unit,
     onNavigateToAiAssistant: () -> Unit,
+    onNavigateToSurvey: () -> Unit,
     viewModel: ProfileViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -58,6 +60,7 @@ fun ProfileScreen(
                 is ProfileEffect.NavigateToPaymentMethods -> onNavigateToPaymentMethods()
                 is ProfileEffect.NavigateToEditProfile -> onNavigateToEditProfile()
                 is ProfileEffect.NavigateToAiAssistant -> onNavigateToAiAssistant()
+                is ProfileEffect.NavigateToSurvey -> onNavigateToSurvey()
                 is ProfileEffect.ShowError -> {
                     snackbarHostState.showSnackbar(effect.message)
                 }
@@ -68,16 +71,16 @@ fun ProfileScreen(
     if (uiState.showLogoutDialog) {
         AlertDialog(
             onDismissRequest = { viewModel.onIntent(ProfileIntent.LogoutDismissed) },
-            title = { Text(stringResource(PresRes.string.profile_sign_out), style = Theme.typography.title) },
-            text = { Text(stringResource(PresRes.string.profile_sign_out_confirmation), style = Theme.typography.body.medium) },
+            title = { Text(stringResource(Res.string.profile_sign_out), style = Theme.typography.title) },
+            text = { Text(stringResource(Res.string.profile_sign_out_confirmation), style = Theme.typography.body.medium) },
             confirmButton = {
                 TextButton(onClick = { viewModel.onIntent(ProfileIntent.LogoutConfirmed) }) {
-                    Text(stringResource(PresRes.string.profile_sign_out), color = Theme.colors.error)
+                    Text(stringResource(Res.string.profile_sign_out), color = Theme.colors.error)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { viewModel.onIntent(ProfileIntent.LogoutDismissed) }) {
-                    Text(stringResource(PresRes.string.profile_cancel), color = Theme.colors.primary)
+                    Text(stringResource(Res.string.profile_cancel), color = Theme.colors.primary)
                 }
             },
             containerColor = Theme.colors.surface,
@@ -97,7 +100,6 @@ fun ProfileScreen(
     }
 
     Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) },
         containerColor = Theme.colors.backGround
     ) { paddingValues ->
         Box(
@@ -105,6 +107,10 @@ fun ProfileScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
+            TrovesSnackbarHost(
+                hostState = snackbarHostState,
+                modifier = Modifier.align(Alignment.TopCenter).zIndex(1f).padding(16.dp),
+            )
             if (uiState.isLoading) {
                 CircularProgressIndicator(
                     modifier = Modifier.align(Alignment.Center),
@@ -130,45 +136,56 @@ fun ProfileScreen(
                     }
 
                     if (!uiState.isGuest) {
-                        ProfileSection(title = stringResource(PresRes.string.profile_account_settings)) {
+                        ProfileSection(title = stringResource(Res.string.profile_account_settings)) {
                             ProfileRowItem(
                                 icon = Res.drawable.ic_ai_sparkles,
-                                title = stringResource(PresRes.string.ai_profile_entry),
+                                title = stringResource(ResP.string.ai_profile_entry),
                                 onClick = { viewModel.onIntent(ProfileIntent.AiAssistantClicked) },
                                 iconColor = Theme.colors.primary
                             )
                             HorizontalDivider(color = Theme.colors.backGround, thickness = 1.dp)
                             ProfileRowItem(
+                                icon = Res.drawable.ic_explore, // Using ic_explore for Survey
+                                title = stringResource(ResP.string.profile_style_survey),
+                                onClick = { viewModel.onIntent(ProfileIntent.SurveyClicked) },
+                                iconColor = Theme.colors.primary
+                            )
+                            HorizontalDivider(color = Theme.colors.backGround, thickness = 1.dp)
+                            ProfileRowItem(
                                 icon = Res.drawable.ic_location,
-                                title = stringResource(PresRes.string.profile_manage_addresses),
+                                title = stringResource(Res.string.profile_manage_addresses),
                                 onClick = { viewModel.onIntent(ProfileIntent.ManageAddressesClicked) },
                                 iconColor = Theme.colors.primary
                             )
                             HorizontalDivider(color = Theme.colors.backGround, thickness = 1.dp)
                             ProfileRowItem(
                                 icon = Res.drawable.ic_order_history,
-                                title = stringResource(PresRes.string.profile_order_history),
+                                title = stringResource(Res.string.profile_order_history),
                                 onClick = { viewModel.onIntent(ProfileIntent.OrderHistoryClicked) },
                                 iconColor = Theme.colors.primary
                             )
-                            HorizontalDivider(color = Theme.colors.backGround, thickness = 1.dp)
+                           /* HorizontalDivider(color = Theme.colors.backGround, thickness = 1.dp)
                             ProfileRowItem(
                                 icon = Res.drawable.ic_payment_method,
-                                title = stringResource(PresRes.string.profile_payment_methods),
+                                title = stringResource(Res.string.profile_payment_methods),
                                 onClick = { viewModel.onIntent(ProfileIntent.PaymentMethodsClicked) },
                                 iconColor = Theme.colors.primary
-                            )
+                            )*/
                         }
                     }
 
-                    ProfileSection(title = stringResource(PresRes.string.profile_market_preferences)) {
-                        LiveRatesRow()
+                    ProfileSection(title = stringResource(Res.string.profile_market_preferences)) {
+                        LiveRatesRow(
+                            exchangeRate = uiState.exchangeRate,
+                            selectedCurrency = uiState.selectedCurrency,
+                            onCurrencySelected = { viewModel.onIntent(ProfileIntent.CurrencySelected(it)) }
+                        )
                     }
 
-                    ProfileSection(title = stringResource(PresRes.string.profile_application)) {
+                    ProfileSection(title = stringResource(Res.string.profile_application)) {
                         ProfileRowItem(
                             icon = Res.drawable.ic_language,
-                            title = stringResource(PresRes.string.profile_language),
+                            title = stringResource(Res.string.profile_language),
                             iconColor = Theme.colors.primary,
                             trailingContent = {
                                 Text(
@@ -183,7 +200,7 @@ fun ProfileScreen(
 
                         ProfileRowItem(
                             icon = Res.drawable.ic_dark_mode,
-                            title = stringResource(PresRes.string.profile_dark_mode),
+                            title = stringResource(Res.string.profile_dark_mode),
                             showArrow = false,
                             iconColor = Theme.colors.primary,
                             trailingContent = {
@@ -204,7 +221,7 @@ fun ProfileScreen(
                         if (!uiState.isGuest) {
                             ProfileRowItem(
                                 icon = Res.drawable.ic_logout,
-                                title = stringResource(PresRes.string.profile_sign_out),
+                                title = stringResource(Res.string.profile_sign_out),
                                 textColor = Theme.colors.error,
                                 iconColor = Theme.colors.error,
                                 showArrow = false,
@@ -236,7 +253,7 @@ fun LanguageBottomSheet(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Text(
-                text = stringResource(PresRes.string.profile_select_language),
+                text = stringResource(Res.string.profile_select_language),
                 style = Theme.typography.title,
                 modifier = Modifier.padding(vertical = 16.dp)
             )
@@ -306,12 +323,12 @@ fun ProfileGuestHeader(
             tint = Color.Unspecified
         )
         Text(
-            text = stringResource(PresRes.string.profile_welcome),
+            text = stringResource(Res.string.profile_welcome),
             style = Theme.typography.displayMedium,
             color = Theme.colors.primaryFont
         )
         Text(
-            text = stringResource(PresRes.string.profile_guest_msg),
+            text = stringResource(Res.string.profile_guest_msg),
             style = Theme.typography.body.medium,
             color = Theme.colors.secondaryFont,
             textAlign = androidx.compose.ui.text.style.TextAlign.Center
@@ -322,7 +339,7 @@ fun ProfileGuestHeader(
             colors = ButtonDefaults.buttonColors(containerColor = Theme.colors.primary),
             shape = RoundedCornerShape(8.dp)
         ) {
-            Text(stringResource(PresRes.string.profile_login_signup), color = Color.White)
+            Text(stringResource(Res.string.profile_login_signup), color = Color.White)
         }
     }
 }

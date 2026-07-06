@@ -3,6 +3,8 @@ package com.troves.presintation.ui.profile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.troves.domain.usecase.auth.LogoutUseCase
+import com.troves.domain.usecase.settings.FetchLatestRatesUseCase
+import com.troves.domain.usecase.settings.GetExchangeRatesUseCase
 import com.troves.domain.usecase.settings.ObserveProfilePreferencesUseCase
 import com.troves.domain.usecase.settings.SetCurrencyUseCase
 import com.troves.domain.usecase.settings.SetLanguageUseCase
@@ -22,6 +24,8 @@ class ProfileViewModel(
     private val setLanguageUseCase: SetLanguageUseCase,
     private val setThemeModeUseCase: SetThemeModeUseCase,
     private val setCurrencyUseCase: SetCurrencyUseCase,
+    private val getExchangeRatesUseCase: GetExchangeRatesUseCase,
+    private val fetchLatestRatesUseCase: FetchLatestRatesUseCase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ProfileState())
@@ -32,6 +36,24 @@ class ProfileViewModel(
 
     init {
         onIntent(ProfileIntent.LoadData)
+        observeExchangeRates()
+        refreshExchangeRates()
+    }
+
+    private fun observeExchangeRates() {
+        getExchangeRatesUseCase()
+            .onEach { rates ->
+                _uiState.update { it.copy(exchangeRate = rates) }
+            }
+            .launchIn(viewModelScope)
+    }
+
+    private fun refreshExchangeRates() {
+        viewModelScope.launch {
+            fetchLatestRatesUseCase("EGP").onFailure { e ->
+                _effect.emit(ProfileEffect.ShowError("Rates: ${e.message}"))
+            }
+        }
     }
 
     fun onIntent(intent: ProfileIntent) {
@@ -42,6 +64,7 @@ class ProfileViewModel(
             is ProfileIntent.OrderHistoryClicked -> emitEffect(ProfileEffect.NavigateToOrders)
             is ProfileIntent.PaymentMethodsClicked -> emitEffect(ProfileEffect.NavigateToPaymentMethods)
             is ProfileIntent.AiAssistantClicked -> emitEffect(ProfileEffect.NavigateToAiAssistant)
+            is ProfileIntent.SurveyClicked -> emitEffect(ProfileEffect.NavigateToSurvey)
             is ProfileIntent.LanguageClicked -> Unit
             is ProfileIntent.LanguageSelected -> selectLanguage(intent.language)
             is ProfileIntent.DarkModeChanged -> setDarkMode(intent.enabled)

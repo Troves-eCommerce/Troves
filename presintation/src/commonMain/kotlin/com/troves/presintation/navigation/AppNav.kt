@@ -4,9 +4,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.Snapshot
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -25,7 +28,6 @@ import com.troves.presintation.ui.address.ManageSavedAddressesScreen
 import com.troves.presintation.ui.address.NewAddressScreen
 import com.troves.presintation.ui.aichat.AiChatScreen
 import com.troves.presintation.ui.aichat.AiChatViewModel
-import com.troves.presintation.ui.allbrands.AllBrandsScreen
 import com.troves.presintation.ui.auth.LoginScreen
 import com.troves.presintation.ui.auth.RegisterScreen
 import com.troves.presintation.ui.cart.CartScreen
@@ -42,7 +44,9 @@ import com.troves.presintation.ui.products.ProductsScreen
 import com.troves.presintation.ui.profile.ProfileScreen
 import com.troves.presintation.ui.search.SearchScreen
 import com.troves.presintation.ui.search.SearchScreenViewModel
+import com.troves.presintation.ui.seeall.SeeAllScreen
 import com.troves.presintation.ui.splash.SplashScreen
+import com.troves.presintation.ui.survey.SurveyScreen
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import org.koin.compose.viewmodel.koinViewModel
@@ -61,7 +65,7 @@ private val navSavedStateConfiguration = SavedStateConfiguration {
             subclass(AppRoute.Register::class, AppRoute.Register.serializer())
             subclass(AppRoute.Home::class, AppRoute.Home.serializer())
             subclass(AppRoute.Products::class, AppRoute.Products.serializer())
-            subclass(AppRoute.AllBrands::class, AppRoute.AllBrands.serializer())
+            subclass(AppRoute.SeeAll::class, AppRoute.SeeAll.serializer())
             subclass(AppRoute.Favorites::class, AppRoute.Favorites.serializer())
             subclass(AppRoute.Profile::class, AppRoute.Profile.serializer())
             subclass(AppRoute.AiChat::class, AppRoute.AiChat.serializer())
@@ -75,6 +79,7 @@ private val navSavedStateConfiguration = SavedStateConfiguration {
             subclass(AppRoute.NewAddress::class, AppRoute.NewAddress.serializer())
             subclass(AppRoute.PaymentMethods::class, AppRoute.PaymentMethods.serializer())
             subclass(AppRoute.OrderResult::class, AppRoute.OrderResult.serializer())
+            subclass(AppRoute.Survey::class, AppRoute.Survey.serializer())
         }
     }
 }
@@ -84,17 +89,7 @@ fun AppNav() {
     val mainViewModel: MainViewModel = koinViewModel()
     val uiState by mainViewModel.uiState.collectAsState()
 
-    if (uiState.isLoading) {
-        SplashScreen(onNavigateToOnboarding = {})
-        return
-    }
-
-
-
-    val initialRoute: NavKey = when (uiState.startDestination) {
-        StartDestination.Onboarding -> AppRoute.Onboarding
-        StartDestination.Home -> AppRoute.Home
-    }
+    val initialRoute: NavKey = AppRoute.Splash
 
     val backStack = rememberNavBackStack(navSavedStateConfiguration, initialRoute)
     val currentRoute = backStack.lastOrNull()
@@ -137,16 +132,22 @@ fun AppNav() {
                 onNavigateToRegister = { backStack.add(AppRoute.Register) },
                 onNavigateToSearch = {backStack.add(AppRoute.Search)},
                 onNavigateToCart = { backStack.add(AppRoute.Cart) },
-                onNavigateToAllBrands = { backStack.add(AppRoute.AllBrands) },
+                onNavigateToAllCategories = {
+                    backStack.add(AppRoute.SeeAll(AppRoute.SeeAllType.CATEGORIES, name = "Categories"))
+                },
+                onNavigateToAllBrands = {
+                    backStack.add(AppRoute.SeeAll(AppRoute.SeeAllType.BRANDS, name = "Brands"))
+                },
                 onNavigateToProducts = { sourceType, sourceId, sourceName ->
                     backStack.add(
-                        AppRoute.Products(
-                            sourceType = sourceType,
-                            sourceId = sourceId,
-                            sourceName = sourceName,
+                        AppRoute.SeeAll(
+                            type = AppRoute.SeeAllType.PRODUCTS,
+                            id = sourceId,
+                            name = sourceName,
                         ),
                     )
                 },
+                onNavigateToSurvey = { backStack.add(AppRoute.Survey) },
             )
         }
         entry<AppRoute.Favorites> {
@@ -171,9 +172,27 @@ fun AppNav() {
             )
         }
         entry<AppRoute.Splash> {
+            var splashFinished by remember { mutableStateOf(false) }
+
+            val destination = remember(uiState.isLoading, uiState.startDestination) {
+                if (uiState.isLoading) null
+                else when (uiState.startDestination) {
+                    StartDestination.Onboarding -> AppRoute.Onboarding
+                    StartDestination.Home -> AppRoute.Home
+                }
+            }
+
             SplashScreen(
-                onNavigateToOnboarding = { replaceWith(AppRoute.Onboarding) }
+                onNavigateToOnboarding = {
+                    splashFinished = true
+                }
             )
+
+            LaunchedEffect(splashFinished, destination) {
+                if (splashFinished && destination != null) {
+                    replaceWith(destination)
+                }
+            }
         }
         entry<AppRoute.Login> {
             LoginScreen(
@@ -191,6 +210,20 @@ fun AppNav() {
                 }
             )
         }
+        entry<AppRoute.SeeAll> { key ->
+            SeeAllScreen(
+                type = key.type,
+                id = key.id,
+                name = key.name,
+                onNavigateBack = { backStack.removeLastOrNull() },
+                onNavigateToProducts = { sourceType, sourceId, sourceName ->
+                    backStack.add(AppRoute.SeeAll(AppRoute.SeeAllType.PRODUCTS, sourceId, sourceName))
+                },
+                onNavigateToProductDetails = { productId ->
+                    backStack.add(AppRoute.ProductDetails(productId))
+                }
+            )
+        }
         entry<AppRoute.Products> { key ->
             ProductsScreen(
                 sourceType = key.sourceType,
@@ -198,20 +231,6 @@ fun AppNav() {
                 sourceName = key.sourceName,
                 onNavigateToProduct = { productId ->
                     backStack.add(AppRoute.ProductDetails(productId))
-                },
-                onNavigateBack = { backStack.removeLastOrNull() },
-            )
-        }
-        entry<AppRoute.AllBrands> {
-            AllBrandsScreen(
-                onNavigateToProducts = { sourceType, sourceId, sourceName ->
-                    backStack.add(
-                        AppRoute.Products(
-                            sourceType = sourceType,
-                            sourceId = sourceId,
-                            sourceName = sourceName,
-                        ),
-                    )
                 },
                 onNavigateBack = { backStack.removeLastOrNull() },
             )
@@ -224,6 +243,7 @@ fun AppNav() {
                 onNavigateToPaymentMethods = { backStack.add(AppRoute.PaymentMethods) },
                 onNavigateToEditProfile = { /* Navigate to Edit Profile screen if it exists */ },
                 onNavigateToAiAssistant = { backStack.add(AppRoute.AiChat) },
+                onNavigateToSurvey = { backStack.add(AppRoute.Survey) },
             )
         }
         entry<AppRoute.AiChat> {
@@ -313,6 +333,11 @@ fun AppNav() {
                 onNavigateBack = { backStack.removeLastOrNull() },
                 onNavigateToLogin = { backStack.add(AppRoute.Login) },
                 addressId = key.addressId,
+            )
+        }
+        entry<AppRoute.Survey> {
+            SurveyScreen(
+                onNavigateBack = { backStack.removeLastOrNull() },
             )
         }
     }

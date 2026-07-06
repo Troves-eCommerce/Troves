@@ -36,7 +36,6 @@ sealed interface CartIntent {
     data object OnCheckout : CartIntent
     data class OnIncrement(val lineId: String) : CartIntent
     data class OnDecrement(val lineId: String) : CartIntent
-    /** User tapped the trash icon on a line; asks for confirmation before removing. */
     data class OnRemoveItemClick(val lineId: String) : CartIntent
     data class OnRemoveItemConfirm(val lineId: String) : CartIntent
     data object OnClearCartClick : CartIntent

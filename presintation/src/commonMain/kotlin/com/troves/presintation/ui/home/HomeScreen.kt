@@ -1,7 +1,7 @@
 package com.troves.presintation.ui.home
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,14 +19,14 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.material3.Icon
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import com.troves.designsystem.components.toast.TrovesSnackbarHost
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -36,9 +36,6 @@ import kotlinx.coroutines.launch
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.BrushPainter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -49,6 +46,11 @@ import com.troves.designsystem.components.shimmer.shimmerEffect
 import com.troves.designsystem.components.topbar.TrovesTopBar
 import com.troves.designsystem.theme.SpTheme
 import com.troves.designsystem.theme.Theme
+import com.troves.designsystem.util.formatPrice
+import com.troves.designsystem.util.autoMirror
+import com.troves.designsystem.util.bounceClick
+import kotlin.math.abs
+
 import com.troves.domain.entity.Ad
 import com.troves.domain.entity.Brand
 import com.troves.domain.entity.Category
@@ -59,13 +61,12 @@ import com.troves.presintation.ui.home.components.AdData
 import com.troves.presintation.ui.home.components.AdSlider
 import com.troves.presintation.ui.home.components.BrandItem
 import com.troves.presintation.ui.home.components.CategoryItem
+import com.troves.presintation.ui.survey.components.SurveyBannerCard
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import troves.designsystem.generated.resources.Res
-import troves.designsystem.generated.resources.ic_chevron_right
-import troves.designsystem.generated.resources.ic_heart
-import troves.designsystem.generated.resources.ic_star
-import troves.designsystem.generated.resources.img_onboarding1
+import troves.designsystem.generated.resources.*
 
 @Composable
 fun HomeScreen(
@@ -75,11 +76,15 @@ fun HomeScreen(
     onNavigateToRegister: () -> Unit,
     onNavigateToSearch: () -> Unit,
     onNavigateToCart: () -> Unit,
+    onNavigateToAllCategories: () -> Unit,
+    onNavigateToSurvey: () -> Unit,
     viewModel: HomeViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+
+    val loginRequiredText = stringResource(Res.string.home_login_required)
 
     ObserveEffect(viewModel.effect) { effect ->
         when (effect) {
@@ -91,11 +96,13 @@ fun HomeScreen(
             )
             is HomeEffect.NavigateToAllBrands -> onNavigateToAllBrands()
             is HomeEffect.NavigateToRegister -> onNavigateToRegister()
+            is HomeEffect.NavigateToAllCategories -> onNavigateToAllCategories()
             is HomeEffect.NavigateToCart -> onNavigateToCart()
+            is HomeEffect.NavigateToSurvey -> onNavigateToSurvey()
             is HomeEffect.ShowToast -> scope.launch { snackbarHostState.showSnackbar(effect.message) }
             is HomeEffect.NavigateToSearch -> onNavigateToSearch()
             is HomeEffect.ShowLoginRequiredDialog -> scope.launch {
-                snackbarHostState.showSnackbar("Please login to continue")
+                snackbarHostState.showSnackbar(loginRequiredText)
             }
         }
     }
@@ -123,6 +130,11 @@ fun HomeScreen(
             TrovesTopBar(
                 onSearchClick = { viewModel.onIntent(HomeIntent.SearchClicked) },
                 onCartClick = { viewModel.onIntent(HomeIntent.CartClicked) },
+                cartBadgeCount = state.cartItemCount,
+                border = BorderStroke(
+                    width = 1.dp,
+                    color = Theme.colors.onPrimary
+                )
             )
 
             if (state.isLoading) {
@@ -135,11 +147,11 @@ fun HomeScreen(
             }
         }
 
-        SnackbarHost(
+        TrovesSnackbarHost(
             hostState = snackbarHostState,
             modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .navigationBarsPadding()
+                .align(Alignment.TopCenter)
+                .statusBarsPadding()
                 .padding(16.dp),
         )
     }
@@ -150,30 +162,39 @@ private fun HomeContent(
     state: HomeUiState,
     onIntent: (HomeIntent) -> Unit,
 ) {
-    val adImage = remember {
-        BrushPainter(
-            Brush.linearGradient(
-                colors = listOf(Color(0xFF0F3D44), Color(0xFF177180)),
-            ),
-        )
-    }
-    val brandImage = painterResource(Res.drawable.img_onboarding1)
-    val categoryImage = painterResource(Res.drawable.img_onboarding1)
-    val productImage = painterResource(Res.drawable.img_onboarding1)
+    val brandImage = painterResource(Res.drawable.img_placeholder)
+    val productImage = painterResource(Res.drawable.img_placeholder)
     val chevron = painterResource(Res.drawable.ic_chevron_right)
     val starIcon = painterResource(Res.drawable.ic_star)
-    val heartIcon = painterResource(Res.drawable.ic_heart)
+    val heartIcon = painterResource(Res.drawable.ic_solid_heart)
+
+    val adImages = listOf(
+        Res.drawable.random_1,
+        Res.drawable.random_2,
+        Res.drawable.random_3,
+        Res.drawable.random_4,
+        Res.drawable.random_5
+    )
 
     val clipboardManager = LocalClipboardManager.current
+    val copyCodeButtonText = stringResource(Res.string.home_copy_code_button)
+
+    if (!state.isSurveyDone) {
+        SurveyBannerCard(
+            onStartSurvey = { onIntent(HomeIntent.SurveyBannerClicked) },
+            modifier = Modifier.padding(horizontal = Theme.spacing.medium),
+        )
+    }
 
     if (state.ads.isNotEmpty()) {
         AdSlider(
-            ads = state.ads.map { ad ->
+            ads = state.ads.mapIndexed { index, ad ->
+                val imageRes = adImages[index % adImages.size]
                 AdData(
                     titleTop = ad.titleTop,
                     titleBottom = ad.titleBottom,
                     description = ad.description,
-                    imagePainter = adImage,
+                    imagePainter = painterResource(imageRes),
                     buttonText = ad.buttonText,
                 )
             },
@@ -181,7 +202,7 @@ private fun HomeContent(
             onShopNowClick = { clicked ->
                 val ad = state.ads.firstOrNull { it.titleTop == clicked.titleTop }
                 if (ad != null) {
-                    if (ad.buttonText == "Copy code") {
+                    if (ad.buttonText == copyCodeButtonText) {
                         clipboardManager.setText(AnnotatedString(ad.titleTop))
                     }
                     onIntent(HomeIntent.AdClicked(ad))
@@ -190,33 +211,51 @@ private fun HomeContent(
         )
     }
 
-    if (state.brands.isNotEmpty()) {
+    if (state.categories.isNotEmpty()) {
         SectionHeader(
-            title = "Brands",
-            actionLabel = "View All",
+            title = stringResource(Res.string.home_categories_title),
             actionIcon = chevron,
-            onAction = { onIntent(HomeIntent.SeeAllBrandsClicked) },
+            actionLabel = stringResource(Res.string.home_view_all),
+            onAction = { onIntent(HomeIntent.ViewAllCategoriesClicked) }
         )
         LazyRow(
             contentPadding = PaddingValues(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            items(state.brands, key = { it.id }) { brand ->
-                BrandItem(
-                    name = brand.name,
-                    imagePainter = rememberAsyncImagePainter(
-                        model = brand.logoUrl,
-                        placeholder = brandImage,
-                        error = brandImage,
-                    ),
-                    onClick = { onIntent(HomeIntent.BrandClicked(brand)) },
+            items(state.categories.take(5), key = { it.id }) { category ->
+                val categoryIcon = when (category.name.lowercase().trim()) {
+                    "footwear" -> Res.drawable.ic_category_footwear
+                    "outerwear" -> Res.drawable.ic_category_man
+                    "accessories" -> Res.drawable.ic_category_accessories
+                    "sale" -> Res.drawable.ic_category_sales
+                    "new arrivals" -> Res.drawable.ic_category_sales
+                    "best sellers" -> Res.drawable.ic_star
+                    "men" -> Res.drawable.ic_category_man
+                    "women" -> Res.drawable.ic_category_women
+                    "dr martens" -> Res.drawable.ic_brand_dr_martens
+                    "kid" -> Res.drawable.ic_category_kids
+                    else -> Res.drawable.ic_star
+                }
+
+                CategoryItem(
+                    name = category.name,
+                    iconPainter = categoryIcon,
+                    onClick = { onIntent(HomeIntent.CategoryClicked(category)) },
+                    modifier = Modifier
+                        .width(85.dp)
+                        .height(100.dp),
                 )
             }
         }
     }
 
     if (state.justForYou.isNotEmpty()) {
-        SectionHeader(title = "Just For You")
+        SectionHeader(
+            title = stringResource(Res.string.home_just_for_you),
+            actionIcon = chevron,
+            actionLabel = stringResource(Res.string.home_view_all),
+            onAction = { onIntent(HomeIntent.ViewAllJustForYouClicked) }
+        )
         ProductRow(
             products = state.justForYou,
             favoriteIds = state.favoriteProductIds,
@@ -226,30 +265,62 @@ private fun HomeContent(
             onIntent = onIntent,
         )
     }
+    if (state.brands.isNotEmpty()) {
+        SectionHeader(
+            title = stringResource(Res.string.home_top_brands),
+            actionLabel = stringResource(Res.string.home_view_all_brands),
+            actionIcon = chevron,
+            onAction = { onIntent(HomeIntent.SeeAllBrandsClicked) },
+        )
 
-    if (state.categories.isNotEmpty()) {
-        SectionHeader(title = "Categories")
         LazyRow(
             contentPadding = PaddingValues(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            items(state.categories, key = { it.id }) { category ->
-                CategoryItem(
-                    name = category.name,
-                    imagePainter = rememberAsyncImagePainter(
-                        model = category.imageUrl,
-                        placeholder = categoryImage,
-                        error = categoryImage,
-                    ),
-                    onClick = { onIntent(HomeIntent.CategoryClicked(category)) },
-                    modifier = Modifier.width(120.dp).height(150.dp),
+            items(state.brands.take(5), key = { it.id }) { brand ->
+
+                val localBrandImage = when (brand.name.trim().lowercase()) {
+                    "dr martens" -> Res.drawable.ic_brand_dr_martens
+                    "herschel" -> Res.drawable.ic_brand_herschel
+                    "flex fit" -> Res.drawable.ic_brand_flexfit
+                    "puma" -> Res.drawable.ic_brand_puma
+                    "supra" -> Res.drawable.ic_brand_supra
+                    "timberland" -> Res.drawable.ic_brand_timberland
+                    "converse" -> Res.drawable.ic_brand_converse
+                    "asics tiger" -> Res.drawable.ic_brand_asics_tiger
+                    "palladuim" -> Res.drawable.ic_brand_palladium
+                    "vans" -> Res.drawable.ic_brand_vans
+                    "adidas" -> Res.drawable.ic_brand_adidas
+                    "nike" -> Res.drawable.ic_brand_nike
+                    else -> null
+                }
+
+                BrandItem(
+                    name = brand.name,
+                    imagePainter = if (localBrandImage != null) {
+                        painterResource(localBrandImage)
+                    } else {
+                        rememberAsyncImagePainter(
+                            model = brand.logoUrl,
+                            placeholder = brandImage,
+                            error = brandImage,
+                        )
+                    },
+                    onClick = {
+                        onIntent(HomeIntent.BrandClicked(brand))
+                    },
                 )
             }
         }
     }
 
     if (state.trending.isNotEmpty()) {
-        SectionHeader(title = "Trending Now")
+        SectionHeader(
+            title = stringResource(Res.string.home_trending_now),
+            actionIcon = chevron,
+            actionLabel = stringResource(Res.string.home_view_all),
+            onAction = { onIntent(HomeIntent.ViewAllTrendingClicked) }
+        )
         ProductRow(
             products = state.trending,
             favoriteIds = state.favoriteProductIds,
@@ -277,7 +348,7 @@ private fun ProductRow(
         items(products, key = { it.id }) { product ->
             MainCard(
                 title = product.title,
-                price = "$${product.price}",
+                price = formatPrice(product.price),
                 rating = PLACEHOLDER_RATING,
                 imagePainter = rememberAsyncImagePainter(
                     model = product.imageUrl,
@@ -318,7 +389,10 @@ private fun SectionHeader(
         if (actionLabel != null && onAction != null) {
             Spacer(Modifier.weight(1f))
             Row(
-                modifier = Modifier.clickable(onClick = onAction),
+                modifier = Modifier.bounceClick(
+                    shape = RoundedCornerShape(10.dp),
+                    onClick = onAction
+                ),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 BasicText(
@@ -333,7 +407,9 @@ private fun SectionHeader(
                         painter = actionIcon,
                         contentDescription = null,
                         tint = Theme.colors.secondaryFont,
-                        modifier = Modifier.size(18.dp),
+                        modifier = Modifier
+                            .size(18.dp)
+                            .autoMirror(),
                     )
                 }
             }
@@ -354,13 +430,14 @@ private fun HomeShimmer() {
 
     Row(
         modifier = Modifier.padding(horizontal = 16.dp),
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         repeat(5) {
             Box(
                 modifier = Modifier
-                    .size(72.dp)
-                    .clip(CircleShape)
+                    .width(85.dp)
+                    .height(100.dp)
+                    .clip(Theme.shapes.medium)
                     .shimmerEffect(),
             )
         }
@@ -435,7 +512,7 @@ private fun previewHomeState(): HomeUiState {
             Brand(id = index.toLong(), name = "Brand ${index + 1}", logoUrl = null)
         },
         justForYou = products,
-        categories = List(4) { index ->
+        categories = List(6) { index ->
             Category(id = index.toLong(), name = "Category ${index + 1}", imageUrl = null)
         },
         trending = products,

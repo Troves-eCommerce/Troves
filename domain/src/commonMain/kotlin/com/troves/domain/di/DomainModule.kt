@@ -1,5 +1,9 @@
 package com.troves.domain.di
 
+import com.troves.domain.usecase.ai.DeleteAiConversationUseCase
+import com.troves.domain.usecase.ai.GetAiConversationsUseCase
+import com.troves.domain.usecase.ai.SaveAiConversationUseCase
+import com.troves.domain.usecase.ai.SendAiMessageUseCase
 import com.troves.domain.usecase.auth.IsLoggedInUseCase
 import com.troves.domain.usecase.auth.LoginUseCase
 import com.troves.domain.usecase.auth.LogoutUseCase
@@ -27,12 +31,15 @@ import com.troves.domain.usecase.order.GetDefaultAddressUseCase
 import com.troves.domain.usecase.order.GetOrderByIdUseCase
 import com.troves.domain.usecase.order.GetOrdersUseCase
 import com.troves.domain.usecase.order.PlaceCodOrderUseCase
+import com.troves.domain.usecase.paymob.GetClientSecretUseCase
 import com.troves.domain.usecase.products.FilterProductsUseCase
 import com.troves.domain.usecase.products.GetProductsByBrandUseCase
 import com.troves.domain.usecase.products.GetProductsByCategoryUseCase
 import com.troves.domain.usecase.products.SortProductsUseCase
 import com.troves.domain.usecase.search.FilterProductsByQueryUseCase
 import com.troves.domain.usecase.search.SearchProductsUseCase
+import com.troves.domain.usecase.settings.FetchLatestRatesUseCase
+import com.troves.domain.usecase.settings.GetExchangeRatesUseCase
 import com.troves.domain.usecase.settings.ObserveProfilePreferencesUseCase
 import com.troves.domain.usecase.settings.SetCurrencyUseCase
 import com.troves.domain.usecase.settings.SetLanguageUseCase
@@ -69,6 +76,12 @@ val domainModule = module {
     factory { IsOnboardingDoneUseCase(get()) }
     factory { CompleteOnboardingUseCase(get()) }
 
+    // Survey
+    factory { com.troves.domain.usecase.survey.IsSurveyDoneUseCase(get()) }
+    factory { com.troves.domain.usecase.survey.CompleteSurveyUseCase(get()) }
+    factory { com.troves.domain.usecase.survey.ObserveSurveyDoneUseCase(get()) }
+
+
     // Wishlist
     factory { GetWishlistUseCase(get()) }
     factory { IsProductFavoritedUseCase(get()) }
@@ -97,6 +110,7 @@ val domainModule = module {
     factory { PlaceCodOrderUseCase(get(), get()) }
     factory { com.troves.domain.usecase.order.AttachAddressToCartUseCase(get()) }
     factory { ClearCartUseCase(get()) }
+    factory { GetClientSecretUseCase(get()) }
     single { SyncWishlistUseCase(get(),get()) }
 
     // Address
@@ -116,7 +130,12 @@ val domainModule = module {
     factory { SetCurrencyUseCase(get()) }
     factory { SetThemeModeUseCase(get()) }
     factory { ObserveProfilePreferencesUseCase(get(), get()) }
+    factory { GetExchangeRatesUseCase(get()) }
+    factory { FetchLatestRatesUseCase(get()) }
 
     // AI assistant
-    factory { com.troves.domain.usecase.ai.SendAiMessageUseCase(get()) }
+    factory { SendAiMessageUseCase(get()) }
+    factory { GetAiConversationsUseCase(get(), get()) }
+    factory { SaveAiConversationUseCase(get(), get()) }
+    factory { DeleteAiConversationUseCase(get(), get()) }
 }

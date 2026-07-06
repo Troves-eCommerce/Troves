@@ -1,7 +1,8 @@
 package com.troves.presintation.ui.checkout.steps
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,8 +12,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
@@ -22,6 +25,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -30,15 +36,16 @@ import com.troves.designsystem.components.button.PrimaryButton
 import com.troves.designsystem.components.cards.OrderSummaryInfoCard
 import com.troves.designsystem.components.cards.OrderSummaryItemCard
 import com.troves.designsystem.components.stepper.HorizontalStepper
-import com.troves.designsystem.components.textfield.TextField
+import com.troves.designsystem.components.textfield.CustomTextField
 import com.troves.designsystem.theme.SpTheme
 import com.troves.designsystem.theme.Theme
+import com.troves.designsystem.util.formatPrice
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import troves.designsystem.generated.resources.Res
-import troves.designsystem.generated.resources.product_card
-import troves.presintation.generated.resources.Res as StringRes
+import troves.designsystem.generated.resources.img_placeholder
 import troves.presintation.generated.resources.apply
+import troves.presintation.generated.resources.checkout_coupon_applied
 import troves.presintation.generated.resources.checkout_coupon_hint
 import troves.presintation.generated.resources.checkout_coupon_label
 import troves.presintation.generated.resources.checkout_discount_code
@@ -46,6 +53,7 @@ import troves.presintation.generated.resources.checkout_order_summary
 import troves.presintation.generated.resources.checkout_review_subtitle
 import troves.presintation.generated.resources.checkout_subtotal_items
 import troves.presintation.generated.resources.checkout_total
+import troves.presintation.generated.resources.Res as StringRes
 
 data class OrderSummaryItemUi(
     val imagePainter: Painter,
@@ -61,6 +69,7 @@ fun OrderSummaryStepContent(
     couponInput: String,
     onCouponChange: (String) -> Unit,
     onApplyCoupon: () -> Unit,
+    onRemoveCoupon: () -> Unit,
     items: List<OrderSummaryItemUi>,
     itemCount: Int,
     subtotalFormatted: String,
@@ -104,7 +113,7 @@ fun OrderSummaryStepContent(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.Bottom,
             ) {
-                TextField(
+                CustomTextField(
                     text = couponInput,
                     onTextChange = onCouponChange,
                     hint = stringResource(StringRes.string.checkout_coupon_hint),
@@ -119,6 +128,18 @@ fun OrderSummaryStepContent(
                     modifier = Modifier.width(80.dp).height(48.dp)
                 )
             }
+
+            if (discountCode != null) {
+                AppliedCouponChip(
+                    code = discountCode,
+                    onRemove = onRemoveCoupon,
+                    enabled = !isApplyingCoupon,
+                )
+                BasicText(
+                    text = stringResource(StringRes.string.checkout_coupon_applied),
+                    style = Theme.typography.body.small.copy(color = Theme.colors.success),
+                )
+            }
         }
 
 
@@ -129,7 +150,7 @@ fun OrderSummaryStepContent(
                 name = item.name,
                 specs = item.specs,
                 quantity = item.quantity,
-                priceFormatted = item.priceFormatted,
+                priceFormatted = formatPrice(item.priceFormatted),
             )
             Box(
                 modifier = Modifier
@@ -141,12 +162,61 @@ fun OrderSummaryStepContent(
 
         OrderSummaryInfoCard(
             subtotalLabel = stringResource(StringRes.string.checkout_subtotal_items, itemCount),
-            subtotalFormatted = subtotalFormatted,
+            subtotalFormatted = formatPrice(subtotalFormatted),
             totalLabel = stringResource(StringRes.string.checkout_total),
-            totalFormatted = totalFormatted,
+            totalFormatted = formatPrice(totalFormatted),
             discountLabel = discountCode?.let { stringResource(StringRes.string.checkout_discount_code, it) },
-            discountValueFormatted = discountValueFormatted,
+            discountValueFormatted = discountValueFormatted?.let { formatPrice(it) },
         )
+    }
+}
+
+@Composable
+private fun AppliedCouponChip(
+    code: String,
+    onRemove: () -> Unit,
+    enabled: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    val crossColor = Theme.colors.onSecondary
+    Row(
+        modifier = modifier
+            .clip(RoundedCornerShape(Theme.spacing.small))
+            .background(Theme.colors.secondary)
+            .padding(horizontal = Theme.spacing.small, vertical = Theme.spacing.extraSmall),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small),
+    ) {
+        BasicText(
+            text = code,
+            style = Theme.typography.body.medium.copy(
+                color = Theme.colors.onSecondary,
+                fontWeight = FontWeight.Medium,
+            ),
+        )
+        Canvas(
+            modifier = Modifier
+                .size(16.dp)
+                .clip(RoundedCornerShape(50))
+                .clickable(enabled = enabled, onClick = onRemove)
+                .padding(3.dp),
+        ) {
+            val stroke = 1.6.dp.toPx()
+            drawLine(
+                color = crossColor,
+                start = Offset(0f, 0f),
+                end = Offset(size.width, size.height),
+                strokeWidth = stroke,
+                cap = StrokeCap.Round,
+            )
+            drawLine(
+                color = crossColor,
+                start = Offset(size.width, 0f),
+                end = Offset(0f, size.height),
+                strokeWidth = stroke,
+                cap = StrokeCap.Round,
+            )
+        }
     }
 }
 
@@ -155,7 +225,8 @@ fun OrderSummaryStepContent(
 private fun OrderSummaryStepPreview() {
     SpTheme(isDarkTheme = false, languageCode = "en") {
         var coupon by remember { mutableStateOf("WELCOME10") }
-        val image = painterResource(Res.drawable.product_card)
+        var appliedCode by remember { mutableStateOf<String?>("WELCOME10") }
+        val image = painterResource(Res.drawable.img_placeholder)
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -164,7 +235,8 @@ private fun OrderSummaryStepPreview() {
             OrderSummaryStepContent(
                 couponInput = coupon,
                 onCouponChange = { coupon = it },
-                onApplyCoupon = {},
+                onApplyCoupon = { appliedCode = coupon },
+                onRemoveCoupon = { appliedCode = null },
                 items = listOf(
                     OrderSummaryItemUi(image, "Soft Knit Sweater", "Cream / M", 2, "\$98.00"),
                     OrderSummaryItemUi(image, "Linen Trousers", "Sand / 32", 1, "\$50.00"),
@@ -173,7 +245,7 @@ private fun OrderSummaryStepPreview() {
                 subtotalFormatted = "\$246.00",
                 totalFormatted = "\$221.40",
                 currentStep = 1,
-                discountCode = "WELCOME10",
+                discountCode = appliedCode,
                 discountValueFormatted = "- \$24.60",
                 modifier = Modifier.weight(1f),
             )

@@ -13,7 +13,15 @@ data class ChatMessageUi(
     val isSuggestion: Boolean = false,
     val clarifying: Boolean = false,
     val declined: Boolean = false,
+    val image: PendingImageUi? = null,
 )
+
+
+@Immutable
+class PendingImageUi(val id: String, val bytes: ByteArray) {
+    override fun equals(other: Any?): Boolean = other is PendingImageUi && other.id == id
+    override fun hashCode(): Int = id.hashCode()
+}
 
 @Immutable
 data class AiProductUi(
@@ -29,6 +37,14 @@ data class AiProductUi(
 )
 
 @Immutable
+data class ConversationSummaryUi(
+    val id: String,
+    val title: String,
+    val timeLabel: String,
+    val isActive: Boolean = false,
+)
+
+@Immutable
 data class AiChatUiState(
     val messages: List<ChatMessageUi> = emptyList(),
     val input: String = "",
@@ -36,9 +52,20 @@ data class AiChatUiState(
     val errorMessage: String? = null,
     val rateLimitedSeconds: Int? = null,
     val favoriteProductIds: Set<String> = emptySet(),
+    val isListening: Boolean = false,
+    val pendingImage: PendingImageUi? = null,
+    val showHistory: Boolean = false,
+    val historyLoading: Boolean = false,
+    val historyError: String? = null,
+    val historyRequiresLogin: Boolean = false,
+    val conversations: List<ConversationSummaryUi> = emptyList(),
 ) {
     val canSend: Boolean
-        get() = !isSending && rateLimitedSeconds == null && input.isNotBlank()
+        get() = !isSending && rateLimitedSeconds == null &&
+            (input.isNotBlank() || pendingImage != null)
+
+    val canUseVoice: Boolean
+        get() = !isSending && rateLimitedSeconds == null
 
     val isEmpty: Boolean get() = messages.isEmpty()
 }
@@ -52,6 +79,20 @@ sealed interface AiChatIntent {
     data class ProductClicked(val product: AiProductUi) : AiChatIntent
     data object ViewAllRecommendations : AiChatIntent
     data class ToggleFavorite(val product: AiProductUi) : AiChatIntent
+
+    data object MicClicked : AiChatIntent
+    data class VoiceTranscript(val text: String) : AiChatIntent
+    data class VoiceFailed(val message: String) : AiChatIntent
+
+    data object AttachImageClicked : AiChatIntent
+    class ImagePicked(val bytes: ByteArray) : AiChatIntent
+    data object RemovePendingImage : AiChatIntent
+
+    data object OpenHistory : AiChatIntent
+    data object CloseHistory : AiChatIntent
+    data class LoadConversation(val id: String) : AiChatIntent
+    data class DeleteConversation(val id: String) : AiChatIntent
+    data object NewChat : AiChatIntent
 }
 
 sealed interface AiChatEffect {
@@ -59,4 +100,9 @@ sealed interface AiChatEffect {
     data class NavigateToProduct(val productId: String) : AiChatEffect
     data object NavigateToSearch : AiChatEffect
     data class ShowMessage(val message: String) : AiChatEffect
+
+    data object StartVoiceCapture : AiChatEffect
+    data object StopVoiceCapture : AiChatEffect
+
+    data object PickImage : AiChatEffect
 }
