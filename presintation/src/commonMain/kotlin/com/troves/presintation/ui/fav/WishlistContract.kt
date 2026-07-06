@@ -10,6 +10,7 @@ sealed interface WishlistEffect {
 
 data class WishlistState(
     val isLoading: Boolean = true,
+    val isRefreshing: Boolean = false,
     val items: List<Product> = emptyList(),
     val errorMessage: String? = null,
 ) {
@@ -17,6 +18,7 @@ data class WishlistState(
 }
 sealed interface WishlistIntent {
     data object Load : WishlistIntent
+    data object Refresh : WishlistIntent
     data object Retry : WishlistIntent
     data class ProductClicked(val product: Product) : WishlistIntent
     data class RemoveClicked(val product: Product) : WishlistIntent

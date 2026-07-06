@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.troves.domain.entity.Product
 import com.troves.domain.usecase.wishlist.GetWishlistUseCase
+import com.troves.domain.usecase.wishlist.SyncWishlistUseCase
 import com.troves.domain.usecase.wishlist.ToggleFavoriteResult
 import com.troves.domain.usecase.wishlist.ToggleFavoriteUseCase
 import kotlinx.coroutines.channels.Channel
@@ -17,6 +18,7 @@ import kotlinx.coroutines.launch
 class WishlistViewModel(
     private val getWishlist: GetWishlistUseCase,
     private val toggleFavoriteUseCase: ToggleFavoriteUseCase,
+    private val syncWishlist: SyncWishlistUseCase,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(WishlistState())
@@ -32,6 +34,7 @@ class WishlistViewModel(
     fun onIntent(intent: WishlistIntent) {
         when (intent) {
             WishlistIntent.Load, WishlistIntent.Retry -> loadWishlist()
+            WishlistIntent.Refresh -> refresh()
             is WishlistIntent.ProductClicked ->
                 sendEffect(WishlistEffect.NavigateToProduct(intent.product.id.toString()))
             is WishlistIntent.RemoveClicked -> removeFavorite(intent.product)
@@ -48,10 +51,23 @@ class WishlistViewModel(
         }
     }
 
+    private fun refresh() {
+        viewModelScope.launch {
+            _state.update { it.copy(isRefreshing = true) }
+            try {
+                syncWishlist(forceRefresh = true)
+            } catch (_: Exception) {
+                sendEffect(WishlistEffect.ShowToast("Failed to sync wishlist"))
+            } finally {
+                _state.update { it.copy(isRefreshing = false) }
+            }
+        }
+    }
+
     private fun removeFavorite(product: Product) {
         _state.update { current -> current.copy(items = current.items.filterNot { it.id == product.id }) }
         viewModelScope.launch {
-            when (val result = toggleFavoriteUseCase(product)) {
+            when (toggleFavoriteUseCase(product)) {
                 ToggleFavoriteResult.Removed ->
                     sendEffect(WishlistEffect.ShowToast("${product.title} removed from wishlist"))
                 ToggleFavoriteResult.RequiresLogin -> {
