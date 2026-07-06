@@ -1,5 +1,4 @@
 package com.troves.presintation.ui.survey
-
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn

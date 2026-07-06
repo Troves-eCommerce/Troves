@@ -33,6 +33,7 @@ class HomeViewModel(
     private val getWishlist: GetWishlistUseCase,
     private val toggleFavoriteUseCase: ToggleFavoriteUseCase,
     private val observeSurveyDone: com.troves.domain.usecase.survey.ObserveSurveyDoneUseCase,
+    private val getCartStream: com.troves.domain.usecase.cart.GetCartStreamUseCase,
 ) : ViewModel(),
     StateHolder<HomeUiState> by DefaultStateHolder(HomeUiState()),
     EffectPublisher<HomeEffect> by DefaultEffectPublisher() {
@@ -41,6 +42,7 @@ class HomeViewModel(
         onIntent(HomeIntent.Load)
         observeWishlist()
         loadSurveyStatus()
+        observeCartCount()
     }
 
     fun onIntent(intent: HomeIntent) {
@@ -160,6 +162,14 @@ class HomeViewModel(
         viewModelScope.launch {
             observeSurveyDone().collect { done ->
                 updateState { copy(isSurveyDone = done) }
+            }
+        }
+    }
+
+    private fun observeCartCount() {
+        viewModelScope.launch {
+            getCartStream().collect { cart ->
+                updateState { copy(cartItemCount = cart?.totalQuantity ?: 0) }
             }
         }
     }
