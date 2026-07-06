@@ -27,6 +27,8 @@ interface AuthenticationRepository {
 
     suspend fun setSurveyDone()
 
+    suspend fun saveSurveyAnswers(answers: com.troves.domain.entity.SurveyAnswers): Result<Unit>
+
     fun getCurrentUserId(): String?
 
     fun getCurrentUserEmail(): String?
