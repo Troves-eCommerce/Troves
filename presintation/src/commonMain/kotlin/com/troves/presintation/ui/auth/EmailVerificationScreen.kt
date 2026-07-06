@@ -17,9 +17,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,7 +27,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.troves.designsystem.components.button.PrimaryButton
 import com.troves.designsystem.components.button.SecondaryButton
-import com.troves.designsystem.components.toast.TrovesToast
+import com.troves.designsystem.components.toast.ToastType
+import com.troves.designsystem.components.toast.TrovesToastHost
+import com.troves.designsystem.components.toast.rememberTrovesToastState
 import com.troves.designsystem.theme.Theme
 import com.troves.presintation.core.mvi.ObserveEffect
 import org.jetbrains.compose.resources.painterResource
@@ -53,13 +53,12 @@ fun EmailVerificationScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    var successMessage by remember { mutableStateOf<String?>(null) }
-    var toastError by remember { mutableStateOf<String?>(null) }
+    val toastState = rememberTrovesToastState()
 
     ObserveEffect(viewModel.effect) { effect ->
         when (effect) {
-            is EmailVerificationEffect.ShowMessage -> successMessage = effect.message
-            is EmailVerificationEffect.ShowError -> toastError = effect.message
+            is EmailVerificationEffect.ShowMessage -> toastState.show(effect.message, ToastType.Success)
+            is EmailVerificationEffect.ShowError -> toastState.show(effect.message, ToastType.Error)
             EmailVerificationEffect.NavigateToHome -> onVerificationSuccess()
         }
     }
@@ -170,12 +169,6 @@ fun EmailVerificationScreen(
             }
         }
 
-        TrovesToast(
-            message = successMessage ?: toastError,
-            onDismiss = {
-                successMessage = null
-                toastError = null
-            },
-        )
+        TrovesToastHost(state = toastState)
     }
 }
