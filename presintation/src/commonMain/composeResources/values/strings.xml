@@ -41,6 +41,7 @@
     <string name="profile_guest_msg">Login to track orders and manage your account</string>
     <string name="profile_login_signup">Login / Sign Up</string>
     <string name="profile_select_language">Select Language</string>
+    <string name="profile_style_survey">Style Survey</string>
 
     <!-- Checkout · shared -->
     <string name="checkout_continue">Continue</string>

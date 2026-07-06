@@ -45,6 +45,7 @@ import com.troves.presintation.ui.search.SearchScreen
 import com.troves.presintation.ui.search.SearchScreenViewModel
 import com.troves.presintation.ui.seeall.SeeAllScreen
 import com.troves.presintation.ui.splash.SplashScreen
+import com.troves.presintation.ui.survey.SurveyScreen
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import org.koin.compose.viewmodel.koinViewModel
@@ -76,6 +77,7 @@ private val navSavedStateConfiguration = SavedStateConfiguration {
             subclass(AppRoute.NewAddress::class, AppRoute.NewAddress.serializer())
             subclass(AppRoute.PaymentMethods::class, AppRoute.PaymentMethods.serializer())
             subclass(AppRoute.OrderResult::class, AppRoute.OrderResult.serializer())
+            subclass(AppRoute.Survey::class, AppRoute.Survey.serializer())
         }
     }
 }
@@ -143,6 +145,7 @@ fun AppNav() {
                         ),
                     )
                 },
+                onNavigateToSurvey = { backStack.add(AppRoute.Survey) },
             )
         }
         entry<AppRoute.Favorites> {
@@ -238,6 +241,7 @@ fun AppNav() {
                 onNavigateToPaymentMethods = { backStack.add(AppRoute.PaymentMethods) },
                 onNavigateToEditProfile = { /* Navigate to Edit Profile screen if it exists */ },
                 onNavigateToAiAssistant = { backStack.add(AppRoute.AiChat) },
+                onNavigateToSurvey = { backStack.add(AppRoute.Survey) },
             )
         }
         entry<AppRoute.AiChat> {
@@ -317,6 +321,11 @@ fun AppNav() {
                 onNavigateBack = { backStack.removeLastOrNull() },
                 onNavigateToLogin = { backStack.add(AppRoute.Login) },
                 addressId = key.addressId,
+            )
+        }
+        entry<AppRoute.Survey> {
+            SurveyScreen(
+                onNavigateBack = { backStack.removeLastOrNull() },
             )
         }
     }
