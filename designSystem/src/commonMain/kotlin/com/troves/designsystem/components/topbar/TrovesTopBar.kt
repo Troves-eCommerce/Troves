@@ -9,6 +9,7 @@ import androidx.compose.ui.unit.dp             // Added
 import com.troves.designsystem.theme.SpTheme
 import org.jetbrains.compose.resources.painterResource
 import troves.designsystem.generated.resources.Res
+import troves.designsystem.generated.resources.ic_ai_sparkles
 import troves.designsystem.generated.resources.ic_cart
 import troves.designsystem.generated.resources.ic_search
 
@@ -20,6 +21,7 @@ import troves.designsystem.generated.resources.ic_search
 fun TrovesTopBar(
     onSearchClick: () -> Unit,
     onCartClick: () -> Unit,
+    onAiClick: () -> Unit,
     modifier: Modifier = Modifier,
     title: String = "Troves",
     cartBadgeCount: Int = 0,
@@ -30,6 +32,12 @@ fun TrovesTopBar(
         title = title,
         border = border,
         actions = listOf(
+            TopBarAction(
+                icon = painterResource(Res.drawable.ic_ai_sparkles),
+                contentDescription = "Cart",
+                badgeCount = cartBadgeCount,
+                onClick = onAiClick,
+            ),
             TopBarAction(
                 icon = painterResource(Res.drawable.ic_search),
                 contentDescription = "Search",
@@ -52,7 +60,8 @@ private fun TrovesTopBarPreview() {
         TrovesTopBar(
             onSearchClick = {},
             onCartClick = {},
-            border = BorderStroke(1.dp, Color.LightGray)
+            border = BorderStroke(1.dp, Color.LightGray),
+            onAiClick = {}
         )
     }
 }
