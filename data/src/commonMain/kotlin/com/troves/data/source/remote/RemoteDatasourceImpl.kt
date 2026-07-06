@@ -3,6 +3,7 @@ package com.troves.data.source.remote
 import com.troves.data.source.remote.dto.CartItemDto
 import com.troves.data.source.remote.dto.UserProfileDto
 import com.troves.data.source.remote.service.TrovesApiService
+import com.troves.data.source.remote.service.ktor.dto.AiConversationDto
 import com.troves.data.source.remote.service.ktor.dto.Collection
 import com.troves.data.source.remote.service.ktor.dto.CollectionImage
 import com.troves.data.source.remote.service.ktor.dto.CustomCollectionResponse
@@ -162,6 +163,40 @@ class RemoteDatasourceImpl(
 
     override suspend fun clearUserCartId(userId: String) {
         userDoc(userId).set(UserProfileDto(cartId = null), merge = true)
+    }
+
+    private fun aiChatsCollection(userId: String) =
+        firestore.collection("users").document(userId).collection("aiChats")
+
+    override suspend fun getAiChats(userId: String): Result<List<AiConversationDto>> {
+        return try {
+            val snapshot = aiChatsCollection(userId).get()
+            val items = snapshot.documents.map { it.data(AiConversationDto.serializer()) }
+            Result.Success(items)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
+    override suspend fun saveAiChat(userId: String, chat: AiConversationDto): Result<String> {
+        return try {
+            val collection = aiChatsCollection(userId)
+            val ref = if (chat.id.isBlank()) collection.document else collection.document(chat.id)
+            val toSave = if (chat.id.isBlank()) chat.copy(id = ref.id) else chat
+            ref.set(toSave)
+            Result.Success(ref.id)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
+    override suspend fun deleteAiChat(userId: String, chatId: String): Result<Unit> {
+        return try {
+            aiChatsCollection(userId).document(chatId).delete()
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
     }
 
     override suspend fun getDiscountCodes(): Result<List<com.troves.domain.entity.DiscountCode>> {
