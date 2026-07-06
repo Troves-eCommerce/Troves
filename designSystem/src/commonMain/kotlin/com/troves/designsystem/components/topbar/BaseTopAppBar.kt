@@ -25,6 +25,7 @@ import com.troves.designsystem.theme.Theme
 data class TopBarAction(
     val icon: Painter,
     val contentDescription: String? = null,
+    val badgeCount: Int = 0,
     val onClick: () -> Unit,
 )
 
@@ -69,12 +70,32 @@ fun BaseTopAppBar(
 
         Row(horizontalArrangement = Arrangement.spacedBy(actionSpacing)) {
             actions.forEach { action ->
-                IconBox(
-                    icon = action.icon,
-                    contentDescription = action.contentDescription,
-                    onClick = action.onClick,
-                    border = border,
-                )
+                if (action.badgeCount > 0) {
+                    androidx.compose.material3.BadgedBox(
+                        badge = {
+                            androidx.compose.material3.Badge(
+                                containerColor = Theme.colors.primary,
+                                contentColor = Theme.colors.onPrimary
+                            ) {
+                                androidx.compose.material3.Text("${action.badgeCount}")
+                            }
+                        }
+                    ) {
+                        IconBox(
+                            icon = action.icon,
+                            contentDescription = action.contentDescription,
+                            onClick = action.onClick,
+                            border = border,
+                        )
+                    }
+                } else {
+                    IconBox(
+                        icon = action.icon,
+                        contentDescription = action.contentDescription,
+                        onClick = action.onClick,
+                        border = border,
+                    )
+                }
             }
         }
     }
@@ -90,8 +111,8 @@ private fun BaseTopAppBarPreview() {
             onLeadingClick = {},
             border = BorderStroke(1.dp, Color.LightGray),
             actions = listOf(
-                TopBarAction(ColorPainter(Color.Black), "Search") {},
-                TopBarAction(ColorPainter(Color.Black), "Cart") {},
+                TopBarAction(ColorPainter(Color.Black), "Search", 0) {},
+                TopBarAction(ColorPainter(Color.Black), "Cart", 3) {},
             ),
         )
     }

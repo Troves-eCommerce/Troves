@@ -130,6 +130,7 @@ fun HomeScreen(
             TrovesTopBar(
                 onSearchClick = { viewModel.onIntent(HomeIntent.SearchClicked) },
                 onCartClick = { viewModel.onIntent(HomeIntent.CartClicked) },
+                cartBadgeCount = state.cartItemCount,
                 border = BorderStroke(
                     width = 1.dp,
                     color = Theme.colors.onPrimary

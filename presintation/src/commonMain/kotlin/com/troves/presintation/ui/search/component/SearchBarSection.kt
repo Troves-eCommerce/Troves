@@ -34,6 +34,7 @@ fun SearchBarSection(
     onSearch: (String) -> Unit,
     onBackClick: () -> Unit,
     onFilterClick: () -> Unit,
+    onClearSearches: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val barBg = if (isSystemInDarkTheme()) Color(0xFF2C2C2C) else Color(0xFFEFEFEF)
@@ -69,7 +70,7 @@ fun SearchBarSection(
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
             keyboardActions = KeyboardActions(onSearch = { onSearch(query) }),
             fieldHeight = 48.dp,
-            onClickTrailingIcon = { if (query.isNotEmpty()) onQueryChange("") },
+            onClickTrailingIcon = onClearSearches,
             shape = CircleShape
         )
         

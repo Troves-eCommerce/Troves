@@ -1,16 +1,6 @@
-package com.troves.data.source.remote.dto
+package com.troves.domain.entity
 
-import kotlinx.serialization.Serializable
-
-
-@Serializable
-data class UserProfileDto(
-    val cartId: String? = null,
-    val survey: SurveyAnswersDto? = null,
-)
-
-@Serializable
-data class SurveyAnswersDto(
+data class SurveyAnswers(
     val favoriteCategories: List<String> = emptyList(),
     val favoriteBrands: List<String> = emptyList(),
     val preferredPriceRange: String = "",

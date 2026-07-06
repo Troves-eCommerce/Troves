@@ -13,16 +13,22 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
+import com.troves.data.source.remote.RemoteDatasource
+import com.troves.data.mapper.toDto
+import com.troves.domain.entity.SurveyAnswers
+
 interface PlatformAuthenticationRepository : AuthenticationRepository
 
 expect fun createAuthenticationRepository(
     preferences: TrovesPreferences,
     storefront: StorefrontApiService,
+    remoteDatasource: RemoteDatasource,
 ): PlatformAuthenticationRepository
 
 class AuthenticationRepositoryFirebaseImpl(
     private val preferences: TrovesPreferences,
     private val storefront: StorefrontApiService,
+    private val remoteDatasource: RemoteDatasource,
 ) : PlatformAuthenticationRepository {
 
     private val firebaseAuth by lazy { Firebase.auth }
@@ -93,11 +99,25 @@ class AuthenticationRepositoryFirebaseImpl(
         preferences.setOnboardingDone(true)
     }
 
+    override val isSurveyDoneStream: Flow<Boolean> = preferences.isSurveyDone
+
     override suspend fun isSurveyDone(): Boolean =
         preferences.isSurveyDone.first()
 
     override suspend fun setSurveyDone() {
         preferences.setSurveyDone(true)
+    }
+
+    override suspend fun saveSurveyAnswers(answers: SurveyAnswers): Result<Unit> {
+        val userId = getCurrentUserId() ?: return Result.Error(Exception("User not logged in"))
+        
+        val dto = answers.toDto()
+        val remoteResult = remoteDatasource.saveSurveyAnswers(userId, dto)
+        
+        if (remoteResult is Result.Success) {
+            setSurveyDone()
+        }
+        return remoteResult
     }
 
     override fun getCurrentUserId(): String? = firebaseAuth.currentUser?.uid

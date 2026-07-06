@@ -30,7 +30,6 @@ import com.composables.icons.lucide.History
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.X
 import com.troves.designsystem.theme.Theme
-import com.troves.presintation.ui.search.RecentSearchUi
 
 /**
  * Copyright (c) 2026 Wahid Ali Wahid Hussien.
@@ -109,11 +108,13 @@ private fun RecentSearchItem(
     onRemoveClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val itemBg = if (androidx.compose.foundation.isSystemInDarkTheme()) Color(0xFF2C2C2C) else Color(0xFFF5F5F5)
+
     Row(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(12.dp))
-            .background(Color(0xFFF5F5F5))
+            .background(itemBg)
             .clickable(onClick = onClick)
             .padding(horizontal = 12.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,

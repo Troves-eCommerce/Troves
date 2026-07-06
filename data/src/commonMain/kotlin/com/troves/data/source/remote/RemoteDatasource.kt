@@ -56,6 +56,7 @@ interface RemoteDatasource {
     suspend fun getUserCartId(userId: String): String?
     suspend fun setUserCartId(userId: String, cartId: String)
     suspend fun clearUserCartId(userId: String)
+    suspend fun saveSurveyAnswers(userId: String, answers: com.troves.data.source.remote.dto.SurveyAnswersDto): Result<Unit>
     //endregion
 
     //region aiChats

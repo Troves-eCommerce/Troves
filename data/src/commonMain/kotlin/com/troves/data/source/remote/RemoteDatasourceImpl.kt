@@ -165,6 +165,15 @@ class RemoteDatasourceImpl(
         userDoc(userId).set(UserProfileDto(cartId = null), merge = true)
     }
 
+    override suspend fun saveSurveyAnswers(userId: String, answers: com.troves.data.source.remote.dto.SurveyAnswersDto): Result<Unit> {
+        return try {
+            userDoc(userId).set(UserProfileDto(survey = answers), merge = true)
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
     private fun aiChatsCollection(userId: String) =
         firestore.collection("users").document(userId).collection("aiChats")
 
