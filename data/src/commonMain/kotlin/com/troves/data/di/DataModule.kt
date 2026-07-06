@@ -98,12 +98,13 @@ val dataModule = module {
 
     // ── Repositories ──────────────────────────────────────────────────────────
     single<TrovesRepository>          { TrovesRepositoryImpl(get(), get(), get(), get(), get(), get()) }
-    single<AuthenticationRepository>  { createAuthenticationRepository(get() , get()) }
+    single<AuthenticationRepository>  { createAuthenticationRepository(get(), get(), get()) }
     single<PaymentRepository>         { PaymentRepositoryImpl(get()) }
     single<WishlistRepository>        { WishlistRepositoryImpl(get() , get()) }
     single<LocationRepository>        { LocationRepositoryImpl(get()) }
     single<AddressRepository>         { AddressRepositoryImpl(get(), get(), get()) }
-    single<AiAssistantRepository>     { AiAssistantRepositoryImpl(get(), get()) }
+    single { AiAssistantRepositoryImpl(get(), get(), get()) }
+    single<AiAssistantRepository>     { get<AiAssistantRepositoryImpl>() }
     single<CurrencyRepository>        { CurrencyRepositoryImpl(get(), get()) }
     single<FirebaseFirestore> { Firebase.firestore }
 }

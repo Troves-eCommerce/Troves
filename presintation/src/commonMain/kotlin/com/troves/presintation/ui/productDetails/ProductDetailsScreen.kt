@@ -1,12 +1,6 @@
 package com.troves.presintation.ui.productDetails
 
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -25,10 +19,20 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.TextButton
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.ui.draw.clip
+import com.troves.designsystem.components.button.PrimaryButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -45,8 +49,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.troves.designsystem.components.button.PrimaryButton
 import com.troves.designsystem.components.dialog.LoginRequiredDialog
+import com.troves.designsystem.components.toast.TrovesSnackbarHost
 import com.troves.designsystem.theme.Theme
 import com.troves.designsystem.util.formatPrice
 import com.troves.designsystem.util.stripHtml
@@ -143,11 +147,11 @@ fun ProductDetailsScreen(
             }
         }
 
-        SnackbarHost(
+        TrovesSnackbarHost(
             hostState = snackBarHostState,
             modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .navigationBarsPadding()
+                .align(Alignment.TopCenter)
+                .statusBarsPadding()
                 .padding(16.dp),
         )
 
@@ -381,6 +385,7 @@ fun ProductDetailsScreenContent(
                             style = Theme.typography.body.small,
                             color = Theme.colors.primary,
                             fontWeight = FontWeight.Bold,
+                            fontSize = 14.sp,
                             modifier = Modifier.clickable { isDescriptionExpanded = !isDescriptionExpanded }
                         )
                     }

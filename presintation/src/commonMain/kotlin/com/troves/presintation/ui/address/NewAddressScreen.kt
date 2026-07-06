@@ -19,9 +19,9 @@ import troves.designsystem.generated.resources.ic_arrow_back
 import org.koin.compose.viewmodel.koinViewModel
 import com.troves.presintation.core.mvi.ObserveEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarDuration
+import com.troves.designsystem.components.toast.TrovesSnackbarHost
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.rememberCoroutineScope
@@ -79,10 +79,10 @@ fun NewAddressScreenContent(
     var expanded by remember { mutableStateOf(false) }
     var cityExpanded by remember { mutableStateOf(false) }
 
+    Box(modifier = Modifier.fillMaxSize()) {
     Scaffold(
         modifier = Modifier.fillMaxSize().statusBarsPadding(),
         containerColor = Theme.colors.backGround,
-        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             BaseTopAppBar(
                 title = if (state.isEditMode) stringResource(Res.string.address_edit_title) else stringResource(Res.string.address_new_title),
@@ -148,6 +148,7 @@ fun NewAddressScreenContent(
                 title = stringResource(Res.string.address_phone_title),
                 hint = stringResource(Res.string.address_phone_hint),
                 singleLine = true,
+                keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = androidx.compose.ui.text.input.KeyboardType.Phone),
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -306,5 +307,10 @@ fun NewAddressScreenContent(
                 modifier = Modifier.fillMaxWidth().heightIn(min = 100.dp)
             )
         }
+    }
+        TrovesSnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier.align(Alignment.TopCenter).statusBarsPadding().padding(16.dp),
+        )
     }
 }

@@ -173,12 +173,19 @@ class NewAddressViewModel(
             return
         }
         
-        if (!com.troves.domain.utils.PhoneUtils.isValidEgyptianPhone(state.phone)) {
+        val isEgypt = state.country.equals("Egypt", ignoreCase = true) || state.country.equals("EG", ignoreCase = true)
+        val cleanPhone = state.phone.filter { !it.isWhitespace() }
+        
+        if (isEgypt && !com.troves.domain.utils.PhoneUtils.isValidEgyptianPhone(cleanPhone)) {
             sendEffect(NewAddressEffect.ShowToast("Please enter a valid Egyptian phone number"))
             return
         }
         
-        val normalizedPhone = com.troves.domain.utils.PhoneUtils.normalizeEgyptianPhone(state.phone)
+        val normalizedPhone = if (isEgypt) {
+            com.troves.domain.utils.PhoneUtils.normalizeEgyptianPhone(cleanPhone)
+        } else {
+            cleanPhone
+        }
 
         updateState { copy(isSaving = true) }
         viewModelScope.launch {

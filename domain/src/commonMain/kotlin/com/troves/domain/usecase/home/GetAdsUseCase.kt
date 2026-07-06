@@ -25,10 +25,10 @@ class GetAdsUseCase(
                         buttonText = "Copy code"
                     )
                 }
-                Result.Success(staticAds + dynamicAds)
+                Result.Success((staticAds + dynamicAds).shuffled())
             },
             onError = {
-                Result.Success(staticAds)
+                Result.Success(staticAds.shuffled())
             },
             onLoading = { Result.Loading }
         )

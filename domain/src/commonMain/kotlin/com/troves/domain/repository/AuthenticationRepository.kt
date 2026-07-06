@@ -22,6 +22,15 @@ interface AuthenticationRepository {
     suspend fun isOnboardingDone(): Boolean
 
     suspend fun setOnboardingDone()
+
+    val isSurveyDoneStream: Flow<Boolean>
+
+    suspend fun isSurveyDone(): Boolean
+
+    suspend fun setSurveyDone()
+
+    suspend fun saveSurveyAnswers(answers: com.troves.domain.entity.SurveyAnswers): Result<Unit>
+
     fun getCurrentUserId(): String?
 
     fun getCurrentUserEmail(): String?

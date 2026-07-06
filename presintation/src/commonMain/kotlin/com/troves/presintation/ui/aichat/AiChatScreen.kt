@@ -1,6 +1,7 @@
 package com.troves.presintation.ui.aichat
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -17,8 +18,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import com.troves.designsystem.components.toast.TrovesSnackbarHost
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -31,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import com.troves.designsystem.theme.Theme
 import com.troves.presintation.core.mvi.ObserveEffect
 import com.troves.presintation.ui.aichat.components.AiChatHeader
+import com.troves.presintation.ui.aichat.components.AiChatHistorySheet
 import com.troves.presintation.ui.aichat.components.AssistantMessageBubble
 import com.troves.presintation.ui.aichat.components.ChatInputBar
 import com.troves.presintation.ui.aichat.components.ErrorRetryBar
@@ -126,8 +128,9 @@ fun AiChatScreen(
         }
     }
 
+    Box(modifier = modifier.fillMaxSize()) {
     Scaffold(
-        modifier = modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize(),
         containerColor = Theme.colors.backGround,
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         topBar = {
@@ -136,6 +139,7 @@ fun AiChatScreen(
                     title = stringResource(Res.string.ai_assistant_name),
                     subtitle = stringResource(Res.string.ai_assistant_subtitle),
                     onBack = { onIntent(AiChatIntent.OnBack) },
+                    onHistoryClick = { onIntent(AiChatIntent.OpenHistory) },
                 )
 
                 state.rateLimitedSeconds?.let { seconds ->
@@ -208,7 +212,6 @@ fun AiChatScreen(
                 )
             }
         },
-        snackbarHost = { SnackbarHost(hostState = snackBarState) },
     ) { paddingValues ->
         LazyColumn(
             state = listState,
@@ -238,5 +241,24 @@ fun AiChatScreen(
                 item { TypingIndicator() }
             }
         }
+    }
+        TrovesSnackbarHost(
+            hostState = snackBarState,
+            modifier = Modifier.align(Alignment.TopCenter).statusBarsPadding().padding(16.dp),
+        )
+    }
+
+    if (state.showHistory) {
+        AiChatHistorySheet(
+            loading = state.historyLoading,
+            requiresLogin = state.historyRequiresLogin,
+            error = state.historyError,
+            conversations = state.conversations,
+            onSelect = { onIntent(AiChatIntent.LoadConversation(it)) },
+            onDelete = { onIntent(AiChatIntent.DeleteConversation(it)) },
+            onNewChat = { onIntent(AiChatIntent.NewChat) },
+            onRetry = { onIntent(AiChatIntent.OpenHistory) },
+            onDismiss = { onIntent(AiChatIntent.CloseHistory) },
+        )
     }
 }

@@ -14,10 +14,12 @@ import com.troves.domain.usecase.wishlist.ToggleFavoriteResult
 import com.troves.domain.usecase.wishlist.ToggleFavoriteUseCase
 import com.troves.domain.utils.Result
 import com.troves.domain.utils.getOrElse
+import com.troves.domain.usecase.survey.IsSurveyDoneUseCase
 import com.troves.presintation.core.mvi.DefaultEffectPublisher
 import com.troves.presintation.core.mvi.DefaultStateHolder
 import com.troves.presintation.core.mvi.EffectPublisher
 import com.troves.presintation.core.mvi.StateHolder
+import com.troves.presintation.ui.home.HomeEffect.*
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
@@ -31,6 +33,8 @@ class HomeViewModel(
     private val isLoggedIn: IsLoggedInUseCase,
     private val getWishlist: GetWishlistUseCase,
     private val toggleFavoriteUseCase: ToggleFavoriteUseCase,
+    private val observeSurveyDone: com.troves.domain.usecase.survey.ObserveSurveyDoneUseCase,
+    private val getCartStream: com.troves.domain.usecase.cart.GetCartStreamUseCase,
 ) : ViewModel(),
     StateHolder<HomeUiState> by DefaultStateHolder(HomeUiState()),
     EffectPublisher<HomeEffect> by DefaultEffectPublisher() {
@@ -38,6 +42,8 @@ class HomeViewModel(
     init {
         onIntent(HomeIntent.Load)
         observeWishlist()
+        loadSurveyStatus()
+        observeCartCount()
     }
 
     fun onIntent(intent: HomeIntent) {
@@ -45,6 +51,7 @@ class HomeViewModel(
             HomeIntent.Load, HomeIntent.Retry -> loadHomeFeed()
             HomeIntent.SearchClicked -> sendEffect(HomeEffect.NavigateToSearch)
             HomeIntent.CartClicked -> onCartClicked()
+            HomeIntent.SurveyBannerClicked -> sendEffect(HomeEffect.NavigateToSurvey)
             HomeIntent.SignUpPromptConfirmed -> {
                 updateState { copy(showSignUpPrompt = false) }
                 sendEffect(HomeEffect.NavigateToRegister)
@@ -53,14 +60,14 @@ class HomeViewModel(
             HomeIntent.SeeAllBrandsClicked -> sendEffect(HomeEffect.NavigateToAllBrands)
             HomeIntent.ViewAllCategoriesClicked -> sendEffect(HomeEffect.NavigateToAllCategories)
             HomeIntent.ViewAllJustForYouClicked -> sendEffect(
-                HomeEffect.NavigateToProducts(
+                NavigateToProducts(
                     sourceType = "collection",
                     sourceId = "just-for-you",
                     sourceName = "Just For You",
                 ),
             )
             HomeIntent.ViewAllTrendingClicked -> sendEffect(
-                HomeEffect.NavigateToProducts(
+                NavigateToProducts(
                     sourceType = "collection",
                     sourceId = "trending",
                     sourceName = "Trending Now",
@@ -72,36 +79,37 @@ class HomeViewModel(
                 val targetName = intent.ad.targetName
                 
                 if (intent.ad.buttonText == "Copy code") {
-                    sendEffect(HomeEffect.ShowToast("Copied ${intent.ad.titleTop} to clipboard"))
+                    sendEffect(ShowToast("Copied ${intent.ad.titleTop} to clipboard"))
                 } else if (targetType != null && targetId != null && targetName != null) {
                     sendEffect(
-                        HomeEffect.NavigateToProducts(
+                        NavigateToProducts(
                             sourceType = targetType,
                             sourceId = targetId,
                             sourceName = targetName,
                         )
                     )
                 } else {
-                    sendEffect(HomeEffect.ShowToast(intent.ad.titleTop))
+                    sendEffect(ShowToast(intent.ad.titleTop))
                 }
             }
             is HomeIntent.BrandClicked -> sendEffect(
-                HomeEffect.NavigateToProducts(
+                NavigateToProducts(
                     sourceType = "brand",
                     sourceId = intent.brand.id.toString(),
                     sourceName = intent.brand.name,
                 ),
             )
             is HomeIntent.CategoryClicked -> sendEffect(
-                HomeEffect.NavigateToProducts(
+                NavigateToProducts(
                     sourceType = "category",
                     sourceId = intent.category.id.toString(),
                     sourceName = intent.category.name,
                 ),
             )
             is HomeIntent.ProductClicked ->
-                sendEffect(HomeEffect.NavigateToProduct(intent.product.id.toString()))
+                sendEffect(NavigateToProduct(intent.product.id.toString()))
             is HomeIntent.FavoriteToggled -> toggleFavorite(intent.product)
+            HomeIntent.AiClicked -> {sendEffect(NavigateToAiChat)}
         }
     }
 
@@ -152,6 +160,21 @@ class HomeViewModel(
         }
     }
 
+    private fun loadSurveyStatus() {
+        viewModelScope.launch {
+            observeSurveyDone().collect { done ->
+                updateState { copy(isSurveyDone = done) }
+            }
+        }
+    }
+
+    private fun observeCartCount() {
+        viewModelScope.launch {
+            getCartStream().collect { cart ->
+                updateState { copy(cartItemCount = cart?.lines?.size ?: 0) }
+            }
+        }
+    }
 
     private fun onCartClicked() {
         viewModelScope.launch {

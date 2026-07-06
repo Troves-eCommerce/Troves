@@ -30,7 +30,6 @@ import com.composables.icons.lucide.History
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.X
 import com.troves.designsystem.theme.Theme
-import com.troves.presintation.ui.search.RecentSearchUi
 
 /**
  * Copyright (c) 2026 Wahid Ali Wahid Hussien.
@@ -54,7 +53,7 @@ import com.troves.presintation.ui.search.RecentSearchUi
  */
 @Composable
 fun RecentSearchSection(
-    recentSearches: List<RecentSearchUi>,
+    recentSearches: List<String>,
     modifier: Modifier = Modifier,
     onSearchClick: (String) -> Unit,
     onRemoveClick: (String) -> Unit,
@@ -92,9 +91,9 @@ fun RecentSearchSection(
             ) {
                 recentSearches.forEach { query ->
                     RecentSearchItem(
-                        query = query.query,
-                        onClick = { onSearchClick(query.query) },
-                        onRemoveClick = { onRemoveClick(query.query) }
+                        query = query,
+                        onClick = { onSearchClick(query) },
+                        onRemoveClick = { onRemoveClick(query) }
                     )
                 }
             }
@@ -109,11 +108,13 @@ private fun RecentSearchItem(
     onRemoveClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val itemBg = if (androidx.compose.foundation.isSystemInDarkTheme()) Color(0xFF2C2C2C) else Color(0xFFF5F5F5)
+
     Row(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(12.dp))
-            .background(Color(0xFFF5F5F5))
+            .background(itemBg)
             .clickable(onClick = onClick)
             .padding(horizontal = 12.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,

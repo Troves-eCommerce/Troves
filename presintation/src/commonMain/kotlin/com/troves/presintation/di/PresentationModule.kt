@@ -14,10 +14,12 @@ import com.troves.presintation.ui.onboarding.OnboardingViewModel
 import com.troves.presintation.ui.productDetails.ProductDetailsViewModel
 import com.troves.presintation.ui.search.SearchScreenViewModel
 import com.troves.presintation.ui.profile.ProfileViewModel
+import com.troves.presintation.ui.orderdetails.OrderDetailsViewModel
 import com.troves.presintation.ui.address.ManageSavedAddressesViewModel
 import com.troves.presintation.ui.address.NewAddressViewModel
 import com.troves.presintation.ui.seeall.SeeAllViewModel
 import com.troves.presintation.ui.aichat.AiChatViewModel
+import com.troves.presintation.ui.survey.SurveyViewModel
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
@@ -34,9 +36,11 @@ val presentationModule = module {
     viewModelOf(::CartViewModel)
     viewModelOf(::CheckoutViewModel)
     viewModelOf(::OrdersViewModel)
+    viewModelOf(::OrderDetailsViewModel)
     viewModelOf(::ProfileViewModel)
     viewModelOf(::ManageSavedAddressesViewModel)
     viewModelOf(::NewAddressViewModel)
     viewModelOf(::SeeAllViewModel)
     viewModelOf(::AiChatViewModel)
+    viewModelOf(::SurveyViewModel)
 }

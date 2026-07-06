@@ -38,6 +38,7 @@ import com.troves.presintation.ui.home.HomeScreen
 import com.troves.presintation.ui.onboarding.OnboardingScreen
 import com.troves.presintation.ui.orderresult.OrderResultScreen
 import com.troves.presintation.ui.orders.OrdersScreen
+import com.troves.presintation.ui.orderdetails.OrderDetailsScreen
 import com.troves.presintation.ui.payment.PaymentMethodsScreen
 import com.troves.presintation.ui.productDetails.ProductDetailsScreen
 import com.troves.presintation.ui.products.ProductsScreen
@@ -46,6 +47,7 @@ import com.troves.presintation.ui.search.SearchScreen
 import com.troves.presintation.ui.search.SearchScreenViewModel
 import com.troves.presintation.ui.seeall.SeeAllScreen
 import com.troves.presintation.ui.splash.SplashScreen
+import com.troves.presintation.ui.survey.SurveyScreen
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import org.koin.compose.viewmodel.koinViewModel
@@ -73,11 +75,13 @@ private val navSavedStateConfiguration = SavedStateConfiguration {
             subclass(AppRoute.Cart::class, AppRoute.Cart.serializer())
             subclass(AppRoute.Checkout::class, AppRoute.Checkout.serializer())
             subclass(AppRoute.Orders::class, AppRoute.Orders.serializer())
+            subclass(AppRoute.OrderDetails::class, AppRoute.OrderDetails.serializer())
             subclass(AppRoute.Search::class, AppRoute.Search.serializer())
             subclass(AppRoute.ManageAddresses::class, AppRoute.ManageAddresses.serializer())
             subclass(AppRoute.NewAddress::class, AppRoute.NewAddress.serializer())
             subclass(AppRoute.PaymentMethods::class, AppRoute.PaymentMethods.serializer())
             subclass(AppRoute.OrderResult::class, AppRoute.OrderResult.serializer())
+            subclass(AppRoute.Survey::class, AppRoute.Survey.serializer())
         }
     }
 }
@@ -145,6 +149,12 @@ fun AppNav() {
                         ),
                     )
                 },
+                onNavigateToSurvey = { backStack.add(AppRoute.Survey) },
+                onNavigateToAiChat = {
+                    backStack.add(
+                        AppRoute.AiChat
+                    )
+                }
             )
         }
         entry<AppRoute.Favorites> {
@@ -255,6 +265,7 @@ fun AppNav() {
                 onNavigateToPaymentMethods = { backStack.add(AppRoute.PaymentMethods) },
                 onNavigateToEditProfile = { /* Navigate to Edit Profile screen if it exists */ },
                 onNavigateToAiAssistant = { backStack.add(AppRoute.AiChat) },
+                onNavigateToSurvey = { backStack.add(AppRoute.Survey) },
             )
         }
         entry<AppRoute.AiChat> {
@@ -301,7 +312,18 @@ fun AppNav() {
             )
         }
         entry<AppRoute.Orders> {
-            OrdersScreen()
+            OrdersScreen(
+                onNavigateToDetails = { orderId ->
+                    backStack.add(AppRoute.OrderDetails(orderId))
+                }
+            )
+        }
+        entry<AppRoute.OrderDetails> { key ->
+            OrderDetailsScreen(
+                orderId = key.orderId,
+                onNavigateBack = { backStack.removeLastOrNull() },
+                onNavigateToSupport = { backStack.add(AppRoute.AiChat) }
+            )
         }
         entry<AppRoute.Search> {
             val viewModel: SearchScreenViewModel = koinViewModel()
@@ -334,6 +356,11 @@ fun AppNav() {
                 onNavigateBack = { backStack.removeLastOrNull() },
                 onNavigateToLogin = { backStack.add(AppRoute.Login) },
                 addressId = key.addressId,
+            )
+        }
+        entry<AppRoute.Survey> {
+            SurveyScreen(
+                onNavigateBack = { backStack.removeLastOrNull() },
             )
         }
     }

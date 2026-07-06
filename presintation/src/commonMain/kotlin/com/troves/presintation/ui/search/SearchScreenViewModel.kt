@@ -8,6 +8,7 @@ import com.troves.domain.usecase.home.GetCategoriesUseCase
 import com.troves.domain.usecase.search.SearchProductsUseCase
 import com.troves.domain.usecase.shared.GetProductsUseCase
 import com.troves.domain.usecase.wishlist.GetWishlistUseCase
+import com.troves.domain.usecase.wishlist.ToggleFavoriteResult
 import com.troves.domain.usecase.wishlist.ToggleFavoriteUseCase
 import com.troves.domain.utils.Result
 import com.troves.domain.utils.fold
@@ -16,12 +17,15 @@ import com.troves.presintation.core.mvi.DefaultEffectPublisher
 import com.troves.presintation.core.mvi.DefaultStateHolder
 import com.troves.presintation.core.mvi.EffectPublisher
 import com.troves.presintation.core.mvi.StateHolder
+import com.troves.presintation.ui.search.SearchEffect.*
 import com.troves.presintation.ui.search.SearchEffect.NavigateToDetails
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterNot
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -63,13 +67,23 @@ class SearchScreenViewModel(
 
     init {
         searchQueryFlow
-            .debounce(350.milliseconds)
+            .filterNot { it.isBlank() }
+            .debounce(500.milliseconds)
             .distinctUntilChanged()
-            .onEach { q -> runSearch(q) }
+            .onEach { q ->
+                runSearch(q)
+                updateState {
+                    val searches = recentSearches.toMutableList()
+                    if (!searches.contains(q)) {
+                        searches.add(0, q)
+                    }
+                    copy(recentSearches = searches.take(10))
+                }
+            }
             .launchIn(viewModelScope)
-            
+
         getWishlistUseCase()
-            .onEach { wishlist -> 
+            .onEach { wishlist ->
                 updateState { copy(favoriteProductIds = wishlist.map { it.id.toString() }.toSet()) }
             }
             .launchIn(viewModelScope)
@@ -77,7 +91,12 @@ class SearchScreenViewModel(
 
     fun onIntent(intent: SearchIntent) {
         when (intent) {
-            SearchIntent.Load, SearchIntent.Retry -> load()
+            SearchIntent.Load -> load()
+            SearchIntent.Retry -> {
+                viewModelScope.launch {
+                    runSearch(state.value.query)
+                }
+            }
 
             SearchIntent.OnFilterClick -> updateState { copy(showFilterSheet = true) }
 
@@ -92,6 +111,7 @@ class SearchScreenViewModel(
                         )
                     )
                 }
+                viewModelScope.launch { runSearch(state.value.query) }
             }
 
             is SearchIntent.CategoriesChange -> {
@@ -105,10 +125,17 @@ class SearchScreenViewModel(
                         )
                     )
                 }
+                viewModelScope.launch { runSearch(state.value.query) }
             }
 
             is SearchIntent.SearchQueryChange -> {
-                updateState { copy(query = intent.newQuery) }
+                if (intent.newQuery.isBlank()) {
+                    viewModelScope.launch {
+                        updateState { copy(query = intent.newQuery, products = emptyList()) }
+                    }
+                } else {
+                    updateState { copy(query = intent.newQuery) }
+                }
                 searchQueryFlow.value = intent.newQuery
             }
 
@@ -124,34 +151,39 @@ class SearchScreenViewModel(
             SearchIntent.OnBottomSheetDismiss -> updateState { copy(showFilterSheet = false) }
 
             is SearchIntent.OnSearch -> {
-                viewModelScope.launch { runSearch(query = intent.query) }
-            }
-
-            is SearchIntent.BrandChange -> {
-                viewModelScope.launch {
-                    val newBrand = if (state.value.selectedBrand == intent.newBrand) "" else intent.newBrand
-                    updateState { copy(selectedBrand = newBrand) }
-                    runSearch(state.value.query)
+                updateState { copy(query = intent.query) }
+                searchQueryFlow.value = intent.query
+                viewModelScope.launch { 
+                    runSearch(query = intent.query) 
+                    updateState {
+                        val searches = recentSearches.toMutableList()
+                        if (intent.query.isNotBlank() && !searches.contains(intent.query)) {
+                            searches.add(0, intent.query)
+                        }
+                        copy(recentSearches = searches.take(10))
+                    }
                 }
             }
 
             is SearchIntent.ApplyFilters -> {
                 viewModelScope.launch {
                     updateState {
-                        copy(sheetFilterOptions = intent.sheetFilterOptions, showFilterSheet = false)
+                        copy(
+                            sheetFilterOptions = intent.sheetFilterOptions,
+                            showFilterSheet = false
+                        )
                     }
-                    runSearch(state.value.query)
                 }
             }
 
             is SearchIntent.RemoveRecentSearch -> {
-                updateState { 
-                    copy(recentSearches = recentSearches.filterNot { it.query == intent.query }.toSet())
+                updateState {
+                    copy(recentSearches = recentSearches.filterNot { it == intent.query })
                 }
             }
 
             SearchIntent.ClearRecentSearches -> {
-                updateState { copy(recentSearches = emptySet()) }
+                updateState { copy(recentSearches = emptyList()) }
             }
 
             is SearchIntent.ToggleFavorite -> {
@@ -161,20 +193,31 @@ class SearchScreenViewModel(
                         ?: return@launch
 
                     when (val result = toggleFavoriteUseCase(product)) {
-                        is com.troves.domain.usecase.wishlist.ToggleFavoriteResult.RequiresLogin -> {
-                            sendEffect(SearchEffect.ShowMessage("Please login to add to wishlist"))
+                        is ToggleFavoriteResult.RequiresLogin -> {
+                            sendEffect(ShowMessage("Please login to add to wishlist"))
                         }
-                        is com.troves.domain.usecase.wishlist.ToggleFavoriteResult.Error -> {
-                            sendEffect(SearchEffect.ShowMessage(result.throwable.message ?: "An error occurred"))
+
+                        is ToggleFavoriteResult.Error -> {
+                            sendEffect(
+                                ShowMessage(
+                                    result.throwable.message ?: "An error occurred"
+                                )
+                            )
                         }
-                        com.troves.domain.usecase.wishlist.ToggleFavoriteResult.Added -> {
-                            sendEffect(SearchEffect.ShowMessage("Added to wishlist"))
+
+                        ToggleFavoriteResult.Added -> {
+                            sendEffect(ShowMessage("Added to wishlist"))
                         }
-                        com.troves.domain.usecase.wishlist.ToggleFavoriteResult.Removed -> {
-                            sendEffect(SearchEffect.ShowMessage("Removed from wishlist"))
+
+                        ToggleFavoriteResult.Removed -> {
+                            sendEffect(ShowMessage("Removed from wishlist"))
                         }
                     }
                 }
+            }
+
+            SearchIntent.ClearSearches -> {
+                updateState { copy(products = emptyList(), query = "") }
             }
         }
     }
@@ -188,7 +231,7 @@ class SearchScreenViewModel(
         val categoryNames = state.value.categories
             .filter { it.id.toString() in state.value.sheetFilterOptions.selectedCategories }
             .map { it.name }
-        
+
         val sheetBrandNames = state.value.brands
             .filter { it.id.toString() in state.value.sheetFilterOptions.selectedBrands }
             .map { it.name }
@@ -217,25 +260,19 @@ class SearchScreenViewModel(
 
     private fun load() {
         viewModelScope.launch {
-            updateState { copy(isLoading = true, errorMessage = null) }
+            updateState { copy(isInitializing = true, errorMessage = null) }
             val categories = async { getCategoriesUseCase() }
             val brands = async { getBrandsUseCase() }
-            val products = async { getProductsUseCase() }
 
             val categoryResult = categories.await()
             val brandsResult = brands.await()
-            val productsResult = products.await()
 
-            val hasError = listOf(categoryResult, brandsResult, productsResult)
+            val hasError = listOf(categoryResult, brandsResult)
                 .firstNotNullOfOrNull { (it as? Result.Error)?.throwable }
-
-            val loadedProducts = productsResult.getOrElse { emptyList() }
 
             updateState {
                 copy(
-                    isLoading = false,
-                    allProducts = loadedProducts,
-                    products = loadedProducts,
+                    isInitializing = false,
                     brands = brandsResult.getOrElse { emptyList() },
                     categories = categoryResult.getOrElse { emptyList() },
                     errorMessage = hasError?.message,

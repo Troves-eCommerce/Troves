@@ -32,6 +32,7 @@ fun AiChatHeader(
     title: String,
     subtitle: String,
     onBack: () -> Unit,
+    onHistoryClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -78,13 +79,11 @@ fun AiChatHeader(
 
         IconBox(
             icon = rememberVectorPainter(Lucide.Clock),
+            contentDescription = "Chat history",
+            onClick = onHistoryClick,
             iconTint = Theme.colors.primaryFont,
             backgroundColor = Theme.colors.backGround,
         )
-        IconBox(
-            icon = rememberVectorPainter(Lucide.Ellipsis),
-            iconTint = Theme.colors.primaryFont,
-            backgroundColor = Theme.colors.backGround,
-        )
+
     }
 }

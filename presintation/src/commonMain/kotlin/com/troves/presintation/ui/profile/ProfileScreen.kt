@@ -14,6 +14,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
+import com.troves.designsystem.components.toast.TrovesSnackbarHost
 import com.troves.designsystem.theme.Theme
 import com.troves.presintation.ui.profile.components.LiveRatesRow
 import com.troves.presintation.ui.profile.components.ProfileHeaderCard
@@ -35,6 +37,7 @@ fun ProfileScreen(
     onNavigateToPaymentMethods: () -> Unit,
     onNavigateToEditProfile: () -> Unit,
     onNavigateToAiAssistant: () -> Unit,
+    onNavigateToSurvey: () -> Unit,
     viewModel: ProfileViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -57,6 +60,7 @@ fun ProfileScreen(
                 is ProfileEffect.NavigateToPaymentMethods -> onNavigateToPaymentMethods()
                 is ProfileEffect.NavigateToEditProfile -> onNavigateToEditProfile()
                 is ProfileEffect.NavigateToAiAssistant -> onNavigateToAiAssistant()
+                is ProfileEffect.NavigateToSurvey -> onNavigateToSurvey()
                 is ProfileEffect.ShowError -> {
                     snackbarHostState.showSnackbar(effect.message)
                 }
@@ -96,7 +100,6 @@ fun ProfileScreen(
     }
 
     Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) },
         containerColor = Theme.colors.backGround
     ) { paddingValues ->
         Box(
@@ -104,6 +107,10 @@ fun ProfileScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
+            TrovesSnackbarHost(
+                hostState = snackbarHostState,
+                modifier = Modifier.align(Alignment.TopCenter).zIndex(1f).padding(16.dp),
+            )
             if (uiState.isLoading) {
                 CircularProgressIndicator(
                     modifier = Modifier.align(Alignment.Center),
@@ -134,6 +141,13 @@ fun ProfileScreen(
                                 icon = Res.drawable.ic_ai_sparkles,
                                 title = stringResource(ResP.string.ai_profile_entry),
                                 onClick = { viewModel.onIntent(ProfileIntent.AiAssistantClicked) },
+                                iconColor = Theme.colors.primary
+                            )
+                            HorizontalDivider(color = Theme.colors.backGround, thickness = 1.dp)
+                            ProfileRowItem(
+                                icon = Res.drawable.ic_explore, // Using ic_explore for Survey
+                                title = stringResource(ResP.string.profile_style_survey),
+                                onClick = { viewModel.onIntent(ProfileIntent.SurveyClicked) },
                                 iconColor = Theme.colors.primary
                             )
                             HorizontalDivider(color = Theme.colors.backGround, thickness = 1.dp)

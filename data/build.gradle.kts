@@ -158,14 +158,6 @@ buildkonfig {
             localProperties.getProperty("SHOPIFY_API_KEY") ?: error("SHOPIFY_API_KEY not set in local.properties")
         )
         buildConfigField(
-            STRING, "SHOPIFY_STOREFRONT_URL",
-            localProperties.getProperty("SHOPIFY_STOREFRONT_URL") ?: error("SHOPIFY_API_KEY not set in local.properties")
-        )
-        buildConfigField(
-            STRING, "SHOPIFY_STOREFRONT_ACCESS_TOKEN",
-            localProperties.getProperty("SHOPIFY_STOREFRONT_ACCESS_TOKEN") ?: error("SHOPIFY_API_KEY not set in local.properties")
-        )
-        buildConfigField(
             STRING, "SHOPIFY_REST_URL",
             localProperties.getProperty("SHOPIFY_REST_URL") ?: error("SHOPIFY_REST_URL not set in local.properties")
         )
@@ -190,11 +182,11 @@ buildkonfig {
         )
         buildConfigField(
             STRING, "SUPABASE_API_KEY",
-            localProperties.getProperty("SUPABASE_API_KEY") ?: "troves-shopify-oauth-salt-v1"
+            localProperties.getProperty("SUPABASE_API_KEY") ?: ""
         )
         buildConfigField(
             STRING, "SUPABASE_API_URL",
-            localProperties.getProperty("SUPABASE_API_URL") ?: "troves-shopify-oauth-salt-v1"
+            localProperties.getProperty("SUPABASE_API_URL") ?: "http://127.0.0.1:54321/"
         )
         buildConfigField(
             STRING, "AI_ASSISTANT_BASE_URL",

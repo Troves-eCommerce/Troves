@@ -30,6 +30,10 @@ fun OrderSummaryInfoCard(
     modifier: Modifier = Modifier,
     discountLabel: String? = null,
     discountValueFormatted: String? = null,
+    shippingLabel: String? = null,
+    shippingFormatted: String? = null,
+    taxLabel: String? = null,
+    taxFormatted: String? = null,
 ) {
     Column(
         modifier = modifier
@@ -46,7 +50,6 @@ fun OrderSummaryInfoCard(
             valueColor = Theme.colors.primaryFont,
         )
 
-
         if (discountLabel != null && discountValueFormatted != null) {
             Divider()
             SummaryRow(
@@ -54,6 +57,26 @@ fun OrderSummaryInfoCard(
                 value = discountValueFormatted,
                 labelColor = Theme.colors.success,
                 valueColor = Theme.colors.success,
+            )
+        }
+
+        if (shippingLabel != null && shippingFormatted != null) {
+            Divider()
+            SummaryRow(
+                label = shippingLabel,
+                value = shippingFormatted,
+                labelColor = Theme.colors.primaryFont,
+                valueColor = Theme.colors.primaryFont,
+            )
+        }
+
+        if (taxLabel != null && taxFormatted != null) {
+            Divider()
+            SummaryRow(
+                label = taxLabel,
+                value = taxFormatted,
+                labelColor = Theme.colors.primaryFont,
+                valueColor = Theme.colors.primaryFont,
             )
         }
 

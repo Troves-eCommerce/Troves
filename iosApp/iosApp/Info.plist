@@ -2,22 +2,24 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>CADisableMinimumFrameDurationOnPhone</key>
-	<true/>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>Troves uses the microphone so you can talk to the AI shopping assistant.</string>
-	<key>NSSpeechRecognitionUsageDescription</key>
-	<string>Troves uses speech recognition to turn your voice into shopping requests for the AI assistant.</string>
-	<key>GIDClientID</key>
-	<string>339149506183-27j1hifg77qpn4283stjsmfeei24mc8g.apps.googleusercontent.com</string>
-	<key>CFBundleURLTypes</key>
-	<array>
-		<dict>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>com.googleusercontent.apps.339149506183-27j1hifg77qpn4283stjsmfeei24mc8g</string>
-			</array>
-		</dict>
-	</array>
+    <key>CADisableMinimumFrameDurationOnPhone</key>
+    <true/>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>Troves uses the microphone so you can talk to the AI shopping assistant.</string>
+    <key>NSSpeechRecognitionUsageDescription</key>
+    <string>Troves uses speech recognition to turn your voice into shopping requests for the AI assistant.</string>
+    <key>GIDClientID</key>
+    <string>339149506183-27j1hifg77qpn4283stjsmfeei24mc8g.apps.googleusercontent.com</string>
+    <key>CFBundleURLTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>com.googleusercontent.apps.339149506183-27j1hifg77qpn4283stjsmfeei24mc8g</string>
+            </array>
+        </dict>
+    </array>
+    <key>UILaunchScreen</key>
+    <dict/>
 </dict>
 </plist>

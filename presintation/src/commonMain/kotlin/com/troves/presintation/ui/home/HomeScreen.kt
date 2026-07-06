@@ -25,12 +25,14 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.material3.Icon
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import com.troves.designsystem.components.toast.TrovesSnackbarHost
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.launch
 import androidx.compose.ui.Alignment
@@ -61,6 +63,7 @@ import com.troves.presintation.ui.home.components.AdData
 import com.troves.presintation.ui.home.components.AdSlider
 import com.troves.presintation.ui.home.components.BrandItem
 import com.troves.presintation.ui.home.components.CategoryItem
+import com.troves.presintation.ui.survey.components.SurveyBannerCard
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -75,12 +78,15 @@ fun HomeScreen(
     onNavigateToRegister: () -> Unit,
     onNavigateToSearch: () -> Unit,
     onNavigateToCart: () -> Unit,
+    onNavigateToAiChat: () -> Unit,
     onNavigateToAllCategories: () -> Unit,
+    onNavigateToSurvey: () -> Unit,
     viewModel: HomeViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+    var showSurveySheet by remember { mutableStateOf(false) }
 
     val loginRequiredText = stringResource(Res.string.home_login_required)
 
@@ -96,12 +102,21 @@ fun HomeScreen(
             is HomeEffect.NavigateToRegister -> onNavigateToRegister()
             is HomeEffect.NavigateToAllCategories -> onNavigateToAllCategories()
             is HomeEffect.NavigateToCart -> onNavigateToCart()
+            is HomeEffect.NavigateToSurvey -> showSurveySheet = true
             is HomeEffect.ShowToast -> scope.launch { snackbarHostState.showSnackbar(effect.message) }
             is HomeEffect.NavigateToSearch -> onNavigateToSearch()
             is HomeEffect.ShowLoginRequiredDialog -> scope.launch {
                 snackbarHostState.showSnackbar(loginRequiredText)
             }
+
+            HomeEffect.NavigateToAiChat -> onNavigateToAiChat()
         }
+    }
+
+    if (showSurveySheet) {
+        com.troves.presintation.ui.survey.SurveyBottomSheet(
+            onDismiss = { showSurveySheet = false },
+        )
     }
 
     if (state.showSignUpPrompt) {
@@ -127,6 +142,8 @@ fun HomeScreen(
             TrovesTopBar(
                 onSearchClick = { viewModel.onIntent(HomeIntent.SearchClicked) },
                 onCartClick = { viewModel.onIntent(HomeIntent.CartClicked) },
+                onAiClick = { viewModel.onIntent(HomeIntent.AiClicked)},
+                cartBadgeCount = state.cartItemCount,
                 border = BorderStroke(
                     width = 1.dp,
                     color = Theme.colors.onPrimary
@@ -143,11 +160,11 @@ fun HomeScreen(
             }
         }
 
-        SnackbarHost(
+        TrovesSnackbarHost(
             hostState = snackbarHostState,
             modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .navigationBarsPadding()
+                .align(Alignment.TopCenter)
+                .statusBarsPadding()
                 .padding(16.dp),
         )
     }
@@ -174,6 +191,13 @@ private fun HomeContent(
 
     val clipboardManager = LocalClipboardManager.current
     val copyCodeButtonText = stringResource(Res.string.home_copy_code_button)
+
+    if (!state.isSurveyDone) {
+        SurveyBannerCard(
+            onStartSurvey = { onIntent(HomeIntent.SurveyBannerClicked) },
+            modifier = Modifier.padding(horizontal = Theme.spacing.medium),
+        )
+    }
 
     if (state.ads.isNotEmpty()) {
         AdSlider(
@@ -468,7 +492,7 @@ private fun HomeScreenPreview() {
                     .padding(bottom = 24.dp),
                 verticalArrangement = Arrangement.spacedBy(20.dp),
             ) {
-                TrovesTopBar(onSearchClick = {}, onCartClick = {})
+                TrovesTopBar(onSearchClick = {}, onCartClick = {}, onAiClick = {})
                 HomeContent(state = previewHomeState(), onIntent = {})
             }
         }

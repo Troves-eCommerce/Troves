@@ -10,8 +10,8 @@ struct iOSApp: App {
     init() {
         FirebaseApp.configure()
         configureGoogleSignIn()
-        
         KoinInitKt.doInitKoin()
+        PaymobBridgeHolder.shared.bridge = PaymobBridgeImpl()
     }
     
     var body: some Scene {

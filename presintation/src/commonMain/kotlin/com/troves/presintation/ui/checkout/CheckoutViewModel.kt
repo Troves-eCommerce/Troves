@@ -14,6 +14,7 @@ import com.troves.domain.usecase.order.ClearCartUseCase
 import com.troves.domain.usecase.order.PlaceCodOrderUseCase
 import com.troves.domain.usecase.order.PlaceOrderResult
 import com.troves.domain.usecase.paymob.GetClientSecretUseCase
+import com.troves.domain.utils.Result
 import com.troves.presintation.core.mvi.DefaultEffectPublisher
 import com.troves.presintation.core.mvi.DefaultStateHolder
 import com.troves.presintation.core.mvi.EffectPublisher
@@ -62,6 +63,7 @@ class CheckoutViewModel(
             CheckoutIntent.OnEditCart -> sendEffect(CheckoutEffect.NavigateToCart)
             is CheckoutIntent.OnCouponChange -> updateState { copy(couponInput = intent.value) }
             CheckoutIntent.OnApplyCoupon -> applyCoupon()
+            CheckoutIntent.OnRemoveCoupon -> removeCoupon()
             is CheckoutIntent.OnSelectAddress -> updateState { copy(selectedAddressId = intent.id) }
             CheckoutIntent.OnAddAddress -> sendEffect(CheckoutEffect.NavigateToNewAddress(null))
             is CheckoutIntent.OnEditAddress -> sendEffect(CheckoutEffect.NavigateToNewAddress(intent.id))
@@ -126,8 +128,20 @@ class CheckoutViewModel(
                     sendEffect(ShowToast("Couldn't start payment, cart ID is empty. Please try again."))
                     return@launch
                 }
-                val clientSecret = getClientSecretUseCase(cartId = cart!!.cartId)
-                sendEffect(CheckoutEffect.OpenPayMobSheet(clientSecret = clientSecret.clientSecret ?: ""))
+                when (val clientSecret = getClientSecretUseCase(cartId = cart!!.cartId)) {
+                    is Result.Success -> {
+                        val secret = clientSecret.value.clientSecret
+                        if (secret.isNullOrBlank()) {
+                            onFailure("Couldn't start payment. Please try again.")
+                        } else {
+                            sendEffect(CheckoutEffect.OpenPayMobSheet(clientSecret = secret))
+                        }
+                    }
+                    is Result.Error -> onFailure(
+                        clientSecret.throwable.message ?: "Couldn't start payment. Please try again."
+                    )
+                    Result.Loading -> Unit
+                }
             } else {
                 sendEffect(CheckoutEffect.ShowToast("Couldn't start payment. Please try again."))
             }
@@ -286,6 +300,23 @@ class CheckoutViewModel(
 
                 ApplyDiscountResult.RequiresLogin -> sendEffect(CheckoutEffect.ShowLoginRequiredDialog)
                 is ApplyDiscountResult.Error -> sendEffect(CheckoutEffect.ShowToast("Couldn't apply discount"))
+            }
+        }
+    }
+
+    private fun removeCoupon() {
+        updateState { copy(isApplyingCoupon = true) }
+        viewModelScope.launch {
+            val result = applyDiscount(emptyList())
+            updateState { copy(isApplyingCoupon = false) }
+            when (result) {
+                is ApplyDiscountResult.Success -> {
+                    updateState { copy(couponInput = "") }
+                    sendEffect(CheckoutEffect.ShowToast("Discount removed"))
+                }
+
+                ApplyDiscountResult.RequiresLogin -> sendEffect(CheckoutEffect.ShowLoginRequiredDialog)
+                is ApplyDiscountResult.Error -> sendEffect(CheckoutEffect.ShowToast("Couldn't remove discount"))
             }
         }
     }

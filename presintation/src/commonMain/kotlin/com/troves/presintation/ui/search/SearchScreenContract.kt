@@ -32,30 +32,39 @@ data class SheetFilterOptions(
     val selectedBrands: Set<String> = emptySet(),
 )
 
+enum class SearchDisplayState { Idle, Loading, Results, NoResults, Error }
+
 @Immutable
 data class SearchUiState(
     val query: String = "",
-    val isLoading: Boolean = true,
+    val isLoading: Boolean = false,
+    val isInitializing: Boolean = true,
     val allProducts: List<Product> = emptyList(),
     val products: List<Product> = emptyList(),
     val categories: List<Category> = emptyList(),
     val brands: List<Brand> = emptyList(),
     val selectedBrand: String = "",
     val sheetFilterOptions: SheetFilterOptions = SheetFilterOptions(),
-    val recentSearches: Set<RecentSearchUi> = emptySet(),
+    val recentSearches: List<String> = emptyList(),
     val errorMessage: String? = null,
     val showFilterSheet: Boolean = false,
     val favoriteProductIds: Set<String> = emptySet(),
 ) {
-    val hasError get() = errorMessage != null
-    val isEmpty get() = !isLoading && products.isEmpty() && !hasError
-}
+    val hasActiveFilter: Boolean
+        get() = sheetFilterOptions.selectedCategories.isNotEmpty()
+            || sheetFilterOptions.selectedBrands.isNotEmpty()
+            || selectedBrand.isNotBlank()
 
-@Immutable
-data class RecentSearchUi(
-    val id: String,
-    val query: String
-)
+    val displayState: SearchDisplayState
+        get() = when {
+            isInitializing -> SearchDisplayState.Loading
+            isLoading -> SearchDisplayState.Loading
+            errorMessage != null -> SearchDisplayState.Error
+            query.isBlank() && !hasActiveFilter -> SearchDisplayState.Idle
+            products.isEmpty() -> SearchDisplayState.NoResults
+            else -> SearchDisplayState.Results
+        }
+}
 
 sealed interface SearchIntent {
     data object Load : SearchIntent
@@ -66,10 +75,10 @@ sealed interface SearchIntent {
     data class OnProductClick(val productId: String) : SearchIntent
     data class ApplyFilters(val sheetFilterOptions: SheetFilterOptions) : SearchIntent
     data class SearchQueryChange(val newQuery: String) : SearchIntent
+    data object ClearSearches : SearchIntent
     data class OnSearch(val query: String) : SearchIntent
     data class CategoriesChange(val newCategory: List<String>) : SearchIntent
     data class BrandsChange(val newBrands: List<String>) : SearchIntent
-    data class BrandChange(val newBrand: String) : SearchIntent
     data class RemoveRecentSearch(val query: String) : SearchIntent
     data object ClearRecentSearches : SearchIntent
     data class ToggleFavorite(val productId: String) : SearchIntent

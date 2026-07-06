@@ -25,28 +25,27 @@ class OrdersViewModel(
         when (intent) {
             OrdersIntent.Load -> load()
             OrdersIntent.OnBack -> sendEffect(OrdersEffect.NavigateBack)
+            is OrdersIntent.OnOrderClick -> sendEffect(OrdersEffect.NavigateToOrderDetails(intent.id))
         }
     }
 
     private fun load() {
-        updateState { copy(isLoading = true) }
+        updateState { copy(isLoading = true, isError = false) }
         viewModelScope.launch {
-            val orders = getOrders().map { it.toUi() }
-            updateState { copy(isLoading = false, orders = orders) }
+            try {
+                val orders = getOrders()
+                    .sortedByDescending { it.processedAt }
+                    .map { it.toUi() }
+                updateState { copy(isLoading = false, orders = orders) }
+            } catch (e: Exception) {
+                updateState { 
+                    copy(
+                        isLoading = false, 
+                        isError = true, 
+                        errorMessage = e.message ?: "Failed to load orders"
+                    ) 
+                }
+            }
         }
     }
 }
-
-private fun Order.toUi() = OrderUi(
-    id = id,
-    name = name,
-    date = processedAt.take(10),
-    status = listOfNotNull(financialStatus, fulfillmentStatus)
-        .filter { it.isNotBlank() }
-        .joinToString(" · ") { it.lowercase().replaceFirstChar(Char::uppercase) },
-    totalFormatted = format(total),
-    itemCount = lineItems.sumOf { it.quantity },
-)
-
-private fun format(money: CartMoney): String =
-    if (money.currencyCode == "USD") "$${money.amount}" else "${money.amount} ${money.currencyCode}"

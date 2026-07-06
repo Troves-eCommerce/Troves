@@ -44,7 +44,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.troves.designsystem.components.button.PrimaryButton
 import com.troves.designsystem.components.textfield.CustomTextField
-import com.troves.designsystem.components.toast.TrovesToast
+import com.troves.designsystem.components.toast.ToastType
+import com.troves.designsystem.components.toast.TrovesToastHost
+import com.troves.designsystem.components.toast.rememberTrovesToastState
 import com.troves.designsystem.theme.Theme
 import com.troves.designsystem.util.bounceClick
 import com.troves.presintation.core.mvi.ObserveEffect
@@ -66,8 +68,7 @@ fun RegisterScreen(
     val googleAuthHandler = LocalGoogleAuthHandler.current
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    var successMessage by remember { mutableStateOf<String?>(null) }
-    var toastError by remember { mutableStateOf<String?>(null) }
+    val toast = rememberTrovesToastState()
 
     // Pre-resolve strings that are referenced inside lambdas / non-composable scopes
     val googleSignInFailedText = stringResource(Res.string.login_google_failed)
@@ -76,8 +77,8 @@ fun RegisterScreen(
 
     ObserveEffect(viewModel.effect) { effect ->
         when (effect) {
-            is AuthEffect.ShowMessage -> successMessage = effect.message
-            is AuthEffect.ShowError -> toastError = effect.message
+            is AuthEffect.ShowMessage -> toast.show(effect.message, ToastType.Success)
+            is AuthEffect.ShowError -> toast.show(effect.message, ToastType.Error)
             AuthEffect.NavigateToHome -> onRegisterSuccess()
             is AuthEffect.OnRegistered -> onRegistered()
             AuthEffect.NavigateToEmailVerification -> onNavigateToEmailVerification()
@@ -260,9 +261,9 @@ fun RegisterScreen(
                                     viewModel.onIntent(AuthIntent.GoogleSignIn(idToken, accessToken))
                                 },
                                 onError = { error ->
-                                    toastError = error.message ?: googleSignInFailedText
+                                    toast.show(error.message ?: googleSignInFailedText, ToastType.Error)
                                 }
-                            ) ?: run { toastError = googleSignInUnsupportedText }
+                            ) ?: run { toast.show(googleSignInUnsupportedText, ToastType.Error) }
                         }
                     ),
                 horizontalArrangement = Arrangement.Center,
@@ -312,12 +313,6 @@ fun RegisterScreen(
             )
         }
 
-        TrovesToast(
-            message = successMessage ?: toastError,
-            onDismiss = {
-                successMessage = null
-                toastError = null
-            },
-        )
+        TrovesToastHost(state = toast)
     }
 }
