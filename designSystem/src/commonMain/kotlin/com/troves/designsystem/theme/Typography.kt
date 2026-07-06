@@ -112,7 +112,7 @@ internal fun spTypographyOf(fontFamily: FontFamily): SPTextStyle = SPTextStyle(
     hint = SizedTextStyle(
         large = TextStyle(
             fontFamily = fontFamily,
-            fontSize = 18.sp,
+            fontSize = 17.sp,
             fontWeight = FontWeight.Light,
             lineHeight = 26.sp
         ),

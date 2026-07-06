@@ -143,4 +143,24 @@
     <string name="home_top_brands">Top Brands</string>
     <string name="home_trending_now">Trending Now</string>
     <string name="home_copy_code_button">Copy code</string>
+
+    <!-- Product Details -->
+    <string name="product_details_description">Description</string>
+    <string name="product_details_read_more">Read more</string>
+    <string name="product_details_read_less">Read less</string>
+    <string name="product_details_size_guide">Size Guide</string>
+    <string name="product_details_reviews_title">Customer Reviews</string>
+    <string name="product_details_reviews_see_all">See all ></string>
+    <string name="product_details_reviews_show_less">Show less</string>
+    <string name="product_details_add_to_cart">Add to Cart</string>
+    <string name="product_details_added_to_cart">Added to Cart</string>
+    <string name="product_details_quantity_in_cart">Quantity in cart: </string>
+    <string name="product_details_view_cart">View Cart</string>
+    <string name="product_details_out_of_stock">Out of stock</string>
+    <string name="product_details_select_option">Select %1$s</string>
+    <string name="product_details_unavailable_combination">Unavailable combination</string>
+    <string name="product_details_coming_soon">Coming soon...</string>
+    <string name="product_details_color_label">Color: %1$s</string>
+    <string name="product_details_reviews_count">(%1$d reviews)</string>
+    <string name="product_details_login_required_favorites">You need to be logged in to manage your favorites.</string>
 </resources>

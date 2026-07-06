@@ -1,6 +1,12 @@
 package com.troves.presintation.ui.productDetails
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -19,19 +25,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.TextButton
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.ui.draw.clip
-import com.troves.designsystem.components.button.PrimaryButton
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -48,6 +45,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.troves.designsystem.components.button.PrimaryButton
 import com.troves.designsystem.components.dialog.LoginRequiredDialog
 import com.troves.designsystem.theme.Theme
 import com.troves.designsystem.util.formatPrice
@@ -61,8 +59,20 @@ import com.troves.presintation.ui.productDetails.components.ProductImageCarousel
 import com.troves.presintation.ui.productDetails.components.SectionHeaderRow
 import com.troves.presintation.ui.productDetails.components.StarRatingRow
 import kotlinx.coroutines.launch
-import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import troves.designsystem.generated.resources.Res
+import troves.designsystem.generated.resources.cart_checkout
+import troves.designsystem.generated.resources.product_details_added_to_cart
+import troves.designsystem.generated.resources.product_details_color_label
+import troves.designsystem.generated.resources.product_details_description
+import troves.designsystem.generated.resources.product_details_quantity_in_cart
+import troves.designsystem.generated.resources.product_details_read_less
+import troves.designsystem.generated.resources.product_details_read_more
+import troves.designsystem.generated.resources.product_details_size_guide
+import troves.designsystem.generated.resources.product_details_view_cart
+import troves.designsystem.generated.resources.product_details_login_required_favorites
+
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ProductDetailsScreen(
@@ -93,7 +103,7 @@ fun ProductDetailsScreen(
 
     if (showLoginRequiredDialog) {
         LoginRequiredDialog(
-            message = "You need to be logged in to manage your favorites.",
+            message = stringResource(Res.string.product_details_login_required_favorites),
             onLoginClick = {
                 showLoginRequiredDialog = false
                 onNavigateToLogin()
@@ -191,14 +201,14 @@ fun CartConfirmationBar(
                 )
                 Column {
                     Text(
-                        text = "Added to Cart",
+                        text = stringResource(Res.string.product_details_added_to_cart),
                         style = Theme.typography.title,
                         fontWeight = FontWeight.Bold,
                         color = Theme.colors.primaryFont
                     )
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
-                            text = "Quantity in cart: ",
+                            text = stringResource(Res.string.product_details_quantity_in_cart),
                             style = Theme.typography.body.small,
                             color = Theme.colors.secondaryFont
                         )
@@ -218,7 +228,7 @@ fun CartConfirmationBar(
             }
             TextButton(onClick = onDismissClick) {
                 Text(
-                    text = "Continue",
+                    text = stringResource(Res.string.cart_checkout),
                     style = Theme.typography.body.medium,
                     color = Theme.colors.secondaryFont
                 )
@@ -226,7 +236,7 @@ fun CartConfirmationBar(
         }
         Spacer(modifier = Modifier.height(16.dp))
         PrimaryButton(
-            caption = "View Cart",
+            caption = stringResource(Res.string.product_details_view_cart),
             onClick = onViewCartClick,
             modifier = Modifier.fillMaxWidth()
         )
@@ -278,9 +288,7 @@ fun ProductDetailsScreenContent(
                         text = uiState.title,
                         style = Theme.typography.title,
                         fontWeight = FontWeight.SemiBold,
-                        color = Color(0xFF1A1A1A),
-                        fontSize = 22.sp,
-                        lineHeight = 28.sp,
+                        color = Theme.colors.primaryFont,
                     )
 
                     Spacer(Modifier.height(8.dp))
@@ -292,9 +300,9 @@ fun ProductDetailsScreenContent(
                     ) {
                         Text(
                             text = formatPrice(uiState.displayPrice),
-                            fontSize = 20.sp,
+                            style = Theme.typography.title,
                             fontWeight = FontWeight.Bold,
-                            color = Color(0xFF4A5D4E),
+                            color = Theme.colors.primary,
                         )
                         StarRatingRow(
                             rating = uiState.rating.toFloat(),
@@ -304,11 +312,11 @@ fun ProductDetailsScreenContent(
 
                     uiState.displayOptions.forEach { option ->
                         Spacer(Modifier.height(16.dp))
-                        HorizontalDivider(color = Color(0xFFECECEC), thickness = 1.dp)
+                        HorizontalDivider(color = Theme.colors.disable, thickness = 1.dp)
                         Spacer(Modifier.height(16.dp))
 
                         if (option.name.contains("Color", ignoreCase = true)) {
-                            SectionHeaderRow(title = "Color: ${uiState.selectedOptions[option.name] ?: ""}")
+                            SectionHeaderRow(title = stringResource(Res.string.product_details_color_label, uiState.selectedOptions[option.name] ?: ""))
                             Spacer(Modifier.height(12.dp))
                             Row(
                                 horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -323,7 +331,7 @@ fun ProductDetailsScreenContent(
                                             .size(38.dp)
                                             .border(
                                                 width = if (isSelected) 2.dp else 1.dp,
-                                                color = if (isSelected) Color.Black else Color(0xFFE2E2E2),
+                                                color = if (isSelected) Theme.colors.primaryFont else Theme.colors.disable,
                                                 shape = CircleShape
                                             )
                                             .padding(if (isSelected) 3.dp else 0.dp)
@@ -337,7 +345,7 @@ fun ProductDetailsScreenContent(
                             if (option.name == "Size") {
                                 SectionHeaderRow(
                                     title = option.name,
-                                    actionLabel = "Size Guide",
+                                    actionLabel = stringResource(Res.string.product_details_size_guide),
                                     onActionClick = onSizeGuide
                                 )
                             } else {
@@ -353,40 +361,36 @@ fun ProductDetailsScreenContent(
                     }
 
                     Spacer(Modifier.height(16.dp))
-                    HorizontalDivider(color = Color(0xFFECECEC), thickness = 1.dp)
+                    HorizontalDivider(color = Theme.colors.disable, thickness = 1.dp)
                     Spacer(Modifier.height(16.dp))
 
-                    SectionHeaderRow(title = "Description")
+                    SectionHeaderRow(title = stringResource(Res.string.product_details_description))
                     Spacer(Modifier.height(10.dp))
 
                     Column(modifier = Modifier.animateContentSize()) {
                         Text(
                             text = uiState.description.stripHtml(),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = Color(0xFF666666),
-                            lineHeight = 22.sp,
+                            style = Theme.typography.body.medium,
+                            color = Theme.colors.secondaryFont,
                             maxLines = if (isDescriptionExpanded) Int.MAX_VALUE else 3,
                             overflow = TextOverflow.Ellipsis
                         )
                         Spacer(Modifier.height(6.dp))
                         Text(
-                            text = if (isDescriptionExpanded) "Read less ∧" else "Read more ∨",
-                            color = Color(0xFF4A5D4E),
+                            text = if (isDescriptionExpanded) stringResource(Res.string.product_details_read_less) else stringResource(Res.string.product_details_read_more),
+                            style = Theme.typography.body.small,
+                            color = Theme.colors.primary,
                             fontWeight = FontWeight.Bold,
-                            fontSize = 14.sp,
                             modifier = Modifier.clickable { isDescriptionExpanded = !isDescriptionExpanded }
                         )
                     }
 
                     Spacer(Modifier.height(16.dp))
-                    HorizontalDivider(color = Color(0xFFECECEC), thickness = 1.dp)
+                    HorizontalDivider(color = Theme.colors.disable, thickness = 1.dp)
                     Spacer(Modifier.height(16.dp))
 
                     if (uiState.reviews.isNotEmpty()) {
                         Spacer(Modifier.height(16.dp))
-                        HorizontalDivider(color = Color(0xFFECECEC), thickness = 1.dp)
-                        Spacer(Modifier.height(16.dp))
-
                         CustomerReviewsSection(
                             reviews = uiState.reviews,
                             onSeeAllClick = onSeeAllReviews,
@@ -401,10 +405,10 @@ fun ProductDetailsScreenContent(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth()
-                .background(Color.White)
+                .background(Theme.colors.surface)
                 .navigationBarsPadding()
         ) {
-            HorizontalDivider(color = Color.Black.copy(alpha = 0.06f), thickness = 1.dp)
+            HorizontalDivider(color = Theme.colors.disable, thickness = 1.dp)
 
             Row(
                 modifier = Modifier

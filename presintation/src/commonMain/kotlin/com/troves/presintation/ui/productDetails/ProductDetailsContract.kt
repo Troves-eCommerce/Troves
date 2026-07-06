@@ -49,19 +49,6 @@ data class ProductDetailUiState(
 
     val canAddToCart: Boolean
         get() = !isAddingToCart && selectedVariant?.available == true
-
-    /** Hint shown next to a disabled Add-to-Cart button. */
-    val addToCartHint: String?
-        get() = when {
-            product == null -> null
-            isAddingToCart -> null
-            selectedVariant == null -> {
-                val missing = displayOptions.firstOrNull { selectedOptions[it.name].isNullOrEmpty() }
-                if (missing != null) "Select ${missing.name.lowercase()}" else "Unavailable combination"
-            }
-            selectedVariant?.available == false -> "Out of stock"
-            else -> null
-        }
 }
 
 sealed interface ProductDetailsEffect {

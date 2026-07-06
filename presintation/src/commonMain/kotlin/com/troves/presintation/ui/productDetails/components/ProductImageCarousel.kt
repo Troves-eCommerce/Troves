@@ -48,7 +48,7 @@ fun ProductImageCarousel(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(440.dp)
+            .height(420.dp)
             .background(Theme.colors.backGround),
     ) {
 

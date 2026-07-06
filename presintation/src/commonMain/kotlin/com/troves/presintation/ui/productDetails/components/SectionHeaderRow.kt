@@ -31,16 +31,16 @@ fun SectionHeaderRow(
     ) {
         Text(
             text = title,
-            fontSize = 16.sp,
+            style = Theme.typography.body.medium,
             fontWeight = FontWeight.Bold,
-            color = Color(0xFF1A1A1A),
+            color = Theme.colors.primaryFont,
         )
         if (actionLabel != null) {
             Text(
                 text = actionLabel,
-                fontSize = 13.sp,
+                style = Theme.typography.body.small,
                 fontWeight = FontWeight.Medium,
-                color = Color(0xFF707070),
+                color = Theme.colors.secondaryFont,
                 modifier = Modifier
                     .clip(RoundedCornerShape(4.dp))
                     .clickable(enabled = onActionClick != null) { onActionClick?.invoke() }

@@ -68,7 +68,7 @@
 
     <!-- Checkout · Payment step -->
     <string name="checkout_payment_step_title">Select Payment Method</string>
-    <string name="checkout_payment_step_subtitle">Choose how you'd like to pay for your order.</string>
+    <string name="checkout_payment_step_subtitle">Choose how you\'d like to pay for your order.</string>
     <string name="checkout_payment_cod_title">Cash on Delivery (COD)</string>
     <string name="checkout_paymob_cod_title">Paymob</string>
     <string name="checkout_paymob_cod_desc">Pay securely in-app using Paymob </string>
