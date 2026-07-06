@@ -36,6 +36,7 @@ sealed interface HomeEffect {
     data object NavigateToSurvey : HomeEffect
     data object ShowLoginRequiredDialog : HomeEffect
     data object NavigateToAllCategories : HomeEffect
+    data object NavigateToAiChat : HomeEffect
 }
 
 sealed interface HomeIntent {
@@ -46,6 +47,7 @@ sealed interface HomeIntent {
     data object ViewAllTrendingClicked : HomeIntent
     data object SearchClicked : HomeIntent
     data object CartClicked : HomeIntent
+    data object AiClicked : HomeIntent
     data object SeeAllBrandsClicked : HomeIntent
     data object SurveyBannerClicked : HomeIntent
     data object SignUpPromptConfirmed : HomeIntent

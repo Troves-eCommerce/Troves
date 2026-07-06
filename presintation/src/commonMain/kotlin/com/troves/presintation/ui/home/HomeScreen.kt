@@ -76,6 +76,7 @@ fun HomeScreen(
     onNavigateToRegister: () -> Unit,
     onNavigateToSearch: () -> Unit,
     onNavigateToCart: () -> Unit,
+    onNavigateToAiChat: () -> Unit,
     onNavigateToAllCategories: () -> Unit,
     onNavigateToSurvey: () -> Unit,
     viewModel: HomeViewModel = koinViewModel(),
@@ -104,6 +105,8 @@ fun HomeScreen(
             is HomeEffect.ShowLoginRequiredDialog -> scope.launch {
                 snackbarHostState.showSnackbar(loginRequiredText)
             }
+
+            HomeEffect.NavigateToAiChat -> onNavigateToAiChat()
         }
     }
 
@@ -130,6 +133,7 @@ fun HomeScreen(
             TrovesTopBar(
                 onSearchClick = { viewModel.onIntent(HomeIntent.SearchClicked) },
                 onCartClick = { viewModel.onIntent(HomeIntent.CartClicked) },
+                onAiClick = { viewModel.onIntent(HomeIntent.AiClicked)},
                 cartBadgeCount = state.cartItemCount,
                 border = BorderStroke(
                     width = 1.dp,
@@ -479,7 +483,7 @@ private fun HomeScreenPreview() {
                     .padding(bottom = 24.dp),
                 verticalArrangement = Arrangement.spacedBy(20.dp),
             ) {
-                TrovesTopBar(onSearchClick = {}, onCartClick = {})
+                TrovesTopBar(onSearchClick = {}, onCartClick = {}, onAiClick = {})
                 HomeContent(state = previewHomeState(), onIntent = {})
             }
         }

@@ -19,6 +19,7 @@ import com.troves.presintation.core.mvi.DefaultEffectPublisher
 import com.troves.presintation.core.mvi.DefaultStateHolder
 import com.troves.presintation.core.mvi.EffectPublisher
 import com.troves.presintation.core.mvi.StateHolder
+import com.troves.presintation.ui.home.HomeEffect.*
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
@@ -59,14 +60,14 @@ class HomeViewModel(
             HomeIntent.SeeAllBrandsClicked -> sendEffect(HomeEffect.NavigateToAllBrands)
             HomeIntent.ViewAllCategoriesClicked -> sendEffect(HomeEffect.NavigateToAllCategories)
             HomeIntent.ViewAllJustForYouClicked -> sendEffect(
-                HomeEffect.NavigateToProducts(
+                NavigateToProducts(
                     sourceType = "collection",
                     sourceId = "just-for-you",
                     sourceName = "Just For You",
                 ),
             )
             HomeIntent.ViewAllTrendingClicked -> sendEffect(
-                HomeEffect.NavigateToProducts(
+                NavigateToProducts(
                     sourceType = "collection",
                     sourceId = "trending",
                     sourceName = "Trending Now",
@@ -78,36 +79,37 @@ class HomeViewModel(
                 val targetName = intent.ad.targetName
                 
                 if (intent.ad.buttonText == "Copy code") {
-                    sendEffect(HomeEffect.ShowToast("Copied ${intent.ad.titleTop} to clipboard"))
+                    sendEffect(ShowToast("Copied ${intent.ad.titleTop} to clipboard"))
                 } else if (targetType != null && targetId != null && targetName != null) {
                     sendEffect(
-                        HomeEffect.NavigateToProducts(
+                        NavigateToProducts(
                             sourceType = targetType,
                             sourceId = targetId,
                             sourceName = targetName,
                         )
                     )
                 } else {
-                    sendEffect(HomeEffect.ShowToast(intent.ad.titleTop))
+                    sendEffect(ShowToast(intent.ad.titleTop))
                 }
             }
             is HomeIntent.BrandClicked -> sendEffect(
-                HomeEffect.NavigateToProducts(
+                NavigateToProducts(
                     sourceType = "brand",
                     sourceId = intent.brand.id.toString(),
                     sourceName = intent.brand.name,
                 ),
             )
             is HomeIntent.CategoryClicked -> sendEffect(
-                HomeEffect.NavigateToProducts(
+                NavigateToProducts(
                     sourceType = "category",
                     sourceId = intent.category.id.toString(),
                     sourceName = intent.category.name,
                 ),
             )
             is HomeIntent.ProductClicked ->
-                sendEffect(HomeEffect.NavigateToProduct(intent.product.id.toString()))
+                sendEffect(NavigateToProduct(intent.product.id.toString()))
             is HomeIntent.FavoriteToggled -> toggleFavorite(intent.product)
+            HomeIntent.AiClicked -> {sendEffect(NavigateToAiChat)}
         }
     }
 

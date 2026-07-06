@@ -148,6 +148,11 @@ fun AppNav() {
                     )
                 },
                 onNavigateToSurvey = { backStack.add(AppRoute.Survey) },
+                onNavigateToAiChat = {
+                    backStack.add(
+                        AppRoute.AiChat
+                    )
+                }
             )
         }
         entry<AppRoute.Favorites> {
