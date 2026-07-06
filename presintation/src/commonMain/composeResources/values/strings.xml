@@ -109,4 +109,15 @@
     <string name="ai_voice_no_speech">Didn\'t catch that. Please try again.</string>
     <string name="ai_voice_error">Voice input failed. Please try again.</string>
     <string name="ai_voice_listening">Listening… tap the mic to stop</string>
+    <string name="ai_history_title">Chat history</string>
+    <string name="ai_history_new_chat">New chat</string>
+    <string name="ai_history_empty">No conversations yet</string>
+    <string name="ai_history_empty_subtitle">Your chats with Troves AI will appear here.</string>
+    <string name="ai_history_guest">Sign in to see your chat history</string>
+    <string name="ai_history_error">Couldn\'t load your chat history.</string>
+    <string name="ai_history_delete">Delete conversation</string>
+    <string name="ai_history_delete_title">Delete conversation?</string>
+    <string name="ai_history_delete_message">This conversation will be permanently removed.</string>
+    <string name="ai_history_delete_confirm">Delete</string>
+    <string name="ai_history_cancel">Cancel</string>
 </resources>
