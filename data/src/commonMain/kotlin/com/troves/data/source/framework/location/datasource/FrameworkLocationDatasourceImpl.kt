@@ -1,11 +1,13 @@
 package com.troves.data.source.framework.location.datasource
 
+import com.troves.data.config.LocationIQConfig
 import com.troves.data.source.framework.location.service.FrameworkLocationService
 import com.troves.data.source.framework.location.service.LocationCoordinates
 import com.troves.data.source.framework.location.service.dto.AddressResponse
 import com.troves.data.source.remote.service.ktor.getResults
 import com.troves.domain.utils.Result
 import io.ktor.client.HttpClient
+import io.ktor.client.request.parameter
 import io.ktor.http.HttpMethod
 import io.ktor.http.path
 
@@ -36,12 +38,19 @@ class FrameworkLocationDatasourceImpl(
     override suspend fun getCurrentLocationCoordinates(): LocationCoordinates =
         frameworkLocationService.getCurrentLocationCoordinates()
 
-    override suspend fun reverseGeocode(coordinates: LocationCoordinates): Result<AddressResponse> {
+    override suspend fun reverseGeocode(
+        coordinates: LocationCoordinates
+    ): Result<AddressResponse> {
         return locationClient.getResults {
             method = HttpMethod.Get
+
             url {
                 path("reverse")
             }
+            parameter("key", LocationIQConfig.LOCATION_IQ_API_KEY)
+            parameter("lat", coordinates.lan)
+            parameter("lon", coordinates.lon)
+            parameter("format", "json")
         }
     }
 }

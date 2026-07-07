@@ -1,8 +1,7 @@
 package com.troves.data.source.framework.location.datasource
 
-import com.troves.data.source.framework.location.service.LocationAddress
-import com.troves.data.source.framework.location.service.LocationCoordinates
 import com.troves.data.source.framework.location.service.FrameworkLocationService
+import com.troves.data.source.framework.location.service.LocationCoordinates
 import com.troves.data.source.framework.location.service.dto.AddressResponse
 import com.troves.domain.utils.Result
 
