@@ -17,6 +17,9 @@ import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import org.jetbrains.compose.resources.stringResource
+import troves.designsystem.generated.resources.Res
+import troves.designsystem.generated.resources.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -52,7 +55,7 @@ fun CustomTextField(
     titleColor: Color = Theme.colors.primaryFont,
     textColor: Color = Theme.colors.primaryFont,
     borderColor: Color = Theme.colors.onPrimary,
-    containerColor: Color = Color(0xFFF9F9F9),
+    containerColor: Color = Theme.colors.surfaceVariant,
     onFocusBorderColor: Color = Theme.colors.primary,
     errorBorderColor: Color = Theme.colors.error,
     errorMessage: String? = null,
@@ -133,7 +136,7 @@ fun CustomTextField(
                 Image(
                     painter = it,
                     colorFilter = ColorFilter.tint(color = leadingIconColor),
-                    contentDescription = "leading icon",
+                    contentDescription = stringResource(Res.string.common_leading_icon),
                     modifier = Modifier
                         .padding(end = 12.dp) // مسافة كافية بعد الأيقونة
                         .size(22.dp)
@@ -187,7 +190,7 @@ fun CustomTextField(
                 Image(
                     painter = it,
                     colorFilter = ColorFilter.tint(color = trailingIconColor),
-                    contentDescription = "trailing icon",
+                    contentDescription = stringResource(Res.string.common_trailing_icon),
                     modifier = Modifier
                         .padding(start = 12.dp)
                         .size(22.dp)
@@ -204,7 +207,7 @@ fun CustomTextField(
                     Image(
                         painter = it,
                         colorFilter = ColorFilter.tint(color = Theme.colors.error),
-                        contentDescription = "error icon",
+                        contentDescription = stringResource(Res.string.common_error_icon),
                         modifier = Modifier
                             .padding(start = Theme.spacing.small)
                             .size(Theme.size.iconSmall)

@@ -162,4 +162,9 @@
     <string name="product_details_color_label">اللون: %1$s</string>
     <string name="product_details_reviews_count">(%1$d تقييم)</string>
     <string name="product_details_login_required_favorites">يجب عليك تسجيل الدخول لإدارة مفضلاتك.</string>
+
+    <!-- Accessibility -->
+    <string name="common_leading_icon">أيقونة بادئة</string>
+    <string name="common_trailing_icon">أيقونة لاحقة</string>
+    <string name="common_error_icon">أيقونة خطأ</string>
 </resources>

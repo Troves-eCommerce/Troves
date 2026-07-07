@@ -163,4 +163,9 @@
     <string name="product_details_color_label">Color: %1$s</string>
     <string name="product_details_reviews_count">(%1$d reviews)</string>
     <string name="product_details_login_required_favorites">You need to be logged in to manage your favorites.</string>
+
+    <!-- Accessibility -->
+    <string name="common_leading_icon">Leading icon</string>
+    <string name="common_trailing_icon">Trailing icon</string>
+    <string name="common_error_icon">Error icon</string>
 </resources>
