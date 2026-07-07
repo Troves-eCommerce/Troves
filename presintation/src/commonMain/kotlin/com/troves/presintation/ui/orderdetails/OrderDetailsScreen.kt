@@ -31,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
@@ -162,7 +163,7 @@ private fun OrderDetailsContent(
                         contentScale = ContentScale.FillBounds,
                         modifier = Modifier
                             .width(128.dp)
-                            .fillMaxHeight()
+                            .height(128.dp)
                             .clip(Theme.shapes.medium)
                             .background(Theme.colors.surfaceVariant),
                     )
@@ -177,7 +178,8 @@ private fun OrderDetailsContent(
                                 color = Theme.colors.primaryFont,
                                 fontWeight = FontWeight.SemiBold,
                             ),
-                            maxLines = 2,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
                         )
                         if (item.variant.isNotBlank()) {
                             BasicText(

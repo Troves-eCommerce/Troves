@@ -64,7 +64,6 @@ fun OrderSummaryItemCard(
 
         Column(
             modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(Theme.spacing.extraSmall),
         ) {
             BasicText(
                 text = name,
