@@ -19,6 +19,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -27,20 +28,7 @@ import com.troves.designsystem.theme.SpTheme
 import com.troves.designsystem.theme.Theme
 import com.troves.designsystem.util.noRippleClickable
 
-/**
- * A selectable saved-address card: leading radio + icon + a title row
- * ("Home" + optional "Default" label + optional "Edit" link) above the recipient
- * name, address lines, and phone.
- *
- * Selected/unselected colors mirror
- * [com.troves.designsystem.components.cards.PaymentMethodCard]: selected uses
- * [Theme.colors.surface] background, [Theme.colors.primaryVariant] border and a
- * primary "donut" radio; unselected uses [Theme.colors.backGround] background,
- * [Theme.colors.secondary] border and radio ring.
- *
- * @param label optional trailing pill next to the title (e.g. "Default").
- * @param onEditClick when non-null, an "Edit" link is shown at the trailing edge of the title row.
- */
+
 @Composable
 fun AddressCard(
     title: String,
@@ -71,6 +59,7 @@ fun AddressCard(
     Row(
         modifier = modifier
             .fillMaxWidth()
+//            .shadow(elevation = 3.dp, shape = Theme.shapes.medium, clip = false)
             .clip(Theme.shapes.medium)
             .background(containerColor)
             .border(1.dp, borderColor, Theme.shapes.medium)

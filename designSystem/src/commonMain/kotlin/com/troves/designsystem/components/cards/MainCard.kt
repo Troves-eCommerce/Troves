@@ -12,12 +12,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
@@ -44,15 +45,18 @@ fun MainCard(
     containerColor: Color = Color.Transparent,
 ) {
     val cardShape = Theme.shapes.large
+    val resolvedContainer = if (containerColor == Color.Transparent) Theme.colors.surface else containerColor
 
     Column(
         modifier = modifier
+//            .shadow(elevation = 6.dp, shape = cardShape, clip = false)
+            .clip(cardShape)
+            .background(resolvedContainer)
+            .border(1.dp, Theme.colors.onPrimary.copy(alpha = 0.5f), cardShape)
             .bounceClick(
-                shape = RoundedCornerShape(10.dp),
+                shape = cardShape,
                 onClick = onClick
             )
-            .background(containerColor, shape = cardShape)
-            .border(1.dp, Theme.colors.onPrimary.copy(alpha = 0.5f), cardShape)
     ) {
         Box(
             modifier = Modifier
