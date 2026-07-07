@@ -109,6 +109,9 @@ kotlin {
                 // Paymob
                 api(libs.paymob.sdk)
 
+                //Mapbox
+                implementation(libs.mapbox.android)
+                implementation(libs.mapbox.compose)
 
                 //Shopify Checkout Android kit
                 implementation(libs.checkout.sheet.kit.android)
