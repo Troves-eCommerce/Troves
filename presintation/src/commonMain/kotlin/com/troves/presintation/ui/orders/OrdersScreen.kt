@@ -41,6 +41,12 @@ import org.koin.compose.viewmodel.koinViewModel
 import troves.designsystem.generated.resources.Res
 import troves.designsystem.generated.resources.ic_chevron_right
 import troves.designsystem.generated.resources.img_placeholder
+import troves.designsystem.generated.resources.orders_empty_title
+import troves.designsystem.generated.resources.orders_empty_desc
+import org.jetbrains.compose.resources.stringResource
+import com.troves.designsystem.components.emptystate.EmptyState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.List
 
 @Composable
 fun OrdersScreen(
@@ -77,11 +83,13 @@ fun OrdersScreen(
                     modifier = Modifier.align(Alignment.Center),
                 )
 
-                state.isEmpty -> BasicText(
-                    text = "You have no orders yet",
-                    style = Theme.typography.body.large.copy(color = Theme.colors.secondaryFont),
-                    modifier = Modifier.align(Alignment.Center),
-                )
+                state.isEmpty -> Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    EmptyState(
+                        title = stringResource(Res.string.orders_empty_title),
+                        description = stringResource(Res.string.orders_empty_desc),
+                        icon = Icons.Default.List,
+                    )
+                }
 
                 else -> LazyColumn(
                     modifier = Modifier.fillMaxSize(),

@@ -37,8 +37,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.launch
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -89,6 +93,7 @@ fun HomeScreen(
     var showSurveySheet by remember { mutableStateOf(false) }
 
     val loginRequiredText = stringResource(Res.string.home_login_required)
+    val showSurveyPopup = state.isLoggedIn && !state.isSurveyDone
 
     ObserveEffect(viewModel.effect) { effect ->
         when (effect) {
@@ -134,7 +139,8 @@ fun HomeScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .statusBarsPadding(),
+                .statusBarsPadding()
+                .then(if (showSurveyPopup) Modifier.blur(16.dp) else Modifier),
         ) {
             TrovesTopBar(
                 onSearchClick = { viewModel.onIntent(HomeIntent.SearchClicked) },
@@ -172,6 +178,24 @@ fun HomeScreen(
                 .statusBarsPadding()
                 .padding(16.dp),
         )
+
+        if (showSurveyPopup) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.4f))
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null
+                    ) {},
+                contentAlignment = Alignment.Center
+            ) {
+                SurveyBannerCard(
+                    onStartSurvey = { viewModel.onIntent(HomeIntent.SurveyBannerClicked) },
+                    modifier = Modifier.padding(horizontal = 24.dp),
+                )
+            }
+        }
     }
 }
 
@@ -196,13 +220,6 @@ private fun HomeContent(
 
     val clipboardManager = LocalClipboardManager.current
     val copyCodeButtonText = stringResource(Res.string.home_copy_code_button)
-
-    if (!state.isSurveyDone) {
-        SurveyBannerCard(
-            onStartSurvey = { onIntent(HomeIntent.SurveyBannerClicked) },
-            modifier = Modifier.padding(horizontal = Theme.spacing.medium),
-        )
-    }
 
     if (state.ads.isNotEmpty()) {
         AdSlider(

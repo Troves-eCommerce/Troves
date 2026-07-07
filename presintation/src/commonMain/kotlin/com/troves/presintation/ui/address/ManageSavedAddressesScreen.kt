@@ -35,6 +35,11 @@ import com.troves.designsystem.components.toast.TrovesSnackbarHost
 import com.troves.domain.entity.Address
 import com.troves.domain.entity.AddressIcon
 import kotlinx.coroutines.launch
+import com.troves.designsystem.components.emptystate.EmptyState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.LocationOn
+import troves.designsystem.generated.resources.address_empty_title
+import troves.designsystem.generated.resources.address_empty_desc
 
 import org.koin.compose.viewmodel.koinViewModel
 import com.troves.presintation.core.mvi.ObserveEffect
@@ -158,19 +163,29 @@ fun ManageSavedAddressesScreenContent(
                 modifier = Modifier.padding(bottom = Theme.spacing.medium)
             )
 
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(Theme.spacing.medium),
-                modifier = Modifier.fillMaxSize()
-            ) {
-                items(state.addresses, key = { it.id }) { address ->
-                    AddressCard(
-                        address = address,
-                        onEdit = { onIntent(ManageSavedAddressesIntent.OnEdit(address)) },
-                        onDelete = { addressToDelete = address },
-                        onSetDefault = { onIntent(ManageSavedAddressesIntent.OnSetDefault(address.id)) }
+            if (state.addresses.isEmpty()) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    EmptyState(
+                        title = stringResource(Res.string.address_empty_title),
+                        description = stringResource(Res.string.address_empty_desc),
+                        icon = Icons.Default.LocationOn,
                     )
                 }
-                item { Spacer(Modifier.height(80.dp)) } // Room for bottom button if scrolling overlaps
+            } else {
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(Theme.spacing.medium),
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    items(state.addresses, key = { it.id }) { address ->
+                        AddressCard(
+                            address = address,
+                            onEdit = { onIntent(ManageSavedAddressesIntent.OnEdit(address)) },
+                            onDelete = { addressToDelete = address },
+                            onSetDefault = { onIntent(ManageSavedAddressesIntent.OnSetDefault(address.id)) }
+                        )
+                    }
+                    item { Spacer(Modifier.height(80.dp)) } // Room for bottom button if scrolling overlaps
+                }
             }
         }
     }

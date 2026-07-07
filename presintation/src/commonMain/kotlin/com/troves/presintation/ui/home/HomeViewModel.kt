@@ -137,6 +137,8 @@ class HomeViewModel(
                 trendingResult,
             ).firstNotNullOfOrNull { (it as? Result.Error)?.throwable }
 
+            val loggedIn = isLoggedIn()
+
             updateState {
                 copy(
                     isLoading = false,
@@ -146,6 +148,7 @@ class HomeViewModel(
                     justForYou = justForYouResult.getOrElse(emptyList()),
                     trending = trendingResult.getOrElse(emptyList()),
                     errorMessage = firstError?.message,
+                    isLoggedIn = loggedIn,
                 )
             }
         }

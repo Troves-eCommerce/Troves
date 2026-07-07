@@ -16,6 +16,7 @@ data class HomeUiState(
     val errorMessage: String? = null,
     val showSignUpPrompt: Boolean = false,
     val isSurveyDone: Boolean = false,
+    val isLoggedIn: Boolean = false,
     val cartItemCount: Int = 0,
 ) {
     val hasError: Boolean get() = errorMessage != null
