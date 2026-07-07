@@ -235,9 +235,7 @@ private fun CartScreenContent(
             if (state.isEmpty) {
                 item {
                     Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = Theme.spacing.extraLarge),
+                        modifier = Modifier.fillParentMaxSize(),
                         contentAlignment = Alignment.Center,
                     ) {
                         EmptyState(

@@ -2,6 +2,7 @@ package com.troves.presintation.ui.search.component
 
 import androidx.compose.ui.Modifier
 import androidx.compose.foundation.layout.size
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.SearchCheck
@@ -35,18 +36,22 @@ import troves.designsystem.generated.resources.search_empty_desc
 fun EmptySearchResult(
     modifier: Modifier = Modifier,
 ) {
-    EmptyState(
-        title = stringResource(Res.string.search_empty_title),
-        description = stringResource(Res.string.search_empty_desc),
+    androidx.compose.foundation.layout.Box(
         modifier = modifier,
-        // Using custom icon since SearchCheck is from Lucide not Icons.Default
-        customIcon = {
-            androidx.compose.material3.Icon(
-                imageVector = Lucide.SearchCheck,
-                contentDescription = null,
-                tint = com.troves.designsystem.theme.Theme.colors.primary,
-                modifier = Modifier.size(34.dp)
-            )
-        }
-    )
+        contentAlignment = androidx.compose.ui.Alignment.Center
+    ) {
+        EmptyState(
+            title = stringResource(Res.string.search_empty_title),
+            description = stringResource(Res.string.search_empty_desc),
+            // Using custom icon since SearchCheck is from Lucide not Icons.Default
+            customIcon = {
+                androidx.compose.material3.Icon(
+                    imageVector = Lucide.SearchCheck,
+                    contentDescription = null,
+                    tint = com.troves.designsystem.theme.Theme.colors.primary,
+                    modifier = Modifier.size(34.dp)
+                )
+            }
+        )
+    }
 }

@@ -126,6 +126,7 @@ fun ProductsScreen(
                 )
 
                 else -> ProductsGrid(
+                    modifier = Modifier.weight(1f),
                     products = state.displayedProducts,
                     favoriteProductIds = state.favoriteProductIds,
                     onProductClick = { viewModel.onIntent(ProductsIntent.ProductClicked(it)) },
@@ -226,6 +227,7 @@ private fun ProductsToolbar(
 
 @Composable
 private fun ProductsGrid(
+    modifier: Modifier = Modifier,
     products: List<Product>,
     favoriteProductIds: Set<String>,
     onProductClick: (Product) -> Unit,
@@ -233,7 +235,7 @@ private fun ProductsGrid(
 ) {
     if (products.isEmpty()) {
         Box(
-            modifier = Modifier.fillMaxSize(),
+            modifier = modifier.fillMaxSize(),
             contentAlignment = Alignment.Center,
         ) {
             EmptyState(
@@ -251,7 +253,7 @@ private fun ProductsGrid(
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         contentPadding = PaddingValues(
             start = Theme.spacing.medium,
             end = Theme.spacing.medium,

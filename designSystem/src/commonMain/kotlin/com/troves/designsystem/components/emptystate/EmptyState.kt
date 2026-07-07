@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -22,13 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.troves.designsystem.theme.Theme
 
-/**
- * Generic, reusable empty-state widget.
- *
- * Pass either [icon] (a Material ImageVector, tinted + placed in a soft circular
- * badge automatically) OR your own [customIcon] slot (e.g. a Painter / Lottie /
- * custom illustration) when you need full control over the visual.
- */
+
 @Composable
 fun EmptyState(
     title: String,
@@ -45,7 +38,8 @@ fun EmptyState(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 32.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
         // ---- Icon / illustration badge ----
         val infinite = rememberInfiniteTransition(label = "empty_state_pulse")
