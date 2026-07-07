@@ -91,9 +91,10 @@ fun HomeScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     var showSurveySheet by remember { mutableStateOf(false) }
+    var dismissedSurveyPopup by remember { mutableStateOf(false) }
 
     val loginRequiredText = stringResource(Res.string.home_login_required)
-    val showSurveyPopup = state.isLoggedIn && !state.isSurveyDone
+    val showSurveyPopup = state.isLoggedIn && !state.isSurveyDone && !dismissedSurveyPopup
 
     ObserveEffect(viewModel.effect) { effect ->
         when (effect) {
@@ -192,6 +193,8 @@ fun HomeScreen(
             ) {
                 SurveyBannerCard(
                     onStartSurvey = { viewModel.onIntent(HomeIntent.SurveyBannerClicked) },
+                    onDismiss = { dismissedSurveyPopup = true },
+                    onNeverShowAgain = { viewModel.onIntent(HomeIntent.SurveyBannerNeverShowAgain) },
                     modifier = Modifier.padding(horizontal = 24.dp),
                 )
             }

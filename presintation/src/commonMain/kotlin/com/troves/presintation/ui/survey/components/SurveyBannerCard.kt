@@ -24,9 +24,17 @@ import org.jetbrains.compose.resources.painterResource
 import troves.designsystem.generated.resources.Res
 import troves.designsystem.generated.resources.ic_ai_sparkles
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.IconButton
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+
 @Composable
 fun SurveyBannerCard(
     onStartSurvey: () -> Unit,
+    onDismiss: () -> Unit,
+    onNeverShowAgain: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val shape = Theme.shapes.large
@@ -41,22 +49,39 @@ fun SurveyBannerCard(
         verticalArrangement = Arrangement.spacedBy(Theme.spacing.medium),
     ) {
         Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small),
         ) {
-            Icon(
-                painter = painterResource(Res.drawable.ic_ai_sparkles),
-                contentDescription = null,
-                tint = Theme.colors.primary,
-                modifier = Modifier.size(20.dp),
-            )
-            BasicText(
-                text = "Personalised for you",
-                style = Theme.typography.body.small.copy(
-                    color = Theme.colors.primary,
-                    fontWeight = FontWeight.SemiBold,
-                ),
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small),
+            ) {
+                Icon(
+                    painter = painterResource(Res.drawable.ic_ai_sparkles),
+                    contentDescription = null,
+                    tint = Theme.colors.primary,
+                    modifier = Modifier.size(20.dp),
+                )
+                BasicText(
+                    text = "Personalised for you",
+                    style = Theme.typography.body.small.copy(
+                        color = Theme.colors.primary,
+                        fontWeight = FontWeight.SemiBold,
+                    ),
+                )
+            }
+            
+            IconButton(
+                onClick = onDismiss, 
+                modifier = Modifier.size(24.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Close,
+                    contentDescription = "Close",
+                    tint = Theme.colors.secondaryFont
+                )
+            }
         }
 
         BasicText(
@@ -81,5 +106,18 @@ fun SurveyBannerCard(
             onClick = onStartSurvey,
             modifier = Modifier.fillMaxWidth(),
         )
+        
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable(onClick = onNeverShowAgain)
+                .padding(vertical = Theme.spacing.small),
+            contentAlignment = Alignment.Center
+        ) {
+            BasicText(
+                text = "Don't show again",
+                style = Theme.typography.body.medium.copy(color = Theme.colors.secondaryFont, fontWeight = FontWeight.SemiBold)
+            )
+        }
     }
 }
