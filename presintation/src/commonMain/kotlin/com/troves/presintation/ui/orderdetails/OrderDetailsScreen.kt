@@ -2,6 +2,7 @@ package com.troves.presintation.ui.orderdetails
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -148,8 +149,10 @@ private fun OrderDetailsContent(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(100.dp)
-                        .clip(Theme.shapes.medium),
+                        .clip(Theme.shapes.medium)
+                        .border(1.dp, Theme.colors.onPrimary.copy(alpha = 0.5f), Theme.shapes.medium)
+                        .padding(end = 16.dp)
+                    ,
                     horizontalArrangement = Arrangement.spacedBy(Theme.spacing.medium),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
