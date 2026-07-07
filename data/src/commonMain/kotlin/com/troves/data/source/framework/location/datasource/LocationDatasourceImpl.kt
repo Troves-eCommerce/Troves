@@ -3,6 +3,11 @@ package com.troves.data.source.framework.location.datasource
 import com.troves.data.source.framework.location.service.LocationAddress
 import com.troves.data.source.framework.location.service.LocationCoordinates
 import com.troves.data.source.framework.location.service.LocationService
+import com.troves.data.source.remote.service.ktor.getResults
+import com.troves.domain.utils.Result
+import io.ktor.client.HttpClient
+import io.ktor.http.HttpMethod
+import io.ktor.http.path
 
 /**
  * Copyright (c) 2026 Wahid Ali Wahid Hussien.
@@ -26,11 +31,17 @@ import com.troves.data.source.framework.location.service.LocationService
  */
 class LocationDatasourceImpl(
     private val locationService: LocationService,
+    private val locationClient: HttpClient
 ) : LocationDatasource {
-    override suspend fun requestPermission(): Boolean = locationService.requestPermission()
     override suspend fun getCurrentLocationCoordinates(): LocationCoordinates =
         locationService.getCurrentLocationCoordinates()
 
-    override suspend fun reverseGeocode(coordinates: LocationCoordinates): LocationAddress =
-        locationService.reverseGeocode(coordinates)
+    override suspend fun reverseGeocode(coordinates: LocationCoordinates): Result<LocationAddress> {
+        return locationClient.getResults {
+            method = HttpMethod.Get
+            url {
+                path("reverce/")
+            }
+        }
+    }
 }

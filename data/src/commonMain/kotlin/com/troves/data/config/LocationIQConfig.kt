@@ -1,9 +1,6 @@
-package com.troves.data.source.framework.location.datasource
+package com.troves.data.config
 
-import com.troves.data.source.framework.location.service.LocationAddress
-import com.troves.data.source.framework.location.service.LocationCoordinates
-import com.troves.data.source.framework.location.service.LocationService
-import com.troves.domain.utils.Result
+import com.troves.data.BuildKonfig
 
 /**
  * Copyright (c) 2026 Wahid Ali Wahid Hussien.
@@ -25,8 +22,7 @@ import com.troves.domain.utils.Result
  * Author: Wahid Ali Wahid Hussien
  * Created: 07/07/2026
  */
-interface LocationDatasource: LocationService{
-    suspend fun reverseGeocode(
-        coordinates: LocationCoordinates,
-    ): Result<LocationAddress>
+object LocationIQConfig {
+    val LOCATION_IQ_API_KEY: String = BuildKonfig.LOCATION_IQ_API_KEY
+    val LOCATION_IQ_BASE_URL: String = BuildKonfig.LOCATION_IQ_BASE_URL
 }
