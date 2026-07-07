@@ -312,9 +312,9 @@ private fun HomeContent(
 
     if (state.justForYou.isNotEmpty()) {
         SectionHeader(
-            title = stringResource(Res.string.home_just_for_you),
+            title = stringResource(Res.string.see_all),
             actionIcon = chevron,
-            actionLabel = stringResource(Res.string.home_view_all),
+            actionLabel = stringResource(Res.string.see_all),
             onAction = { onIntent(HomeIntent.ViewAllJustForYouClicked) }
         )
         ProductRow(
@@ -377,9 +377,9 @@ private fun HomeContent(
 
     if (state.trending.isNotEmpty()) {
         SectionHeader(
-            title = stringResource(Res.string.home_trending_now),
+            title = stringResource(Res.string.see_all),
             actionIcon = chevron,
-            actionLabel = stringResource(Res.string.home_view_all),
+            actionLabel = stringResource(Res.string.see_all),
             onAction = { onIntent(HomeIntent.ViewAllTrendingClicked) }
         )
         ProductRow(
