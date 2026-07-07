@@ -91,7 +91,15 @@ class AuthenticationRepositoryFirebaseImpl(
     // isLoggedInStream tries to read it — that's the exact error you hit.
     override val currentUserStream: Flow<UserProfile?> =
         firebaseAuth.idTokenChanged.map { user ->
-            user?.let { UserProfile(id = it.uid, email = it.email, isEmailVerified = it.isEmailVerified) }
+            user?.let {
+                UserProfile(
+                    id = it.uid,
+                    email = it.email,
+                    isEmailVerified = it.isEmailVerified,
+                    displayName = it.displayName,
+                    profileImageUrl = it.photoURL
+                )
+            }
         }
 
     /**
@@ -161,7 +169,13 @@ class AuthenticationRepositoryFirebaseImpl(
 
     override suspend fun getCurrentUserProfile(): UserProfile? =
         firebaseAuth.currentUser?.let {
-            UserProfile(id = it.uid, email = it.email, isEmailVerified = it.isEmailVerified)
+            UserProfile(
+                id = it.uid,
+                email = it.email,
+                isEmailVerified = it.isEmailVerified,
+                displayName = it.displayName,
+                profileImageUrl = it.photoURL
+            )
         }
 
     private suspend fun acquireShopifyToken(email: String, password: String): Boolean {

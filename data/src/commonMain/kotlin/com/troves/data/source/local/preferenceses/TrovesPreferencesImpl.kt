@@ -87,7 +87,7 @@ class TrovesPreferencesImpl(
         dataStore.data
             .catchIOException()
             .map {
-                it[AppPreferencesKeys.SELECTED_CURRENCY] ?: "USD"
+                it[AppPreferencesKeys.SELECTED_CURRENCY] ?: "EGP"
             }
     override val themeMode: Flow<String>
         get() = dataStore.data

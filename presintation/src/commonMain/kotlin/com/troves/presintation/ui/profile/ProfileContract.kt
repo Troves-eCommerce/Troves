@@ -7,9 +7,10 @@ data class ProfileState(
     val isGuest: Boolean = true,
     val userName: String = "",
     val userEmail: String = "",
+    val userProfileImage: String? = null,
     val selectedLanguage: String = "en",
     val themeMode: String = "system",
-    val selectedCurrency: String = "USD",
+    val selectedCurrency: String = "EGP",
     val exchangeRate: ExchangeRate? = null,
     val showLogoutDialog: Boolean = false,
     val errorMessage: String? = null
@@ -57,8 +58,8 @@ sealed interface ProfileIntent {
         val language: String
     ) : ProfileIntent
 
-    data class DarkModeChanged(
-        val enabled: Boolean
+    data class ThemeModeSelected(
+        val mode: String
     ) : ProfileIntent
 
     data class CurrencySelected(

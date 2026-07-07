@@ -26,7 +26,9 @@ class ObserveProfilePreferencesUseCase(
                 language = values[2] as String,
                 themeMode = values[3] as String,
                 currency = values[4] as String,
-                email = user?.email
+                displayName = user?.displayName,
+                email = user?.email,
+                profileImageUrl = user?.profileImageUrl
             )
         }
 }

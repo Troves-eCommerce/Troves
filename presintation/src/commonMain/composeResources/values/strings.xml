@@ -42,6 +42,31 @@
     <string name="profile_login_signup">Login / Sign Up</string>
     <string name="profile_select_language">Select Language</string>
     <string name="profile_style_survey">Style Survey</string>
+    <string name="profile_order_history_desc">View and track your orders</string>
+    <string name="profile_manage_addresses_desc">Manage your saved addresses</string>
+    <string name="profile_language_desc">Change app language</string>
+    <string name="profile_theme">Theme</string>
+    <string name="profile_theme_dark">Dark</string>
+    <string name="profile_theme_light">Light</string>
+    <string name="profile_theme_system">System default</string>
+    <string name="profile_sign_out_desc">Sign out from your account</string>
+    <string name="profile_select_theme">Select Theme</string>
+    <string name="profile_welcome_back">Welcome back,</string>
+    <string name="profile_premium_member">Premium Member</string>
+    <string name="profile_currency_exchange_rates">Currency &amp; Exchange Rates</string>
+    <string name="profile_currency_desc">View live rates and change currency</string>
+    <string name="profile_base_currency">Base currency</string>
+    <string name="profile_select_currency">Select Currency</string>
+    <string name="profile_select_currency_subtitle">Choose the currency you want to use.</string>
+    <string name="profile_save_currency">Save Currency</string>
+    <string name="profile_exchange_rate_format">1 %1$s = %2$s %3$s</string>
+    <string name="currency_egp">Egyptian Pound</string>
+    <string name="currency_usd">US Dollar</string>
+    <string name="currency_eur">Euro</string>
+    <string name="currency_sar">Saudi Riyal</string>
+    <string name="language_english">English</string>
+    <string name="language_arabic">العربية</string>
+    <string name="profile_navigate">Navigate</string>
 
     <!-- Checkout · shared -->
     <string name="checkout_continue">Continue</string>
