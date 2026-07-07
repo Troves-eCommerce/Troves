@@ -22,6 +22,10 @@ import com.troves.data.repository.PaymentRepositoryImpl
 import com.troves.data.repository.TrovesRepositoryImpl
 import com.troves.data.repository.WishlistRepositoryImpl
 import com.troves.data.repository.createAuthenticationRepository
+import com.troves.data.source.framework.location.datasource.LocationDatasource
+import com.troves.data.source.framework.location.datasource.LocationDatasourceImpl
+import com.troves.data.source.framework.location.service.LocationService
+import com.troves.data.source.framework.location.service.provideLocationService
 import com.troves.data.source.local.ads.LocalAdsDataSource
 import com.troves.data.source.local.ads.LocalAdsDataSourceImpl
 import com.troves.data.source.local.preferenceses.TrovesPreferences
@@ -59,19 +63,33 @@ val dataModule = module {
     // Ktor client kept registered for easy rollback to the REST implementation.
     single<HttpClient> { provideHttpClient() }
     single<HttpClient>(named(PAYMOB)) { providePaymobClient() }
+
+
+
     // Dedicated client for public location APIs — no Shopify auth/base URL leaks to third parties.
     single<HttpClient>(named(LOCATION_CLIENT)) { provideLocationHttpClient() }
+
+
     // Admin GraphQL client (product catalogue) and Storefront client (cart/checkout/customer/orders).
     single<ApolloClient>(named(ADMIN_CLIENT)) { provideApolloClient() }
     single<ApolloClient>(named(STORE_CLIENT)) { provideStorefrontApolloClient() }
+
+
     // GraphQL (Apollo) is now the active TrovesApiService implementation.
     single<TrovesApiService> { ApolloTrovesApiServiceImpl(get(named(ADMIN_CLIENT))) }
     single<StorefrontApiService> { ApolloStorefrontApiServiceImpl(get(named(STORE_CLIENT))) }
 
+
+
     single<PaymobApiService> { PaymobServiceImpl(get(named(PAYMOB))) }
+
+
+
     // Location (countries/cities) — dedicated service → data source → repository.
     single<LocationApiService> { LocationApiServiceImpl(get(named(LOCATION_CLIENT))) }
     single<LocationDataSource> { LocationDataSourceImpl(get()) }
+
+
 
     // AI assistant — dedicated client (no Shopify auth) → service (swap seam) → data source.
     single<HttpClient>(named(AI_CLIENT)) { provideAiHttpClient() }
@@ -107,6 +125,21 @@ val dataModule = module {
     single<AiAssistantRepository>     { get<AiAssistantRepositoryImpl>() }
     single<CurrencyRepository>        { CurrencyRepositoryImpl(get(), get()) }
     single<FirebaseFirestore> { Firebase.firestore }
+
+
+
+
+
+    //LocationService
+    single<LocationService> { provideLocationService() }
+    single<LocationDatasource> { LocationDatasourceImpl(get()) }
+
+
+
+
+
+
+
 }
 
 private const val ADMIN_CLIENT = "admin"
