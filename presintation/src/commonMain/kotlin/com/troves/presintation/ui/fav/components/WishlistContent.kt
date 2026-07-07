@@ -23,9 +23,15 @@ import com.troves.designsystem.theme.Theme
 import com.troves.domain.entity.Product
 import com.troves.presintation.ui.fav.WishlistIntent
 import com.troves.presintation.ui.fav.WishlistState
+import com.troves.designsystem.components.emptystate.EmptyState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.FavoriteBorder
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import troves.designsystem.generated.resources.Res
 import troves.designsystem.generated.resources.ic_wishlist
+import troves.designsystem.generated.resources.wishlist_empty_title
+import troves.designsystem.generated.resources.wishlist_empty_desc
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -82,24 +88,11 @@ fun WishlistContent(
                             .verticalScroll(rememberScrollState()),
                         contentAlignment = Alignment.Center
                     ) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.spacedBy(16.dp)
-                        ) {
-                            Icon(
-                                painter = painterResource(Res.drawable.ic_wishlist),
-                                contentDescription = null,
-                                tint = Theme.colors.primary,
-                                modifier = Modifier.size(80.dp)
-                            )
-                            Text(
-                                text = "Your wishlist is empty",
-                                style = Theme.typography.body.large.copy(
-                                    fontWeight = FontWeight.Medium
-                                ),
-                                color = Theme.colors.secondaryFont
-                            )
-                        }
+                        EmptyState(
+                            title = stringResource(Res.string.wishlist_empty_title),
+                            description = stringResource(Res.string.wishlist_empty_desc),
+                            icon = Icons.Default.FavoriteBorder,
+                        )
                     }
                 }
 

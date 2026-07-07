@@ -43,10 +43,16 @@ import com.troves.designsystem.components.toast.TrovesSnackbarHost
 import com.troves.designsystem.theme.Theme
 import com.troves.presintation.core.mvi.ObserveEffect
 import com.troves.presintation.ui.cart.components.CartItemCard
+import com.troves.designsystem.components.emptystate.EmptyState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ShoppingCart
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import troves.designsystem.generated.resources.Res
 import troves.designsystem.generated.resources.ic_arrow_back
+import troves.designsystem.generated.resources.cart_empty_title
+import troves.designsystem.generated.resources.cart_empty_desc
 
 @Composable
 fun CartScreen(
@@ -234,11 +240,10 @@ private fun CartScreenContent(
                             .padding(top = Theme.spacing.extraLarge),
                         contentAlignment = Alignment.Center,
                     ) {
-                        BasicText(
-                            text = "Your cart is empty",
-                            style = Theme.typography.body.large.copy(
-                                color = Theme.colors.secondaryFont,
-                            ),
+                        EmptyState(
+                            title = stringResource(Res.string.cart_empty_title),
+                            description = stringResource(Res.string.cart_empty_desc),
+                            icon = Icons.Default.ShoppingCart,
                         )
                     }
                 }

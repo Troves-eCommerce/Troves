@@ -57,9 +57,13 @@ import troves.designsystem.generated.resources.*
 import troves.designsystem.generated.resources.Res as DesignRes
 import troves.designsystem.generated.resources.filter_title
 import troves.designsystem.generated.resources.img_placeholder
-import troves.designsystem.generated.resources.products_empty
 import troves.designsystem.generated.resources.products_retry
 import troves.designsystem.generated.resources.sort_title
+import troves.designsystem.generated.resources.products_empty_title
+import troves.designsystem.generated.resources.products_empty_desc
+import com.troves.designsystem.components.emptystate.EmptyState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -232,9 +236,10 @@ private fun ProductsGrid(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center,
         ) {
-            BasicText(
-                text = stringResource(DesignRes.string.products_empty),
-                style = Theme.typography.body.large.copy(color = Theme.colors.secondaryFont),
+            EmptyState(
+                title = stringResource(DesignRes.string.products_empty_title),
+                description = stringResource(DesignRes.string.products_empty_desc),
+                icon = Icons.Default.Search,
             )
         }
         return
