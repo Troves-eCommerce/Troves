@@ -5,6 +5,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import com.troves.designsystem.theme.Theme
+import org.jetbrains.compose.resources.stringResource
+import troves.presintation.generated.resources.Res
+import troves.presintation.generated.resources.signup_prompt_title
+import troves.presintation.generated.resources.signup_prompt_msg
+import troves.presintation.generated.resources.signup_prompt_confirm
+import troves.presintation.generated.resources.profile_cancel
 
 @Composable
 fun SignUpPromptDialog(
@@ -14,13 +20,13 @@ fun SignUpPromptDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         containerColor = Theme.colors.surface,
-        title = { Text("Sign up required") },
-        text = { Text("You need an account to do that. Would you like to sign up?") },
+        title = { Text(stringResource(Res.string.signup_prompt_title)) },
+        text = { Text(stringResource(Res.string.signup_prompt_msg)) },
         confirmButton = {
-            TextButton(onClick = onConfirm) { Text("Sign Up") }
+            TextButton(onClick = onConfirm) { Text(stringResource(Res.string.signup_prompt_confirm)) }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Cancel") }
+            TextButton(onClick = onDismiss) { Text(stringResource(Res.string.profile_cancel)) }
         },
     )
 }

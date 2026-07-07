@@ -10,6 +10,7 @@ import com.troves.domain.entity.Order
 import com.troves.domain.entity.OrderSummary
 import com.troves.domain.entity.Product
 import com.troves.domain.entity.ProductSearchParams
+import com.troves.domain.entity.Review
 import com.troves.domain.utils.Result
 import kotlinx.coroutines.flow.Flow
 
@@ -51,4 +52,8 @@ interface TrovesRepository {
     suspend fun getOrderById(orderId: String): Order?
     suspend fun placeCodOrder(cart: Cart, address: Address): String
     suspend fun attachAddressToCart(cartId: String, address: Address)
+
+    // ── Product reviews (Firestore) ───────────────────────────────────────────
+    suspend fun getReviews(productId: String): Result<List<Review>>
+    suspend fun submitReview(productId: String, review: Review): Result<Unit>
 }

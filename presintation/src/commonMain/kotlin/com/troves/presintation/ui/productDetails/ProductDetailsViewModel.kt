@@ -16,12 +16,22 @@ import com.troves.presintation.core.mvi.StateHolder
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import com.troves.domain.utils.Result
+import com.troves.domain.entity.Review
+import com.troves.domain.usecase.review.GetProductReviewsUseCase
+import com.troves.domain.usecase.review.GetReviewerIdentityUseCase
+import com.troves.domain.usecase.review.SubmitReviewResult
+import com.troves.domain.usecase.review.SubmitReviewUseCase
+import com.troves.presintation.ui.aichat.nowEpochMillis
+import com.troves.presintation.ui.productDetails.models.ReviewDraft
 import com.troves.presintation.ui.productDetails.models.ReviewUi
 
 import org.jetbrains.compose.resources.getString
 import troves.designsystem.generated.resources.Res
 import troves.designsystem.generated.resources.product_details_coming_soon
 import troves.designsystem.generated.resources.product_details_out_of_stock
+import troves.designsystem.generated.resources.product_details_review_error
+import troves.designsystem.generated.resources.product_details_review_rating_required
+import troves.designsystem.generated.resources.product_details_review_submitted
 import troves.designsystem.generated.resources.product_details_select_option
 import troves.designsystem.generated.resources.product_details_unavailable_combination
 
@@ -31,6 +41,9 @@ class ProductDetailsViewModel(
     private val isProductFavorite: IsProductFavoritedUseCase,
     private val toggleFavoriteUseCase: ToggleFavoriteUseCase,
     private val getCartStreamUseCase: com.troves.domain.usecase.cart.GetCartStreamUseCase,
+    private val getProductReviews: GetProductReviewsUseCase,
+    private val submitReviewUseCase: SubmitReviewUseCase,
+    private val getReviewerIdentity: GetReviewerIdentityUseCase,
 ) : ViewModel(),
     StateHolder<ProductDetailUiState> by DefaultStateHolder(ProductDetailUiState()),
     EffectPublisher<ProductDetailsEffect> by DefaultEffectPublisher() {
@@ -38,6 +51,7 @@ class ProductDetailsViewModel(
     private var favoriteJob: Job? = null
     private var cartJob: Job? = null
     private var bannerDismissJob: Job? = null
+    private var currentProductId: String = ""
 
     fun onIntent(intent: ProductDetailsIntent) {
         when (intent) {
@@ -67,11 +81,26 @@ class ProductDetailsViewModel(
                 updateState { copy(showCartConfirmation = false) }
             }
 
-            else -> {}
+            ProductDetailsIntent.OnSeeAllReviews ->
+                updateState { copy(showReviewsSheet = true) }
+
+            ProductDetailsIntent.OnDismissReviewsSheet ->
+                updateState { copy(showReviewsSheet = false, showReviewEditor = false) }
+
+            ProductDetailsIntent.OnOpenReviewEditor -> openReviewEditor()
+
+            ProductDetailsIntent.OnDismissReviewEditor ->
+                updateState { copy(showReviewEditor = false) }
+
+            is ProductDetailsIntent.OnReviewDraftChanged ->
+                updateState { copy(reviewDraft = intent.draft) }
+
+            ProductDetailsIntent.OnSubmitReview -> submitReview()
         }
     }
 
     private fun fetchProduct(productId: String) {
+        currentProductId = productId
         viewModelScope.launch {
             when (val product = getProductByIdUseCase(productId)) {
                 Result.Loading -> updateState { copy(isLoading = true) }
@@ -85,8 +114,6 @@ class ProductDetailsViewModel(
 
                 is Result.Success<Product> -> {
                     val value = product.value
-                    val randomReviews = MOCK_REVIEWS.shuffled().take((2..MOCK_REVIEWS.size).random())
-                    val averageRating = randomReviews.map { it.rating }.average().toInt()
                     updateState {
                         copy(
                             isLoading = false,
@@ -96,15 +123,139 @@ class ProductDetailsViewModel(
                             priceFormatted = value.price,
                             errorMessage = null,
                             description = value.description,
-                            rating = averageRating,
-                            reviews = randomReviews,
-                            reviewCount = randomReviews.size
                         )
                     }
                     observeFavoriteStatus(productId)
                     observeCartStatus(productId)
+                    loadReviews(productId)
                 }
             }
+        }
+    }
+
+    private fun loadReviews(productId: String) {
+        viewModelScope.launch {
+            updateState { copy(reviewsLoading = true) }
+            when (val result = getProductReviews(productId)) {
+                is Result.Success ->
+                    applyReviews(productId, result.value.reviews, result.value.currentUserId)
+
+                // Even if the read fails (e.g. Firestore rules not set yet) still show seed reviews.
+                is Result.Error ->
+                    applyReviews(productId, realReviews = emptyList(), currentUserId = null)
+
+                Result.Loading -> {}
+            }
+        }
+    }
+
+    private fun applyReviews(
+        productId: String,
+        realReviews: List<Review>,
+        currentUserId: String?,
+    ) {
+        val now = nowEpochMillis()
+        // Merge real reviews with DEV-only seed reviews (never duplicating a real author).
+        val seeds = FakeReviews.forProduct(productId, now)
+            .filter { seed -> realReviews.none { it.userId == seed.userId } }
+        val uiReviews = (realReviews + seeds)
+            .sortedByDescending { it.createdAt }
+            .map { it.toUi(currentUserId, now) }
+        val mine = uiReviews.firstOrNull { it.isMine }
+        updateState {
+            copy(
+                reviewsLoading = false,
+                reviews = uiReviews,
+                myReview = mine,
+                reviewCount = uiReviews.size,
+                rating = if (uiReviews.isEmpty()) 0
+                else uiReviews.map { it.rating }.average().toInt(),
+            )
+        }
+    }
+
+    private fun openReviewEditor() {
+        viewModelScope.launch {
+            val draft = currentState.myReview?.let {
+                ReviewDraft(
+                    firstName = it.firstName,
+                    lastName = it.lastName,
+                    rating = it.rating,
+                    comment = it.comment,
+                )
+            } ?: run {
+                val identity = getReviewerIdentity()
+                ReviewDraft(firstName = identity.firstName, lastName = identity.lastName)
+            }
+            updateState {
+                copy(
+                    reviewDraft = draft,
+                    showReviewsSheet = true,
+                    showReviewEditor = true,
+                )
+            }
+        }
+    }
+
+    private fun submitReview() {
+        val draft = currentState.reviewDraft
+        if (draft.rating <= 0) {
+            viewModelScope.launch {
+                sendEffect(ProductDetailsEffect.ShowToast(getString(Res.string.product_details_review_rating_required)))
+            }
+            return
+        }
+        val productId = currentProductId
+        updateState { copy(isSubmittingReview = true) }
+        viewModelScope.launch {
+            val result = submitReviewUseCase(
+                productId = productId,
+                firstName = draft.firstName,
+                lastName = draft.lastName,
+                rating = draft.rating,
+                comment = draft.comment,
+                createdAt = nowEpochMillis(),
+            )
+            updateState { copy(isSubmittingReview = false) }
+            when (result) {
+                SubmitReviewResult.Success -> {
+                    updateState { copy(showReviewEditor = false) }
+                    sendEffect(ProductDetailsEffect.ShowToast(getString(Res.string.product_details_review_submitted)))
+                    loadReviews(productId)
+                }
+
+                SubmitReviewResult.RequiresLogin ->
+                    sendEffect(ProductDetailsEffect.ShowLoginRequiredDialog(forReview = true))
+
+                is SubmitReviewResult.Error ->
+                    sendEffect(ProductDetailsEffect.ShowToast(getString(Res.string.product_details_review_error)))
+            }
+        }
+    }
+
+    private fun Review.toUi(currentUserId: String?, now: Long) = ReviewUi(
+        id = id,
+        userId = userId,
+        firstName = firstName,
+        lastName = lastName,
+        rating = rating,
+        comment = comment,
+        date = relativeTime(now, createdAt),
+        isMine = currentUserId != null && userId == currentUserId,
+    )
+
+    private fun relativeTime(now: Long, then: Long): String {
+        if (then <= 0L) return ""
+        val diff = (now - then).coerceAtLeast(0L)
+        val minutes = diff / 60_000
+        val hours = diff / 3_600_000
+        val days = diff / 86_400_000
+        return when {
+            minutes < 1 -> "Just now"
+            minutes < 60 -> "${minutes}m ago"
+            hours < 24 -> "${hours}h ago"
+            days < 7 -> "${days}d ago"
+            else -> "${days / 7}w ago"
         }
     }
 
@@ -148,7 +299,7 @@ class ProductDetailsViewModel(
 
                 ToggleFavoriteResult.RequiresLogin -> {
                     updateState { copy(isFavorite = wasFavorite) }
-                    sendEffect(ProductDetailsEffect.ShowLoginRequiredDialog)
+                    sendEffect(ProductDetailsEffect.ShowLoginRequiredDialog())
                 }
 
                 is ToggleFavoriteResult.Error -> {
@@ -186,7 +337,7 @@ class ProductDetailsViewModel(
                 CartOperationResult.Success -> showCartConfirmationBar()
 
                 CartOperationResult.RequiresLogin ->
-                    sendEffect(ProductDetailsEffect.ShowLoginRequiredDialog)
+                    sendEffect(ProductDetailsEffect.ShowLoginRequiredDialog())
 
                 is CartOperationResult.Error ->
                     sendEffect(ProductDetailsEffect.ShowToast("Couldn't add to cart"))
@@ -203,16 +354,3 @@ class ProductDetailsViewModel(
         }
     }
 }
-
-private val MOCK_REVIEWS = listOf(
-    ReviewUi("Ahmed", 5, "Oct 1, 2023", "Excellent product, very high quality!"),
-    ReviewUi("Sara", 4, "Oct 5, 2023", "Good value for money, but shipping was a bit slow."),
-    ReviewUi("Mohamed", 5, "Oct 10, 2023", "I love it! Exactly what I was looking for."),
-    ReviewUi("Layla", 3, "Oct 12, 2023", "It's okay, but the color is slightly different from the photos."),
-    ReviewUi("Omar", 5, "Oct 15, 2023", "Perfect fit and very comfortable."),
-    ReviewUi("Nour", 4, "Oct 18, 2023", "Great quality, will definitely buy again."),
-    ReviewUi("Khaled", 2, "Oct 20, 2023", "Disappointed, it broke after two days of use."),
-    ReviewUi("Mona", 5, "Oct 22, 2023", "Super fast delivery and amazing customer service."),
-    ReviewUi("Zaid", 4, "Oct 25, 2023", "Nice design, but a bit smaller than expected."),
-    ReviewUi("Huda", 5, "Oct 28, 2023", "Absolutely beautiful! Highly recommend.")
-)

@@ -3,6 +3,7 @@ package com.troves.presintation.ui.productDetails
 import com.troves.domain.entity.Product
 import com.troves.domain.entity.ProductOption
 import com.troves.domain.entity.ProductVariant
+import com.troves.presintation.ui.productDetails.models.ReviewDraft
 import com.troves.presintation.ui.productDetails.models.ReviewUi
 
 data class ProductDetailUiState(
@@ -22,6 +23,12 @@ data class ProductDetailUiState(
     val product: Product? = null,
     val showCartConfirmation: Boolean = false,
     val productCartQuantity: Int = 0,
+    val reviewsLoading: Boolean = false,
+    val myReview: ReviewUi? = null,          // current user's existing review (null if none)
+    val showReviewsSheet: Boolean = false,   // the "see all" list sheet
+    val showReviewEditor: Boolean = false,   // editor mode inside that sheet
+    val reviewDraft: ReviewDraft = ReviewDraft(),
+    val isSubmittingReview: Boolean = false,
 ) {
     val hasError = errorMessage != null
 
@@ -54,7 +61,7 @@ data class ProductDetailUiState(
 sealed interface ProductDetailsEffect {
     data object NavigateBack : ProductDetailsEffect
     data class ShowToast(val message: String) : ProductDetailsEffect
-    data object ShowLoginRequiredDialog : ProductDetailsEffect
+    data class ShowLoginRequiredDialog(val forReview: Boolean = false) : ProductDetailsEffect
     data object NavigateToCart : ProductDetailsEffect
 }
 
@@ -62,6 +69,11 @@ sealed interface ProductDetailsIntent {
     data class Load(val productId: String) : ProductDetailsIntent
     data class Retry(val productId: String) : ProductDetailsIntent
     data object OnSeeAllReviews : ProductDetailsIntent
+    data object OnDismissReviewsSheet : ProductDetailsIntent
+    data object OnOpenReviewEditor : ProductDetailsIntent
+    data object OnDismissReviewEditor : ProductDetailsIntent
+    data class OnReviewDraftChanged(val draft: ReviewDraft) : ProductDetailsIntent
+    data object OnSubmitReview : ProductDetailsIntent
     data object OnSizeGuide : ProductDetailsIntent
     data object OnBackClick : ProductDetailsIntent
     data class OnOptionSelected(val optionName: String, val value: String) : ProductDetailsIntent

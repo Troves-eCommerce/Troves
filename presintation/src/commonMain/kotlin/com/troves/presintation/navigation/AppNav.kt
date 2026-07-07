@@ -56,9 +56,13 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import troves.designsystem.generated.resources.Res
 import troves.designsystem.generated.resources.ic_home
+import troves.designsystem.generated.resources.ic_home_selected
 import troves.designsystem.generated.resources.ic_order
+import troves.designsystem.generated.resources.ic_order_selected
 import troves.designsystem.generated.resources.ic_profile
+import troves.designsystem.generated.resources.ic_profile_selected
 import troves.designsystem.generated.resources.ic_wishlist
+import troves.designsystem.generated.resources.ic_wishlist_selected
 import troves.presintation.generated.resources.nav_home
 import troves.presintation.generated.resources.nav_orders
 import troves.presintation.generated.resources.nav_profile
@@ -394,10 +398,10 @@ fun AppNav() {
             if (shouldShowBottomBar) {
                 SPFloatingBottomNavigation(
                     items = listOf(
-                        BottomNavItem(stringResource(StringRes.string.nav_home), Res.drawable.ic_home),
-                        BottomNavItem(stringResource(StringRes.string.nav_wishlist), Res.drawable.ic_wishlist),
-                        BottomNavItem(stringResource(StringRes.string.nav_orders), Res.drawable.ic_order),
-                        BottomNavItem(stringResource(StringRes.string.nav_profile), Res.drawable.ic_profile)
+                        BottomNavItem(stringResource(StringRes.string.nav_home), Res.drawable.ic_home,Res.drawable.ic_home_selected),
+                        BottomNavItem(stringResource(StringRes.string.nav_wishlist), Res.drawable.ic_wishlist,Res.drawable.ic_wishlist_selected),
+                        BottomNavItem(stringResource(StringRes.string.nav_orders), Res.drawable.ic_order,Res.drawable.ic_order_selected),
+                        BottomNavItem(stringResource(StringRes.string.nav_profile), Res.drawable.ic_profile,Res.drawable.ic_profile_selected)
                     ),
                     selectedIndex = if (selectedIndex != -1) selectedIndex else 0,
                     onItemSelected = { index -> onBottomNavItemSelected(index) },

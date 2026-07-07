@@ -158,12 +158,12 @@ private fun OrderCardSkeleton() {
             .clip(Theme.shapes.large)
             .background(Theme.colors.surface)
             .border(1.dp, Theme.colors.onPrimary.copy(alpha = 0.5f), Theme.shapes.large)
-            .padding(Theme.spacing.medium),
-        verticalArrangement = Arrangement.spacedBy(Theme.spacing.medium),
+            .padding(Theme.spacing.small),
+        verticalArrangement = Arrangement.spacedBy(Theme.spacing.small),
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(Theme.spacing.medium),
+            horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Box(
@@ -175,7 +175,7 @@ private fun OrderCardSkeleton() {
 
             Column(
                 modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(Theme.spacing.small),
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -245,8 +245,8 @@ private fun OrderCard(order: OrderUi, onClick: () -> Unit) {
             .background(Theme.colors.surface)
             .border(1.dp, Theme.colors.onPrimary.copy(alpha = 0.5f), Theme.shapes.large)
             .clickable(onClick = onClick)
-            .padding(Theme.spacing.medium),
-        verticalArrangement = Arrangement.spacedBy(Theme.spacing.medium),
+            .padding(Theme.spacing.small),
+        verticalArrangement = Arrangement.spacedBy(Theme.spacing.small),
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),

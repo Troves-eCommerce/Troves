@@ -23,6 +23,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.troves.designsystem.theme.SpTheme
 import com.troves.designsystem.theme.Theme
+import org.jetbrains.compose.resources.stringResource
+import troves.designsystem.generated.resources.Res
+import troves.designsystem.generated.resources.stepper_label
 
 /**
  * Horizontal progress indicator: a "STEP X OF N" label above a row of circles
@@ -47,7 +50,7 @@ fun HorizontalStepper(
     Column(modifier = modifier.fillMaxWidth()) {
         if (showStepLabel) {
             BasicText(
-                text = "STEP $currentStep OF $totalSteps",
+                text = stringResource(Res.string.stepper_label, currentStep, totalSteps),
                 style = Theme.typography.body.small.copy(
                     color = Theme.colors.primaryVariant,
                     fontWeight = FontWeight.Medium,

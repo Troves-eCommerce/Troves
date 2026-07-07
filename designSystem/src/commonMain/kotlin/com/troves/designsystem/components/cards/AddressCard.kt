@@ -27,7 +27,9 @@ import androidx.compose.ui.unit.dp
 import com.troves.designsystem.theme.SpTheme
 import com.troves.designsystem.theme.Theme
 import com.troves.designsystem.util.noRippleClickable
-
+import org.jetbrains.compose.resources.stringResource
+import troves.designsystem.generated.resources.Res
+import troves.designsystem.generated.resources.address_edit
 
 @Composable
 fun AddressCard(
@@ -107,7 +109,7 @@ fun AddressCard(
                 Spacer(modifier = Modifier.weight(1f))
                 if (onEditClick != null) {
                     BasicText(
-                        text = "Edit",
+                        text = stringResource(Res.string.address_edit),
                         style = Theme.typography.body.medium.copy(
                             color = Theme.colors.primaryVariant,
                             fontWeight = FontWeight.Medium,

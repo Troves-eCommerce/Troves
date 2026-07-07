@@ -26,8 +26,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.troves.designsystem.theme.SpTheme
 import com.troves.designsystem.theme.Theme
-import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import troves.designsystem.generated.resources.Res
+import troves.designsystem.generated.resources.quantity_label
+import org.jetbrains.compose.resources.painterResource
 import troves.designsystem.generated.resources.img_placeholder
 
 
@@ -43,7 +45,7 @@ fun OrderSummaryItemCard(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .height(100.dp)
+            .height(128.dp)
            .shadow(elevation =0.4.dp, shape = Theme.shapes.medium, clip = false)
             .clip(Theme.shapes.medium)
             .background(Theme.colors.surface)
@@ -64,7 +66,6 @@ fun OrderSummaryItemCard(
 
         Column(
             modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(Theme.spacing.extraSmall),
         ) {
             BasicText(
                 text = name,
@@ -80,7 +81,7 @@ fun OrderSummaryItemCard(
                 style = Theme.typography.body.medium.copy(color = Theme.colors.secondaryFont),
             )
             BasicText(
-                text = "Qty: $quantity",
+                text = stringResource(Res.string.quantity_label, quantity),
                 style = Theme.typography.body.medium.copy(color = Theme.colors.secondaryFont),
             )
         }

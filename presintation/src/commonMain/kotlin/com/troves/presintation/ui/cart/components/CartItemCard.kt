@@ -40,8 +40,8 @@ fun CartItemCard(
             .clip(Theme.shapes.large)
             .background(Theme.colors.surface)
             .border(1.dp, Theme.colors.onPrimary.copy(alpha = 0.5f), Theme.shapes.large)
-            .padding(Theme.spacing.medium),
-        horizontalArrangement = Arrangement.spacedBy(Theme.spacing.medium),
+            .padding(Theme.spacing.small),
+        horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         AsyncImage(
@@ -56,7 +56,6 @@ fun CartItemCard(
 
         Column(
             modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -82,7 +81,6 @@ fun CartItemCard(
                 overflow = TextOverflow.Ellipsis,
             )
 
-            Spacer(Modifier.height(4.dp))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),

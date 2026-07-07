@@ -49,7 +49,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import troves.designsystem.generated.resources.Res
 import troves.designsystem.generated.resources.ic_arrow_back
-import troves.designsystem.generated.resources.ic_home
+import troves.designsystem.generated.resources.ic_home_selected
 import troves.designsystem.generated.resources.ic_location
 import troves.designsystem.generated.resources.ic_payment_method
 import troves.presintation.generated.resources.checkout_continue
@@ -64,6 +64,9 @@ import troves.presintation.generated.resources.checkout_place_order
 import troves.presintation.generated.resources.checkout_title_confirm_order
 import troves.presintation.generated.resources.checkout_title_delivery_address
 import troves.presintation.generated.resources.checkout_title_payment
+import troves.presintation.generated.resources.address_label_home
+import troves.presintation.generated.resources.address_label_work
+import troves.presintation.generated.resources.address_label_other
 import troves.presintation.generated.resources.Res as StringRes
 
 @Composable
@@ -278,14 +281,14 @@ private fun PaymentOption.toMethod(): CheckoutPaymentMethod = when (this) {
 @Composable
 private fun Address.toAddressUi(): AddressUi {
     val iconRes = when (icon) {
-        AddressIcon.HOME -> Res.drawable.ic_home
+        AddressIcon.HOME -> Res.drawable.ic_home_selected
         AddressIcon.WORK -> Res.drawable.ic_location
         AddressIcon.OTHER -> Res.drawable.ic_location
     }
     val title = label ?: when (icon) {
-        AddressIcon.HOME -> "Home"
-        AddressIcon.WORK -> "Work"
-        AddressIcon.OTHER -> "Address"
+        AddressIcon.HOME -> stringResource(StringRes.string.address_label_home)
+        AddressIcon.WORK -> stringResource(StringRes.string.address_label_work)
+        AddressIcon.OTHER -> stringResource(StringRes.string.address_label_other)
     }
     return AddressUi(
         id = id,
