@@ -1,9 +1,6 @@
 package com.troves.data.network
 
 import com.troves.data.config.LocationIQConfig
-import com.troves.data.config.ShopifyConfig
-import com.troves.data.source.remote.service.ktor.LocationIqPlugin
-import com.troves.data.source.remote.service.ktor.PaymobPlugin
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
@@ -55,7 +52,6 @@ fun provideLocationClient(): HttpClient = HttpClient {
             it == HttpHeaders.Authorization
         }
     }
-    install(LocationIqPlugin)
     defaultRequest {
         url(LocationIQConfig.LOCATION_IQ_BASE_URL)
     }
