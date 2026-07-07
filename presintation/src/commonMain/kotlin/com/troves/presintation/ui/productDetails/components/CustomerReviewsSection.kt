@@ -55,10 +55,8 @@ fun CustomerReviewsSection(
         )
 
         if (reviews.isEmpty()) {
-            // Suppress the "no reviews" state while the first load is still in flight.
             if (!isLoading) ReviewsEmptyState(onWriteReviewClick = onWriteReviewClick)
         } else {
-            // Show the user's own review first; all cards share one fixed size.
             val preview = reviews.sortedByDescending { it.isMine }.take(PREVIEW_COUNT)
             LazyRow(
                 modifier = Modifier.fillMaxWidth(),

@@ -208,7 +208,6 @@ class RemoteDatasourceImpl(
         }
     }
 
-    // Product-scoped so every viewer can read a product's reviews; doc id == userId → one per user.
     private fun reviewsCollection(productId: String) =
         firestore.collection("products").document(productId).collection("reviews")
 
