@@ -65,7 +65,7 @@ class CheckoutViewModel(
             CheckoutIntent.OnApplyCoupon -> applyCoupon()
             CheckoutIntent.OnRemoveCoupon -> removeCoupon()
             is CheckoutIntent.OnSelectAddress -> updateState { copy(selectedAddressId = intent.id) }
-            CheckoutIntent.OnAddAddress -> sendEffect(CheckoutEffect.NavigateToNewAddress(null))
+            CheckoutIntent.OnAddAddressClick -> sendEffect(CheckoutEffect.NavigateToNewAddress(null))
             is CheckoutIntent.OnEditAddress -> sendEffect(CheckoutEffect.NavigateToNewAddress(intent.id))
             is CheckoutIntent.OnSelectPaymentMethod -> updateState { copy(paymentMethod = intent.method) }
             CheckoutIntent.OnChangePayment -> updateState { copy(step = CheckoutStep.Payment) }

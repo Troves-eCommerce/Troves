@@ -108,6 +108,7 @@
     <string name="address_note_hint">e.g. Leave package at the door</string>
     <string name="address_loading">Loading...</string>
     <string name="address_error_countries">Error loading countries</string>
+    <string name="button_caption_select_address_from_map">Select address on the map</string>
     <string name="address_error_cities">Could not load cities. You can type your city manually.</string>
 
     <!-- Auth Screens -->

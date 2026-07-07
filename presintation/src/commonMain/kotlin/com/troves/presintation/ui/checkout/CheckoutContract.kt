@@ -54,7 +54,7 @@ sealed interface CheckoutIntent {
     data object OnApplyCoupon : CheckoutIntent
     data object OnRemoveCoupon : CheckoutIntent
     data class OnSelectAddress(val id: String) : CheckoutIntent
-    data object OnAddAddress : CheckoutIntent
+    data object OnAddAddressClick : CheckoutIntent
     data class OnEditAddress(val id: String) : CheckoutIntent
     data class OnSelectPaymentMethod(val method: CheckoutPaymentMethod) : CheckoutIntent
     data object OnChangePayment : CheckoutIntent
