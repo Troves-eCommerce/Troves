@@ -7,6 +7,7 @@ data class ColorScheme(
     val primary: Color,
     val primaryVariant: Color,
     val onPrimary: Color,
+    val onPrimaryVariant: Color,
     val secondary: Color,
     val onSecondary: Color,
     val backGround: Color,
@@ -34,6 +35,7 @@ val lightColors = ColorScheme(
     onPrimary = Color(0xFFECECEC),       // Dark text for better readability on green
     secondary = Color(0xFFD2D9CC),       // Light neutral secondary color
     onSecondary = Color(0xFF000000),     // Dark text for secondary surfaces
+    onPrimaryVariant = Color(0xffF9F6F2),
     backGround = Color(0xFFFEFDFC),
     primaryFont = Color(0xFF000000),
     secondaryFont = Color(0xFF636369),
@@ -60,6 +62,7 @@ val darkColors = ColorScheme(
     onPrimary = Color(0xFF121212),       // Dark contrast text for primary elements
     secondary = Color(0xFF8B9286),       // Muted, darker version of the secondary color for dark mode
     onSecondary = Color(0xFF121212),
+    onPrimaryVariant = Color(0xffF9F6F2),
     backGround = Color(0xFF121212),
     primaryFont = Color(0xFFEEEEEE),
     secondaryFont = Color(0xFFAAAAAA),

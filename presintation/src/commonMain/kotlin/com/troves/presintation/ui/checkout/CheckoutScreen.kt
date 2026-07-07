@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -122,35 +121,22 @@ fun CheckoutScreen(
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        Scaffold(
-            modifier = Modifier.fillMaxSize().statusBarsPadding(),
-            containerColor = Theme.colors.backGround,
-            topBar = {
-                BaseTopAppBar(
-                    title = titleFor(state.step),
-                    leadingIcon = painterResource(Res.drawable.ic_arrow_back),
-                    onLeadingClick = { viewModel.onIntent(CheckoutIntent.OnBack) },
-                    modifier = Modifier.background(Theme.colors.backGround),
-                    autoMirrorLeadingIcon = true
-                )
-            },
-            bottomBar = {
-                CheckoutBottomBar(
-                    isPlaceOrderStep = state.step == CheckoutStep.PlaceOrder,
-                    enabled = state.canContinue,
-                    isBusy = state.isBusy,
-                    onClick = {
-                        viewModel.onIntent(
-                            if (state.step == CheckoutStep.PlaceOrder) CheckoutIntent.OnPlaceOrder
-                            else CheckoutIntent.OnNext
-                        )
-                    },
-                )
-            },
-        ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Theme.colors.backGround)
+                .statusBarsPadding(),
+        ) {
+            BaseTopAppBar(
+                title = titleFor(state.step),
+                leadingIcon = painterResource(Res.drawable.ic_arrow_back),
+                onLeadingClick = { viewModel.onIntent(CheckoutIntent.OnBack) },
+                modifier = Modifier.background(Theme.colors.backGround),
+                autoMirrorLeadingIcon = true
+            )
             AnimatedContent(
                 targetState = state.step,
-                modifier = Modifier.fillMaxSize().padding(innerPadding),
+                modifier = Modifier.fillMaxWidth().weight(1f),
                 label = "checkoutStep",
             ) { step ->
                 when (step) {
@@ -224,6 +210,17 @@ fun CheckoutScreen(
                     }
                 }
             }
+            CheckoutBottomBar(
+                isPlaceOrderStep = state.step == CheckoutStep.PlaceOrder,
+                enabled = state.canContinue,
+                isBusy = state.isBusy,
+                onClick = {
+                    viewModel.onIntent(
+                        if (state.step == CheckoutStep.PlaceOrder) CheckoutIntent.OnPlaceOrder
+                        else CheckoutIntent.OnNext
+                    )
+                },
+            )
         }
 
         TrovesSnackbarHost(

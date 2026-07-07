@@ -1,5 +1,6 @@
 package com.troves.presintation.navigation
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -11,6 +12,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.Snapshot
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavEntry
@@ -21,7 +23,7 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import androidx.savedstate.serialization.SavedStateConfiguration
 import com.troves.designsystem.components.bottomnav.BottomNavItem
-import com.troves.designsystem.components.bottomnav.SPBottomNavigation
+import com.troves.designsystem.components.bottomnav.SPFloatingBottomNavigation
 import com.troves.presintation.ui.MainViewModel
 import com.troves.presintation.ui.StartDestination
 import com.troves.presintation.ui.address.ManageSavedAddressesScreen
@@ -50,12 +52,18 @@ import com.troves.presintation.ui.splash.SplashScreen
 import com.troves.presintation.ui.survey.SurveyScreen
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import troves.designsystem.generated.resources.Res
 import troves.designsystem.generated.resources.ic_home
 import troves.designsystem.generated.resources.ic_order
 import troves.designsystem.generated.resources.ic_profile
 import troves.designsystem.generated.resources.ic_wishlist
+import troves.presintation.generated.resources.nav_home
+import troves.presintation.generated.resources.nav_orders
+import troves.presintation.generated.resources.nav_profile
+import troves.presintation.generated.resources.nav_wishlist
+import troves.presintation.generated.resources.Res as StringRes
 
 private val navSavedStateConfiguration = SavedStateConfiguration {
     serializersModule = SerializersModule {
@@ -367,31 +375,37 @@ fun AppNav() {
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        bottomBar = {
+    ) { paddingValues ->
+        Box(modifier = Modifier.fillMaxSize()) {
+            NavDisplay<NavKey>(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .then(
+                        if (shouldShowBottomBar) Modifier
+                        else Modifier.padding(bottom = paddingValues.calculateBottomPadding())
+                    ),
+                entries = rememberDecoratedNavEntries(
+                    backStack = backStack,
+                    entryProvider = entryProvider
+                ),
+                onBack = { if (backStack.size > 1) backStack.removeLastOrNull() }
+            )
+
             if (shouldShowBottomBar) {
-                SPBottomNavigation(
+                SPFloatingBottomNavigation(
                     items = listOf(
-                        BottomNavItem("Home", Res.drawable.ic_home),
-                        BottomNavItem("Wishlist", Res.drawable.ic_wishlist),
-                        BottomNavItem("Orders", Res.drawable.ic_order),
-                        BottomNavItem("Profile", Res.drawable.ic_profile)
+                        BottomNavItem(stringResource(StringRes.string.nav_home), Res.drawable.ic_home),
+                        BottomNavItem(stringResource(StringRes.string.nav_wishlist), Res.drawable.ic_wishlist),
+                        BottomNavItem(stringResource(StringRes.string.nav_orders), Res.drawable.ic_order),
+                        BottomNavItem(stringResource(StringRes.string.nav_profile), Res.drawable.ic_profile)
                     ),
                     selectedIndex = if (selectedIndex != -1) selectedIndex else 0,
-                    onItemSelected = { index -> onBottomNavItemSelected(index) }
+                    onItemSelected = { index -> onBottomNavItemSelected(index) },
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(bottom = paddingValues.calculateBottomPadding()),
                 )
             }
         }
-    ) { paddingValues ->
-        NavDisplay<NavKey>(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(bottom = paddingValues.calculateBottomPadding())
-            ,
-            entries = rememberDecoratedNavEntries(
-                backStack = backStack,
-                entryProvider = entryProvider
-            ),
-            onBack = { if (backStack.size > 1) backStack.removeLastOrNull() }
-        )
     }
 }
