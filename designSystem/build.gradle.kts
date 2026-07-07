@@ -67,6 +67,7 @@ kotlin {
                 implementation(libs.compose.components.resources)
                 implementation(libs.compose.uiToolingPreview)
                 implementation(libs.compose.icons.extended)
+                implementation(libs.bundles.coil)
 
                 api(compose.runtime)
                 api(compose.ui)

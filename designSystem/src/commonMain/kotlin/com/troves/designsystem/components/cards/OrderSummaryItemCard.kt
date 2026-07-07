@@ -33,9 +33,12 @@ import org.jetbrains.compose.resources.painterResource
 import troves.designsystem.generated.resources.img_placeholder
 
 
+import coil3.compose.AsyncImage
+
 @Composable
 fun OrderSummaryItemCard(
-    imagePainter: Painter,
+    imageUrl: String? = null,
+    imagePainter: Painter? = null,
     name: String,
     specs: String,
     quantity: Int,
@@ -54,15 +57,28 @@ fun OrderSummaryItemCard(
         horizontalArrangement = Arrangement.spacedBy(Theme.spacing.medium),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Image(
-            painter = imagePainter,
-            contentDescription = name,
-            contentScale = ContentScale.FillBounds,
-            modifier = Modifier
-                .width(110.dp)
-                .fillMaxHeight()
-                .clip(Theme.shapes.medium),
-        )
+        if (imageUrl != null) {
+            AsyncImage(
+                model = imageUrl,
+                contentDescription = name,
+                contentScale = ContentScale.FillBounds,
+                modifier = Modifier
+                    .width(110.dp)
+                    .fillMaxHeight()
+                    .clip(Theme.shapes.medium)
+                    .background(Theme.colors.surfaceVariant),
+            )
+        } else if (imagePainter != null) {
+            Image(
+                painter = imagePainter,
+                contentDescription = name,
+                contentScale = ContentScale.FillBounds,
+                modifier = Modifier
+                    .width(110.dp)
+                    .fillMaxHeight()
+                    .clip(Theme.shapes.medium),
+            )
+        }
 
         Column(
             modifier = Modifier.weight(1f),

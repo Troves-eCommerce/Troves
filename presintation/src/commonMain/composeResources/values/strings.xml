@@ -167,7 +167,7 @@
     <string name="signup_prompt_confirm">Sign Up</string>
 
     <!-- Wishlist Header -->
-    <string name="wishlist_header_title">Your Wishlist</string>
+    <string name="wishlist_header_title">My Wishlist</string>
     <string name="wishlist_header_items_count">%1$d items saved for later</string>
 
     <!-- Search Section -->

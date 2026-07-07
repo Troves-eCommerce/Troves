@@ -92,10 +92,11 @@ fun HomeScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     var showSurveySheet by remember { mutableStateOf(false) }
+    var dismissedSurveyPopup by remember { mutableStateOf(false) }
     var productToRemove by remember { mutableStateOf<Product?>(null) }
 
     val loginRequiredText = stringResource(Res.string.home_login_required)
-    val showSurveyPopup = state.isLoggedIn && !state.isSurveyDone
+    val showSurveyPopup = state.isLoggedIn && !state.isSurveyDone && !dismissedSurveyPopup
 
     // Intercept wishlist REMOVALS to confirm first; adding a favorite (or any other intent) passes through.
     val onIntent: (HomeIntent) -> Unit = { intent ->
@@ -218,6 +219,8 @@ fun HomeScreen(
             ) {
                 SurveyBannerCard(
                     onStartSurvey = { viewModel.onIntent(HomeIntent.SurveyBannerClicked) },
+                    onDismiss = { dismissedSurveyPopup = true },
+                    onNeverShowAgain = { viewModel.onIntent(HomeIntent.SurveyBannerNeverShowAgain) },
                     modifier = Modifier.padding(horizontal = 24.dp),
                 )
             }

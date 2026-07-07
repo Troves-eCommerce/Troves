@@ -215,13 +215,6 @@ private fun OrderCardSkeleton() {
             }
         }
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(1.dp)
-                .background(Theme.colors.disable)
-        )
-
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -319,13 +312,6 @@ private fun OrderCard(order: OrderUi, onClick: () -> Unit) {
                 }
             }
         }
-        
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(1.dp)
-                .background(Theme.colors.disable)
-        )
 
         Row(
             modifier = Modifier.fillMaxWidth(),

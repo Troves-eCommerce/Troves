@@ -172,6 +172,7 @@
     <!-- Orders Screen -->
     <string name="orders_empty_title">No Orders Yet</string>
     <string name="orders_empty_desc">Your order history will show up here once you place your first order.</string>
+    <string name="quantity_label">Qty: %1$d</string>
 
     <!-- Sign-in required (guest) empty states -->
     <string name="auth_required_title">You're not signed in</string>
@@ -197,7 +198,6 @@
     <string name="product_details_review_submitted">Thanks! Your review was submitted</string>
     <string name="product_details_review_error">Couldn't submit your review</string>
     <string name="product_details_review_login_required">You need to be logged in to write a review.</string>
-    <string name="quantity_label">Qty: %1$d</string>
     <string name="stepper_label">STEP %1$d OF %2$d</string>
     <string name="login_required_title">Login Required</string>
     <string name="login_required_msg">You need to be logged in to perform this action.</string>
