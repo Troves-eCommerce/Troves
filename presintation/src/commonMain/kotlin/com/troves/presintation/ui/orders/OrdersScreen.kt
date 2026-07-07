@@ -2,6 +2,7 @@ package com.troves.presintation.ui.orders
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -83,7 +84,12 @@ fun OrdersScreen(
 
                 else -> LazyColumn(
                     modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(Theme.spacing.medium),
+                    contentPadding = PaddingValues(
+                        start = Theme.spacing.medium,
+                        end = Theme.spacing.medium,
+                        top = Theme.spacing.medium,
+                        bottom = 100.dp,
+                    ),
                     verticalArrangement = Arrangement.spacedBy(Theme.spacing.medium),
                 ) {
                     item {
@@ -115,6 +121,7 @@ private fun OrderCard(order: OrderUi, onClick: () -> Unit) {
             .fillMaxWidth()
             .clip(Theme.shapes.large)
             .background(Theme.colors.surface)
+            .border(1.dp, Theme.colors.onPrimary.copy(alpha = 0.5f), Theme.shapes.large)
             .clickable(onClick = onClick)
             .padding(Theme.spacing.medium),
         verticalArrangement = Arrangement.spacedBy(Theme.spacing.medium),

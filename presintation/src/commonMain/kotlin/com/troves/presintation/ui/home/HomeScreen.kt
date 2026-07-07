@@ -136,7 +136,7 @@ fun HomeScreen(
                 .fillMaxSize()
                 .statusBarsPadding()
                 .verticalScroll(rememberScrollState())
-                .padding(bottom = 24.dp),
+                .padding(bottom = 100.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
             TrovesTopBar(
@@ -489,7 +489,7 @@ private fun HomeScreenPreview() {
                 modifier = Modifier
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
-                    .padding(bottom = 24.dp),
+                    .padding(bottom = 100.dp),
                 verticalArrangement = Arrangement.spacedBy(20.dp),
             ) {
                 TrovesTopBar(onSearchClick = {}, onCartClick = {}, onAiClick = {})
