@@ -46,7 +46,7 @@ fun WishlistContent(
             modifier = Modifier
                 .fillMaxSize()
                 .statusBarsPadding()
-                .padding(bottom = 24.dp),
+                .padding(bottom = 120.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
 
