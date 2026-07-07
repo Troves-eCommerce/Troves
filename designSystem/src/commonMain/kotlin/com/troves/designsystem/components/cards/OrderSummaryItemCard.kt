@@ -45,7 +45,7 @@ fun OrderSummaryItemCard(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .height(100.dp)
+            .height(128.dp)
            .shadow(elevation =0.4.dp, shape = Theme.shapes.medium, clip = false)
             .clip(Theme.shapes.medium)
             .background(Theme.colors.surface)
