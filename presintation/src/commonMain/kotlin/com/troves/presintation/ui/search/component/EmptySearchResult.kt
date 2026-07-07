@@ -6,16 +6,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.SearchCheck
-import com.troves.designsystem.theme.Theme
 import org.jetbrains.compose.resources.stringResource
-import troves.presintation.generated.resources.Res
-import troves.presintation.generated.resources.empty_search_title
-import troves.presintation.generated.resources.empty_search_msg
 import com.troves.designsystem.components.emptystate.EmptyState
-import org.jetbrains.compose.resources.stringResource
 import troves.designsystem.generated.resources.Res
-import troves.designsystem.generated.resources.search_empty_title
 import troves.designsystem.generated.resources.search_empty_desc
+import troves.designsystem.generated.resources.search_empty_title
 
 /**
  * Copyright (c) 2026 Wahid Ali Wahid Hussien.
@@ -40,8 +35,6 @@ import troves.designsystem.generated.resources.search_empty_desc
 @Composable
 fun EmptySearchResult(
     modifier: Modifier = Modifier,
-    title: String = stringResource(Res.string.empty_search_title),
-    message: String = stringResource(Res.string.empty_search_msg)
 ) {
     androidx.compose.foundation.layout.Box(
         modifier = modifier,
