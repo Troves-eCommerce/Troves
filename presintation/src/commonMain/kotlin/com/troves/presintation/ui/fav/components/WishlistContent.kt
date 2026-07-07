@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -29,8 +28,7 @@ fun WishlistContent(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .statusBarsPadding()
-            .padding(bottom = 24.dp),
+            .statusBarsPadding(),
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
 
@@ -81,7 +79,12 @@ fun WishlistContent(
                         onIntent(WishlistIntent.ProductClicked(it))
                     },
                     onRemoveClick = onRemoveClick,
-                    contentPadding = PaddingValues(horizontal = 16.dp)
+                    contentPadding = PaddingValues(
+                        start = 16.dp,
+                        end = 16.dp,
+                        top = 8.dp,
+                        bottom = 100.dp,
+                    )
                 )
             }
         }
