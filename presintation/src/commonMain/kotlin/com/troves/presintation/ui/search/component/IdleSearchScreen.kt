@@ -34,6 +34,12 @@ import androidx.compose.ui.unit.dp
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Search
 import com.troves.designsystem.theme.Theme
+import org.jetbrains.compose.resources.stringResource
+import troves.presintation.generated.resources.Res
+import troves.presintation.generated.resources.search_discovery_title
+import troves.presintation.generated.resources.search_discovery_desc
+import troves.presintation.generated.resources.search_hint_title
+import troves.presintation.generated.resources.search_hint_desc
 
 @Composable
 fun IdleSearchScreen(
@@ -117,7 +123,7 @@ private fun SearchDiscoveryPrompt(modifier: Modifier = Modifier) {
         Spacer(Modifier.height(28.dp))
 
         Text(
-            text = "Find your next favourite",
+            text = stringResource(Res.string.search_discovery_title),
             style = MaterialTheme.typography.headlineSmall,
             color = Theme.colors.primaryFont,
             textAlign = TextAlign.Center,
@@ -126,7 +132,7 @@ private fun SearchDiscoveryPrompt(modifier: Modifier = Modifier) {
         Spacer(Modifier.height(10.dp))
 
         Text(
-            text = "Search for products, brands or categories\nand discover amazing deals.",
+            text = stringResource(Res.string.search_discovery_desc),
             style = MaterialTheme.typography.bodyMedium,
             color = Theme.colors.secondaryFont,
             textAlign = TextAlign.Center,
@@ -160,7 +166,7 @@ private fun SearchHintBanner(modifier: Modifier = Modifier) {
         Spacer(Modifier.height(12.dp))
 
         Text(
-            text = "What are you looking for?",
+            text = stringResource(Res.string.search_hint_title),
             style = MaterialTheme.typography.titleMedium,
             color = Theme.colors.primaryFont,
             textAlign = TextAlign.Center,
@@ -169,7 +175,7 @@ private fun SearchHintBanner(modifier: Modifier = Modifier) {
         Spacer(Modifier.height(4.dp))
 
         Text(
-            text = "Pick up where you left off",
+            text = stringResource(Res.string.search_hint_desc),
             style = MaterialTheme.typography.bodySmall,
             color = Theme.colors.secondaryFont,
             textAlign = TextAlign.Center,

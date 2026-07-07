@@ -142,4 +142,9 @@ val domainModule = module {
     factory { GetAiConversationsUseCase(get(), get()) }
     factory { SaveAiConversationUseCase(get(), get()) }
     factory { DeleteAiConversationUseCase(get(), get()) }
+
+    // Product reviews
+    factory { com.troves.domain.usecase.review.GetProductReviewsUseCase(get(), get()) }
+    factory { com.troves.domain.usecase.review.SubmitReviewUseCase(get(), get()) }
+    factory { com.troves.domain.usecase.review.GetReviewerIdentityUseCase(get(), get()) }
 }

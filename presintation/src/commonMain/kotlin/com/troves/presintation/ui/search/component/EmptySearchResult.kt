@@ -6,11 +6,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.SearchCheck
-import com.troves.designsystem.components.emptystate.EmptyState
 import org.jetbrains.compose.resources.stringResource
+import com.troves.designsystem.components.emptystate.EmptyState
 import troves.designsystem.generated.resources.Res
-import troves.designsystem.generated.resources.search_empty_title
 import troves.designsystem.generated.resources.search_empty_desc
+import troves.designsystem.generated.resources.search_empty_title
 
 /**
  * Copyright (c) 2026 Wahid Ali Wahid Hussien.

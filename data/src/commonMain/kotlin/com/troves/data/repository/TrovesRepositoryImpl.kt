@@ -5,6 +5,7 @@ import com.troves.data.mapper.toCategory
 import com.troves.data.mapper.toDomain
 import com.troves.data.source.local.preferenceses.TrovesPreferences
 import com.troves.data.source.remote.RemoteDatasource
+import com.troves.data.source.remote.dto.ReviewDto
 import com.troves.data.source.remote.service.StorefrontApiService
 import com.troves.data.source.remote.service.TrovesApiService
 import com.troves.data.util.applyAppLocale
@@ -18,6 +19,7 @@ import com.troves.domain.entity.Order
 import com.troves.domain.entity.OrderSummary
 import com.troves.domain.entity.Product
 import com.troves.domain.entity.ProductSearchParams
+import com.troves.domain.entity.Review
 import com.troves.domain.repository.AuthenticationRepository
 import com.troves.domain.repository.TrovesRepository
 import com.troves.domain.utils.Result
@@ -299,5 +301,44 @@ class TrovesRepositoryImpl(
         storefront.updateCartBuyerIdentity(cartId, token, email)
         storefront.updateCartDeliveryAddress(cartId, address)
     }
+
+    // ── Product reviews (Firestore) ───────────────────────────────────────────
+
+    override suspend fun getReviews(productId: String): Result<List<Review>> =
+        withContext(coroutineDispatcher) {
+            when (val result = remoteDataSource.getProductReviews(productId)) {
+                is Result.Success -> Result.Success(
+                    result.value.map { it.toDomainReview() }.sortedByDescending { it.createdAt }
+                )
+
+                is Result.Error -> Result.Error(result.throwable)
+                Result.Loading -> Result.Loading
+            }
+        }
+
+    override suspend fun submitReview(productId: String, review: Review): Result<Unit> =
+        withContext(coroutineDispatcher) {
+            remoteDataSource.submitReview(productId, review.toReviewDto())
+        }
+
+    private fun ReviewDto.toDomainReview() = Review(
+        id = id,
+        userId = userId,
+        firstName = firstName,
+        lastName = lastName,
+        rating = rating,
+        comment = comment,
+        createdAt = createdAt,
+    )
+
+    private fun Review.toReviewDto() = ReviewDto(
+        id = id,
+        userId = userId,
+        firstName = firstName,
+        lastName = lastName,
+        rating = rating,
+        comment = comment,
+        createdAt = createdAt,
+    )
 
 }

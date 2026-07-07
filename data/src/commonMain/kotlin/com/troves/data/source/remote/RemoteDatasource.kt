@@ -65,5 +65,10 @@ interface RemoteDatasource {
     suspend fun deleteAiChat(userId: String, chatId: String): Result<Unit>
     //endregion
 
+    //region reviews
+    suspend fun getProductReviews(productId: String): Result<List<com.troves.data.source.remote.dto.ReviewDto>>
+    suspend fun submitReview(productId: String, review: com.troves.data.source.remote.dto.ReviewDto): Result<Unit>
+    //endregion
+
     suspend fun getDiscountCodes(): Result<List<com.troves.domain.entity.DiscountCode>>
 }
