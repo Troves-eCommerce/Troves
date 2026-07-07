@@ -1,6 +1,7 @@
 package com.troves.designsystem.components.cards
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,6 +13,7 @@ import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -38,8 +40,10 @@ fun OrderSummaryInfoCard(
     Column(
         modifier = modifier
             .fillMaxWidth()
+//            .shadow(elevation = 2.dp, shape = Theme.shapes.medium, clip = false)
             .clip(Theme.shapes.medium)
             .background(Theme.colors.surface)
+            .border(1.dp, Theme.colors.surfaceVariant, Theme.shapes.medium)
             .padding(Theme.spacing.medium),
         verticalArrangement = Arrangement.spacedBy(Theme.spacing.small),
     ) {

@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.BasicText
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
@@ -119,9 +118,7 @@ fun CartScreen(
         CartScreenContent(
             state = state,
             onIntent = viewModel::onIntent,
-            modifier = Modifier
-                .fillMaxSize()
-                .statusBarsPadding(),
+            modifier = Modifier.fillMaxSize(),
         )
 
         TrovesSnackbarHost(
@@ -141,30 +138,21 @@ private fun CartScreenContent(
     onIntent: (CartIntent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Scaffold(
-        modifier = modifier,
-        containerColor = Theme.colors.backGround,
-        topBar = {
-            BaseTopAppBar(
-                title = "Cart",
-                leadingIcon = painterResource(Res.drawable.ic_arrow_back),
-                onLeadingClick = { onIntent(CartIntent.OnBackClick) },
-                modifier = Modifier.background(Theme.colors.backGround),
-            )
-        },
-        bottomBar = {
-            CartBottomBar(
-                totalFormatted = state.totalFormatted,
-                onCheckout = { onIntent(CartIntent.OnCheckout) },
-                isLoading = state.isLoading,
-                isEmpty = state.isEmpty,
-            )
-        },
-    ) { innerPadding ->
+    Column(
+        modifier = modifier
+            .background(Theme.colors.backGround)
+            .statusBarsPadding(),
+    ) {
+        BaseTopAppBar(
+            title = "Cart",
+            leadingIcon = painterResource(Res.drawable.ic_arrow_back),
+            onLeadingClick = { onIntent(CartIntent.OnBackClick) },
+            modifier = Modifier.background(Theme.colors.backGround),
+        )
         LazyColumn(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding),
+                .fillMaxWidth()
+                .weight(1f),
             contentPadding = PaddingValues(Theme.spacing.medium),
             verticalArrangement = Arrangement.spacedBy(Theme.spacing.medium),
         ) {
@@ -256,6 +244,12 @@ private fun CartScreenContent(
                 }
             }
         }
+        CartBottomBar(
+            totalFormatted = state.totalFormatted,
+            onCheckout = { onIntent(CartIntent.OnCheckout) },
+            isLoading = state.isLoading,
+            isEmpty = state.isEmpty,
+        )
     }
 }
 

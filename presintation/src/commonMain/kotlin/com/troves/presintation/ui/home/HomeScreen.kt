@@ -134,10 +134,7 @@ fun HomeScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .statusBarsPadding()
-                .verticalScroll(rememberScrollState())
-                .padding(bottom = 24.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp),
+                .statusBarsPadding(),
         ) {
             TrovesTopBar(
                 onSearchClick = { viewModel.onIntent(HomeIntent.SearchClicked) },
@@ -150,13 +147,21 @@ fun HomeScreen(
                 )
             )
 
-            if (state.isLoading) {
-                HomeShimmer()
-            } else {
-                HomeContent(
-                    state = state,
-                    onIntent = viewModel::onIntent,
-                )
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(top = 20.dp, bottom = 120.dp),
+                verticalArrangement = Arrangement.spacedBy(20.dp),
+            ) {
+                if (state.isLoading) {
+                    HomeShimmer()
+                } else {
+                    HomeContent(
+                        state = state,
+                        onIntent = viewModel::onIntent,
+                    )
+                }
             }
         }
 
@@ -488,12 +493,18 @@ private fun HomeScreenPreview() {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .padding(bottom = 24.dp),
-                verticalArrangement = Arrangement.spacedBy(20.dp),
+                    .statusBarsPadding(),
             ) {
                 TrovesTopBar(onSearchClick = {}, onCartClick = {}, onAiClick = {})
-                HomeContent(state = previewHomeState(), onIntent = {})
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
+                        .padding(top = 20.dp, bottom = 100.dp),
+                    verticalArrangement = Arrangement.spacedBy(20.dp),
+                ) {
+                    HomeContent(state = previewHomeState(), onIntent = {})
+                }
             }
         }
     }
