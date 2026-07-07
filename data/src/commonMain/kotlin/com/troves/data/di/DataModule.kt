@@ -23,9 +23,9 @@ import com.troves.data.repository.PaymentRepositoryImpl
 import com.troves.data.repository.TrovesRepositoryImpl
 import com.troves.data.repository.WishlistRepositoryImpl
 import com.troves.data.repository.createAuthenticationRepository
-import com.troves.data.source.framework.location.datasource.LocationDatasource
-import com.troves.data.source.framework.location.datasource.LocationDatasourceImpl
-import com.troves.data.source.framework.location.service.LocationService
+import com.troves.data.source.framework.location.datasource.FrameworkLocationDatasource
+import com.troves.data.source.framework.location.datasource.FrameworkLocationDatasourceImpl
+import com.troves.data.source.framework.location.service.FrameworkLocationService
 import com.troves.data.source.framework.location.service.provideLocationService
 import com.troves.data.source.local.ads.LocalAdsDataSource
 import com.troves.data.source.local.ads.LocalAdsDataSourceImpl
@@ -118,7 +118,7 @@ val dataModule = module {
     single<AuthenticationRepository>  { createAuthenticationRepository(get(), get(), get()) }
     single<PaymentRepository>         { PaymentRepositoryImpl(get()) }
     single<WishlistRepository>        { WishlistRepositoryImpl(get() , get()) }
-    single<LocationRepository>        { LocationRepositoryImpl(get()) }
+    single<LocationRepository>        { LocationRepositoryImpl(get(),get()) }
     single<AddressRepository>         { AddressRepositoryImpl(get(), get(), get()) }
     single { AiAssistantRepositoryImpl(get(), get(), get()) }
     single<AiAssistantRepository>     { get<AiAssistantRepositoryImpl>() }
@@ -130,8 +130,8 @@ val dataModule = module {
 
 
     //LocationService
-    single<LocationService> { provideLocationService() }
-    single<LocationDatasource> { LocationDatasourceImpl(get(),get(named(LOCATION_IQ))) }
+    single<FrameworkLocationService> { provideLocationService() }
+    single<FrameworkLocationDatasource> { FrameworkLocationDatasourceImpl(get(),get(named(LOCATION_IQ))) }
 
 
 

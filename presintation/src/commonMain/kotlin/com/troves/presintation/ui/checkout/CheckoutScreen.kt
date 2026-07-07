@@ -183,7 +183,7 @@ fun CheckoutScreen(
                         selectedAddressId = state.selectedAddressId,
                         onSelectAddress = { viewModel.onIntent(CheckoutIntent.OnSelectAddress(it)) },
                         onEditAddress = { viewModel.onIntent(CheckoutIntent.OnEditAddress(it)) },
-                        onAddAddress = { viewModel.onIntent(CheckoutIntent.OnAddAddress) },
+                        onAddAddressClick = { viewModel.onIntent(CheckoutIntent.OnAddAddressClick) },
                         currentStep = state.stepNumber,
                         totalSteps = state.totalSteps,
                     )
