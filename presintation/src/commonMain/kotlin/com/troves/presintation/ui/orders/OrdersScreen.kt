@@ -45,13 +45,16 @@ import troves.designsystem.generated.resources.orders_empty_title
 import troves.designsystem.generated.resources.orders_empty_desc
 import org.jetbrains.compose.resources.stringResource
 import com.troves.designsystem.components.emptystate.EmptyState
+import com.troves.presintation.ui.components.SignInRequiredState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.List
+import troves.designsystem.generated.resources.orders_auth_required_desc
 
 @Composable
 fun OrdersScreen(
     viewModel: OrdersViewModel = koinViewModel(),
     onNavigateToDetails: (String) -> Unit = {},
+    onNavigateToRegister: () -> Unit = {},
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -75,6 +78,11 @@ fun OrdersScreen(
             .statusBarsPadding(),
     ) {
         when {
+                state.isNotSignedIn -> SignInRequiredState(
+                    description = stringResource(Res.string.orders_auth_required_desc),
+                    onSignIn = onNavigateToRegister,
+                )
+
                 state.isLoading -> OrdersLoadingContent()
 
                 state.isError -> BasicText(
@@ -207,13 +215,6 @@ private fun OrderCardSkeleton() {
             }
         }
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(1.dp)
-                .background(Theme.colors.disable)
-        )
-
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -311,13 +312,6 @@ private fun OrderCard(order: OrderUi, onClick: () -> Unit) {
                 }
             }
         }
-        
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(1.dp)
-                .background(Theme.colors.disable)
-        )
 
         Row(
             modifier = Modifier.fillMaxWidth(),

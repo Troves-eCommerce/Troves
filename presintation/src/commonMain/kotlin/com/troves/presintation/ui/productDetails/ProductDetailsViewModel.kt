@@ -292,10 +292,10 @@ class ProductDetailsViewModel(
         viewModelScope.launch {
             when (toggleFavoriteUseCase(product)) {
                 ToggleFavoriteResult.Added ->
-                    sendEffect(ProductDetailsEffect.ShowToast("Added to favorites"))
+                    sendEffect(ProductDetailsEffect.ShowToast("Added to favorites successfully"))
 
                 ToggleFavoriteResult.Removed ->
-                    sendEffect(ProductDetailsEffect.ShowToast("Removed from favorites"))
+                    sendEffect(ProductDetailsEffect.ShowToast("Removed from favorites successfully"))
 
                 ToggleFavoriteResult.RequiresLogin -> {
                     updateState { copy(isFavorite = wasFavorite) }

@@ -60,7 +60,7 @@
     <!-- Cart Screen -->
     <string name="cart_title">Cart</string>
     <string name="cart_empty_title">Your cart is empty</string>
-    <string name="cart_empty_desc">Looks like you haven\'t added anything yet.</string>
+    <string name="cart_empty_desc">Looks like you haven't added anything yet.</string>
     <string name="cart_remove_title">Remove Item</string>
     <string name="cart_remove_msg">Are you sure you want to remove this item from your cart?</string>
     <string name="cart_clear_title">Clear Cart</string>
@@ -83,7 +83,7 @@
     <string name="address_default">Default</string>
     <string name="address_fallback_label">Address</string>
     <string name="address_empty_title">No Addresses Yet</string>
-    <string name="address_empty_desc">You haven\'t added any addresses yet. Add your first address to get started.</string>
+    <string name="address_empty_desc">You haven't added any addresses yet. Add your first address to get started.</string>
     <!-- New/Edit Address Screen -->
     <string name="address_new_title">New Address</string>
     <string name="address_edit_title">Edit Address</string>
@@ -143,6 +143,7 @@
     <string name="home_categories_title">Categories</string>
     <string name="home_view_all">View all</string>
     <string name="home_view_all_brands">View All</string>
+    <string name="see_all">See All</string>
     <string name="home_just_for_you">Just For You</string>
     <string name="home_top_brands">Top Brands</string>
     <string name="home_trending_now">Trending Now</string>
@@ -176,6 +177,13 @@
     <!-- Orders Screen -->
     <string name="orders_empty_title">No Orders Yet</string>
     <string name="orders_empty_desc">Your order history will show up here once you place your first order.</string>
+    <string name="quantity_label">Qty: %1$d</string>
+
+    <!-- Sign-in required (guest) empty states -->
+    <string name="auth_required_title">You're not signed in</string>
+    <string name="auth_required_action">Sign In</string>
+    <string name="orders_auth_required_desc">Sign in to view and track your orders.</string>
+    <string name="wishlist_auth_required_desc">Sign in to view the items you've saved.</string>
 
     <!-- Search Screen -->
     <string name="search_empty_title">No Results Found</string>
@@ -195,7 +203,6 @@
     <string name="product_details_review_submitted">Thanks! Your review was submitted</string>
     <string name="product_details_review_error">Couldn't submit your review</string>
     <string name="product_details_review_login_required">You need to be logged in to write a review.</string>
-    <string name="quantity_label">Qty: %1$d</string>
     <string name="stepper_label">STEP %1$d OF %2$d</string>
     <string name="login_required_title">Login Required</string>
     <string name="login_required_msg">You need to be logged in to perform this action.</string>

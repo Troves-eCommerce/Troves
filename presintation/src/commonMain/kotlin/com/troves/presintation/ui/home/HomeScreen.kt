@@ -57,6 +57,7 @@ import com.troves.designsystem.util.autoMirror
 import com.troves.designsystem.util.bounceClick
 import kotlin.math.abs
 
+import com.troves.designsystem.components.dialog.TrovesDialog
 import com.troves.domain.entity.Ad
 import com.troves.domain.entity.Brand
 import com.troves.domain.entity.Category
@@ -91,9 +92,20 @@ fun HomeScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     var showSurveySheet by remember { mutableStateOf(false) }
+    var dismissedSurveyPopup by remember { mutableStateOf(false) }
+    var productToRemove by remember { mutableStateOf<Product?>(null) }
 
     val loginRequiredText = stringResource(Res.string.home_login_required)
-    val showSurveyPopup = state.isLoggedIn && !state.isSurveyDone
+    val showSurveyPopup = state.isLoggedIn && !state.isSurveyDone && !dismissedSurveyPopup
+
+    // Intercept wishlist REMOVALS to confirm first; adding a favorite (or any other intent) passes through.
+    val onIntent: (HomeIntent) -> Unit = { intent ->
+        if (intent is HomeIntent.FavoriteToggled && intent.product.id in state.favoriteProductIds) {
+            productToRemove = intent.product
+        } else {
+            viewModel.onIntent(intent)
+        }
+    }
 
     ObserveEffect(viewModel.effect) { effect ->
         when (effect) {
@@ -131,6 +143,21 @@ fun HomeScreen(
         )
     }
 
+    productToRemove?.let { product ->
+        TrovesDialog(
+            title = stringResource(Res.string.wishlist_remove_title),
+            message = stringResource(Res.string.wishlist_remove_msg),
+            confirmText = stringResource(Res.string.wishlist_remove),
+            dismissText = stringResource(Res.string.profile_cancel),
+            icon = painterResource(Res.drawable.ic_solid_heart),
+            onConfirm = {
+                viewModel.onIntent(HomeIntent.FavoriteToggled(product))
+                productToRemove = null
+            },
+            onDismiss = { productToRemove = null },
+        )
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -165,7 +192,7 @@ fun HomeScreen(
                 } else {
                     HomeContent(
                         state = state,
-                        onIntent = viewModel::onIntent,
+                        onIntent = onIntent,
                     )
                 }
             }
@@ -192,6 +219,8 @@ fun HomeScreen(
             ) {
                 SurveyBannerCard(
                     onStartSurvey = { viewModel.onIntent(HomeIntent.SurveyBannerClicked) },
+                    onDismiss = { dismissedSurveyPopup = true },
+                    onNeverShowAgain = { viewModel.onIntent(HomeIntent.SurveyBannerNeverShowAgain) },
                     modifier = Modifier.padding(horizontal = 24.dp),
                 )
             }
@@ -289,9 +318,9 @@ private fun HomeContent(
 
     if (state.justForYou.isNotEmpty()) {
         SectionHeader(
-            title = stringResource(Res.string.home_just_for_you),
+            title = stringResource(Res.string.see_all),
             actionIcon = chevron,
-            actionLabel = stringResource(Res.string.home_view_all),
+            actionLabel = stringResource(Res.string.see_all),
             onAction = { onIntent(HomeIntent.ViewAllJustForYouClicked) }
         )
         ProductRow(
@@ -354,9 +383,9 @@ private fun HomeContent(
 
     if (state.trending.isNotEmpty()) {
         SectionHeader(
-            title = stringResource(Res.string.home_trending_now),
+            title = stringResource(Res.string.see_all),
             actionIcon = chevron,
-            actionLabel = stringResource(Res.string.home_view_all),
+            actionLabel = stringResource(Res.string.see_all),
             onAction = { onIntent(HomeIntent.ViewAllTrendingClicked) }
         )
         ProductRow(

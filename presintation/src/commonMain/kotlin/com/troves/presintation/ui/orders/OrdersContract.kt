@@ -5,6 +5,7 @@ data class OrdersUiState(
     val orders: List<OrderUi> = emptyList(),
     val isError: Boolean = false,
     val errorMessage: String? = null,
+    val isNotSignedIn: Boolean = false,
 ) {
     val isEmpty: Boolean get() = !isLoading && orders.isEmpty()
 }

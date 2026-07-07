@@ -327,7 +327,8 @@ fun AppNav() {
             OrdersScreen(
                 onNavigateToDetails = { orderId ->
                     backStack.add(AppRoute.OrderDetails(orderId))
-                }
+                },
+                onNavigateToRegister = { backStack.add(AppRoute.Register) },
             )
         }
         entry<AppRoute.OrderDetails> { key ->
