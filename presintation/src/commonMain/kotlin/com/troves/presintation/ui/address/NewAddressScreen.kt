@@ -26,6 +26,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.rememberCoroutineScope
 import com.troves.designsystem.components.textfield.CustomTextField
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun NewAddressScreen(
@@ -50,7 +51,7 @@ fun NewAddressScreen(
                 // re-fetches on resume). The snackbar is short-lived; navigation shouldn't wait on it.
                 scope.launch { snackbarHostState.showSnackbar(effect.message, duration = SnackbarDuration.Short) }
                 scope.launch {
-                    delay(900)
+                    delay(900.milliseconds)
                     onNavigateBack()
                 }
             }
