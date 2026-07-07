@@ -208,6 +208,29 @@ class RemoteDatasourceImpl(
         }
     }
 
+    // Product-scoped so every viewer can read a product's reviews; doc id == userId → one per user.
+    private fun reviewsCollection(productId: String) =
+        firestore.collection("products").document(productId).collection("reviews")
+
+    override suspend fun getProductReviews(productId: String): Result<List<com.troves.data.source.remote.dto.ReviewDto>> {
+        return try {
+            val snapshot = reviewsCollection(productId).get()
+            val items = snapshot.documents.map { it.data(com.troves.data.source.remote.dto.ReviewDto.serializer()) }
+            Result.Success(items)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
+    override suspend fun submitReview(productId: String, review: com.troves.data.source.remote.dto.ReviewDto): Result<Unit> {
+        return try {
+            reviewsCollection(productId).document(review.userId).set(review)
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
     override suspend fun getDiscountCodes(): Result<List<com.troves.domain.entity.DiscountCode>> {
         return trovesApiService.getDiscountCodes()
     }
