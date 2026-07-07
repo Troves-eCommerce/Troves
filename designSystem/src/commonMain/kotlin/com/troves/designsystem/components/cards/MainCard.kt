@@ -26,6 +26,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.troves.designsystem.components.button.FavoriteButton
 import com.troves.designsystem.theme.Theme
 import com.troves.designsystem.util.bounceClick
@@ -99,8 +100,7 @@ fun MainCard(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 12.dp, vertical = 10.dp),
-            verticalArrangement = Arrangement.spacedBy(6.dp)
+                .padding(horizontal = 8.dp, vertical = 8.dp),
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -123,9 +123,10 @@ fun MainCard(
             BasicText(
                 text = title,
                 maxLines = 1,
-                style = Theme.typography.body.large.copy(
+                style = Theme.typography.body.medium.copy(
                     color = Theme.colors.primaryFont,
-                    fontWeight = FontWeight.Normal
+                    fontWeight = FontWeight.Normal,
+                    lineHeight = 0.sp
                 ),
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier
@@ -134,9 +135,10 @@ fun MainCard(
 
             BasicText(
                 text = price,
-                style = Theme.typography.body.large.copy(
+                style = Theme.typography.body.medium.copy(
                     color = Theme.colors.primaryFont,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    lineHeight = 0.sp
                 ),
                 modifier = Modifier.padding(bottom = 6.dp)
             )

@@ -205,7 +205,7 @@ private fun AddressCard(
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    painter = if (address.icon == AddressIcon.HOME) painterResource(Res.drawable.ic_home) else painterResource(Res.drawable.ic_profile),
+                    painter = if (address.icon == AddressIcon.HOME) painterResource(Res.drawable.ic_home_selected) else painterResource(Res.drawable.ic_profile),
                     contentDescription = null,
                     tint = Theme.colors.primary,
                     modifier = Modifier.size(20.dp)
