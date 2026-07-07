@@ -51,6 +51,7 @@ sealed interface HomeIntent {
     data object AiClicked : HomeIntent
     data object SeeAllBrandsClicked : HomeIntent
     data object SurveyBannerClicked : HomeIntent
+    data object SurveyBannerNeverShowAgain : HomeIntent
     data object SignUpPromptConfirmed : HomeIntent
     data object SignUpPromptDismissed : HomeIntent
     data class AdClicked(val ad: Ad) : HomeIntent

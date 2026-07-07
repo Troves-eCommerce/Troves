@@ -81,7 +81,6 @@ fun OrderSummaryInfoCard(
             )
         }
 
-        Divider()
 
         SummaryRow(
             label = totalLabel,
@@ -94,16 +93,6 @@ fun OrderSummaryInfoCard(
     }
 }
 
-@Composable
-private fun Divider() {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = Theme.spacing.extraSmall)
-            .height(1.dp)
-            .background(Theme.colors.onPrimaryVariant.copy(alpha = 0.5f)),
-    )
-}
 
 @Composable
 private fun SummaryRow(
