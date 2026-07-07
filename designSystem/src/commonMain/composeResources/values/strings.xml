@@ -14,7 +14,7 @@
     <!-- Products screen -->
     <string name="products_title">Products</string>
     <string name="products_empty_title">No Products Found</string>
-    <string name="products_empty_desc">We couldn\'t find any products matching your criteria.</string>
+    <string name="products_empty_desc">We couldn't find any products matching your criteria.</string>
     <string name="products_retry">Retry</string>
 
     <!-- Sort bottom sheet -->
@@ -121,7 +121,7 @@
     <string name="login_button">Log in</string>
     <string name="login_or_continue">or continue with</string>
     <string name="login_google">Continue with Google</string>
-    <string name="login_dont_have_account">Don\'t have an account? </string>
+    <string name="login_dont_have_account">Don't have an account? </string>
     <string name="login_sign_up">Sign up</string>
 
     <string name="register_title">Create Account</string>
@@ -175,4 +175,24 @@
     <!-- Search Screen -->
     <string name="search_empty_title">No Results Found</string>
     <string name="search_empty_desc">We couldn\'t find what you were looking for. Try a different search term.</string>
+    <string name="product_details_reviews_empty_title">No reviews yet</string>
+    <string name="product_details_reviews_empty_subtitle">Be the first to review this product</string>
+    <string name="product_details_reviews_write">Write a review</string>
+    <string name="product_details_reviews_edit_yours">Edit your review</string>
+    <string name="product_details_reviews_your_badge">Your review</string>
+    <string name="product_details_review_editor_title">Your review</string>
+    <string name="product_details_review_first_name_hint">First name</string>
+    <string name="product_details_review_last_name_hint">Last name</string>
+    <string name="product_details_review_comment_hint">Share your experience…</string>
+    <string name="product_details_review_rating_label">Your rating</string>
+    <string name="product_details_review_submit">Submit review</string>
+    <string name="product_details_review_rating_required">Please select a rating</string>
+    <string name="product_details_review_submitted">Thanks! Your review was submitted</string>
+    <string name="product_details_review_error">Couldn\'t submit your review</string>
+    <string name="product_details_review_login_required">You need to be logged in to write a review.</string>
+    <string name="quantity_label">Qty: %1$d</string>
+    <string name="stepper_label">STEP %1$d OF %2$d</string>
+    <string name="login_required_title">Login Required</string>
+    <string name="login_required_msg">You need to be logged in to perform this action.</string>
+    <string name="login_required_btn">Log In</string>
 </resources>

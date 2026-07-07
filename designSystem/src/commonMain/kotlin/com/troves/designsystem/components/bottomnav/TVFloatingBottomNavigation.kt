@@ -80,6 +80,7 @@ private fun RowScope.SPFloatingBottomNavigationItem(
     modifier: Modifier = Modifier,
 ) {
     val spec = tween<Color>(durationMillis = 250)
+    val icon = if (isSelected) item.iconResSelected else item.iconRes
 
     val pillColor by animateColorAsState(
         targetValue = if (isSelected) Theme.colors.secondary.copy(alpha = 0.5f) else Color.Transparent,
@@ -111,21 +112,20 @@ private fun RowScope.SPFloatingBottomNavigationItem(
         verticalArrangement = Arrangement.Center,
     ) {
         Icon(
-            painter = painterResource(item.iconRes),
+            painter = painterResource(icon),
             contentDescription = item.label,
             tint = contentColor,
             modifier = Modifier
                 .size(22.dp)
                 .scale(iconScale),
         )
-        Spacer(modifier = Modifier.height(4.dp))
         BasicText(
             text = item.label,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             style = Theme.typography.body.small.copy(
                 color = contentColor,
-                fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
+                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
             ),
         )
     }

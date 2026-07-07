@@ -28,7 +28,8 @@ import org.jetbrains.compose.resources.painterResource
 
 data class BottomNavItem(
     val label: String,
-    val iconRes: DrawableResource
+    val iconRes: DrawableResource,
+    val iconResSelected:DrawableResource
 )
 
 @Composable

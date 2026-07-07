@@ -31,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
@@ -42,10 +43,23 @@ import com.troves.designsystem.components.topbar.BaseTopAppBar
 import com.troves.designsystem.theme.Theme
 import com.troves.presintation.ui.orderdetails.components.OrderTimeline
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import troves.designsystem.generated.resources.Res
 import troves.designsystem.generated.resources.ic_arrow_back
 import troves.designsystem.generated.resources.img_placeholder
+import troves.presintation.generated.resources.Res as ResP
+import troves.presintation.generated.resources.order_details_title
+import troves.presintation.generated.resources.error_view_title
+import troves.presintation.generated.resources.order_details_progress
+import troves.presintation.generated.resources.order_details_items
+import troves.presintation.generated.resources.checkout_order_summary
+import troves.presintation.generated.resources.order_details_subtotal
+import troves.presintation.generated.resources.order_details_shipping
+import troves.presintation.generated.resources.order_details_tax
+import troves.presintation.generated.resources.checkout_total
+import troves.presintation.generated.resources.order_details_help
+import troves.presintation.generated.resources.order_details_support
 
 @Composable
 fun OrderDetailsScreen(
@@ -76,7 +90,7 @@ fun OrderDetailsScreen(
             .statusBarsPadding(),
     ) {
         BaseTopAppBar(
-            title = "Order Details",
+            title = stringResource(ResP.string.order_details_title),
             leadingIcon = painterResource(Res.drawable.ic_arrow_back),
             onLeadingClick = { viewModel.onIntent(OrderDetailsIntent.OnBack) },
             modifier = Modifier.background(Theme.colors.backGround),
@@ -88,7 +102,7 @@ fun OrderDetailsScreen(
                 }
                 state.isError -> {
                     BasicText(
-                        text = state.errorMessage ?: "Something went wrong",
+                        text = state.errorMessage ?: stringResource(ResP.string.error_view_title),
                         style = Theme.typography.body.large.copy(color = Theme.colors.error),
                         modifier = Modifier.align(Alignment.Center)
                     )
@@ -120,7 +134,7 @@ private fun OrderDetailsContent(
         
         item {
             BasicText(
-                text = "Order Progress",
+                text = stringResource(ResP.string.order_details_progress),
                 style = Theme.typography.title.copy(
                     color = Theme.colors.primaryFont,
                     fontWeight = FontWeight.Bold,
@@ -132,7 +146,7 @@ private fun OrderDetailsContent(
 
         item {
             BasicText(
-                text = "Order Items",
+                text = stringResource(ResP.string.order_details_items),
                 style = Theme.typography.title.copy(
                     color = Theme.colors.primaryFont,
                     fontWeight = FontWeight.Bold,
@@ -142,19 +156,81 @@ private fun OrderDetailsContent(
         }
 
         items(orderDetails.items, key = { it.id }) { item ->
-            OrderSummaryItemCard(
-                imageUrl = item.imageUrl,
-                imagePainter = if (item.imageUrl == null) painterResource(Res.drawable.img_placeholder) else null,
-                name = item.name,
-                specs = item.variant,
-                quantity = item.quantity,
-                priceFormatted = item.price,
-            )
+            val painter = if (item.imageUrl != null) null else painterResource(Res.drawable.img_placeholder)
+            
+            if (item.imageUrl != null) {
+                // Async image for product
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(Theme.shapes.medium)
+                        .border(1.dp, Theme.colors.onPrimary.copy(alpha = 0.5f), Theme.shapes.medium)
+                .padding(end = 16.dp)
+                    ,
+                    horizontalArrangement = Arrangement.spacedBy(Theme.spacing.medium),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    AsyncImage(
+                        model = item.imageUrl,
+                        contentDescription = item.name,
+                        contentScale = ContentScale.FillBounds,
+                        modifier = Modifier
+                            .width(128.dp)
+                            .height(128.dp)
+                            .clip(Theme.shapes.medium)
+                            .background(Theme.colors.surfaceVariant),
+                    )
+
+                    Column(
+                        modifier = Modifier.weight(1f),
+                        verticalArrangement = Arrangement.spacedBy(Theme.spacing.extraSmall),
+                    ) {
+                        BasicText(
+                            text = item.name,
+                            style = Theme.typography.body.large.copy(
+                                color = Theme.colors.primaryFont,
+                                fontWeight = FontWeight.SemiBold,
+                            ),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                        if (item.variant.isNotBlank()) {
+                            BasicText(
+                                text = item.variant,
+                                style = Theme.typography.body.medium.copy(color = Theme.colors.secondaryFont),
+                            )
+                        }
+                        BasicText(
+                            text = "Qty: ${item.quantity}",
+                            style = Theme.typography.body.medium.copy(color = Theme.colors.secondaryFont),
+                        )
+                    }
+
+                    BasicText(
+                        text = item.price,
+                        style = Theme.typography.body.large.copy(
+                            color = Theme.colors.primaryFont,
+                            fontWeight = FontWeight.Bold,
+                        ),
+                        modifier = Modifier
+                            .align(Alignment.Bottom)
+                            .padding(bottom = Theme.spacing.extraSmall),
+                    )
+                }
+            } else {
+                OrderSummaryItemCard(
+                    imagePainter = painter!!,
+                    name = item.name,
+                    specs = item.variant,
+                    quantity = item.quantity,
+                    priceFormatted = item.price,
+                )
+            }
         }
 
         item {
             BasicText(
-                text = "Order Summary",
+                text = stringResource(ResP.string.checkout_order_summary),
                 style = Theme.typography.title.copy(
                     color = Theme.colors.primaryFont,
                     fontWeight = FontWeight.Bold,
@@ -163,13 +239,13 @@ private fun OrderDetailsContent(
             )
             
             OrderSummaryInfoCard(
-                subtotalLabel = "Subtotal",
+                subtotalLabel = stringResource(ResP.string.order_details_subtotal),
                 subtotalFormatted = orderDetails.subtotal,
-                shippingLabel = if (orderDetails.shipping.isNotBlank()) "Shipping" else null,
+                shippingLabel = if (orderDetails.shipping.isNotBlank()) stringResource(ResP.string.order_details_shipping) else null,
                 shippingFormatted = if (orderDetails.shipping.isNotBlank()) orderDetails.shipping else null,
-                taxLabel = if (orderDetails.tax.isNotBlank()) "Tax" else null,
+                taxLabel = if (orderDetails.tax.isNotBlank()) stringResource(ResP.string.order_details_tax) else null,
                 taxFormatted = if (orderDetails.tax.isNotBlank()) orderDetails.tax else null,
-                totalLabel = "Total",
+                totalLabel = stringResource(ResP.string.checkout_total),
                 totalFormatted = orderDetails.total,
             )
         }
@@ -316,96 +392,46 @@ private fun OrderSummaryHeaderCard(orderDetails: OrderDetailsUi) {
             .clip(Theme.shapes.large)
             .background(Theme.colors.surface)
             .padding(Theme.spacing.medium),
-        verticalArrangement = Arrangement.spacedBy(Theme.spacing.medium),
+        verticalArrangement = Arrangement.spacedBy(Theme.spacing.small),
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(Theme.spacing.medium),
+            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            val firstImageUrl = orderDetails.items.firstOrNull()?.imageUrl
-            if (firstImageUrl != null) {
-                AsyncImage(
-                    model = firstImageUrl,
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .size(64.dp)
-                        .clip(Theme.shapes.medium)
-                        .background(Theme.colors.surfaceVariant)
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                BasicText(
+                    text = "Order #${orderDetails.orderNumber}",
+                    style = Theme.typography.body.large.copy(
+                        color = Theme.colors.primaryFont,
+                        fontWeight = FontWeight.Bold,
+                    ),
                 )
-            } else {
-                Image(
-                    painter = painterResource(Res.drawable.img_placeholder),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .size(64.dp)
-                        .clip(Theme.shapes.medium)
+                BasicText(
+                    text = "Placed on ${orderDetails.orderDate}",
+                    style = Theme.typography.body.small.copy(color = Theme.colors.secondaryFont),
                 )
             }
-
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    BasicText(
-                        text = "Order #${orderDetails.orderNumber}",
-                        style = Theme.typography.body.large.copy(
-                            color = Theme.colors.primaryFont,
-                            fontWeight = FontWeight.Bold,
-                        ),
-                    )
-                    
-                    if (orderDetails.status.isNotBlank()) {
-                        OrderStatusBadge(status = orderDetails.status)
-                    }
-                }
-                
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    BasicText(
-                        text = "Placed on ${orderDetails.orderDate}",
-                        style = Theme.typography.body.small.copy(color = Theme.colors.secondaryFont),
-                    )
-                    BasicText(
-                        text = "${orderDetails.itemCount} items",
-                        style = Theme.typography.body.small.copy(color = Theme.colors.secondaryFont),
-                    )
-                }
-            }
-        }
-        
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(1.dp)
-                .background(Theme.colors.disable.copy(alpha = 0.5f))
-        )
-        
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.End,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            BasicText(
-                text = "Total: ",
-                style = Theme.typography.body.medium.copy(color = Theme.colors.secondaryFont),
-            )
             BasicText(
                 text = orderDetails.totalAmount,
                 style = Theme.typography.title.copy(
                     color = Theme.colors.primaryFont,
                     fontWeight = FontWeight.Bold,
                 ),
+            )
+        }
+        
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(top = Theme.spacing.small),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            if (orderDetails.status.isNotBlank()) {
+                OrderStatusBadge(status = orderDetails.status)
+            }
+            BasicText(
+                text = "${orderDetails.itemCount} items",
+                style = Theme.typography.body.medium.copy(color = Theme.colors.secondaryFont),
             )
         }
     }
@@ -425,14 +451,14 @@ private fun SupportCard(onClick: () -> Unit) {
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             BasicText(
-                text = "Need help with your order?",
+                text = stringResource(ResP.string.order_details_help),
                 style = Theme.typography.body.large.copy(
                     color = Theme.colors.primaryFont,
                     fontWeight = FontWeight.Bold,
                 ),
             )
             BasicText(
-                text = "Contact our support team",
+                text = stringResource(ResP.string.order_details_support),
                 style = Theme.typography.body.medium.copy(color = Theme.colors.secondaryFont),
             )
         }

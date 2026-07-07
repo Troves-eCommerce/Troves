@@ -160,4 +160,44 @@
     <string name="ai_history_delete_message">This conversation will be permanently removed.</string>
     <string name="ai_history_delete_confirm">Delete</string>
     <string name="ai_history_cancel">Cancel</string>
+
+    <!-- SignUp Prompt Dialog -->
+    <string name="signup_prompt_title">Sign up required</string>
+    <string name="signup_prompt_msg">You need an account to do that. Would you like to sign up?</string>
+    <string name="signup_prompt_confirm">Sign Up</string>
+
+    <!-- Wishlist Header -->
+    <string name="wishlist_header_title">Your Wishlist</string>
+    <string name="wishlist_header_items_count">%1$d items saved for later</string>
+
+    <!-- Search Section -->
+    <string name="recent_searches">Recent Searches</string>
+    <string name="search_discovery_title">Find your next favourite</string>
+    <string name="search_discovery_desc">Search for products, brands or categories\nand discover amazing deals.</string>
+    <string name="search_hint_title">What are you looking for?</string>
+    <string name="search_hint_desc">Pick up where you left off</string>
+    <string name="empty_search_title">No products</string>
+    <string name="empty_search_msg">Try another keyword or adjust your filters.</string>
+
+    <!-- Error View -->
+    <string name="error_view_title">Something went wrong</string>
+    <string name="error_view_retry">Try Again</string>
+
+    <!-- Address labels in checkout fallback -->
+    <string name="address_label_home">Home</string>
+    <string name="address_label_work">Work</string>
+    <string name="address_label_other">Address</string>
+
+    <!-- Cart Confirmations -->
+    <string name="cart_remove_item_confirm">Are you sure you want to remove \"%1$s\" from your cart?</string>
+
+    <!-- Order Details Screen -->
+    <string name="order_details_title">Order Details</string>
+    <string name="order_details_progress">Order Progress</string>
+    <string name="order_details_items">Order Items</string>
+    <string name="order_details_help">Need help with your order?</string>
+    <string name="order_details_support">Contact our support team</string>
+    <string name="order_details_subtotal">Subtotal</string>
+    <string name="order_details_shipping">Shipping</string>
+    <string name="order_details_tax">Tax</string>
 </resources>

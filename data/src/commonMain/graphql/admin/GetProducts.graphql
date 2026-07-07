@@ -1,5 +1,5 @@
-query GetProducts($first: Int!, $after: String, $sortKey: ProductSortKeys, $reverse: Boolean) {
-    products(first: $first, after: $after, sortKey: $sortKey, reverse: $reverse) {
+query GetProducts($first: Int!) {
+    products(first: $first) {
         edges {
             cursor
             node {

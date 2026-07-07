@@ -28,6 +28,7 @@ import coil3.compose.AsyncImage
 import com.troves.designsystem.components.button.FavoriteButton
 import com.troves.designsystem.theme.Theme
 import com.troves.designsystem.util.autoMirror
+import com.troves.designsystem.util.bounceClick
 import org.jetbrains.compose.resources.painterResource
 import troves.designsystem.generated.resources.Res
 import troves.designsystem.generated.resources.ic_arrow_back
@@ -83,6 +84,10 @@ fun ProductImageCarousel(
                 modifier = Modifier
                     .size(20.dp)
                     .autoMirror()
+                    .bounceClick(
+                        shape = RoundedCornerShape(12.dp),
+                        onClick = onBackClick
+                    )
             )
         }
 
