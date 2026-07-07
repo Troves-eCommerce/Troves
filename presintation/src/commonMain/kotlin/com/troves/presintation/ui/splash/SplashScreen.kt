@@ -28,10 +28,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.jetbrains.compose.resources.painterResource
 import com.troves.designsystem.theme.Theme
+import coil3.compose.rememberAsyncImagePainter
 import troves.designsystem.generated.resources.Res
-import troves.designsystem.generated.resources.troves_logo
 
 @Composable
 fun SplashScreen(onNavigateToOnboarding: () -> Unit) {
@@ -106,7 +105,7 @@ fun SplashScreen(onNavigateToOnboarding: () -> Unit) {
         ) {
 
             Image(
-                painter = painterResource(Res.drawable.troves_logo),
+                painter = rememberAsyncImagePainter(Res.getUri("drawable/troves_logo_animated.gif")),
                 contentDescription = "Troves Logo",
                 modifier = Modifier
                     .size(220.dp)
@@ -117,7 +116,6 @@ fun SplashScreen(onNavigateToOnboarding: () -> Unit) {
                     )
                     .alpha(logoAlpha.value)
             )
-
             Spacer(Modifier.height(24.dp))
 
             Text(
