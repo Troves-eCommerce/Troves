@@ -9,33 +9,10 @@ import com.google.android.gms.location.CurrentLocationRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.tasks.CancellationTokenSource
 import com.troves.data.util.AndroidApp
+import kotlinx.coroutines.tasks.await
 
 class LocationServiceImpl : LocationService {
-    lateinit var locationPermissionHandler: LocationPermissionHandler
-
-    @RequiresPermission(allOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
-    override fun getCurrentLocationCoordinates(): LocationCoordinates {
-        if (requestLocationPermission()){
-            val provider = LocationServices.getFusedLocationProviderClient(AndroidApp.androidApp)
-            val request = CurrentLocationRequest.Builder().build()
-            val location = provider.getCurrentLocation(
-                request,
-                CancellationTokenSource().token
-            ).result.toCoordinates()
-            locationPermissionHandler.onGranted(location = location)
-
-
-        }
-
-
-    }
-
-    override fun getAddressFromCoordinates(locationCoordinates: LocationCoordinates): LocationAddress {
-        TODO("Not yet implemented")
-    }
-
-
-    fun requestLocationPermission(): Boolean {
+    override suspend fun requestPermission(): Boolean {
         return listOf(
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION,
@@ -44,6 +21,34 @@ class LocationServiceImpl : LocationService {
         }.all {
             it == PackageManager.PERMISSION_GRANTED
         }
+    }
+
+    @RequiresPermission(
+        allOf = [
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        ]
+    )
+    override suspend fun getCurrentLocationCoordinates(): LocationCoordinates {
+
+        if (!requestPermission()) {
+            throw SecurityException("Location permission denied")
+        }
+
+        val provider =
+            LocationServices.getFusedLocationProviderClient(AndroidApp.androidApp)
+
+        val location = provider
+            .getCurrentLocation(
+                CurrentLocationRequest.Builder().build(),
+                CancellationTokenSource().token
+            )
+            .await()
+        return location.toCoordinates()
+    }
+
+    override suspend fun reverseGeocode(coordinates: LocationCoordinates): LocationAddress {
+        TODO("Not yet implemented")
     }
 
 }

@@ -25,13 +25,12 @@ import com.troves.data.source.framework.location.service.LocationService
  * Created: 07/07/2026
  */
 class LocationDatasourceImpl(
-    private val locationService: LocationService
+    private val locationService: LocationService,
 ) : LocationDatasource {
-    override fun getCurrentLocationCoordinates(): LocationCoordinates {
-        return locationService.getCurrentLocationCoordinates()
-    }
+    override suspend fun requestPermission(): Boolean = locationService.requestPermission()
+    override suspend fun getCurrentLocationCoordinates(): LocationCoordinates =
+        locationService.getCurrentLocationCoordinates()
 
-    override fun getAddressFromCoordinates(locationCoordinates: LocationCoordinates): LocationAddress {
-        return locationService.getAddressFromCoordinates(locationCoordinates = locationCoordinates)
-    }
+    override suspend fun reverseGeocode(coordinates: LocationCoordinates): LocationAddress =
+        locationService.reverseGeocode(coordinates)
 }

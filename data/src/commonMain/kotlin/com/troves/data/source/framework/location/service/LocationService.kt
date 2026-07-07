@@ -1,5 +1,7 @@
 package com.troves.data.source.framework.location.service
 
+import com.troves.domain.entity.Address
+
 /**
  * Copyright (c) 2026 Wahid Ali Wahid Hussien.
  *
@@ -21,8 +23,14 @@ package com.troves.data.source.framework.location.service
  * Created: 07/07/2026
  */
 interface LocationService {
-     fun getCurrentLocationCoordinates(): LocationCoordinates
-     fun getAddressFromCoordinates(locationCoordinates: LocationCoordinates): LocationAddress
+
+     suspend fun requestPermission(): Boolean
+
+     suspend fun getCurrentLocationCoordinates(): LocationCoordinates
+
+     suspend fun reverseGeocode(
+          coordinates: LocationCoordinates
+     ): LocationAddress
 }
 
 expect fun provideLocationService(): LocationService
