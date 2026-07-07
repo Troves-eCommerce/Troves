@@ -142,75 +142,14 @@ private fun OrderDetailsContent(
         }
 
         items(orderDetails.items, key = { it.id }) { item ->
-            val painter = if (item.imageUrl != null) null else painterResource(Res.drawable.img_placeholder)
-            
-            if (item.imageUrl != null) {
-                // Async image for product
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(Theme.shapes.medium)
-                        .border(1.dp, Theme.colors.onPrimary.copy(alpha = 0.5f), Theme.shapes.medium)
-                .padding(end = 16.dp)
-                    ,
-                    horizontalArrangement = Arrangement.spacedBy(Theme.spacing.medium),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    AsyncImage(
-                        model = item.imageUrl,
-                        contentDescription = item.name,
-                        contentScale = ContentScale.FillBounds,
-                        modifier = Modifier
-                            .width(128.dp)
-                            .fillMaxHeight()
-                            .clip(Theme.shapes.medium)
-                            .background(Theme.colors.surfaceVariant),
-                    )
-
-                    Column(
-                        modifier = Modifier.weight(1f),
-                        verticalArrangement = Arrangement.spacedBy(Theme.spacing.extraSmall),
-                    ) {
-                        BasicText(
-                            text = item.name,
-                            style = Theme.typography.body.large.copy(
-                                color = Theme.colors.primaryFont,
-                                fontWeight = FontWeight.SemiBold,
-                            ),
-                            maxLines = 2,
-                        )
-                        if (item.variant.isNotBlank()) {
-                            BasicText(
-                                text = item.variant,
-                                style = Theme.typography.body.medium.copy(color = Theme.colors.secondaryFont),
-                            )
-                        }
-                        BasicText(
-                            text = "Qty: ${item.quantity}",
-                            style = Theme.typography.body.medium.copy(color = Theme.colors.secondaryFont),
-                        )
-                    }
-
-                    BasicText(
-                        text = item.price,
-                        style = Theme.typography.body.large.copy(
-                            color = Theme.colors.primaryFont,
-                            fontWeight = FontWeight.Bold,
-                        ),
-                        modifier = Modifier
-                            .align(Alignment.Bottom)
-                            .padding(bottom = Theme.spacing.extraSmall),
-                    )
-                }
-            } else {
-                OrderSummaryItemCard(
-                    imagePainter = painter!!,
-                    name = item.name,
-                    specs = item.variant,
-                    quantity = item.quantity,
-                    priceFormatted = item.price,
-                )
-            }
+            OrderSummaryItemCard(
+                imageUrl = item.imageUrl,
+                imagePainter = if (item.imageUrl == null) painterResource(Res.drawable.img_placeholder) else null,
+                name = item.name,
+                specs = item.variant,
+                quantity = item.quantity,
+                priceFormatted = item.price,
+            )
         }
 
         item {
@@ -377,46 +316,96 @@ private fun OrderSummaryHeaderCard(orderDetails: OrderDetailsUi) {
             .clip(Theme.shapes.large)
             .background(Theme.colors.surface)
             .padding(Theme.spacing.medium),
-        verticalArrangement = Arrangement.spacedBy(Theme.spacing.small),
+        verticalArrangement = Arrangement.spacedBy(Theme.spacing.medium),
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
+            horizontalArrangement = Arrangement.spacedBy(Theme.spacing.medium),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                BasicText(
-                    text = "Order #${orderDetails.orderNumber}",
-                    style = Theme.typography.body.large.copy(
-                        color = Theme.colors.primaryFont,
-                        fontWeight = FontWeight.Bold,
-                    ),
+            val firstImageUrl = orderDetails.items.firstOrNull()?.imageUrl
+            if (firstImageUrl != null) {
+                AsyncImage(
+                    model = firstImageUrl,
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .size(64.dp)
+                        .clip(Theme.shapes.medium)
+                        .background(Theme.colors.surfaceVariant)
                 )
-                BasicText(
-                    text = "Placed on ${orderDetails.orderDate}",
-                    style = Theme.typography.body.small.copy(color = Theme.colors.secondaryFont),
+            } else {
+                Image(
+                    painter = painterResource(Res.drawable.img_placeholder),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .size(64.dp)
+                        .clip(Theme.shapes.medium)
                 )
             }
+
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    BasicText(
+                        text = "Order #${orderDetails.orderNumber}",
+                        style = Theme.typography.body.large.copy(
+                            color = Theme.colors.primaryFont,
+                            fontWeight = FontWeight.Bold,
+                        ),
+                    )
+                    
+                    if (orderDetails.status.isNotBlank()) {
+                        OrderStatusBadge(status = orderDetails.status)
+                    }
+                }
+                
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    BasicText(
+                        text = "Placed on ${orderDetails.orderDate}",
+                        style = Theme.typography.body.small.copy(color = Theme.colors.secondaryFont),
+                    )
+                    BasicText(
+                        text = "${orderDetails.itemCount} items",
+                        style = Theme.typography.body.small.copy(color = Theme.colors.secondaryFont),
+                    )
+                }
+            }
+        }
+        
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(1.dp)
+                .background(Theme.colors.disable.copy(alpha = 0.5f))
+        )
+        
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.End,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            BasicText(
+                text = "Total: ",
+                style = Theme.typography.body.medium.copy(color = Theme.colors.secondaryFont),
+            )
             BasicText(
                 text = orderDetails.totalAmount,
                 style = Theme.typography.title.copy(
                     color = Theme.colors.primaryFont,
                     fontWeight = FontWeight.Bold,
                 ),
-            )
-        }
-        
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(top = Theme.spacing.small),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            if (orderDetails.status.isNotBlank()) {
-                OrderStatusBadge(status = orderDetails.status)
-            }
-            BasicText(
-                text = "${orderDetails.itemCount} items",
-                style = Theme.typography.body.medium.copy(color = Theme.colors.secondaryFont),
             )
         }
     }
