@@ -1,4 +1,10 @@
 <resources>
+    <!-- Bottom navigation -->
+    <string name="nav_home">الرئيسية</string>
+    <string name="nav_wishlist">المفضلة</string>
+    <string name="nav_orders">الطلبات</string>
+    <string name="nav_profile">الملف الشخصي</string>
+
     <!-- Common bottom sheet actions -->
     <string name="apply">تطبيق</string>
     <string name="reset">إعادة تعيين</string>

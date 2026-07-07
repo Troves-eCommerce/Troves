@@ -1,4 +1,10 @@
 <resources>
+    <!-- Bottom navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_wishlist">Wishlist</string>
+    <string name="nav_orders">Orders</string>
+    <string name="nav_profile">Profile</string>
+
     <!-- Common bottom sheet actions -->
     <string name="apply">Apply</string>
     <string name="reset">Reset</string>
