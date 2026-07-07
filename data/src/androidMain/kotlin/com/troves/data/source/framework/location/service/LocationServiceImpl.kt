@@ -11,8 +11,9 @@ import com.google.android.gms.tasks.CancellationTokenSource
 import com.troves.data.util.AndroidApp
 import kotlinx.coroutines.tasks.await
 
+
 class LocationServiceImpl : LocationService {
-    override suspend fun requestPermission(): Boolean {
+    private fun requestPermission(): Boolean {
         return listOf(
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION,
@@ -30,7 +31,6 @@ class LocationServiceImpl : LocationService {
         ]
     )
     override suspend fun getCurrentLocationCoordinates(): LocationCoordinates {
-
         if (!requestPermission()) {
             throw SecurityException("Location permission denied")
         }
@@ -46,11 +46,6 @@ class LocationServiceImpl : LocationService {
             .await()
         return location.toCoordinates()
     }
-
-    override suspend fun reverseGeocode(coordinates: LocationCoordinates): LocationAddress {
-        TODO("Not yet implemented")
-    }
-
 }
 
 

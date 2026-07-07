@@ -24,13 +24,7 @@ import com.troves.domain.entity.Address
  */
 interface LocationService {
 
-     suspend fun requestPermission(): Boolean
-
      suspend fun getCurrentLocationCoordinates(): LocationCoordinates
-
-     suspend fun reverseGeocode(
-          coordinates: LocationCoordinates
-     ): LocationAddress
 }
 
 expect fun provideLocationService(): LocationService
