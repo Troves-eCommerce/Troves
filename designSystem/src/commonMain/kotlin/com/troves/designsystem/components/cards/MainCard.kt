@@ -49,10 +49,10 @@ fun MainCard(
 
     Column(
         modifier = modifier
-//            .shadow(elevation = 6.dp, shape = cardShape, clip = false)
+            .shadow(elevation = 0.2.dp, shape = cardShape, clip = false)
             .clip(cardShape)
             .background(resolvedContainer)
-            .border(1.dp, Theme.colors.onPrimary.copy(alpha = 0.5f), cardShape)
+            .border(1.5.dp, Theme.colors.onPrimaryVariant, cardShape)
             .bounceClick(
                 shape = cardShape,
                 onClick = onClick

@@ -40,10 +40,10 @@ fun OrderSummaryInfoCard(
     Column(
         modifier = modifier
             .fillMaxWidth()
-//            .shadow(elevation = 2.dp, shape = Theme.shapes.medium, clip = false)
+          .shadow(elevation = 0.2.dp, shape = Theme.shapes.medium, clip = false)
             .clip(Theme.shapes.medium)
             .background(Theme.colors.surface)
-            .border(1.dp, Theme.colors.surfaceVariant, Theme.shapes.medium)
+            .border(1.dp, Theme.colors.onPrimaryVariant, Theme.shapes.medium)
             .padding(Theme.spacing.medium),
         verticalArrangement = Arrangement.spacedBy(Theme.spacing.small),
     ) {
@@ -55,7 +55,6 @@ fun OrderSummaryInfoCard(
         )
 
         if (discountLabel != null && discountValueFormatted != null) {
-            Divider()
             SummaryRow(
                 label = discountLabel,
                 value = discountValueFormatted,
@@ -65,7 +64,6 @@ fun OrderSummaryInfoCard(
         }
 
         if (shippingLabel != null && shippingFormatted != null) {
-            Divider()
             SummaryRow(
                 label = shippingLabel,
                 value = shippingFormatted,
@@ -75,7 +73,6 @@ fun OrderSummaryInfoCard(
         }
 
         if (taxLabel != null && taxFormatted != null) {
-            Divider()
             SummaryRow(
                 label = taxLabel,
                 value = taxFormatted,
@@ -104,7 +101,7 @@ private fun Divider() {
             .fillMaxWidth()
             .padding(vertical = Theme.spacing.extraSmall)
             .height(1.dp)
-            .background(Theme.colors.primary),
+            .background(Theme.colors.onPrimaryVariant.copy(alpha = 0.5f)),
     )
 }
 
