@@ -121,6 +121,9 @@ kotlin {
                 implementation(libs.androidx.room.runtime)
                 implementation(libs.androidx.appcompat)
                 implementation(libs.androidx.core.ktx)
+                implementation(libs.mapbox.android)
+                implementation(libs.mapbox.compose)
+                implementation(libs.play.services.location)
             }
         }
 

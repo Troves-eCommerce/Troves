@@ -8,6 +8,7 @@ pluginManagement {
                 includeGroupAndSubgroups("androidx")
                 includeGroupAndSubgroups("com.android")
                 includeGroupAndSubgroups("com.google")
+                includeGroupAndSubgroups("org.chromium")
             }
         }
         mavenCentral()
@@ -22,12 +23,17 @@ dependencyResolutionManagement {
                 includeGroupAndSubgroups("androidx")
                 includeGroupAndSubgroups("com.android")
                 includeGroupAndSubgroups("com.google")
+                includeGroupAndSubgroups("org.chromium")
             }
         }
         maven {
             url = rootProject.projectDir.toURI().resolve("androidApp/libs/PaymobAndroidSDK1.9.2/")
         }
         mavenCentral()
+        maven {
+            url = uri("https://api.mapbox.com/downloads/v2/releases/maven")
+        }
+        
         maven(url = "https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven")
         // GitLive Firebase KMP SDK
         maven(url = "https://jitpack.io")
