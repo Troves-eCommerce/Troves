@@ -13,6 +13,7 @@ data class WishlistState(
     val isRefreshing: Boolean = false,
     val items: List<Product> = emptyList(),
     val errorMessage: String? = null,
+    val isNotSignedIn: Boolean = false,
 ) {
     val isEmpty: Boolean get() = !isLoading && items.isEmpty() && errorMessage == null
 }

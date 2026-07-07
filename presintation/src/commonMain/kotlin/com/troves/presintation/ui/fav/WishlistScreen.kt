@@ -18,9 +18,13 @@ import com.troves.designsystem.components.dialog.TrovesDialog
 import com.troves.designsystem.theme.Theme
 import com.troves.domain.entity.Product
 import com.troves.presintation.core.mvi.ObserveEffect
+import com.troves.presintation.ui.components.SignInRequiredState
 import com.troves.presintation.ui.fav.components.WishlistContent
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import troves.designsystem.generated.resources.Res
+import troves.designsystem.generated.resources.wishlist_auth_required_desc
 
 @Composable
 fun WishlistScreen(
@@ -108,16 +112,23 @@ fun WishlistScreen(
             .background(Theme.colors.backGround)
     ) {
 
-        WishlistContent(
-            state = state,
-            onIntent = viewModel::onIntent,
-            onRemoveClick = {
-                productToRemove = it
-            },
-            onClearAllClick = {
-                showClearDialog = true
-            }
-        )
+        if (state.isNotSignedIn) {
+            SignInRequiredState(
+                description = stringResource(Res.string.wishlist_auth_required_desc),
+                onSignIn = onNavigateToRegister,
+            )
+        } else {
+            WishlistContent(
+                state = state,
+                onIntent = viewModel::onIntent,
+                onRemoveClick = {
+                    productToRemove = it
+                },
+                onClearAllClick = {
+                    showClearDialog = true
+                }
+            )
+        }
 
         TrovesSnackbarHost(
             hostState = snackbarHostState,
