@@ -13,7 +13,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.SpanStyle
@@ -27,13 +26,17 @@ import com.troves.designsystem.theme.Theme
 import com.troves.domain.entity.ExchangeRate
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import troves.designsystem.generated.resources.Res
-import troves.designsystem.generated.resources.ic_arrow_drop_down
+import troves.presintation.generated.resources.Res as ResP
+import troves.presintation.generated.resources.*
+import troves.designsystem.generated.resources.ic_arrow
 import troves.designsystem.generated.resources.ic_flag_europ
 import troves.designsystem.generated.resources.ic_flag_saudi
 import troves.designsystem.generated.resources.ic_flag_us
 import troves.designsystem.generated.resources.ic_live_rate
 import troves.designsystem.generated.resources.ic_flag_egypt
+import com.troves.designsystem.util.autoMirror
 
 data class CurrencyInfo(
     val code: String,
@@ -50,80 +53,77 @@ fun LiveRatesRow(
 ) {
     var showDialog by remember { mutableStateOf(false) }
 
-    val currencies = remember {
+    val egpName = stringResource(ResP.string.currency_egp)
+    val usdName = stringResource(ResP.string.currency_usd)
+    val eurName = stringResource(ResP.string.currency_eur)
+    val sarName = stringResource(ResP.string.currency_sar)
+
+    val currencies = remember(egpName, usdName, eurName, sarName) {
         listOf(
-            CurrencyInfo("EGP", "Egyptian Pound", "EGP", Res.drawable.ic_flag_egypt),
-            CurrencyInfo("USD", "US Dollar", "$ USD" , Res.drawable.ic_flag_us),
-            CurrencyInfo("EUR", "Euro", "€ EUR", Res.drawable.ic_flag_europ),
-            CurrencyInfo("SAR", "Saudi Riyal", "SAR", Res.drawable.ic_flag_saudi),
+            CurrencyInfo("EGP", egpName, "EGP", Res.drawable.ic_flag_egypt),
+            CurrencyInfo("USD", usdName, "$ USD" , Res.drawable.ic_flag_us),
+            CurrencyInfo("EUR", eurName, "€ EUR", Res.drawable.ic_flag_europ),
+            CurrencyInfo("SAR", sarName, "SAR", Res.drawable.ic_flag_saudi),
         )
     }
 
-    val currentCurrency = currencies.find { it.code == selectedCurrency } ?: currencies.first()
-
-    Column(
+    Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+            .clickable { showDialog = true }
+            .padding(horizontal = 16.dp, vertical = 16.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            Icon(
-                painter = painterResource(Res.drawable.ic_live_rate),
-                contentDescription = null,
-                tint = Theme.colors.primary
-            )
+        Icon(
+            painter = painterResource(Res.drawable.ic_live_rate),
+            contentDescription = null,
+            tint = Theme.colors.secondaryFont,
+            modifier = Modifier.size(24.dp)
+        )
+        Spacer(modifier = Modifier.width(16.dp))
+
+        Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = "Exchange Rates",
-                style = Theme.typography.body.large.copy(color = Theme.colors.primaryFont)
-            )
-        }
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(12.dp))
-                .background(Theme.colors.backGround)
-                .clickable { showDialog = true }
-                .padding(horizontal = 16.dp, vertical = 14.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Text(
-                    text = currentCurrency.symbol,
-                    style = Theme.typography.body.medium.copy(
-                        color = Theme.colors.primaryFont,
-                        fontWeight = FontWeight.Bold
-                    )
+                text = stringResource(ResP.string.profile_currency_exchange_rates),
+                style = Theme.typography.body.medium.copy(
+                    color = Theme.colors.primaryFont,
+                    fontWeight = FontWeight.SemiBold
                 )
+            )
 
-                if (exchangeRate != null) {
+            val currentCurrency = currencies.find { it.code == selectedCurrency } ?: currencies.first()
+            var rateText = stringResource(ResP.string.profile_currency_desc)
+
+            if (exchangeRate != null) {
+                if (selectedCurrency == exchangeRate.base) {
+                    rateText = stringResource(ResP.string.profile_base_currency)
+                } else {
                     val rate = exchangeRate.rates[selectedCurrency]
                     if (rate != null) {
-                        // Rounds to 2 decimal places safely in KMP common code
-                        val formattedRate = rate.roundTo(2)
-
-                        Text(
-                            text = "1 ${exchangeRate.base} = $formattedRate $selectedCurrency",
-                            style = Theme.typography.body.medium.copy(color = Theme.colors.secondaryFont)
+                        rateText = stringResource(
+                            ResP.string.profile_exchange_rate_format,
+                            exchangeRate.base,
+                            rate.roundTo(2).toString(),
+                            currentCurrency.code
                         )
                     }
                 }
             }
-            Icon(
-                painter = painterResource(Res.drawable.ic_arrow_drop_down),
-                contentDescription = null,
-                tint = Theme.colors.secondaryFont,
-                modifier = Modifier.size(24.dp)
+
+            Text(
+                text = rateText,
+                style = Theme.typography.body.small.copy(color = Theme.colors.secondaryFont)
             )
         }
+
+        Icon(
+            painter = painterResource(Res.drawable.ic_arrow),
+            contentDescription = null,
+            tint = Theme.colors.hint,
+            modifier = Modifier
+                .size(16.dp)
+                .autoMirror()
+        )
     }
 
     if (showDialog) {
@@ -168,7 +168,7 @@ fun CurrencySelectionDialog(
                     .padding(24.dp)
             ) {
                 Text(
-                    text = "Select Currency",
+                    text = stringResource(ResP.string.profile_select_currency),
                     style = Theme.typography.title.copy(
                         color = Theme.colors.primaryFont,
                         fontWeight = FontWeight.Bold
@@ -176,7 +176,7 @@ fun CurrencySelectionDialog(
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "Choose the currency you want to use.",
+                    text = stringResource(ResP.string.profile_select_currency_subtitle),
                     style = Theme.typography.body.medium.copy(color = Theme.colors.secondaryFont)
                 )
                 Spacer(modifier = Modifier.height(24.dp))
@@ -217,7 +217,7 @@ fun CurrencySelectionDialog(
                     )
                 ) {
                     Text(
-                        text = "Save Currency",
+                        text = stringResource(ResP.string.profile_save_currency),
                         style = Theme.typography.body.large.copy(
                             color = Color.White,
                             fontWeight = FontWeight.SemiBold
@@ -282,7 +282,12 @@ fun CurrencyItem(
             )
             if (rate != null && baseCurrency != null && currency.code != baseCurrency) {
                 Text(
-                    text = "1 $baseCurrency = $rate ${currency.code}",
+                    text = stringResource(
+                        ResP.string.profile_exchange_rate_format,
+                        baseCurrency,
+                        rate.toString(),
+                        currency.code
+                    ),
                     style = Theme.typography.body.small.copy(color = Theme.colors.secondaryFont)
                 )
             }
@@ -298,6 +303,7 @@ fun CurrencyItem(
         )
     }
 }
+
 fun Double.roundTo(decimals: Int = 2): Double {
     var multiplier = 1.0
     repeat(decimals) { multiplier *= 10 }

@@ -67,7 +67,7 @@ class ProfileViewModel(
             is ProfileIntent.SurveyClicked -> emitEffect(ProfileEffect.NavigateToSurvey)
             is ProfileIntent.LanguageClicked -> Unit
             is ProfileIntent.LanguageSelected -> selectLanguage(intent.language)
-            is ProfileIntent.DarkModeChanged -> setDarkMode(intent.enabled)
+            is ProfileIntent.ThemeModeSelected -> setThemeMode(intent.mode)
             is ProfileIntent.CurrencySelected -> selectCurrency(intent.currency)
             is ProfileIntent.LogoutClicked -> _uiState.update { it.copy(showLogoutDialog = true) }
             is ProfileIntent.LogoutConfirmed -> logout()
@@ -80,12 +80,20 @@ class ProfileViewModel(
         _uiState.update { it.copy(isLoading = true) }
         observeProfilePreferences()
             .onEach { prefs ->
+                val fallbackEmail = prefs.email ?: ""
+                val resolvedName = when {
+                    !prefs.displayName.isNullOrEmpty() -> prefs.displayName!!
+                    fallbackEmail.contains("@") -> fallbackEmail.substringBefore("@")
+                    else -> "User"
+                }
+
                 _uiState.update {
                     it.copy(
                         isLoading = false,
                         isGuest = !prefs.isLoggedIn,
-                        userName = prefs.displayName ?: "",
-                        userEmail = prefs.email ?: "",
+                        userName = resolvedName,
+                        userEmail = fallbackEmail,
+                        userProfileImage = prefs.profileImageUrl,
                         selectedLanguage = prefs.language,
                         themeMode = prefs.themeMode,
                         selectedCurrency = prefs.currency,
@@ -101,9 +109,10 @@ class ProfileViewModel(
         }
     }
 
-    private fun setDarkMode(enabled: Boolean) {
+    private fun setThemeMode(mode: String) {
         viewModelScope.launch {
-            setThemeModeUseCase(enabled)
+            setThemeModeUseCase(mode)
+            _uiState.update { it.copy(themeMode = mode) }
         }
     }
 
