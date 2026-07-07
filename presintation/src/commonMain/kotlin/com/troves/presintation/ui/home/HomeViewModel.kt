@@ -202,10 +202,10 @@ class HomeViewModel(
         viewModelScope.launch {
             when (toggleFavoriteUseCase(product)) {
                 ToggleFavoriteResult.Added ->
-                    sendEffect(HomeEffect.ShowToast("${product.title} added to favorites"))
+                    sendEffect(HomeEffect.ShowToast("Added to favorites"))
 
                 ToggleFavoriteResult.Removed ->
-                    sendEffect(HomeEffect.ShowToast("${product.title} removed from favorites"))
+                    sendEffect(HomeEffect.ShowToast("Removed from favorites"))
 
                 ToggleFavoriteResult.RequiresLogin -> {
                     updateState {

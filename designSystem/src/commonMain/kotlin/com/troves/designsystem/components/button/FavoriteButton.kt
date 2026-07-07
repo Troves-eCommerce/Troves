@@ -18,14 +18,6 @@ import troves.designsystem.generated.resources.Res
 import troves.designsystem.generated.resources.ic_full_heart
 import troves.designsystem.generated.resources.ic_solid_heart
 
-/**
- * Common Favorite Button used across the application.
- *
- * Requirements:
- * - Selected: Solid Red background, White Full (Filled) Icon.
- * - Not Selected: White background, Red Solid (Outlined) Icon, Red Border.
- * - Shape: Same as the main card (Theme.shapes.large).
- */
 @Composable
 fun FavoriteButton(
     isFavorite: Boolean,
