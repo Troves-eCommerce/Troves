@@ -166,14 +166,14 @@ buildkonfig {
         )
         buildConfigField(
             STRING, "SHOPIFY_STOREFRONT_URL",
-            localProperties.getProperty("SHOPIFY_STOREFRONT_URL") ?: ""
+            localProperties.getProperty("SHOPIFY_STOREFRONT_URL") ?: error("SHOPIFY_STOREFRONT_URL not set in local.properties")
         )
         buildConfigField(
             STRING, "SHOPIFY_STOREFRONT_ACCESS_TOKEN",
             localProperties.getProperty("SHOPIFY_STORE_FRONT_API_KEY")
                 ?: localProperties.getProperty("SHOPIFY_STOREFRONT_ACCESS_TOKEN")
                 ?: localProperties.getProperty("STORE_ACCESS_TOKEN")
-                ?: ""
+                ?: error("SHOPIFY_STOREFRONT_ACCESS_TOKEN not set in local.properties")
         )
         buildConfigField(
             STRING, "SHOPIFY_REST_URL",
@@ -185,16 +185,25 @@ buildkonfig {
         )
         buildConfigField(
             STRING, "SUPABASE_API_KEY",
-            localProperties.getProperty("SUPABASE_API_KEY") ?: ""
+            localProperties.getProperty("SUPABASE_API_KEY")?: error("CAN NOT FIND: SUPABASE_API_KEY")
         )
         buildConfigField(
             STRING, "SUPABASE_API_URL",
-            localProperties.getProperty("SUPABASE_API_URL") ?: "http://127.0.0.1:54321/"
+            localProperties.getProperty("SUPABASE_API_URL") ?: error("CAN NOT FIND: SUPABASE_API_URL")
         )
         buildConfigField(
             STRING, "AI_ASSISTANT_BASE_URL",
             localProperties.getProperty("AI_ASSISTANT_BASE_URL")
                 ?: "https://ai-shopping-assistant.trovess.workers.dev/"
+        )
+
+        buildConfigField(
+            STRING, "LOCATION_IQ_API_KEY",
+            localProperties.getProperty("LOCATION_IQ_API_KEY") ?: error("CAN NOT FIND: LOCATION_IQ_API_KEY")
+        )
+        buildConfigField(
+            STRING, "LOCATION_IQ_BASE_URL",
+            localProperties.getProperty("LOCATION_IQ_BASE_URL") ?: error("LOCATION_IQ_BASE_URL: LOCATION_IQ_API_KEY")
         )
     }
 }

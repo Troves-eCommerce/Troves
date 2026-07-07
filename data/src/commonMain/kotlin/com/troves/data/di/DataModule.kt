@@ -8,6 +8,7 @@ import com.troves.data.network.provideStorefrontApolloClient
 import com.troves.data.network.provideHttpClient
 import com.troves.data.network.provideLocationHttpClient
 import com.troves.data.network.provideAiHttpClient
+import com.troves.data.network.provideLocationClient
 import com.troves.data.repository.AiAssistantRepositoryImpl
 import com.troves.data.source.remote.ai.AiApiService
 import com.troves.data.source.remote.ai.AiApiServiceImpl
@@ -63,10 +64,8 @@ val dataModule = module {
     // Ktor client kept registered for easy rollback to the REST implementation.
     single<HttpClient> { provideHttpClient() }
     single<HttpClient>(named(PAYMOB)) { providePaymobClient() }
+    single<HttpClient>(named(LOCATION_IQ)) { provideLocationClient() }
 
-
-
-    // Dedicated client for public location APIs — no Shopify auth/base URL leaks to third parties.
     single<HttpClient>(named(LOCATION_CLIENT)) { provideLocationHttpClient() }
 
 
@@ -132,7 +131,7 @@ val dataModule = module {
 
     //LocationService
     single<LocationService> { provideLocationService() }
-    single<LocationDatasource> { LocationDatasourceImpl(get()) }
+    single<LocationDatasource> { LocationDatasourceImpl(get(),get(named(LOCATION_IQ))) }
 
 
 
@@ -146,4 +145,5 @@ private const val ADMIN_CLIENT = "admin"
 private const val STORE_CLIENT = "store"
 private const val LOCATION_CLIENT = "location"
 private const val PAYMOB = "paymob"
+private const val LOCATION_IQ = "location_iq"
 private const val AI_CLIENT = "ai"
