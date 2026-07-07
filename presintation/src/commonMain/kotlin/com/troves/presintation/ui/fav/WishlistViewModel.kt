@@ -68,8 +68,9 @@ class WishlistViewModel(
         _state.update { current -> current.copy(items = current.items.filterNot { it.id == product.id }) }
         viewModelScope.launch {
             when (toggleFavoriteUseCase(product)) {
-                ToggleFavoriteResult.Removed ->
-                    sendEffect(WishlistEffect.ShowToast("${product.title} removed from wishlist"))
+                ToggleFavoriteResult.Removed -> {
+                    // No toast needed, popup confirmation is enough
+                }
                 ToggleFavoriteResult.RequiresLogin -> {
                     sendEffect(WishlistEffect.ShowLoginRequiredDialog)
                     loadWishlist()
@@ -88,7 +89,7 @@ class WishlistViewModel(
         _state.update { it.copy(items = emptyList()) }
         viewModelScope.launch {
             toRemove.forEach { product -> toggleFavoriteUseCase(product) }
-            sendEffect(WishlistEffect.ShowToast("Wishlist cleared"))
+            // No toast needed, popup confirmation is enough
         }
     }
 

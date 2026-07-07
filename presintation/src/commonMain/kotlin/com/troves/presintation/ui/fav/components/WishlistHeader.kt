@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -54,16 +55,13 @@ fun WishlistHeader(
  
              if (showClearButton) {
  
-                 Text(
-                     text = stringResource(Res.string.clear_all),
-                     style = Theme.typography.body.medium.copy(
-                         fontWeight = FontWeight.SemiBold
-                     ),
-                     color = Theme.colors.primary,
-                     modifier = Modifier.clickable {
-                         onClearAllClick()
-                     }
-                 )
+                 TextButton(onClick = onClearAllClick) {
+                     Text(
+                         text = stringResource(Res.string.clear_all),
+                         style = Theme.typography.body.medium,
+                         color = Theme.colors.error,
+                     )
+                 }
              }
          }
      }

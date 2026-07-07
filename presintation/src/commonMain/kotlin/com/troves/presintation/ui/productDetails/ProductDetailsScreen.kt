@@ -450,7 +450,7 @@ fun ProductDetailsScreenContent(
             ) {
                 AddToCartButton(
                     onAddToCart = onAddToCart,
-                    enabled = true,
+                    enabled = uiState.canAddToCart,
                     modifier = Modifier.weight(1f)
                 )
 
