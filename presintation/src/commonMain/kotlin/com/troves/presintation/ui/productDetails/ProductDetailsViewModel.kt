@@ -16,6 +16,14 @@ import com.troves.presintation.core.mvi.StateHolder
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import com.troves.domain.utils.Result
+import com.troves.presintation.ui.productDetails.models.ReviewUi
+
+import org.jetbrains.compose.resources.getString
+import troves.designsystem.generated.resources.Res
+import troves.designsystem.generated.resources.product_details_coming_soon
+import troves.designsystem.generated.resources.product_details_out_of_stock
+import troves.designsystem.generated.resources.product_details_select_option
+import troves.designsystem.generated.resources.product_details_unavailable_combination
 
 class ProductDetailsViewModel(
     private val getProductByIdUseCase: GetProductByIdUseCase,
@@ -35,9 +43,6 @@ class ProductDetailsViewModel(
         when (intent) {
             ProductDetailsIntent.OnBackClick ->
                 sendEffect(ProductDetailsEffect.NavigateBack)
-
-            ProductDetailsIntent.OnSeeAllReviews ->
-                sendEffect(ProductDetailsEffect.ShowToast("Coming soon..."))
 
             ProductDetailsIntent.OnSizeGuide ->
                 sendEffect(ProductDetailsEffect.NavigateBack)
@@ -61,6 +66,8 @@ class ProductDetailsViewModel(
                 bannerDismissJob?.cancel()
                 updateState { copy(showCartConfirmation = false) }
             }
+
+            else -> {}
         }
     }
 
@@ -78,6 +85,8 @@ class ProductDetailsViewModel(
 
                 is Result.Success<Product> -> {
                     val value = product.value
+                    val randomReviews = MOCK_REVIEWS.shuffled().take((2..MOCK_REVIEWS.size).random())
+                    val averageRating = randomReviews.map { it.rating }.average().toInt()
                     updateState {
                         copy(
                             isLoading = false,
@@ -87,7 +96,9 @@ class ProductDetailsViewModel(
                             priceFormatted = value.price,
                             errorMessage = null,
                             description = value.description,
-                            rating = value.rating,
+                            rating = averageRating,
+                            reviews = randomReviews,
+                            reviewCount = randomReviews.size
                         )
                     }
                     observeFavoriteStatus(productId)
@@ -153,7 +164,18 @@ class ProductDetailsViewModel(
         state.product ?: return
         val variant = state.selectedVariant
         if (variant == null || !variant.available) {
-            sendEffect(ProductDetailsEffect.ShowToast(state.addToCartHint ?: "Select options first"))
+            viewModelScope.launch {
+                val message = when {
+                    variant == null -> {
+                        val missing = state.displayOptions.firstOrNull { state.selectedOptions[it.name].isNullOrEmpty() }
+                        if (missing != null) getString(Res.string.product_details_select_option, missing.name)
+                        else getString(Res.string.product_details_unavailable_combination)
+                    }
+                    !variant.available -> getString(Res.string.product_details_out_of_stock)
+                    else -> ""
+                }
+                sendEffect(ProductDetailsEffect.ShowToast(message))
+            }
             return
         }
         updateState { copy(isAddingToCart = true) }
@@ -181,3 +203,16 @@ class ProductDetailsViewModel(
         }
     }
 }
+
+private val MOCK_REVIEWS = listOf(
+    ReviewUi("Ahmed", 5, "Oct 1, 2023", "Excellent product, very high quality!"),
+    ReviewUi("Sara", 4, "Oct 5, 2023", "Good value for money, but shipping was a bit slow."),
+    ReviewUi("Mohamed", 5, "Oct 10, 2023", "I love it! Exactly what I was looking for."),
+    ReviewUi("Layla", 3, "Oct 12, 2023", "It's okay, but the color is slightly different from the photos."),
+    ReviewUi("Omar", 5, "Oct 15, 2023", "Perfect fit and very comfortable."),
+    ReviewUi("Nour", 4, "Oct 18, 2023", "Great quality, will definitely buy again."),
+    ReviewUi("Khaled", 2, "Oct 20, 2023", "Disappointed, it broke after two days of use."),
+    ReviewUi("Mona", 5, "Oct 22, 2023", "Super fast delivery and amazing customer service."),
+    ReviewUi("Zaid", 4, "Oct 25, 2023", "Nice design, but a bit smaller than expected."),
+    ReviewUi("Huda", 5, "Oct 28, 2023", "Absolutely beautiful! Highly recommend.")
+)

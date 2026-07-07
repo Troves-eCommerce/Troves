@@ -6,5 +6,6 @@ data class ProfilePreferences(
     val themeMode: String,
     val currency: String,
     val displayName: String? = null,
-    val email: String? = null
+    val email: String? = null,
+    val profileImageUrl: String? = null
 )

@@ -47,6 +47,32 @@
     <string name="profile_guest_msg">سجل الدخول لتتبع طلباتك وإدارة حسابك</string>
     <string name="profile_login_signup">تسجيل الدخول / إنشاء حساب</string>
     <string name="profile_select_language">اختر اللغة</string>
+    <string name="profile_style_survey">اختبار النمط</string>
+    <string name="profile_order_history_desc">عرض وتتبع طلباتك</string>
+    <string name="profile_manage_addresses_desc">إدارة عناوين التوصيل الخاصة بك</string>
+    <string name="profile_language_desc">تغيير لغة التطبيق</string>
+    <string name="profile_theme">المظهر</string>
+    <string name="profile_theme_dark">الوضع الداكن</string>
+    <string name="profile_theme_light">الوضع الفاتح</string>
+    <string name="profile_theme_system">تلقائي (حسب النظام)</string>
+    <string name="profile_sign_out_desc">تسجيل الخروج من حسابك</string>
+    <string name="profile_select_theme">اختر المظهر</string>
+    <string name="profile_welcome_back">مرحباً بك من جديد،</string>
+    <string name="profile_premium_member">عضو مميز</string>
+    <string name="profile_currency_exchange_rates">العملة وأسعار الصرف</string>
+    <string name="profile_currency_desc">عرض الأسعار المباشرة وتغيير العملة</string>
+    <string name="profile_base_currency">العملة الأساسية</string>
+    <string name="profile_select_currency">اختر العملة</string>
+    <string name="profile_select_currency_subtitle">اختر العملة التي ترغب في استخدامها.</string>
+    <string name="profile_save_currency">حفظ العملة</string>
+    <string name="profile_exchange_rate_format">1 %1$s = %2$s %3$s</string>
+    <string name="currency_egp">الجنيه المصري</string>
+    <string name="currency_usd">الدولار الأمريكي</string>
+    <string name="currency_eur">اليورو</string>
+    <string name="currency_sar">الريال السعودي</string>
+    <string name="language_english">English</string>
+    <string name="language_arabic">العربية</string>
+    <string name="profile_navigate">انتقال</string>
 
     <!-- Checkout · shared -->
     <string name="checkout_continue">متابعة</string>

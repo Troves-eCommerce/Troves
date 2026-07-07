@@ -46,6 +46,7 @@ class WishlistRepositoryImpl(
         when (val result = remoteDatasource.getWishlist(userId)) {
 
             is Result.Success -> {
+                wishlistDao.clearAll()
                 result.value.forEach { dto ->
                     wishlistDao.addFavorite(dto.toEntity())
                 }

@@ -142,4 +142,24 @@
     <string name="home_top_brands">أفضل العلامات التجارية</string>
     <string name="home_trending_now">الأكثر رواجاً</string>
     <string name="home_copy_code_button">نسخ الكود</string>
+
+    <!-- Product Details -->
+    <string name="product_details_description">الوصف</string>
+    <string name="product_details_read_more">اقرأ المزيد</string>
+    <string name="product_details_read_less">اقرأ أقل</string>
+    <string name="product_details_size_guide">دليل المقاسات</string>
+    <string name="product_details_reviews_title">آراء العملاء</string>
+    <string name="product_details_reviews_see_all">عرض الكل ></string>
+    <string name="product_details_reviews_show_less">عرض أقل</string>
+    <string name="product_details_add_to_cart">أضف إلى السلة</string>
+    <string name="product_details_added_to_cart">تم الإضافة للسلة</string>
+    <string name="product_details_quantity_in_cart">الكمية في السلة: </string>
+    <string name="product_details_view_cart">عرض السلة</string>
+    <string name="product_details_out_of_stock">نفذت الكمية</string>
+    <string name="product_details_select_option">اختر %1$s</string>
+    <string name="product_details_unavailable_combination">تشكيلة غير متوفرة</string>
+    <string name="product_details_coming_soon">قريباً...</string>
+    <string name="product_details_color_label">اللون: %1$s</string>
+    <string name="product_details_reviews_count">(%1$d تقييم)</string>
+    <string name="product_details_login_required_favorites">يجب عليك تسجيل الدخول لإدارة مفضلاتك.</string>
 </resources>

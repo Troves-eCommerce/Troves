@@ -12,8 +12,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.troves.designsystem.theme.Theme
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import troves.designsystem.generated.resources.Res
 import troves.designsystem.generated.resources.ic_star
+import troves.designsystem.generated.resources.product_details_reviews_count
 
 @Composable
 fun StarRatingRow(
@@ -39,7 +41,7 @@ fun StarRatingRow(
             color = Theme.colors.primaryFont
         )
         Text(
-            text = "($reviewCount reviews)",
+            text = stringResource(Res.string.product_details_reviews_count, reviewCount),
             style = Theme.typography.body.small,
             color = Theme.colors.hint,
         )

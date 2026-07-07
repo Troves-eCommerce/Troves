@@ -62,6 +62,7 @@ fun LoginScreen(
     onNavigateToRegister: () -> Unit,
     onLoginSuccess: () -> Unit,
     onNavigateToForgotPassword: () -> Unit = {},
+    onNavigateToEmailVerification: () -> Unit,
     viewModel: AuthViewModel = koinViewModel(),
     onLoggedIn: () -> Unit,
 ) {
@@ -76,6 +77,7 @@ fun LoginScreen(
             is AuthEffect.ShowError -> toast.show(effect.message, ToastType.Error)
             AuthEffect.NavigateToHome -> onLoginSuccess()
             is AuthEffect.OnRegistered -> onLoggedIn()
+            AuthEffect.NavigateToEmailVerification -> onNavigateToEmailVerification()
         }
     }
 
