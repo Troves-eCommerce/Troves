@@ -43,10 +43,23 @@ import com.troves.designsystem.components.topbar.BaseTopAppBar
 import com.troves.designsystem.theme.Theme
 import com.troves.presintation.ui.orderdetails.components.OrderTimeline
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import troves.designsystem.generated.resources.Res
 import troves.designsystem.generated.resources.ic_arrow_back
 import troves.designsystem.generated.resources.img_placeholder
+import troves.presintation.generated.resources.Res as ResP
+import troves.presintation.generated.resources.order_details_title
+import troves.presintation.generated.resources.error_view_title
+import troves.presintation.generated.resources.order_details_progress
+import troves.presintation.generated.resources.order_details_items
+import troves.presintation.generated.resources.checkout_order_summary
+import troves.presintation.generated.resources.order_details_subtotal
+import troves.presintation.generated.resources.order_details_shipping
+import troves.presintation.generated.resources.order_details_tax
+import troves.presintation.generated.resources.checkout_total
+import troves.presintation.generated.resources.order_details_help
+import troves.presintation.generated.resources.order_details_support
 
 @Composable
 fun OrderDetailsScreen(
@@ -77,7 +90,7 @@ fun OrderDetailsScreen(
             .statusBarsPadding(),
     ) {
         BaseTopAppBar(
-            title = "Order Details",
+            title = stringResource(ResP.string.order_details_title),
             leadingIcon = painterResource(Res.drawable.ic_arrow_back),
             onLeadingClick = { viewModel.onIntent(OrderDetailsIntent.OnBack) },
             modifier = Modifier.background(Theme.colors.backGround),
@@ -89,7 +102,7 @@ fun OrderDetailsScreen(
                 }
                 state.isError -> {
                     BasicText(
-                        text = state.errorMessage ?: "Something went wrong",
+                        text = state.errorMessage ?: stringResource(ResP.string.error_view_title),
                         style = Theme.typography.body.large.copy(color = Theme.colors.error),
                         modifier = Modifier.align(Alignment.Center)
                     )
@@ -121,7 +134,7 @@ private fun OrderDetailsContent(
         
         item {
             BasicText(
-                text = "Order Progress",
+                text = stringResource(ResP.string.order_details_progress),
                 style = Theme.typography.title.copy(
                     color = Theme.colors.primaryFont,
                     fontWeight = FontWeight.Bold,
@@ -133,7 +146,7 @@ private fun OrderDetailsContent(
 
         item {
             BasicText(
-                text = "Order Items",
+                text = stringResource(ResP.string.order_details_items),
                 style = Theme.typography.title.copy(
                     color = Theme.colors.primaryFont,
                     fontWeight = FontWeight.Bold,
@@ -217,7 +230,7 @@ private fun OrderDetailsContent(
 
         item {
             BasicText(
-                text = "Order Summary",
+                text = stringResource(ResP.string.checkout_order_summary),
                 style = Theme.typography.title.copy(
                     color = Theme.colors.primaryFont,
                     fontWeight = FontWeight.Bold,
@@ -226,13 +239,13 @@ private fun OrderDetailsContent(
             )
             
             OrderSummaryInfoCard(
-                subtotalLabel = "Subtotal",
+                subtotalLabel = stringResource(ResP.string.order_details_subtotal),
                 subtotalFormatted = orderDetails.subtotal,
-                shippingLabel = if (orderDetails.shipping.isNotBlank()) "Shipping" else null,
+                shippingLabel = if (orderDetails.shipping.isNotBlank()) stringResource(ResP.string.order_details_shipping) else null,
                 shippingFormatted = if (orderDetails.shipping.isNotBlank()) orderDetails.shipping else null,
-                taxLabel = if (orderDetails.tax.isNotBlank()) "Tax" else null,
+                taxLabel = if (orderDetails.tax.isNotBlank()) stringResource(ResP.string.order_details_tax) else null,
                 taxFormatted = if (orderDetails.tax.isNotBlank()) orderDetails.tax else null,
-                totalLabel = "Total",
+                totalLabel = stringResource(ResP.string.checkout_total),
                 totalFormatted = orderDetails.total,
             )
         }
@@ -438,14 +451,14 @@ private fun SupportCard(onClick: () -> Unit) {
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             BasicText(
-                text = "Need help with your order?",
+                text = stringResource(ResP.string.order_details_help),
                 style = Theme.typography.body.large.copy(
                     color = Theme.colors.primaryFont,
                     fontWeight = FontWeight.Bold,
                 ),
             )
             BasicText(
-                text = "Contact our support team",
+                text = stringResource(ResP.string.order_details_support),
                 style = Theme.typography.body.medium.copy(color = Theme.colors.secondaryFont),
             )
         }

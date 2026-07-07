@@ -162,4 +162,9 @@
     <string name="product_details_color_label">اللون: %1$s</string>
     <string name="product_details_reviews_count">(%1$d تقييم)</string>
     <string name="product_details_login_required_favorites">يجب عليك تسجيل الدخول لإدارة مفضلاتك.</string>
+    <string name="quantity_label">الكمية: %1$d</string>
+    <string name="stepper_label">الخطوة %1$d من %2$d</string>
+    <string name="login_required_title">تسجيل الدخول مطلوب</string>
+    <string name="login_required_msg">يجب عليك تسجيل الدخول للقيام بهذا الإجراء.</string>
+    <string name="login_required_btn">تسجيل الدخول</string>
 </resources>

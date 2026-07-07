@@ -117,7 +117,7 @@
     <string name="login_button">Log in</string>
     <string name="login_or_continue">or continue with</string>
     <string name="login_google">Continue with Google</string>
-    <string name="login_dont_have_account">Don\'t have an account? </string>
+    <string name="login_dont_have_account">Don't have an account? </string>
     <string name="login_sign_up">Sign up</string>
 
     <string name="register_title">Create Account</string>
@@ -163,4 +163,9 @@
     <string name="product_details_color_label">Color: %1$s</string>
     <string name="product_details_reviews_count">(%1$d reviews)</string>
     <string name="product_details_login_required_favorites">You need to be logged in to manage your favorites.</string>
+    <string name="quantity_label">Qty: %1$d</string>
+    <string name="stepper_label">STEP %1$d OF %2$d</string>
+    <string name="login_required_title">Login Required</string>
+    <string name="login_required_msg">You need to be logged in to perform this action.</string>
+    <string name="login_required_btn">Log In</string>
 </resources>

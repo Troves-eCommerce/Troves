@@ -64,6 +64,9 @@ import troves.presintation.generated.resources.checkout_place_order
 import troves.presintation.generated.resources.checkout_title_confirm_order
 import troves.presintation.generated.resources.checkout_title_delivery_address
 import troves.presintation.generated.resources.checkout_title_payment
+import troves.presintation.generated.resources.address_label_home
+import troves.presintation.generated.resources.address_label_work
+import troves.presintation.generated.resources.address_label_other
 import troves.presintation.generated.resources.Res as StringRes
 
 @Composable
@@ -283,9 +286,9 @@ private fun Address.toAddressUi(): AddressUi {
         AddressIcon.OTHER -> Res.drawable.ic_location
     }
     val title = label ?: when (icon) {
-        AddressIcon.HOME -> "Home"
-        AddressIcon.WORK -> "Work"
-        AddressIcon.OTHER -> "Address"
+        AddressIcon.HOME -> stringResource(StringRes.string.address_label_home)
+        AddressIcon.WORK -> stringResource(StringRes.string.address_label_work)
+        AddressIcon.OTHER -> stringResource(StringRes.string.address_label_other)
     }
     return AddressUi(
         id = id,

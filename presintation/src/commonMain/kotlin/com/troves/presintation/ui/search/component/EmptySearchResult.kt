@@ -14,6 +14,10 @@ import androidx.compose.ui.Modifier
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.SearchCheck
 import com.troves.designsystem.theme.Theme
+import org.jetbrains.compose.resources.stringResource
+import troves.presintation.generated.resources.Res
+import troves.presintation.generated.resources.empty_search_title
+import troves.presintation.generated.resources.empty_search_msg
 
 /**
  * Copyright (c) 2026 Wahid Ali Wahid Hussien.
@@ -38,8 +42,8 @@ import com.troves.designsystem.theme.Theme
 @Composable
 fun EmptySearchResult(
     modifier: Modifier = Modifier,
-    title: String = "No products",
-    message: String = "Try another keyword or adjust your filters."
+    title: String = stringResource(Res.string.empty_search_title),
+    message: String = stringResource(Res.string.empty_search_msg)
 ) {
     Column(
         modifier = modifier

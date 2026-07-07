@@ -13,6 +13,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.troves.designsystem.theme.Theme
+import org.jetbrains.compose.resources.stringResource
+import troves.presintation.generated.resources.Res
+import troves.presintation.generated.resources.wishlist_header_title
+import troves.presintation.generated.resources.wishlist_header_items_count
+import troves.presintation.generated.resources.clear_all
 
 @Composable
 fun WishlistHeader(
@@ -28,38 +33,38 @@ fun WishlistHeader(
             .padding(horizontal = 16.dp)
     ) {
 
-        Text(
-            text = "Your Wishlist",
-            style = Theme.typography.title,
-            color = Theme.colors.primaryFont,
-        )
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-
-            Text(
-                text = "$itemCount items saved for later",
-                style = Theme.typography.body.medium,
-                color = Theme.colors.secondaryFont,
-            )
-
-            if (showClearButton) {
-
-                Text(
-                    text = "Clear All",
-                    style = Theme.typography.body.medium.copy(
-                        fontWeight = FontWeight.SemiBold
-                    ),
-                    color = Theme.colors.primary,
-                    modifier = Modifier.clickable {
-                        onClearAllClick()
-                    }
-                )
-            }
-        }
-    }
-}
+         Text(
+             text = stringResource(Res.string.wishlist_header_title),
+             style = Theme.typography.title,
+             color = Theme.colors.primaryFont,
+         )
+ 
+         Row(
+             modifier = Modifier
+                 .fillMaxWidth()
+                 .padding(top = 8.dp),
+             horizontalArrangement = Arrangement.SpaceBetween
+         ) {
+ 
+             Text(
+                 text = stringResource(Res.string.wishlist_header_items_count, itemCount),
+                 style = Theme.typography.body.medium,
+                 color = Theme.colors.secondaryFont,
+             )
+ 
+             if (showClearButton) {
+ 
+                 Text(
+                     text = stringResource(Res.string.clear_all),
+                     style = Theme.typography.body.medium.copy(
+                         fontWeight = FontWeight.SemiBold
+                     ),
+                     color = Theme.colors.primary,
+                     modifier = Modifier.clickable {
+                         onClearAllClick()
+                     }
+                 )
+             }
+         }
+     }
+ }

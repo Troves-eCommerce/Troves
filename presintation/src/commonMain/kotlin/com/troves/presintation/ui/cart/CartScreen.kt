@@ -44,9 +44,11 @@ import com.troves.designsystem.theme.Theme
 import com.troves.presintation.core.mvi.ObserveEffect
 import com.troves.presintation.ui.cart.components.CartItemCard
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-import troves.designsystem.generated.resources.Res
-import troves.designsystem.generated.resources.ic_arrow_back
+import troves.designsystem.generated.resources.*
+import troves.presintation.generated.resources.Res as ResP
+import troves.presintation.generated.resources.cart_remove_item_confirm
 
 @Composable
 fun CartScreen(
@@ -88,9 +90,9 @@ fun CartScreen(
 
     itemToRemove?.let { item ->
         TrovesDialog(
-            title = "Remove Item",
-            message = "Are you sure you want to remove \"${item.title}\" from your cart?",
-            confirmText = "Remove",
+            title = stringResource(Res.string.cart_remove_title),
+            message = stringResource(ResP.string.cart_remove_item_confirm, item.title),
+            confirmText = stringResource(Res.string.wishlist_remove),
             onConfirm = {
                 viewModel.onIntent(CartIntent.OnRemoveItemConfirm(item.lineId))
                 itemToRemove = null
@@ -103,9 +105,9 @@ fun CartScreen(
 
     if (showClearConfirm) {
         TrovesDialog(
-            title = "Clear Cart",
-            message = "Remove all items from your cart?",
-            confirmText = "Clear All",
+            title = stringResource(Res.string.cart_clear_title),
+            message = stringResource(Res.string.cart_clear_msg),
+            confirmText = stringResource(Res.string.clear_all),
             onConfirm = {
                 viewModel.onIntent(CartIntent.OnClearCartConfirm)
                 showClearConfirm = false
@@ -144,7 +146,7 @@ private fun CartScreenContent(
             .statusBarsPadding(),
     ) {
         BaseTopAppBar(
-            title = "Cart",
+            title = stringResource(Res.string.cart_title),
             leadingIcon = painterResource(Res.drawable.ic_arrow_back),
             onLeadingClick = { onIntent(CartIntent.OnBackClick) },
             modifier = Modifier.background(Theme.colors.backGround),
@@ -164,12 +166,12 @@ private fun CartScreenContent(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         BasicText(
-                            text = "${state.items.size} item(s)",
+                            text = stringResource(Res.string.cart_items_count, state.items.size.toString()),
                             style = Theme.typography.body.medium.copy(color = Theme.colors.secondaryFont),
                         )
                         TextButton(onClick = { onIntent(CartIntent.OnClearCartClick) }) {
                             Text(
-                                text = "Clear all",
+                                text = stringResource(Res.string.clear_all),
                                 style = Theme.typography.body.medium,
                                 color = Theme.colors.error,
                             )
@@ -209,7 +211,7 @@ private fun CartScreenContent(
                         ) {
                             if (dismissState.targetValue == SwipeToDismissBoxValue.EndToStart) {
                                 Text(
-                                    text = "Remove",
+                                    text = stringResource(Res.string.wishlist_remove),
                                     color = Color.White,
                                     fontWeight = FontWeight.Bold
                                 )
@@ -235,7 +237,7 @@ private fun CartScreenContent(
                         contentAlignment = Alignment.Center,
                     ) {
                         BasicText(
-                            text = "Your cart is empty",
+                            text = stringResource(Res.string.cart_empty),
                             style = Theme.typography.body.large.copy(
                                 color = Theme.colors.secondaryFont,
                             ),
@@ -274,7 +276,7 @@ private fun CartBottomBar(
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(Theme.spacing.extraSmall)) {
             BasicText(
-                text = "Total Price",
+                text = stringResource(Res.string.cart_total),
                 style = Theme.typography.body.small.copy(color = Theme.colors.secondaryFont),
             )
             BasicText(
@@ -287,7 +289,7 @@ private fun CartBottomBar(
         }
 
         PrimaryButton(
-            caption = "Checkout",
+            caption = stringResource(Res.string.cart_checkout),
             onClick = onCheckout,
             isDisabled = isLoading || isEmpty,
             modifier = Modifier
