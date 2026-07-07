@@ -182,4 +182,10 @@
     <string name="login_required_title">تسجيل الدخول مطلوب</string>
     <string name="login_required_msg">يجب عليك تسجيل الدخول للقيام بهذا الإجراء.</string>
     <string name="login_required_btn">تسجيل الدخول</string>
+
+    <!-- Sign-in required (guest) empty states -->
+    <string name="auth_required_title">لم تقم بتسجيل الدخول</string>
+    <string name="auth_required_action">تسجيل الدخول</string>
+    <string name="orders_auth_required_desc">سجّل الدخول لعرض وتتبع طلباتك.</string>
+    <string name="wishlist_auth_required_desc">سجّل الدخول لعرض العناصر التي حفظتها.</string>
 </resources>

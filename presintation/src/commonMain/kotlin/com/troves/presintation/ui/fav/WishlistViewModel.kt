@@ -3,6 +3,7 @@ package com.troves.presintation.ui.fav
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.troves.domain.entity.Product
+import com.troves.domain.usecase.auth.IsLoggedInUseCase
 import com.troves.domain.usecase.wishlist.GetWishlistUseCase
 import com.troves.domain.usecase.wishlist.SyncWishlistUseCase
 import com.troves.domain.usecase.wishlist.ToggleFavoriteResult
@@ -19,6 +20,7 @@ class WishlistViewModel(
     private val getWishlist: GetWishlistUseCase,
     private val toggleFavoriteUseCase: ToggleFavoriteUseCase,
     private val syncWishlist: SyncWishlistUseCase,
+    private val isLoggedIn: IsLoggedInUseCase,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(WishlistState())
@@ -45,8 +47,12 @@ class WishlistViewModel(
     private fun loadWishlist() {
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true, errorMessage = null) }
+            if (!isLoggedIn()) {
+                _state.update { it.copy(isLoading = false, isNotSignedIn = true, items = emptyList()) }
+                return@launch
+            }
             getWishlist().collect { items ->
-                _state.update { it.copy(isLoading = false, items = items) }
+                _state.update { it.copy(isLoading = false, isNotSignedIn = false, items = items) }
             }
         }
     }
