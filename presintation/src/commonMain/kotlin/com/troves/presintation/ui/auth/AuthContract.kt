@@ -7,6 +7,7 @@ data class AuthState(
     val passwordVisible: Boolean = false,
     val confirmPasswordVisible: Boolean = false,
     val isLoading: Boolean = false,
+    val isGoogleLoading: Boolean = false,
     val errorMessage: String? = null,
 )
 

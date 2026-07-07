@@ -240,11 +240,14 @@ private fun HomeContent(
     val heartIcon = painterResource(Res.drawable.ic_solid_heart)
 
     val adImages = listOf(
-        Res.drawable.random_1,
+        Res.drawable.random_7,
         Res.drawable.random_2,
         Res.drawable.random_3,
         Res.drawable.random_4,
-        Res.drawable.random_5
+        Res.drawable.random_5,
+        Res.drawable.random_6,
+        Res.drawable.random_1,
+        Res.drawable.random_8
     )
 
     val clipboardManager = LocalClipboardManager.current
@@ -293,7 +296,7 @@ private fun HomeContent(
                     "accessories" -> Res.drawable.ic_category_accessories
                     "sale" -> Res.drawable.ic_category_sales
                     "new arrivals" -> Res.drawable.ic_category_sales
-                    "best sellers" -> Res.drawable.ic_star
+                    "best sellers" -> Res.drawable.ic_best_seller
                     "men" -> Res.drawable.ic_category_man
                     "women" -> Res.drawable.ic_category_women
                     "dr martens" -> Res.drawable.ic_brand_dr_martens

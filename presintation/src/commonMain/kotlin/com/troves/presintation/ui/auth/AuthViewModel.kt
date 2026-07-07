@@ -106,14 +106,14 @@ class AuthViewModel(
 
     private fun signInWithGoogle(idToken: String, accessToken: String?) {
         viewModelScope.launch {
-            updateState { copy(isLoading = true, errorMessage = null) }
+            updateState { copy(isGoogleLoading = true, errorMessage = null) }
             when (val result = signInWithGoogleUseCase(idToken, accessToken)) {
                 is Result.Success -> {
-                    onAuthenticated("Signed in with Google successfully")
+                    onAuthenticated("Signed in with Google successfully", isGoogle = true)
                 }
                 is Result.Error -> updateState {
                     copy(
-                        isLoading = false,
+                        isGoogleLoading = false,
                         errorMessage = result.throwable.message
                             ?: "Google Sign-In failed. Please try again.",
                     )
@@ -133,10 +133,10 @@ class AuthViewModel(
      * happened inside the repository's login/register/signInWithGoogle calls
      * above; nothing about that is touched here.
      */
-    private suspend fun onAuthenticated(message: String) {
+    private suspend fun onAuthenticated(message: String, isGoogle: Boolean = false) {
         runCatching { syncWishlistUseCase() }
         runCatching { syncCartUseCase() }
-        updateState { copy(isLoading = false) }
+        updateState { copy(isLoading = false, isGoogleLoading = false) }
         sendEffect(AuthEffect.ShowMessage(message))
         delay(SUCCESS_NAV_DELAY_MS.milliseconds)
         sendEffect(AuthEffect.OnRegistered)

@@ -14,7 +14,6 @@ import com.troves.domain.usecase.wishlist.ToggleFavoriteResult
 import com.troves.domain.usecase.wishlist.ToggleFavoriteUseCase
 import com.troves.domain.utils.Result
 import com.troves.domain.utils.getOrElse
-import com.troves.domain.usecase.survey.IsSurveyDoneUseCase
 import com.troves.presintation.core.mvi.DefaultEffectPublisher
 import com.troves.presintation.core.mvi.DefaultStateHolder
 import com.troves.presintation.core.mvi.EffectPublisher
@@ -210,8 +209,11 @@ class HomeViewModel(
 
         viewModelScope.launch {
             when (toggleFavoriteUseCase(product)) {
-                ToggleFavoriteResult.Added,
-                ToggleFavoriteResult.Removed -> Unit // no toast on wishlist add/remove
+                ToggleFavoriteResult.Added ->
+                    sendEffect(HomeEffect.ShowToast("Added to favorites"))
+
+                ToggleFavoriteResult.Removed ->
+                    sendEffect(HomeEffect.ShowToast("Removed from favorites"))
 
                 ToggleFavoriteResult.RequiresLogin -> {
                     updateState {

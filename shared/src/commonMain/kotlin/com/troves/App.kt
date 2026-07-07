@@ -12,7 +12,6 @@ import androidx.compose.ui.unit.LayoutDirection
 import com.troves.designsystem.theme.SpTheme
 import com.troves.designsystem.util.CurrencyState
 import com.troves.designsystem.util.LocalCurrency
-
 import com.troves.presintation.navigation.AppNav
 import com.troves.presintation.ui.MainViewModel
 import org.koin.compose.viewmodel.koinViewModel

@@ -109,6 +109,7 @@ androidx-navigation3-ui = { module = "org.jetbrains.androidx.navigation3:navigat
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil3" }
 coil-compose-core = { module = "io.coil-kt.coil3:coil-compose-core", version.ref = "coil3" }
 coil-network-ktor3 = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coil3" }
+coil-gif = { module = "io.coil-kt.coil3:coil-gif", version.ref = "coil3" }
 
 # Testing
 kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlinStdlib" }
@@ -147,7 +148,8 @@ apollo = { id = "com.apollographql.apollo", version.ref = "apollo" }
 coil = [
     "coil-compose",
     "coil-compose-core",
-    "coil-network-ktor3"
+    "coil-network-ktor3",
+    "coil-gif"
 ]
 ktor = [
     "ktor-client-core",

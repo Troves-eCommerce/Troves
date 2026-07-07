@@ -144,7 +144,7 @@ private fun SeeAllContent(
                         "accessories" -> Res.drawable.ic_category_accessories
                         "sale" -> Res.drawable.ic_category_sales
                         "new arrivals" -> Res.drawable.ic_category_sales
-                        "best sellers" -> Res.drawable.ic_star
+                        "best sellers" -> Res.drawable.ic_best_seller
                         "men" -> Res.drawable.ic_category_man
                         "kid" -> Res.drawable.ic_category_kids
                         "women" -> Res.drawable.ic_category_women

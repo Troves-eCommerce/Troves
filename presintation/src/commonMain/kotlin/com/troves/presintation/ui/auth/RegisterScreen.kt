@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -20,17 +21,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -91,6 +89,8 @@ fun RegisterScreen(
     val passwordVisible = state.passwordVisible
     val confirmPasswordVisible = state.confirmPasswordVisible
     val isLoading = state.isLoading
+    val isGoogleLoading = state.isGoogleLoading
+    val isAnyLoading = isLoading || isGoogleLoading
     val errorMessage = state.errorMessage
 
     val eyeIcon = Res.drawable.ic_eye
@@ -98,19 +98,23 @@ fun RegisterScreen(
 
     val customBorderShape = RoundedCornerShape(14.dp)
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Theme.colors.backGround)
-    ) {
-        Column(
+    Scaffold(
+        containerColor = Theme.colors.backGround,
+    ) { paddingValues ->
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = 24.dp, vertical = 40.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+                .padding(paddingValues)
         ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .imePadding()
+                    .padding(horizontal = 24.dp, vertical = 20.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
 
             Spacer(Modifier.height(16.dp))
 
@@ -123,7 +127,7 @@ fun RegisterScreen(
                 )
             )
 
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(4.dp))
 
             BasicText(
                 text = stringResource(Res.string.register_desc),
@@ -145,6 +149,7 @@ fun RegisterScreen(
                 onFocusBorderColor = Theme.colors.primary,
                 leadingIcon = painterResource(Res.drawable.ic_outline_email),
                 leadingIconColor = Theme.colors.primaryFont.copy(alpha = 0.7f),
+                enabled = !isAnyLoading,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Email,
                     imeAction = ImeAction.Next
@@ -163,6 +168,7 @@ fun RegisterScreen(
                 singleLine = true,
                 borderColor = Theme.colors.hint.copy(alpha = 0.4f),
                 onFocusBorderColor = Theme.colors.primary,
+                enabled = !isAnyLoading,
                 visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Password,
@@ -175,7 +181,7 @@ fun RegisterScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            Spacer(Modifier.height(20.dp))
+            Spacer(Modifier.height(14.dp))
 
             CustomTextField(
                 text = confirmPassword,
@@ -185,6 +191,7 @@ fun RegisterScreen(
                 singleLine = true,
                 borderColor = Theme.colors.hint.copy(alpha = 0.4f),
                 onFocusBorderColor = Theme.colors.primary,
+                enabled = !isAnyLoading,
                 visualTransformation = if (confirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Password,
@@ -216,17 +223,17 @@ fun RegisterScreen(
                 }
             }
 
-            Spacer(Modifier.height(32.dp))
+            Spacer(Modifier.height(28.dp))
 
             PrimaryButton(
                 caption = stringResource(Res.string.register_button),
                 onClick = { viewModel.onIntent(AuthIntent.Register) },
                 modifier = Modifier.fillMaxWidth(),
                 isLoading = isLoading,
-                isDisabled = isLoading,
+                isDisabled = isAnyLoading,
             )
 
-            Spacer(Modifier.height(32.dp))
+            Spacer(Modifier.height(28.dp))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -250,39 +257,49 @@ fun RegisterScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(58.dp)
-                    .background(Color.White, customBorderShape)
+                    .background(Theme.colors.surface, customBorderShape)
                     .border(1.dp, Theme.colors.hint.copy(alpha = 0.4f), customBorderShape)
                     .bounceClick(
                         shape = customBorderShape,
                         maxPadding = 4.dp,
                         onClick = {
-                            googleAuthHandler?.signIn(
-                                onSuccess = { idToken, accessToken ->
-                                    viewModel.onIntent(AuthIntent.GoogleSignIn(idToken, accessToken))
-                                },
-                                onError = { error ->
-                                    toast.show(error.message ?: googleSignInFailedText, ToastType.Error)
-                                }
-                            ) ?: run { toast.show(googleSignInUnsupportedText, ToastType.Error) }
+                            if (!isAnyLoading) {
+                                googleAuthHandler?.signIn(
+                                    onSuccess = { idToken, accessToken ->
+                                        viewModel.onIntent(AuthIntent.GoogleSignIn(idToken, accessToken))
+                                    },
+                                    onError = { error ->
+                                        toast.show(error.message ?: googleSignInFailedText, ToastType.Error)
+                                    }
+                                ) ?: run { toast.show(googleSignInUnsupportedText, ToastType.Error) }
+                            }
                         }
                     ),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Image(
-                    painter = painterResource(Res.drawable.ic_google),
-                    contentDescription = "Google Icon",
-                    modifier = Modifier.size(22.dp)
-                )
-                Spacer(Modifier.width(12.dp))
-                BasicText(
-                    text = stringResource(Res.string.login_google),
-                    style = Theme.typography.body.large.copy(
-                        color = Theme.colors.primaryFont.copy(alpha = 0.8f),
-                        fontWeight = FontWeight.Medium,
-                        fontSize = 16.sp
+                if (isGoogleLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(24.dp),
+                        color = Theme.colors.primary,
+                        strokeWidth = 2.dp
                     )
-                )
+                } else {
+                    Image(
+                        painter = painterResource(Res.drawable.ic_google),
+                        contentDescription = "Google Icon",
+                        modifier = Modifier.size(22.dp)
+                    )
+                    Spacer(Modifier.width(12.dp))
+                    BasicText(
+                        text = stringResource(Res.string.login_google),
+                        style = Theme.typography.body.large.copy(
+                            color = Theme.colors.primaryFont.copy(alpha = 0.8f),
+                            fontWeight = FontWeight.Medium,
+                            fontSize = 16.sp
+                        )
+                    )
+                }
             }
 
             Spacer(Modifier.height(42.dp))
@@ -315,4 +332,5 @@ fun RegisterScreen(
 
         TrovesToastHost(state = toast)
     }
+}
 }

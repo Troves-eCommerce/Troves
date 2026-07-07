@@ -74,9 +74,7 @@ class WishlistViewModel(
         _state.update { current -> current.copy(items = current.items.filterNot { it.id == product.id }) }
         viewModelScope.launch {
             when (toggleFavoriteUseCase(product)) {
-                ToggleFavoriteResult.Removed -> {
-                    // No toast needed, popup confirmation is enough
-                }
+                ToggleFavoriteResult.Removed -> Unit
                 ToggleFavoriteResult.RequiresLogin -> {
                     sendEffect(WishlistEffect.ShowLoginRequiredDialog)
                     loadWishlist()

@@ -14,6 +14,8 @@
     <!-- Products screen -->
     <string name="products_title">المنتجات</string>
     <string name="products_empty">لا توجد منتجات</string>
+    <string name="products_empty_title">لم يتم العثور على منتجات</string>
+    <string name="products_empty_desc">حاول تعديل الفلاتر أو مصطلحات البحث للعثور على ما تبحث عنه.</string>
     <string name="products_retry">إعادة المحاولة</string>
 
     <!-- Sort bottom sheet -->
@@ -162,6 +164,11 @@
     <string name="product_details_color_label">اللون: %1$s</string>
     <string name="product_details_reviews_count">(%1$d تقييم)</string>
     <string name="product_details_login_required_favorites">يجب عليك تسجيل الدخول لإدارة مفضلاتك.</string>
+
+    <!-- Accessibility -->
+    <string name="common_leading_icon">أيقونة بادئة</string>
+    <string name="common_trailing_icon">أيقونة لاحقة</string>
+    <string name="common_error_icon">أيقونة خطأ</string>
     <string name="product_details_reviews_empty_title">لا توجد تقييمات بعد</string>
     <string name="product_details_reviews_empty_subtitle">كن أول من يقيّم هذا المنتج</string>
     <string name="product_details_reviews_write">اكتب تقييماً</string>
