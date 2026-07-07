@@ -50,7 +50,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.troves.designsystem.components.dialog.LoginRequiredDialog
+import com.troves.designsystem.components.dialog.TrovesDialog
 import com.troves.designsystem.components.toast.TrovesSnackbarHost
+import org.jetbrains.compose.resources.painterResource
 import com.troves.designsystem.theme.Theme
 import com.troves.designsystem.util.formatPrice
 import com.troves.designsystem.util.stripHtml
@@ -78,6 +80,11 @@ import troves.designsystem.generated.resources.product_details_review_login_requ
 import troves.designsystem.generated.resources.product_details_size_guide
 import troves.designsystem.generated.resources.product_details_view_cart
 import troves.designsystem.generated.resources.product_details_login_required_favorites
+import troves.designsystem.generated.resources.wishlist_remove_title
+import troves.designsystem.generated.resources.wishlist_remove_msg
+import troves.designsystem.generated.resources.wishlist_remove
+import troves.designsystem.generated.resources.profile_cancel
+import troves.designsystem.generated.resources.ic_solid_heart
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -93,6 +100,7 @@ fun ProductDetailsScreen(
     val scope = rememberCoroutineScope()
     var showLoginRequiredDialog by remember { mutableStateOf(false) }
     var loginDialogForReview by remember { mutableStateOf(false) }
+    var showRemoveFavoriteDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(productId) {
         viewModel.onIntent(ProductDetailsIntent.Load(productId = productId))
@@ -123,6 +131,21 @@ fun ProductDetailsScreen(
                 onNavigateToLogin()
             },
             onDismiss = { showLoginRequiredDialog = false }
+        )
+    }
+
+    if (showRemoveFavoriteDialog) {
+        TrovesDialog(
+            title = stringResource(Res.string.wishlist_remove_title),
+            message = stringResource(Res.string.wishlist_remove_msg),
+            confirmText = stringResource(Res.string.wishlist_remove),
+            dismissText = stringResource(Res.string.profile_cancel),
+            icon = painterResource(Res.drawable.ic_solid_heart),
+            onConfirm = {
+                showRemoveFavoriteDialog = false
+                viewModel.onIntent(ProductDetailsIntent.OnFavoriteClick)
+            },
+            onDismiss = { showRemoveFavoriteDialog = false },
         )
     }
 
@@ -163,7 +186,13 @@ fun ProductDetailsScreen(
                     onOptionSelected = { name, value ->
                         intent(ProductDetailsIntent.OnOptionSelected(name, value))
                     },
-                    onFavoriteClick = { intent(ProductDetailsIntent.OnFavoriteClick) },
+                    onFavoriteClick = {
+                        if (uiState.isFavorite) {
+                            showRemoveFavoriteDialog = true      // removing → confirm
+                        } else {
+                            intent(ProductDetailsIntent.OnFavoriteClick) // adding → instant
+                        }
+                    },
                     onSeeAllReviews = { intent(ProductDetailsIntent.OnSeeAllReviews) },
                     onWriteReview = { intent(ProductDetailsIntent.OnOpenReviewEditor) },
                     onSizeGuide = { intent(ProductDetailsIntent.OnSizeGuide) },
@@ -450,7 +479,7 @@ fun ProductDetailsScreenContent(
             ) {
                 AddToCartButton(
                     onAddToCart = onAddToCart,
-                    enabled = true,
+                    enabled = uiState.canAddToCart,
                     modifier = Modifier.weight(1f)
                 )
 

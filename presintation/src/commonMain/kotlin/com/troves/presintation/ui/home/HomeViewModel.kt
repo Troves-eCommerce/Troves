@@ -201,11 +201,8 @@ class HomeViewModel(
 
         viewModelScope.launch {
             when (toggleFavoriteUseCase(product)) {
-                ToggleFavoriteResult.Added ->
-                    sendEffect(HomeEffect.ShowToast("${product.title} added to favorites"))
-
-                ToggleFavoriteResult.Removed ->
-                    sendEffect(HomeEffect.ShowToast("${product.title} removed from favorites"))
+                ToggleFavoriteResult.Added,
+                ToggleFavoriteResult.Removed -> Unit // no toast on wishlist add/remove
 
                 ToggleFavoriteResult.RequiresLogin -> {
                     updateState {

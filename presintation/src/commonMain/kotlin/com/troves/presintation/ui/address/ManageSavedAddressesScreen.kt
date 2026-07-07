@@ -19,7 +19,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import com.composables.icons.lucide.Lucide
+import com.composables.icons.lucide.Trash2
 import com.troves.designsystem.components.button.SecondaryButton
+import com.troves.designsystem.components.dialog.TrovesDialog
 import com.troves.designsystem.components.topbar.BaseTopAppBar
 import com.troves.designsystem.theme.Theme
 import org.jetbrains.compose.resources.painterResource
@@ -94,29 +98,19 @@ fun ManageSavedAddressesScreenContent(
 ) {
     var addressToDelete by remember { mutableStateOf<Address?>(null) }
     
-    if (addressToDelete != null) {
-        AlertDialog(
-            onDismissRequest = { addressToDelete = null },
-            title = { Text(stringResource(Res.string.address_delete_title), style = Theme.typography.body.large.copy(fontWeight = FontWeight.Bold)) },
-            text = { Text(stringResource(Res.string.address_delete_msg), style = Theme.typography.body.medium) },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        addressToDelete?.let { onIntent(ManageSavedAddressesIntent.OnDelete(it.id)) }
-                        addressToDelete = null
-                    }
-                ) {
-                    Text(stringResource(Res.string.address_delete), color = Theme.colors.error)
-                }
+    addressToDelete?.let { address ->
+        TrovesDialog(
+            title = stringResource(Res.string.address_delete_title),
+            message = stringResource(Res.string.address_delete_msg),
+            confirmText = stringResource(Res.string.address_delete),
+            dismissText = stringResource(Res.string.profile_cancel),
+            icon = rememberVectorPainter(Lucide.Trash2),
+            confirmColor = Theme.colors.error,
+            onConfirm = {
+                onIntent(ManageSavedAddressesIntent.OnDelete(address.id))
+                addressToDelete = null
             },
-            dismissButton = {
-                TextButton(onClick = { addressToDelete = null }) {
-                    Text(stringResource(Res.string.profile_cancel), color = Theme.colors.primary)
-                }
-            },
-            containerColor = Theme.colors.surface,
-            titleContentColor = Theme.colors.primaryFont,
-            textContentColor = Theme.colors.secondaryFont
+            onDismiss = { addressToDelete = null },
         )
     }
 
