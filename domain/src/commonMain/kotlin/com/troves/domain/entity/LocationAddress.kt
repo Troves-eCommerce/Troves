@@ -1,9 +1,6 @@
-package com.troves.data.source.framework.location.datasource
+package com.troves.domain.entity
 
-import com.troves.data.source.framework.location.service.LocationAddress
-import com.troves.data.source.framework.location.service.LocationCoordinates
-import com.troves.data.source.framework.location.service.LocationService
-import com.troves.domain.utils.Result
+import kotlinx.serialization.SerialName
 
 /**
  * Copyright (c) 2026 Wahid Ali Wahid Hussien.
@@ -25,8 +22,14 @@ import com.troves.domain.utils.Result
  * Author: Wahid Ali Wahid Hussien
  * Created: 07/07/2026
  */
-interface LocationDatasource: LocationService{
-    suspend fun reverseGeocode(
-        coordinates: LocationCoordinates,
-    ): Result<LocationAddress>
-}
+data class LocationAddress(
+    val city: String,
+    val country: String,
+    val countryCode: String,
+    val houseNumber: String,
+    val neighbourhood: String,
+    val postcode: String,
+    val road: String,
+    val state: String,
+    val suburb: String
+)

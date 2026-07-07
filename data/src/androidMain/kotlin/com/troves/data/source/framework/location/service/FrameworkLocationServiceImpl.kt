@@ -12,7 +12,7 @@ import com.troves.data.util.AndroidApp
 import kotlinx.coroutines.tasks.await
 
 
-class LocationServiceImpl : LocationService {
+class FrameworkLocationServiceImpl : FrameworkLocationService {
     private fun requestPermission(): Boolean {
         return listOf(
             Manifest.permission.ACCESS_FINE_LOCATION,

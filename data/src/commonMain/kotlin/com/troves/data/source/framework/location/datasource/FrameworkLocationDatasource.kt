@@ -1,4 +1,10 @@
-package com.troves.data.source.framework.location.service
+package com.troves.data.source.framework.location.datasource
+
+import com.troves.data.source.framework.location.service.LocationAddress
+import com.troves.data.source.framework.location.service.LocationCoordinates
+import com.troves.data.source.framework.location.service.FrameworkLocationService
+import com.troves.data.source.framework.location.service.dto.AddressResponse
+import com.troves.domain.utils.Result
 
 /**
  * Copyright (c) 2026 Wahid Ali Wahid Hussien.
@@ -20,9 +26,8 @@ package com.troves.data.source.framework.location.service
  * Author: Wahid Ali Wahid Hussien
  * Created: 07/07/2026
  */
-data class LocationAddress(
-    val streetName: String = "",
-    val country: String,
-    val city: String,
-    val postalCode: String,
-)
+interface FrameworkLocationDatasource: FrameworkLocationService{
+    suspend fun reverseGeocode(
+        coordinates: LocationCoordinates,
+    ): Result<AddressResponse>
+}

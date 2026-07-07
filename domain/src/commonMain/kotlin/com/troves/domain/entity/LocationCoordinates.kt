@@ -1,6 +1,4 @@
-package com.troves.data.source.framework.location.service
-
-import com.troves.domain.entity.LocationCoordinates
+package com.troves.domain.entity
 
 /**
  * Copyright (c) 2026 Wahid Ali Wahid Hussien.
@@ -23,8 +21,6 @@ import com.troves.domain.entity.LocationCoordinates
  * Created: 07/07/2026
  */
 data class LocationCoordinates(
-    val lan: Double = 0.0,
-    val lon: Double = 0.0,
-) {
-    fun toDomain(): LocationCoordinates = LocationCoordinates(lan = lan, lon = lon)
-}
+    val lan: Double,
+    val lon: Double
+)

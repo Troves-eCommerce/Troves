@@ -1,8 +1,8 @@
 package com.troves.data.source.framework.location.datasource
 
-import com.troves.data.source.framework.location.service.LocationAddress
+import com.troves.data.source.framework.location.service.FrameworkLocationService
 import com.troves.data.source.framework.location.service.LocationCoordinates
-import com.troves.data.source.framework.location.service.LocationService
+import com.troves.data.source.framework.location.service.dto.AddressResponse
 import com.troves.data.source.remote.service.ktor.getResults
 import com.troves.domain.utils.Result
 import io.ktor.client.HttpClient
@@ -29,18 +29,18 @@ import io.ktor.http.path
  * Author: Wahid Ali Wahid Hussien
  * Created: 07/07/2026
  */
-class LocationDatasourceImpl(
-    private val locationService: LocationService,
+class FrameworkLocationDatasourceImpl(
+    private val frameworkLocationService: FrameworkLocationService,
     private val locationClient: HttpClient
-) : LocationDatasource {
+) : FrameworkLocationDatasource {
     override suspend fun getCurrentLocationCoordinates(): LocationCoordinates =
-        locationService.getCurrentLocationCoordinates()
+        frameworkLocationService.getCurrentLocationCoordinates()
 
-    override suspend fun reverseGeocode(coordinates: LocationCoordinates): Result<LocationAddress> {
+    override suspend fun reverseGeocode(coordinates: LocationCoordinates): Result<AddressResponse> {
         return locationClient.getResults {
             method = HttpMethod.Get
             url {
-                path("reverce/")
+                path("reverse")
             }
         }
     }
