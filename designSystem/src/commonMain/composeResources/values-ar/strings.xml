@@ -14,6 +14,8 @@
     <!-- Products screen -->
     <string name="products_title">المنتجات</string>
     <string name="products_empty">لا توجد منتجات</string>
+    <string name="products_empty_title">لم يتم العثور على منتجات</string>
+    <string name="products_empty_desc">حاول تعديل الفلاتر أو مصطلحات البحث للعثور على ما تبحث عنه.</string>
     <string name="products_retry">إعادة المحاولة</string>
 
     <!-- Sort bottom sheet -->

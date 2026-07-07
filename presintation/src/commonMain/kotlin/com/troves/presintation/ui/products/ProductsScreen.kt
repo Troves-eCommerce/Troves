@@ -57,9 +57,13 @@ import troves.designsystem.generated.resources.*
 import troves.designsystem.generated.resources.Res as DesignRes
 import troves.designsystem.generated.resources.filter_title
 import troves.designsystem.generated.resources.img_placeholder
-import troves.designsystem.generated.resources.products_empty
 import troves.designsystem.generated.resources.products_retry
 import troves.designsystem.generated.resources.sort_title
+import troves.designsystem.generated.resources.products_empty_title
+import troves.designsystem.generated.resources.products_empty_desc
+import com.troves.designsystem.components.emptystate.EmptyState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -122,6 +126,7 @@ fun ProductsScreen(
                 )
 
                 else -> ProductsGrid(
+                    modifier = Modifier.weight(1f),
                     products = state.displayedProducts,
                     favoriteProductIds = state.favoriteProductIds,
                     onProductClick = { viewModel.onIntent(ProductsIntent.ProductClicked(it)) },
@@ -222,6 +227,7 @@ private fun ProductsToolbar(
 
 @Composable
 private fun ProductsGrid(
+    modifier: Modifier = Modifier,
     products: List<Product>,
     favoriteProductIds: Set<String>,
     onProductClick: (Product) -> Unit,
@@ -229,12 +235,13 @@ private fun ProductsGrid(
 ) {
     if (products.isEmpty()) {
         Box(
-            modifier = Modifier.fillMaxSize(),
+            modifier = modifier.fillMaxSize(),
             contentAlignment = Alignment.Center,
         ) {
-            BasicText(
-                text = stringResource(DesignRes.string.products_empty),
-                style = Theme.typography.body.large.copy(color = Theme.colors.secondaryFont),
+            EmptyState(
+                title = stringResource(DesignRes.string.products_empty_title),
+                description = stringResource(DesignRes.string.products_empty_desc),
+                icon = Icons.Default.Search,
             )
         }
         return
@@ -246,7 +253,7 @@ private fun ProductsGrid(
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         contentPadding = PaddingValues(
             start = Theme.spacing.medium,
             end = Theme.spacing.medium,

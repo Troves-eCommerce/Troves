@@ -14,6 +14,8 @@
     <!-- Products screen -->
     <string name="products_title">Products</string>
     <string name="products_empty">No products found</string>
+    <string name="products_empty_title">No products found</string>
+    <string name="products_empty_desc">Try adjusting your filters or search terms to find what you\'re looking for.</string>
     <string name="products_retry">Retry</string>
 
     <!-- Sort bottom sheet -->
@@ -47,7 +49,8 @@
 
     <!-- Wishlist Screen -->
     <string name="wishlist_title">Wishlist</string>
-    <string name="wishlist_empty">Your wishlist is empty</string>
+    <string name="wishlist_empty_title">Your wishlist is empty</string>
+    <string name="wishlist_empty_desc">Save items you love here to easily find them later.</string>
     <string name="wishlist_remove_title">Remove Item</string>
     <string name="wishlist_remove_msg">Are you sure you want to remove this item from your wishlist?</string>
     <string name="wishlist_clear_title">Clear Wishlist</string>
@@ -57,7 +60,8 @@
 
     <!-- Cart Screen -->
     <string name="cart_title">Cart</string>
-    <string name="cart_empty">Your cart is empty</string>
+    <string name="cart_empty_title">Your cart is empty</string>
+    <string name="cart_empty_desc">Looks like you haven\'t added anything yet.</string>
     <string name="cart_remove_title">Remove Item</string>
     <string name="cart_remove_msg">Are you sure you want to remove this item from your cart?</string>
     <string name="cart_clear_title">Clear Cart</string>
@@ -79,7 +83,8 @@
     <string name="address_set_default">Set Default</string>
     <string name="address_default">Default</string>
     <string name="address_fallback_label">Address</string>
-
+    <string name="address_empty_title">No Addresses Yet</string>
+    <string name="address_empty_desc">You haven\'t added any addresses yet. Add your first address to get started.</string>
     <!-- New/Edit Address Screen -->
     <string name="address_new_title">New Address</string>
     <string name="address_edit_title">Edit Address</string>
@@ -168,4 +173,12 @@
     <string name="common_leading_icon">Leading icon</string>
     <string name="common_trailing_icon">Trailing icon</string>
     <string name="common_error_icon">Error icon</string>
+
+    <!-- Orders Screen -->
+    <string name="orders_empty_title">No Orders Yet</string>
+    <string name="orders_empty_desc">Your order history will show up here once you place your first order.</string>
+
+    <!-- Search Screen -->
+    <string name="search_empty_title">No Results Found</string>
+    <string name="search_empty_desc">We couldn\'t find what you were looking for. Try a different search term.</string>
 </resources>

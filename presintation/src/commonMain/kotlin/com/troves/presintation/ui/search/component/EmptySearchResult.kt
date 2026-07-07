@@ -1,19 +1,16 @@
 package com.troves.presintation.ui.search.component
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.text.BasicText
-import androidx.compose.material3.Icon
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.foundation.layout.size
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.unit.dp
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.SearchCheck
-import com.troves.designsystem.theme.Theme
+import com.troves.designsystem.components.emptystate.EmptyState
+import org.jetbrains.compose.resources.stringResource
+import troves.designsystem.generated.resources.Res
+import troves.designsystem.generated.resources.search_empty_title
+import troves.designsystem.generated.resources.search_empty_desc
 
 /**
  * Copyright (c) 2026 Wahid Ali Wahid Hussien.
@@ -38,39 +35,23 @@ import com.troves.designsystem.theme.Theme
 @Composable
 fun EmptySearchResult(
     modifier: Modifier = Modifier,
-    title: String = "No products",
-    message: String = "Try another keyword or adjust your filters."
 ) {
-    Column(
-        modifier = modifier
-            .padding(horizontal = Theme.spacing.large, vertical = Theme.spacing.extraLarge),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+    androidx.compose.foundation.layout.Box(
+        modifier = modifier,
+        contentAlignment = androidx.compose.ui.Alignment.Center
     ) {
-
-        Icon(
-            imageVector = Lucide.SearchCheck,
-            contentDescription = null,
-            modifier = Modifier.size(Theme.size.large),
-            tint = Theme.colors.primary
-        )
-
-        Spacer(Modifier.height(Theme.spacing.large))
-
-        BasicText(
-            text = title,
-            style = Theme.typography.title.copy(
-                color = Theme.colors.primaryFont
-            )
-        )
-
-        Spacer(Modifier.height(Theme.spacing.small))
-
-        BasicText(
-            text = message,
-            style = Theme.typography.body.medium.copy(
-                color = Theme.colors.secondaryFont
-            )
+        EmptyState(
+            title = stringResource(Res.string.search_empty_title),
+            description = stringResource(Res.string.search_empty_desc),
+            // Using custom icon since SearchCheck is from Lucide not Icons.Default
+            customIcon = {
+                androidx.compose.material3.Icon(
+                    imageVector = Lucide.SearchCheck,
+                    contentDescription = null,
+                    tint = com.troves.designsystem.theme.Theme.colors.primary,
+                    modifier = Modifier.size(34.dp)
+                )
+            }
         )
     }
 }

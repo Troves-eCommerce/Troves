@@ -31,6 +31,7 @@ import kotlinx.coroutines.launch
 import com.troves.designsystem.theme.Theme
 import coil3.compose.rememberAsyncImagePainter
 import troves.designsystem.generated.resources.Res
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun SplashScreen(onNavigateToOnboarding: () -> Unit) {
@@ -69,7 +70,7 @@ fun SplashScreen(onNavigateToOnboarding: () -> Unit) {
                 animationSpec = tween(durationMillis = 800, easing = FastOutSlowInEasing)
             )
         }
-        delay(300)
+        delay(300.milliseconds)
         launch {
             textAlpha.animateTo(
                 targetValue = 1f,
@@ -82,7 +83,7 @@ fun SplashScreen(onNavigateToOnboarding: () -> Unit) {
                 animationSpec = tween(durationMillis = 600, easing = FastOutSlowInEasing)
             )
         }
-        delay(200)
+        delay(200.milliseconds)
         launch {
             taglineAlpha.animateTo(
                 targetValue = 1f,
@@ -90,7 +91,7 @@ fun SplashScreen(onNavigateToOnboarding: () -> Unit) {
             )
         }
 
-        delay(1500)
+        delay(1500.milliseconds)
         onNavigateToOnboarding()
     }
 
@@ -116,7 +117,6 @@ fun SplashScreen(onNavigateToOnboarding: () -> Unit) {
                     )
                     .alpha(logoAlpha.value)
             )
-            Spacer(Modifier.height(24.dp))
 
             Text(
                 text = buildAnnotatedString {
@@ -134,8 +134,6 @@ fun SplashScreen(onNavigateToOnboarding: () -> Unit) {
                     .graphicsLayer(translationY = textTranslationY.value)
                     .alpha(textAlpha.value)
             )
-
-            Spacer(Modifier.height(12.dp))
             Text(
                 text = "Discover Your Next Treasure.",
                 style = Theme.typography.body.medium,

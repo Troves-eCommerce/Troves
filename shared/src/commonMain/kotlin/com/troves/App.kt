@@ -12,29 +12,13 @@ import androidx.compose.ui.unit.LayoutDirection
 import com.troves.designsystem.theme.SpTheme
 import com.troves.designsystem.util.CurrencyState
 import com.troves.designsystem.util.LocalCurrency
-
 import com.troves.presintation.navigation.AppNav
 import com.troves.presintation.ui.MainViewModel
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.compose.koinInject
-import coil3.ImageLoader
-import coil3.compose.setSingletonImageLoaderFactory
-import coil3.gif.AnimatedImageDecoder
-import coil3.request.crossfade
-import coil3.util.DebugLogger
 
 @Composable
 fun App() {
-    setSingletonImageLoaderFactory { context ->
-        ImageLoader.Builder(context)
-            .components {
-                add(AnimatedImageDecoder.Factory())
-            }
-            .crossfade(true)
-            .logger(DebugLogger())
-            .build()
-    }
-
     val mainViewModel: MainViewModel = koinViewModel()
     val appState by mainViewModel.uiState.collectAsState()
 
