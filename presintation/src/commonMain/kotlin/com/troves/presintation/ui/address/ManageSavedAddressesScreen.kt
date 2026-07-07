@@ -19,7 +19,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import com.composables.icons.lucide.Lucide
+import com.composables.icons.lucide.Trash2
 import com.troves.designsystem.components.button.SecondaryButton
+import com.troves.designsystem.components.dialog.TrovesDialog
 import com.troves.designsystem.components.topbar.BaseTopAppBar
 import com.troves.designsystem.theme.Theme
 import org.jetbrains.compose.resources.painterResource
@@ -35,6 +39,11 @@ import com.troves.designsystem.components.toast.TrovesSnackbarHost
 import com.troves.domain.entity.Address
 import com.troves.domain.entity.AddressIcon
 import kotlinx.coroutines.launch
+import com.troves.designsystem.components.emptystate.EmptyState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.LocationOn
+import troves.designsystem.generated.resources.address_empty_title
+import troves.designsystem.generated.resources.address_empty_desc
 
 import org.koin.compose.viewmodel.koinViewModel
 import com.troves.presintation.core.mvi.ObserveEffect
@@ -89,29 +98,19 @@ fun ManageSavedAddressesScreenContent(
 ) {
     var addressToDelete by remember { mutableStateOf<Address?>(null) }
     
-    if (addressToDelete != null) {
-        AlertDialog(
-            onDismissRequest = { addressToDelete = null },
-            title = { Text(stringResource(Res.string.address_delete_title), style = Theme.typography.body.large.copy(fontWeight = FontWeight.Bold)) },
-            text = { Text(stringResource(Res.string.address_delete_msg), style = Theme.typography.body.medium) },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        addressToDelete?.let { onIntent(ManageSavedAddressesIntent.OnDelete(it.id)) }
-                        addressToDelete = null
-                    }
-                ) {
-                    Text(stringResource(Res.string.address_delete), color = Theme.colors.error)
-                }
+    addressToDelete?.let { address ->
+        TrovesDialog(
+            title = stringResource(Res.string.address_delete_title),
+            message = stringResource(Res.string.address_delete_msg),
+            confirmText = stringResource(Res.string.address_delete),
+            dismissText = stringResource(Res.string.profile_cancel),
+            icon = rememberVectorPainter(Lucide.Trash2),
+            confirmColor = Theme.colors.error,
+            onConfirm = {
+                onIntent(ManageSavedAddressesIntent.OnDelete(address.id))
+                addressToDelete = null
             },
-            dismissButton = {
-                TextButton(onClick = { addressToDelete = null }) {
-                    Text(stringResource(Res.string.profile_cancel), color = Theme.colors.primary)
-                }
-            },
-            containerColor = Theme.colors.surface,
-            titleContentColor = Theme.colors.primaryFont,
-            textContentColor = Theme.colors.secondaryFont
+            onDismiss = { addressToDelete = null },
         )
     }
 
@@ -158,19 +157,29 @@ fun ManageSavedAddressesScreenContent(
                 modifier = Modifier.padding(bottom = Theme.spacing.medium)
             )
 
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(Theme.spacing.medium),
-                modifier = Modifier.fillMaxSize()
-            ) {
-                items(state.addresses, key = { it.id }) { address ->
-                    AddressCard(
-                        address = address,
-                        onEdit = { onIntent(ManageSavedAddressesIntent.OnEdit(address)) },
-                        onDelete = { addressToDelete = address },
-                        onSetDefault = { onIntent(ManageSavedAddressesIntent.OnSetDefault(address.id)) }
+            if (state.addresses.isEmpty()) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    EmptyState(
+                        title = stringResource(Res.string.address_empty_title),
+                        description = stringResource(Res.string.address_empty_desc),
+                        icon = Icons.Default.LocationOn,
                     )
                 }
-                item { Spacer(Modifier.height(80.dp)) } // Room for bottom button if scrolling overlaps
+            } else {
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(Theme.spacing.medium),
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    items(state.addresses, key = { it.id }) { address ->
+                        AddressCard(
+                            address = address,
+                            onEdit = { onIntent(ManageSavedAddressesIntent.OnEdit(address)) },
+                            onDelete = { addressToDelete = address },
+                            onSetDefault = { onIntent(ManageSavedAddressesIntent.OnSetDefault(address.id)) }
+                        )
+                    }
+                    item { Spacer(Modifier.height(80.dp)) } // Room for bottom button if scrolling overlaps
+                }
             }
         }
     }
@@ -205,7 +214,7 @@ private fun AddressCard(
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    painter = if (address.icon == AddressIcon.HOME) painterResource(Res.drawable.ic_home) else painterResource(Res.drawable.ic_profile),
+                    painter = if (address.icon == AddressIcon.HOME) painterResource(Res.drawable.ic_home_selected) else painterResource(Res.drawable.ic_profile),
                     contentDescription = null,
                     tint = Theme.colors.primary,
                     modifier = Modifier.size(20.dp)

@@ -13,7 +13,8 @@
 
     <!-- Products screen -->
     <string name="products_title">Products</string>
-    <string name="products_empty">No products found</string>
+    <string name="products_empty_title">No Products Found</string>
+    <string name="products_empty_desc">We couldn't find any products matching your criteria.</string>
     <string name="products_retry">Retry</string>
 
     <!-- Sort bottom sheet -->
@@ -47,7 +48,8 @@
 
     <!-- Wishlist Screen -->
     <string name="wishlist_title">Wishlist</string>
-    <string name="wishlist_empty">Your wishlist is empty</string>
+    <string name="wishlist_empty_title">Your wishlist is empty</string>
+    <string name="wishlist_empty_desc">Save items you love here to easily find them later.</string>
     <string name="wishlist_remove_title">Remove Item</string>
     <string name="wishlist_remove_msg">Are you sure you want to remove this item from your wishlist?</string>
     <string name="wishlist_clear_title">Clear Wishlist</string>
@@ -57,7 +59,8 @@
 
     <!-- Cart Screen -->
     <string name="cart_title">Cart</string>
-    <string name="cart_empty">Your cart is empty</string>
+    <string name="cart_empty_title">Your cart is empty</string>
+    <string name="cart_empty_desc">Looks like you haven't added anything yet.</string>
     <string name="cart_remove_title">Remove Item</string>
     <string name="cart_remove_msg">Are you sure you want to remove this item from your cart?</string>
     <string name="cart_clear_title">Clear Cart</string>
@@ -79,7 +82,8 @@
     <string name="address_set_default">Set Default</string>
     <string name="address_default">Default</string>
     <string name="address_fallback_label">Address</string>
-
+    <string name="address_empty_title">No Addresses Yet</string>
+    <string name="address_empty_desc">You haven't added any addresses yet. Add your first address to get started.</string>
     <!-- New/Edit Address Screen -->
     <string name="address_new_title">New Address</string>
     <string name="address_edit_title">Edit Address</string>
@@ -118,7 +122,7 @@
     <string name="login_button">Log in</string>
     <string name="login_or_continue">or continue with</string>
     <string name="login_google">Continue with Google</string>
-    <string name="login_dont_have_account">Don\'t have an account? </string>
+    <string name="login_dont_have_account">Don't have an account? </string>
     <string name="login_sign_up">Sign up</string>
 
     <string name="register_title">Create Account</string>
@@ -140,6 +144,7 @@
     <string name="home_categories_title">Categories</string>
     <string name="home_view_all">View all</string>
     <string name="home_view_all_brands">View All</string>
+    <string name="see_all">See All</string>
     <string name="home_just_for_you">Just For You</string>
     <string name="home_top_brands">Top Brands</string>
     <string name="home_trending_now">Trending Now</string>
@@ -164,4 +169,43 @@
     <string name="product_details_color_label">Color: %1$s</string>
     <string name="product_details_reviews_count">(%1$d reviews)</string>
     <string name="product_details_login_required_favorites">You need to be logged in to manage your favorites.</string>
+
+    <!-- Accessibility -->
+    <string name="common_leading_icon">Leading icon</string>
+    <string name="common_trailing_icon">Trailing icon</string>
+    <string name="common_error_icon">Error icon</string>
+
+    <!-- Orders Screen -->
+    <string name="orders_empty_title">No Orders Yet</string>
+    <string name="orders_empty_desc">Your order history will show up here once you place your first order.</string>
+    <string name="quantity_label">Qty: %1$d</string>
+
+    <!-- Sign-in required (guest) empty states -->
+    <string name="auth_required_title">You're not signed in</string>
+    <string name="auth_required_action">Sign In</string>
+    <string name="orders_auth_required_desc">Sign in to view and track your orders.</string>
+    <string name="wishlist_auth_required_desc">Sign in to view the items you've saved.</string>
+
+    <!-- Search Screen -->
+    <string name="search_empty_title">No Results Found</string>
+    <string name="search_empty_desc">We couldn't find what you were looking for. Try a different search term.</string>
+    <string name="product_details_reviews_empty_title">No reviews yet</string>
+    <string name="product_details_reviews_empty_subtitle">Be the first to review this product</string>
+    <string name="product_details_reviews_write">Write a review</string>
+    <string name="product_details_reviews_edit_yours">Edit your review</string>
+    <string name="product_details_reviews_your_badge">Your review</string>
+    <string name="product_details_review_editor_title">Your review</string>
+    <string name="product_details_review_first_name_hint">First name</string>
+    <string name="product_details_review_last_name_hint">Last name</string>
+    <string name="product_details_review_comment_hint">Share your experience…</string>
+    <string name="product_details_review_rating_label">Your rating</string>
+    <string name="product_details_review_submit">Submit review</string>
+    <string name="product_details_review_rating_required">Please select a rating</string>
+    <string name="product_details_review_submitted">Thanks! Your review was submitted</string>
+    <string name="product_details_review_error">Couldn't submit your review</string>
+    <string name="product_details_review_login_required">You need to be logged in to write a review.</string>
+    <string name="stepper_label">STEP %1$d OF %2$d</string>
+    <string name="login_required_title">Login Required</string>
+    <string name="login_required_msg">You need to be logged in to perform this action.</string>
+    <string name="login_required_btn">Log In</string>
 </resources>

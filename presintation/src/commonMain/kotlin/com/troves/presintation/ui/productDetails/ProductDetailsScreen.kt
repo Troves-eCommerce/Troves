@@ -50,7 +50,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.troves.designsystem.components.dialog.LoginRequiredDialog
+import com.troves.designsystem.components.dialog.TrovesDialog
 import com.troves.designsystem.components.toast.TrovesSnackbarHost
+import org.jetbrains.compose.resources.painterResource
 import com.troves.designsystem.theme.Theme
 import com.troves.designsystem.util.formatPrice
 import com.troves.designsystem.util.stripHtml
@@ -60,6 +62,7 @@ import com.troves.presintation.ui.productDetails.components.CustomerReviewsSecti
 import com.troves.presintation.ui.productDetails.components.OptionSelectorRow
 import com.troves.presintation.ui.productDetails.components.ProductDetailsShimmer
 import com.troves.presintation.ui.productDetails.components.ProductImageCarousel
+import com.troves.presintation.ui.productDetails.components.ReviewsBottomSheet
 import com.troves.presintation.ui.productDetails.components.SectionHeaderRow
 import com.troves.presintation.ui.productDetails.components.StarRatingRow
 import kotlinx.coroutines.launch
@@ -73,9 +76,15 @@ import troves.designsystem.generated.resources.product_details_description
 import troves.designsystem.generated.resources.product_details_quantity_in_cart
 import troves.designsystem.generated.resources.product_details_read_less
 import troves.designsystem.generated.resources.product_details_read_more
+import troves.designsystem.generated.resources.product_details_review_login_required
 import troves.designsystem.generated.resources.product_details_size_guide
 import troves.designsystem.generated.resources.product_details_view_cart
 import troves.designsystem.generated.resources.product_details_login_required_favorites
+import troves.designsystem.generated.resources.wishlist_remove_title
+import troves.designsystem.generated.resources.wishlist_remove_msg
+import troves.designsystem.generated.resources.wishlist_remove
+import troves.designsystem.generated.resources.profile_cancel
+import troves.designsystem.generated.resources.ic_solid_heart
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -90,6 +99,8 @@ fun ProductDetailsScreen(
     val snackBarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     var showLoginRequiredDialog by remember { mutableStateOf(false) }
+    var loginDialogForReview by remember { mutableStateOf(false) }
+    var showRemoveFavoriteDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(productId) {
         viewModel.onIntent(ProductDetailsIntent.Load(productId = productId))
@@ -100,19 +111,56 @@ fun ProductDetailsScreen(
             ProductDetailsEffect.NavigateBack -> onNavigateBack()
             is ProductDetailsEffect.ShowToast ->
                 scope.launch { snackBarHostState.showSnackbar(newEffect.message) }
-            ProductDetailsEffect.ShowLoginRequiredDialog -> showLoginRequiredDialog = true
+            is ProductDetailsEffect.ShowLoginRequiredDialog -> {
+                loginDialogForReview = newEffect.forReview
+                showLoginRequiredDialog = true
+            }
             ProductDetailsEffect.NavigateToCart -> onNavigateToCart()
         }
     }
 
     if (showLoginRequiredDialog) {
         LoginRequiredDialog(
-            message = stringResource(Res.string.product_details_login_required_favorites),
+            message = if (loginDialogForReview) {
+                stringResource(Res.string.product_details_review_login_required)
+            } else {
+                stringResource(Res.string.product_details_login_required_favorites)
+            },
             onLoginClick = {
                 showLoginRequiredDialog = false
                 onNavigateToLogin()
             },
             onDismiss = { showLoginRequiredDialog = false }
+        )
+    }
+
+    if (showRemoveFavoriteDialog) {
+        TrovesDialog(
+            title = stringResource(Res.string.wishlist_remove_title),
+            message = stringResource(Res.string.wishlist_remove_msg),
+            confirmText = stringResource(Res.string.wishlist_remove),
+            dismissText = stringResource(Res.string.profile_cancel),
+            icon = painterResource(Res.drawable.ic_solid_heart),
+            onConfirm = {
+                showRemoveFavoriteDialog = false
+                viewModel.onIntent(ProductDetailsIntent.OnFavoriteClick)
+            },
+            onDismiss = { showRemoveFavoriteDialog = false },
+        )
+    }
+
+    if (uiState.showReviewsSheet) {
+        ReviewsBottomSheet(
+            reviews = uiState.reviews,
+            myReview = uiState.myReview,
+            showEditor = uiState.showReviewEditor,
+            draft = uiState.reviewDraft,
+            isSubmitting = uiState.isSubmittingReview,
+            onDraftChange = { viewModel.onIntent(ProductDetailsIntent.OnReviewDraftChanged(it)) },
+            onWriteReview = { viewModel.onIntent(ProductDetailsIntent.OnOpenReviewEditor) },
+            onDismissEditor = { viewModel.onIntent(ProductDetailsIntent.OnDismissReviewEditor) },
+            onSubmit = { viewModel.onIntent(ProductDetailsIntent.OnSubmitReview) },
+            onDismiss = { viewModel.onIntent(ProductDetailsIntent.OnDismissReviewsSheet) },
         )
     }
 
@@ -138,8 +186,15 @@ fun ProductDetailsScreen(
                     onOptionSelected = { name, value ->
                         intent(ProductDetailsIntent.OnOptionSelected(name, value))
                     },
-                    onFavoriteClick = { intent(ProductDetailsIntent.OnFavoriteClick) },
+                    onFavoriteClick = {
+                        if (uiState.isFavorite) {
+                            showRemoveFavoriteDialog = true      // removing → confirm
+                        } else {
+                            intent(ProductDetailsIntent.OnFavoriteClick) // adding → instant
+                        }
+                    },
                     onSeeAllReviews = { intent(ProductDetailsIntent.OnSeeAllReviews) },
+                    onWriteReview = { intent(ProductDetailsIntent.OnOpenReviewEditor) },
                     onSizeGuide = { intent(ProductDetailsIntent.OnSizeGuide) },
                     modifier = Modifier.fillMaxSize(),
                     backEnabled = true
@@ -255,6 +310,7 @@ fun ProductDetailsScreenContent(
     onOptionSelected: (String, String) -> Unit,
     onFavoriteClick: () -> Unit,
     onSeeAllReviews: () -> Unit,
+    onWriteReview: () -> Unit,
     onSizeGuide: () -> Unit,
     backEnabled: Boolean = true,
     modifier: Modifier = Modifier,
@@ -349,7 +405,6 @@ fun ProductDetailsScreenContent(
                             if (option.name == "Size") {
                                 SectionHeaderRow(
                                     title = option.name,
-                                    actionLabel = stringResource(Res.string.product_details_size_guide),
                                     onActionClick = onSizeGuide
                                 )
                             } else {
@@ -394,13 +449,13 @@ fun ProductDetailsScreenContent(
                     HorizontalDivider(color = Theme.colors.disable, thickness = 1.dp)
                     Spacer(Modifier.height(16.dp))
 
-                    if (uiState.reviews.isNotEmpty()) {
-                        Spacer(Modifier.height(16.dp))
-                        CustomerReviewsSection(
-                            reviews = uiState.reviews,
-                            onSeeAllClick = onSeeAllReviews,
-                        )
-                    }
+                    Spacer(Modifier.height(16.dp))
+                    CustomerReviewsSection(
+                        reviews = uiState.reviews,
+                        isLoading = uiState.reviewsLoading,
+                        onSeeAllClick = onSeeAllReviews,
+                        onWriteReviewClick = onWriteReview,
+                    )
 
                     Spacer(Modifier.height(16.dp))
                 }
@@ -424,7 +479,7 @@ fun ProductDetailsScreenContent(
             ) {
                 AddToCartButton(
                     onAddToCart = onAddToCart,
-                    enabled = true,
+                    enabled = uiState.canAddToCart,
                     modifier = Modifier.weight(1f)
                 )
 

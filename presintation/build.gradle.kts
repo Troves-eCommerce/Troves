@@ -71,6 +71,7 @@ kotlin {
                 implementation(libs.compose.runtime)
                 implementation(libs.compose.uiToolingPreview)
                 implementation(libs.compose.components.resources)
+                implementation(libs.compose.icons.extended)
                 implementation(libs.icons.lucide.cmp)
                 // ViewModel
                 implementation(libs.androidx.lifecycle.viewmodelCompose)

@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.BasicText
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
@@ -44,10 +43,19 @@ import com.troves.designsystem.components.toast.TrovesSnackbarHost
 import com.troves.designsystem.theme.Theme
 import com.troves.presintation.core.mvi.ObserveEffect
 import com.troves.presintation.ui.cart.components.CartItemCard
+import com.troves.designsystem.components.emptystate.EmptyState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ShoppingCart
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import troves.designsystem.generated.resources.Res
 import troves.designsystem.generated.resources.ic_arrow_back
+import troves.designsystem.generated.resources.cart_empty_title
+import troves.designsystem.generated.resources.cart_empty_desc
+import troves.designsystem.generated.resources.*
+import troves.presintation.generated.resources.Res as ResP
+import troves.presintation.generated.resources.cart_remove_item_confirm
 
 @Composable
 fun CartScreen(
@@ -89,9 +97,9 @@ fun CartScreen(
 
     itemToRemove?.let { item ->
         TrovesDialog(
-            title = "Remove Item",
-            message = "Are you sure you want to remove \"${item.title}\" from your cart?",
-            confirmText = "Remove",
+            title = stringResource(Res.string.cart_remove_title),
+            message = stringResource(ResP.string.cart_remove_item_confirm, item.title),
+            confirmText = stringResource(Res.string.wishlist_remove),
             onConfirm = {
                 viewModel.onIntent(CartIntent.OnRemoveItemConfirm(item.lineId))
                 itemToRemove = null
@@ -104,9 +112,9 @@ fun CartScreen(
 
     if (showClearConfirm) {
         TrovesDialog(
-            title = "Clear Cart",
-            message = "Remove all items from your cart?",
-            confirmText = "Clear All",
+            title = stringResource(Res.string.cart_clear_title),
+            message = stringResource(Res.string.cart_clear_msg),
+            confirmText = stringResource(Res.string.clear_all),
             onConfirm = {
                 viewModel.onIntent(CartIntent.OnClearCartConfirm)
                 showClearConfirm = false
@@ -119,9 +127,7 @@ fun CartScreen(
         CartScreenContent(
             state = state,
             onIntent = viewModel::onIntent,
-            modifier = Modifier
-                .fillMaxSize()
-                .statusBarsPadding(),
+            modifier = Modifier.fillMaxSize(),
         )
 
         TrovesSnackbarHost(
@@ -141,30 +147,21 @@ private fun CartScreenContent(
     onIntent: (CartIntent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Scaffold(
-        modifier = modifier,
-        containerColor = Theme.colors.backGround,
-        topBar = {
-            BaseTopAppBar(
-                title = "Cart",
-                leadingIcon = painterResource(Res.drawable.ic_arrow_back),
-                onLeadingClick = { onIntent(CartIntent.OnBackClick) },
-                modifier = Modifier.background(Theme.colors.backGround),
-            )
-        },
-        bottomBar = {
-            CartBottomBar(
-                totalFormatted = state.totalFormatted,
-                onCheckout = { onIntent(CartIntent.OnCheckout) },
-                isLoading = state.isLoading,
-                isEmpty = state.isEmpty,
-            )
-        },
-    ) { innerPadding ->
+    Column(
+        modifier = modifier
+            .background(Theme.colors.backGround)
+            .statusBarsPadding(),
+    ) {
+        BaseTopAppBar(
+            title = stringResource(Res.string.cart_title),
+            leadingIcon = painterResource(Res.drawable.ic_arrow_back),
+            onLeadingClick = { onIntent(CartIntent.OnBackClick) },
+            modifier = Modifier.background(Theme.colors.backGround),
+        )
         LazyColumn(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding),
+                .fillMaxWidth()
+                .weight(1f),
             contentPadding = PaddingValues(Theme.spacing.medium),
             verticalArrangement = Arrangement.spacedBy(Theme.spacing.medium),
         ) {
@@ -176,12 +173,12 @@ private fun CartScreenContent(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         BasicText(
-                            text = "${state.items.size} item(s)",
+                            text = stringResource(Res.string.cart_items_count, state.items.size.toString()),
                             style = Theme.typography.body.medium.copy(color = Theme.colors.secondaryFont),
                         )
                         TextButton(onClick = { onIntent(CartIntent.OnClearCartClick) }) {
                             Text(
-                                text = "Clear all",
+                                text = stringResource(Res.string.clear_all),
                                 style = Theme.typography.body.medium,
                                 color = Theme.colors.error,
                             )
@@ -221,7 +218,7 @@ private fun CartScreenContent(
                         ) {
                             if (dismissState.targetValue == SwipeToDismissBoxValue.EndToStart) {
                                 Text(
-                                    text = "Remove",
+                                    text = stringResource(Res.string.wishlist_remove),
                                     color = Color.White,
                                     fontWeight = FontWeight.Bold
                                 )
@@ -241,21 +238,24 @@ private fun CartScreenContent(
             if (state.isEmpty) {
                 item {
                     Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = Theme.spacing.extraLarge),
+                        modifier = Modifier.fillParentMaxSize(),
                         contentAlignment = Alignment.Center,
                     ) {
-                        BasicText(
-                            text = "Your cart is empty",
-                            style = Theme.typography.body.large.copy(
-                                color = Theme.colors.secondaryFont,
-                            ),
+                        EmptyState(
+                            title = stringResource(Res.string.cart_empty_title),
+                            description = stringResource(Res.string.cart_empty_desc),
+                            icon = Icons.Default.ShoppingCart,
                         )
                     }
                 }
             }
         }
+        CartBottomBar(
+            totalFormatted = state.totalFormatted,
+            onCheckout = { onIntent(CartIntent.OnCheckout) },
+            isLoading = state.isLoading,
+            isEmpty = state.isEmpty,
+        )
     }
 }
 
@@ -280,7 +280,7 @@ private fun CartBottomBar(
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(Theme.spacing.extraSmall)) {
             BasicText(
-                text = "Total Price",
+                text = stringResource(Res.string.cart_total),
                 style = Theme.typography.body.small.copy(color = Theme.colors.secondaryFont),
             )
             BasicText(
@@ -293,7 +293,7 @@ private fun CartBottomBar(
         }
 
         PrimaryButton(
-            caption = "Checkout",
+            caption = stringResource(Res.string.cart_checkout),
             onClick = onCheckout,
             isDisabled = isLoading || isEmpty,
             modifier = Modifier

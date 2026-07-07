@@ -19,6 +19,10 @@ import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.ServerCrash
 import com.troves.designsystem.components.button.PrimaryButton
 import com.troves.designsystem.theme.Theme
+import org.jetbrains.compose.resources.stringResource
+import troves.presintation.generated.resources.Res
+import troves.presintation.generated.resources.error_view_title
+import troves.presintation.generated.resources.error_view_retry
 
 /**
  * Copyright (c) 2026 Wahid Ali Wahid Hussien.
@@ -64,7 +68,7 @@ fun ErrorView(
         Spacer(modifier = Modifier.height(Theme.spacing.large))
 
         BasicText(
-            text = "Something went wrong",
+            text = stringResource(Res.string.error_view_title),
             style = Theme.typography.title.copy(
                 color = Theme.colors.primaryFont,
                 fontWeight = FontWeight.Bold
@@ -84,7 +88,7 @@ fun ErrorView(
             Spacer(modifier = Modifier.height(Theme.spacing.extraLarge))
 
             PrimaryButton(
-                caption = "Try Again",
+                caption = stringResource(Res.string.error_view_retry),
                 onClick = onRetry,
                 modifier = Modifier.fillMaxWidth(0.6f)
             )

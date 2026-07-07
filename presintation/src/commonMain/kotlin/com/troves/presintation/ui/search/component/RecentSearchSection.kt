@@ -30,6 +30,10 @@ import com.composables.icons.lucide.History
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.X
 import com.troves.designsystem.theme.Theme
+import org.jetbrains.compose.resources.stringResource
+import troves.presintation.generated.resources.Res
+import troves.presintation.generated.resources.recent_searches
+import troves.presintation.generated.resources.clear_all
 
 /**
  * Copyright (c) 2026 Wahid Ali Wahid Hussien.
@@ -75,11 +79,11 @@ fun RecentSearchSection(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Recent Searches",
+                    text = stringResource(Res.string.recent_searches),
                     style = MaterialTheme.typography.titleMedium
                 )
                 TextButton(onClick = onClearAllClick) {
-                    Text("Clear all", color = Theme.colors.primary)
+                    Text(stringResource(Res.string.clear_all), color = Theme.colors.primary)
                 }
             }
 

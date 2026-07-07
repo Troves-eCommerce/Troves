@@ -2,6 +2,7 @@ package com.troves.presintation.ui.orderdetails
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,10 +20,9 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -31,20 +31,35 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.troves.designsystem.components.cards.OrderSummaryInfoCard
 import com.troves.designsystem.components.cards.OrderSummaryItemCard
 import com.troves.designsystem.components.chip.OrderStatusBadge
+import com.troves.designsystem.components.shimmer.shimmerEffect
 import com.troves.designsystem.components.topbar.BaseTopAppBar
 import com.troves.designsystem.theme.Theme
 import com.troves.presintation.ui.orderdetails.components.OrderTimeline
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import troves.designsystem.generated.resources.Res
 import troves.designsystem.generated.resources.ic_arrow_back
 import troves.designsystem.generated.resources.img_placeholder
+import troves.presintation.generated.resources.Res as ResP
+import troves.presintation.generated.resources.order_details_title
+import troves.presintation.generated.resources.error_view_title
+import troves.presintation.generated.resources.order_details_progress
+import troves.presintation.generated.resources.order_details_items
+import troves.presintation.generated.resources.checkout_order_summary
+import troves.presintation.generated.resources.order_details_subtotal
+import troves.presintation.generated.resources.order_details_shipping
+import troves.presintation.generated.resources.order_details_tax
+import troves.presintation.generated.resources.checkout_total
+import troves.presintation.generated.resources.order_details_help
+import troves.presintation.generated.resources.order_details_support
 
 @Composable
 fun OrderDetailsScreen(
@@ -68,26 +83,26 @@ fun OrderDetailsScreen(
         }
     }
 
-    Scaffold(
-        modifier = Modifier.fillMaxSize().statusBarsPadding(),
-        containerColor = Theme.colors.backGround,
-        topBar = {
-            BaseTopAppBar(
-                title = "Order Details",
-                leadingIcon = painterResource(Res.drawable.ic_arrow_back),
-                onLeadingClick = { viewModel.onIntent(OrderDetailsIntent.OnBack) },
-                modifier = Modifier.background(Theme.colors.backGround),
-            )
-        }
-    ) { innerPadding ->
-        Box(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Theme.colors.backGround)
+            .statusBarsPadding(),
+    ) {
+        BaseTopAppBar(
+            title = stringResource(ResP.string.order_details_title),
+            leadingIcon = painterResource(Res.drawable.ic_arrow_back),
+            onLeadingClick = { viewModel.onIntent(OrderDetailsIntent.OnBack) },
+            modifier = Modifier.background(Theme.colors.backGround),
+        )
+        Box(modifier = Modifier.fillMaxSize()) {
             when {
                 state.isLoading -> {
-                    CircularProgressIndicator(Modifier.align(Alignment.Center))
+                    OrderDetailsLoadingContent()
                 }
                 state.isError -> {
                     BasicText(
-                        text = state.errorMessage ?: "Something went wrong",
+                        text = state.errorMessage ?: stringResource(ResP.string.error_view_title),
                         style = Theme.typography.body.large.copy(color = Theme.colors.error),
                         modifier = Modifier.align(Alignment.Center)
                     )
@@ -119,7 +134,7 @@ private fun OrderDetailsContent(
         
         item {
             BasicText(
-                text = "Order Progress",
+                text = stringResource(ResP.string.order_details_progress),
                 style = Theme.typography.title.copy(
                     color = Theme.colors.primaryFont,
                     fontWeight = FontWeight.Bold,
@@ -131,7 +146,7 @@ private fun OrderDetailsContent(
 
         item {
             BasicText(
-                text = "Order Items",
+                text = stringResource(ResP.string.order_details_items),
                 style = Theme.typography.title.copy(
                     color = Theme.colors.primaryFont,
                     fontWeight = FontWeight.Bold,
@@ -148,8 +163,10 @@ private fun OrderDetailsContent(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(100.dp)
-                        .clip(Theme.shapes.medium),
+                        .clip(Theme.shapes.medium)
+                        .border(1.dp, Theme.colors.onPrimary.copy(alpha = 0.5f), Theme.shapes.medium)
+                .padding(end = 16.dp)
+                    ,
                     horizontalArrangement = Arrangement.spacedBy(Theme.spacing.medium),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
@@ -159,7 +176,7 @@ private fun OrderDetailsContent(
                         contentScale = ContentScale.FillBounds,
                         modifier = Modifier
                             .width(128.dp)
-                            .fillMaxHeight()
+                            .height(128.dp)
                             .clip(Theme.shapes.medium)
                             .background(Theme.colors.surfaceVariant),
                     )
@@ -174,7 +191,8 @@ private fun OrderDetailsContent(
                                 color = Theme.colors.primaryFont,
                                 fontWeight = FontWeight.SemiBold,
                             ),
-                            maxLines = 2,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
                         )
                         if (item.variant.isNotBlank()) {
                             BasicText(
@@ -212,7 +230,7 @@ private fun OrderDetailsContent(
 
         item {
             BasicText(
-                text = "Order Summary",
+                text = stringResource(ResP.string.checkout_order_summary),
                 style = Theme.typography.title.copy(
                     color = Theme.colors.primaryFont,
                     fontWeight = FontWeight.Bold,
@@ -221,13 +239,13 @@ private fun OrderDetailsContent(
             )
             
             OrderSummaryInfoCard(
-                subtotalLabel = "Subtotal",
+                subtotalLabel = stringResource(ResP.string.order_details_subtotal),
                 subtotalFormatted = orderDetails.subtotal,
-                shippingLabel = if (orderDetails.shipping.isNotBlank()) "Shipping" else null,
+                shippingLabel = if (orderDetails.shipping.isNotBlank()) stringResource(ResP.string.order_details_shipping) else null,
                 shippingFormatted = if (orderDetails.shipping.isNotBlank()) orderDetails.shipping else null,
-                taxLabel = if (orderDetails.tax.isNotBlank()) "Tax" else null,
+                taxLabel = if (orderDetails.tax.isNotBlank()) stringResource(ResP.string.order_details_tax) else null,
                 taxFormatted = if (orderDetails.tax.isNotBlank()) orderDetails.tax else null,
-                totalLabel = "Total",
+                totalLabel = stringResource(ResP.string.checkout_total),
                 totalFormatted = orderDetails.total,
             )
         }
@@ -237,6 +255,133 @@ private fun OrderDetailsContent(
             SupportCard(onClick = onSupportClick)
         }
     }
+}
+
+@Composable
+private fun OrderDetailsLoadingContent() {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(Theme.spacing.medium),
+        verticalArrangement = Arrangement.spacedBy(Theme.spacing.medium),
+    ) {
+        // Header card skeleton
+        item {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(Theme.shapes.large)
+                    .background(Theme.colors.surface)
+                    .padding(Theme.spacing.medium),
+                verticalArrangement = Arrangement.spacedBy(Theme.spacing.small),
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        ShimmerLine(width = 120.dp, height = 18.dp)
+                        ShimmerLine(width = 160.dp, height = 14.dp)
+                    }
+                    ShimmerLine(width = 90.dp, height = 24.dp)
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(top = Theme.spacing.small),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .width(72.dp)
+                            .height(24.dp)
+                            .clip(Theme.shapes.small)
+                            .shimmerEffect()
+                    )
+                    ShimmerLine(width = 60.dp, height = 14.dp)
+                }
+            }
+        }
+
+        // Section title skeleton
+        item {
+            ShimmerLine(
+                width = 140.dp,
+                height = 22.dp,
+                modifier = Modifier.padding(vertical = Theme.spacing.small),
+            )
+        }
+
+        // Order item skeletons
+        items(3) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(Theme.shapes.medium)
+                    .border(1.dp, Theme.colors.onPrimary.copy(alpha = 0.5f), Theme.shapes.medium)
+                    .padding(Theme.spacing.medium),
+                horizontalArrangement = Arrangement.spacedBy(Theme.spacing.medium),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(72.dp)
+                        .clip(Theme.shapes.medium)
+                        .shimmerEffect()
+                )
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(Theme.spacing.extraSmall),
+                ) {
+                    ShimmerLine(width = 180.dp, height = 16.dp)
+                    ShimmerLine(width = 100.dp, height = 14.dp)
+                    ShimmerLine(width = 60.dp, height = 14.dp)
+                }
+                ShimmerLine(width = 60.dp, height = 16.dp)
+            }
+        }
+
+        // Summary card skeleton
+        item {
+            ShimmerLine(
+                width = 140.dp,
+                height = 22.dp,
+                modifier = Modifier.padding(vertical = Theme.spacing.small),
+            )
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(Theme.shapes.large)
+                    .background(Theme.colors.surface)
+                    .padding(Theme.spacing.medium),
+                verticalArrangement = Arrangement.spacedBy(Theme.spacing.small),
+            ) {
+                repeat(3) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                    ) {
+                        ShimmerLine(width = 80.dp, height = 14.dp)
+                        ShimmerLine(width = 60.dp, height = 14.dp)
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ShimmerLine(
+    width: androidx.compose.ui.unit.Dp,
+    height: androidx.compose.ui.unit.Dp,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier
+            .width(width)
+            .height(height)
+            .clip(RoundedCornerShape(6.dp))
+            .shimmerEffect()
+    )
 }
 
 @Composable
@@ -306,14 +451,14 @@ private fun SupportCard(onClick: () -> Unit) {
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             BasicText(
-                text = "Need help with your order?",
+                text = stringResource(ResP.string.order_details_help),
                 style = Theme.typography.body.large.copy(
                     color = Theme.colors.primaryFont,
                     fontWeight = FontWeight.Bold,
                 ),
             )
             BasicText(
-                text = "Contact our support team",
+                text = stringResource(ResP.string.order_details_support),
                 style = Theme.typography.body.medium.copy(color = Theme.colors.secondaryFont),
             )
         }

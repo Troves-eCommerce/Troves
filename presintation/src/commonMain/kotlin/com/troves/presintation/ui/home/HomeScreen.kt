@@ -37,8 +37,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.launch
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -53,6 +57,7 @@ import com.troves.designsystem.util.autoMirror
 import com.troves.designsystem.util.bounceClick
 import kotlin.math.abs
 
+import com.troves.designsystem.components.dialog.TrovesDialog
 import com.troves.domain.entity.Ad
 import com.troves.domain.entity.Brand
 import com.troves.domain.entity.Category
@@ -87,8 +92,20 @@ fun HomeScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     var showSurveySheet by remember { mutableStateOf(false) }
+    var dismissedSurveyPopup by remember { mutableStateOf(false) }
+    var productToRemove by remember { mutableStateOf<Product?>(null) }
 
     val loginRequiredText = stringResource(Res.string.home_login_required)
+    val showSurveyPopup = state.isLoggedIn && !state.isSurveyDone && !dismissedSurveyPopup
+
+    // Intercept wishlist REMOVALS to confirm first; adding a favorite (or any other intent) passes through.
+    val onIntent: (HomeIntent) -> Unit = { intent ->
+        if (intent is HomeIntent.FavoriteToggled && intent.product.id in state.favoriteProductIds) {
+            productToRemove = intent.product
+        } else {
+            viewModel.onIntent(intent)
+        }
+    }
 
     ObserveEffect(viewModel.effect) { effect ->
         when (effect) {
@@ -126,6 +143,21 @@ fun HomeScreen(
         )
     }
 
+    productToRemove?.let { product ->
+        TrovesDialog(
+            title = stringResource(Res.string.wishlist_remove_title),
+            message = stringResource(Res.string.wishlist_remove_msg),
+            confirmText = stringResource(Res.string.wishlist_remove),
+            dismissText = stringResource(Res.string.profile_cancel),
+            icon = painterResource(Res.drawable.ic_solid_heart),
+            onConfirm = {
+                viewModel.onIntent(HomeIntent.FavoriteToggled(product))
+                productToRemove = null
+            },
+            onDismiss = { productToRemove = null },
+        )
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -135,9 +167,7 @@ fun HomeScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .statusBarsPadding()
-                .verticalScroll(rememberScrollState())
-                .padding(bottom = 24.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp),
+                .then(if (showSurveyPopup) Modifier.blur(16.dp) else Modifier),
         ) {
             TrovesTopBar(
                 onSearchClick = { viewModel.onIntent(HomeIntent.SearchClicked) },
@@ -150,13 +180,21 @@ fun HomeScreen(
                 )
             )
 
-            if (state.isLoading) {
-                HomeShimmer()
-            } else {
-                HomeContent(
-                    state = state,
-                    onIntent = viewModel::onIntent,
-                )
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(top = 20.dp, bottom = 120.dp),
+                verticalArrangement = Arrangement.spacedBy(20.dp),
+            ) {
+                if (state.isLoading) {
+                    HomeShimmer()
+                } else {
+                    HomeContent(
+                        state = state,
+                        onIntent = onIntent,
+                    )
+                }
             }
         }
 
@@ -167,6 +205,26 @@ fun HomeScreen(
                 .statusBarsPadding()
                 .padding(16.dp),
         )
+
+        if (showSurveyPopup) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.4f))
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null
+                    ) {},
+                contentAlignment = Alignment.Center
+            ) {
+                SurveyBannerCard(
+                    onStartSurvey = { viewModel.onIntent(HomeIntent.SurveyBannerClicked) },
+                    onDismiss = { dismissedSurveyPopup = true },
+                    onNeverShowAgain = { viewModel.onIntent(HomeIntent.SurveyBannerNeverShowAgain) },
+                    modifier = Modifier.padding(horizontal = 24.dp),
+                )
+            }
+        }
     }
 }
 
@@ -182,22 +240,18 @@ private fun HomeContent(
     val heartIcon = painterResource(Res.drawable.ic_solid_heart)
 
     val adImages = listOf(
-        Res.drawable.random_1,
+        Res.drawable.random_7,
         Res.drawable.random_2,
         Res.drawable.random_3,
         Res.drawable.random_4,
-        Res.drawable.random_5
+        Res.drawable.random_5,
+        Res.drawable.random_6,
+        Res.drawable.random_1,
+        Res.drawable.random_8
     )
 
     val clipboardManager = LocalClipboardManager.current
     val copyCodeButtonText = stringResource(Res.string.home_copy_code_button)
-
-    if (!state.isSurveyDone) {
-        SurveyBannerCard(
-            onStartSurvey = { onIntent(HomeIntent.SurveyBannerClicked) },
-            modifier = Modifier.padding(horizontal = Theme.spacing.medium),
-        )
-    }
 
     if (state.ads.isNotEmpty()) {
         AdSlider(
@@ -242,7 +296,7 @@ private fun HomeContent(
                     "accessories" -> Res.drawable.ic_category_accessories
                     "sale" -> Res.drawable.ic_category_sales
                     "new arrivals" -> Res.drawable.ic_category_sales
-                    "best sellers" -> Res.drawable.ic_star
+                    "best sellers" -> Res.drawable.ic_best_seller
                     "men" -> Res.drawable.ic_category_man
                     "women" -> Res.drawable.ic_category_women
                     "dr martens" -> Res.drawable.ic_brand_dr_martens
@@ -264,9 +318,9 @@ private fun HomeContent(
 
     if (state.justForYou.isNotEmpty()) {
         SectionHeader(
-            title = stringResource(Res.string.home_just_for_you),
+            title = stringResource(Res.string.see_all),
             actionIcon = chevron,
-            actionLabel = stringResource(Res.string.home_view_all),
+            actionLabel = stringResource(Res.string.see_all),
             onAction = { onIntent(HomeIntent.ViewAllJustForYouClicked) }
         )
         ProductRow(
@@ -329,9 +383,9 @@ private fun HomeContent(
 
     if (state.trending.isNotEmpty()) {
         SectionHeader(
-            title = stringResource(Res.string.home_trending_now),
+            title = stringResource(Res.string.see_all),
             actionIcon = chevron,
-            actionLabel = stringResource(Res.string.home_view_all),
+            actionLabel = stringResource(Res.string.see_all),
             onAction = { onIntent(HomeIntent.ViewAllTrendingClicked) }
         )
         ProductRow(
@@ -488,12 +542,18 @@ private fun HomeScreenPreview() {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .padding(bottom = 24.dp),
-                verticalArrangement = Arrangement.spacedBy(20.dp),
+                    .statusBarsPadding(),
             ) {
                 TrovesTopBar(onSearchClick = {}, onCartClick = {}, onAiClick = {})
-                HomeContent(state = previewHomeState(), onIntent = {})
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
+                        .padding(top = 20.dp, bottom = 100.dp),
+                    verticalArrangement = Arrangement.spacedBy(20.dp),
+                ) {
+                    HomeContent(state = previewHomeState(), onIntent = {})
+                }
             }
         }
     }

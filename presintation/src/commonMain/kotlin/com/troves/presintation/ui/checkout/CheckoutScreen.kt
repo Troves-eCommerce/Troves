@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -50,7 +49,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import troves.designsystem.generated.resources.Res
 import troves.designsystem.generated.resources.ic_arrow_back
-import troves.designsystem.generated.resources.ic_home
+import troves.designsystem.generated.resources.ic_home_selected
 import troves.designsystem.generated.resources.ic_location
 import troves.designsystem.generated.resources.ic_payment_method
 import troves.presintation.generated.resources.checkout_continue
@@ -65,6 +64,9 @@ import troves.presintation.generated.resources.checkout_place_order
 import troves.presintation.generated.resources.checkout_title_confirm_order
 import troves.presintation.generated.resources.checkout_title_delivery_address
 import troves.presintation.generated.resources.checkout_title_payment
+import troves.presintation.generated.resources.address_label_home
+import troves.presintation.generated.resources.address_label_work
+import troves.presintation.generated.resources.address_label_other
 import troves.presintation.generated.resources.Res as StringRes
 
 @Composable
@@ -122,35 +124,22 @@ fun CheckoutScreen(
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        Scaffold(
-            modifier = Modifier.fillMaxSize().statusBarsPadding(),
-            containerColor = Theme.colors.backGround,
-            topBar = {
-                BaseTopAppBar(
-                    title = titleFor(state.step),
-                    leadingIcon = painterResource(Res.drawable.ic_arrow_back),
-                    onLeadingClick = { viewModel.onIntent(CheckoutIntent.OnBack) },
-                    modifier = Modifier.background(Theme.colors.backGround),
-                    autoMirrorLeadingIcon = true
-                )
-            },
-            bottomBar = {
-                CheckoutBottomBar(
-                    isPlaceOrderStep = state.step == CheckoutStep.PlaceOrder,
-                    enabled = state.canContinue,
-                    isBusy = state.isBusy,
-                    onClick = {
-                        viewModel.onIntent(
-                            if (state.step == CheckoutStep.PlaceOrder) CheckoutIntent.OnPlaceOrder
-                            else CheckoutIntent.OnNext
-                        )
-                    },
-                )
-            },
-        ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Theme.colors.backGround)
+                .statusBarsPadding(),
+        ) {
+            BaseTopAppBar(
+                title = titleFor(state.step),
+                leadingIcon = painterResource(Res.drawable.ic_arrow_back),
+                onLeadingClick = { viewModel.onIntent(CheckoutIntent.OnBack) },
+                modifier = Modifier.background(Theme.colors.backGround),
+                autoMirrorLeadingIcon = true
+            )
             AnimatedContent(
                 targetState = state.step,
-                modifier = Modifier.fillMaxSize().padding(innerPadding),
+                modifier = Modifier.fillMaxWidth().weight(1f),
                 label = "checkoutStep",
             ) { step ->
                 when (step) {
@@ -224,6 +213,17 @@ fun CheckoutScreen(
                     }
                 }
             }
+            CheckoutBottomBar(
+                isPlaceOrderStep = state.step == CheckoutStep.PlaceOrder,
+                enabled = state.canContinue,
+                isBusy = state.isBusy,
+                onClick = {
+                    viewModel.onIntent(
+                        if (state.step == CheckoutStep.PlaceOrder) CheckoutIntent.OnPlaceOrder
+                        else CheckoutIntent.OnNext
+                    )
+                },
+            )
         }
 
         TrovesSnackbarHost(
@@ -281,14 +281,14 @@ private fun PaymentOption.toMethod(): CheckoutPaymentMethod = when (this) {
 @Composable
 private fun Address.toAddressUi(): AddressUi {
     val iconRes = when (icon) {
-        AddressIcon.HOME -> Res.drawable.ic_home
+        AddressIcon.HOME -> Res.drawable.ic_home_selected
         AddressIcon.WORK -> Res.drawable.ic_location
         AddressIcon.OTHER -> Res.drawable.ic_location
     }
     val title = label ?: when (icon) {
-        AddressIcon.HOME -> "Home"
-        AddressIcon.WORK -> "Work"
-        AddressIcon.OTHER -> "Address"
+        AddressIcon.HOME -> stringResource(StringRes.string.address_label_home)
+        AddressIcon.WORK -> stringResource(StringRes.string.address_label_work)
+        AddressIcon.OTHER -> stringResource(StringRes.string.address_label_other)
     }
     return AddressUi(
         id = id,

@@ -14,6 +14,8 @@
     <!-- Products screen -->
     <string name="products_title">المنتجات</string>
     <string name="products_empty">لا توجد منتجات</string>
+    <string name="products_empty_title">لم يتم العثور على منتجات</string>
+    <string name="products_empty_desc">حاول تعديل الفلاتر أو مصطلحات البحث للعثور على ما تبحث عنه.</string>
     <string name="products_retry">إعادة المحاولة</string>
 
     <!-- Sort bottom sheet -->
@@ -163,4 +165,35 @@
     <string name="product_details_color_label">اللون: %1$s</string>
     <string name="product_details_reviews_count">(%1$d تقييم)</string>
     <string name="product_details_login_required_favorites">يجب عليك تسجيل الدخول لإدارة مفضلاتك.</string>
+
+    <!-- Accessibility -->
+    <string name="common_leading_icon">أيقونة بادئة</string>
+    <string name="common_trailing_icon">أيقونة لاحقة</string>
+    <string name="common_error_icon">أيقونة خطأ</string>
+    <string name="product_details_reviews_empty_title">لا توجد تقييمات بعد</string>
+    <string name="product_details_reviews_empty_subtitle">كن أول من يقيّم هذا المنتج</string>
+    <string name="product_details_reviews_write">اكتب تقييماً</string>
+    <string name="product_details_reviews_edit_yours">عدّل تقييمك</string>
+    <string name="product_details_reviews_your_badge">تقييمك</string>
+    <string name="product_details_review_editor_title">تقييمك</string>
+    <string name="product_details_review_first_name_hint">الاسم الأول</string>
+    <string name="product_details_review_last_name_hint">اسم العائلة</string>
+    <string name="product_details_review_comment_hint">شاركنا تجربتك…</string>
+    <string name="product_details_review_rating_label">تقييمك</string>
+    <string name="product_details_review_submit">إرسال التقييم</string>
+    <string name="product_details_review_rating_required">يرجى اختيار تقييم</string>
+    <string name="product_details_review_submitted">شكراً لك! تم إرسال تقييمك</string>
+    <string name="product_details_review_error">تعذّر إرسال تقييمك</string>
+    <string name="product_details_review_login_required">يجب عليك تسجيل الدخول لكتابة تقييم.</string>
+    <string name="quantity_label">الكمية: %1$d</string>
+    <string name="stepper_label">الخطوة %1$d من %2$d</string>
+    <string name="login_required_title">تسجيل الدخول مطلوب</string>
+    <string name="login_required_msg">يجب عليك تسجيل الدخول للقيام بهذا الإجراء.</string>
+    <string name="login_required_btn">تسجيل الدخول</string>
+
+    <!-- Sign-in required (guest) empty states -->
+    <string name="auth_required_title">لم تقم بتسجيل الدخول</string>
+    <string name="auth_required_action">تسجيل الدخول</string>
+    <string name="orders_auth_required_desc">سجّل الدخول لعرض وتتبع طلباتك.</string>
+    <string name="wishlist_auth_required_desc">سجّل الدخول لعرض العناصر التي حفظتها.</string>
 </resources>

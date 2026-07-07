@@ -50,6 +50,7 @@ fun ProfileScreen(
 
     var showLanguageSheet by remember { mutableStateOf(false) }
     var showThemeSheet by remember { mutableStateOf(false) }
+    var showSurveySheet by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
@@ -97,6 +98,12 @@ fun ProfileScreen(
                 showThemeSheet = false
             },
             onDismiss = { showThemeSheet = false }
+        )
+    }
+
+    if (showSurveySheet) {
+        com.troves.presintation.ui.survey.SurveyBottomSheet(
+            onDismiss = { showSurveySheet = false },
         )
     }
 
@@ -198,6 +205,21 @@ fun ProfileScreen(
                             },
                             onClick = { showThemeSheet = true }
                         )
+
+                        if (!uiState.isGuest) {
+                            HorizontalDivider(
+                                color = Theme.colors.onPrimary,
+                                thickness = 1.dp,
+                                modifier = Modifier.padding(horizontal = 16.dp)
+                            )
+                            
+                            ProfileRowItem(
+                                icon = Res.drawable.ic_ai_sparkles,
+                                title = stringResource(ResP.string.profile_style_survey),
+                                description = "Update your style preferences",
+                                onClick = { showSurveySheet = true }
+                            )
+                        }
 
                         if (!uiState.isGuest) {
                             HorizontalDivider(

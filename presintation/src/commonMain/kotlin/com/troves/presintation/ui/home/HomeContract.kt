@@ -16,6 +16,7 @@ data class HomeUiState(
     val errorMessage: String? = null,
     val showSignUpPrompt: Boolean = false,
     val isSurveyDone: Boolean = false,
+    val isLoggedIn: Boolean = false,
     val cartItemCount: Int = 0,
 ) {
     val hasError: Boolean get() = errorMessage != null
@@ -50,6 +51,7 @@ sealed interface HomeIntent {
     data object AiClicked : HomeIntent
     data object SeeAllBrandsClicked : HomeIntent
     data object SurveyBannerClicked : HomeIntent
+    data object SurveyBannerNeverShowAgain : HomeIntent
     data object SignUpPromptConfirmed : HomeIntent
     data object SignUpPromptDismissed : HomeIntent
     data class AdClicked(val ad: Ad) : HomeIntent

@@ -1,4 +1,10 @@
 <resources>
+    <!-- Bottom navigation -->
+    <string name="nav_home">الرئيسية</string>
+    <string name="nav_wishlist">المفضلة</string>
+    <string name="nav_orders">الطلبات</string>
+    <string name="nav_profile">الملف الشخصي</string>
+
     <!-- Common bottom sheet actions -->
     <string name="apply">تطبيق</string>
     <string name="reset">إعادة تعيين</string>
@@ -144,4 +150,56 @@
     <string name="ai_history_delete_message">سيتم حذف هذه المحادثة نهائيًا.</string>
     <string name="ai_history_delete_confirm">حذف</string>
     <string name="ai_history_cancel">إلغاء</string>
+    
+    <!-- Paymob -->
+    <string name="checkout_paymob_cod_title">بي موب</string>
+    <string name="checkout_paymob_cod_desc">ادفع بأمان داخل التطبيق باستخدام بي موب.</string>
+
+    <!-- Email Verification -->
+    <string name="verify_email_title">تأكيد البريد الإلكتروني</string>
+    <string name="verify_email_desc">لقد أرسلنا بريداً إلكترونياً للتأكيد إلى %1$s. يرجى التحقق من صندوق الوارد الخاص بك والنقر على الرابط لتأكيد حسابك.</string>
+    <string name="verify_email_resend_button">إعادة إرسال البريد</string>
+    <string name="verify_email_check_status_button">لقد قمت بتأكيد بريدي الإلكتروني</string>
+    <string name="verify_email_not_received">لم تتلقَّ البريد الإلكتروني؟</string>
+    <string name="verify_email_continue_as_guest">المتابعة كضيف</string>
+
+    <!-- SignUp Prompt Dialog -->
+    <string name="signup_prompt_title">التسجيل مطلوب</string>
+    <string name="signup_prompt_msg">تحتاج إلى حساب للقيام بذلك. هل ترغب في التسجيل؟</string>
+    <string name="signup_prompt_confirm">إنشاء حساب</string>
+
+    <!-- Wishlist Header -->
+    <string name="wishlist_header_title">قائمة أمنياتك</string>
+    <string name="wishlist_header_items_count">%1$d منتجات محفوظة لوقت لاحق</string>
+
+    <!-- Search Section -->
+    <string name="recent_searches">عمليات البحث الأخيرة</string>
+    <string name="search_discovery_title">ابحث عن مفضلتك التالية</string>
+    <string name="search_discovery_desc">ابحث عن المنتجات أو العلامات التجارية أو الفئات واكتشف صفقات مذهلة.</string>
+    <string name="search_hint_title">عن ماذا تبحث؟</string>
+    <string name="search_hint_desc">أكمل من حيث توقفت</string>
+    <string name="empty_search_title">لا توجد منتجات</string>
+    <string name="empty_search_msg">جرب كلمة رئيسية أخرى أو اضبط عوامل التصفية الخاصة بك.</string>
+
+    <!-- Error View -->
+    <string name="error_view_title">حدث خطأ ما</string>
+    <string name="error_view_retry">حاول مرة أخرى</string>
+
+    <!-- Address labels in checkout fallback -->
+    <string name="address_label_home">المنزل</string>
+    <string name="address_label_work">العمل</string>
+    <string name="address_label_other">العنوان</string>
+
+    <!-- Cart Confirmations -->
+    <string name="cart_remove_item_confirm">هل أنت متأكد أنك تريد إزالة \"%1$s\" من عربتك؟</string>
+
+    <!-- Order Details Screen -->
+    <string name="order_details_title">تفاصيل الطلب</string>
+    <string name="order_details_progress">تتبع الطلب</string>
+    <string name="order_details_items">منتجات الطلب</string>
+    <string name="order_details_help">هل تحتاج إلى مساعدة في طلبك؟</string>
+    <string name="order_details_support">اتصل بفريق الدعم الخاص بنا</string>
+    <string name="order_details_subtotal">المجموع الفرعي</string>
+    <string name="order_details_shipping">الشحن</string>
+    <string name="order_details_tax">الضريبة</string>
 </resources>

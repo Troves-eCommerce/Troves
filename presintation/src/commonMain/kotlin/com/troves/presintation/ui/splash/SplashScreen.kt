@@ -28,10 +28,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.jetbrains.compose.resources.painterResource
 import com.troves.designsystem.theme.Theme
+import coil3.compose.rememberAsyncImagePainter
 import troves.designsystem.generated.resources.Res
-import troves.designsystem.generated.resources.troves_logo
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun SplashScreen(onNavigateToOnboarding: () -> Unit) {
@@ -70,7 +70,7 @@ fun SplashScreen(onNavigateToOnboarding: () -> Unit) {
                 animationSpec = tween(durationMillis = 800, easing = FastOutSlowInEasing)
             )
         }
-        delay(300)
+        delay(300.milliseconds)
         launch {
             textAlpha.animateTo(
                 targetValue = 1f,
@@ -83,7 +83,7 @@ fun SplashScreen(onNavigateToOnboarding: () -> Unit) {
                 animationSpec = tween(durationMillis = 600, easing = FastOutSlowInEasing)
             )
         }
-        delay(200)
+        delay(200.milliseconds)
         launch {
             taglineAlpha.animateTo(
                 targetValue = 1f,
@@ -91,7 +91,7 @@ fun SplashScreen(onNavigateToOnboarding: () -> Unit) {
             )
         }
 
-        delay(1500)
+        delay(1500.milliseconds)
         onNavigateToOnboarding()
     }
 
@@ -106,7 +106,7 @@ fun SplashScreen(onNavigateToOnboarding: () -> Unit) {
         ) {
 
             Image(
-                painter = painterResource(Res.drawable.troves_logo),
+                painter = rememberAsyncImagePainter(Res.getUri("drawable/troves_logo_animated.gif")),
                 contentDescription = "Troves Logo",
                 modifier = Modifier
                     .size(220.dp)
@@ -117,8 +117,6 @@ fun SplashScreen(onNavigateToOnboarding: () -> Unit) {
                     )
                     .alpha(logoAlpha.value)
             )
-
-            Spacer(Modifier.height(24.dp))
 
             Text(
                 text = buildAnnotatedString {
@@ -136,8 +134,6 @@ fun SplashScreen(onNavigateToOnboarding: () -> Unit) {
                     .graphicsLayer(translationY = textTranslationY.value)
                     .alpha(textAlpha.value)
             )
-
-            Spacer(Modifier.height(12.dp))
             Text(
                 text = "Discover Your Next Treasure.",
                 style = Theme.typography.body.medium,

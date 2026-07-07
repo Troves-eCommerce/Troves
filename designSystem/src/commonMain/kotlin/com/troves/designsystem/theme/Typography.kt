@@ -46,6 +46,42 @@ internal val defaultFontFamily: FontFamily
             weight = FontWeight.Black
         )
     )
+internal val englishFontFamily: FontFamily
+    @Composable
+    get() = FontFamily(
+        Font(
+            resource = Res.font.poppins_bold,
+            weight = FontWeight.ExtraLight
+        ),
+        Font(
+            resource = Res.font.poppins_regular,
+            weight = FontWeight.Light
+        ),
+        Font(
+            resource = Res.font.poppins_regular,
+            weight = FontWeight.Normal
+        ),
+        Font(
+            resource = Res.font.poppins_medium,
+            weight = FontWeight.Medium
+        ),
+        Font(
+            resource = Res.font.poppins_bold,
+            weight = FontWeight.SemiBold
+        ),
+        Font(
+            resource = Res.font.poppins_bold,
+            weight = FontWeight.Bold
+        ),
+        Font(
+            resource = Res.font.poppins_bold,
+            weight = FontWeight.ExtraBold
+        ),
+        Font(
+            resource = Res.font.poppins_bold,
+            weight = FontWeight.Black
+        )
+    )
 
 data class SPTextStyle(
     val display: TextStyle,
@@ -73,7 +109,7 @@ data class SizedTextStyle(
 internal fun spTypographyOf(fontFamily: FontFamily): SPTextStyle = SPTextStyle(
     display = TextStyle(
         fontFamily = fontFamily,
-        fontSize = 32.sp,
+        fontSize = 40.sp,
         fontWeight = FontWeight.Bold,
         lineHeight = 42.sp
     ),
@@ -94,19 +130,19 @@ internal fun spTypographyOf(fontFamily: FontFamily): SPTextStyle = SPTextStyle(
             fontFamily = fontFamily,
             fontSize = 16.sp,
             fontWeight = FontWeight.Normal,
-            lineHeight = 24.sp
+            lineHeight = 14.sp
         ),
         medium = TextStyle(
             fontFamily = fontFamily,
             fontSize = 14.sp,
             fontWeight = FontWeight.Normal,
-            lineHeight = 20.sp
+            lineHeight = 12.sp
         ),
         small = TextStyle(
             fontFamily = fontFamily,
             fontSize = 12.sp,
             fontWeight = FontWeight.Normal,
-            lineHeight = 16.sp
+            lineHeight = 12.sp
         )
     ),
     hint = SizedTextStyle(

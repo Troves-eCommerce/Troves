@@ -12,12 +12,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
@@ -25,6 +26,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.troves.designsystem.components.button.FavoriteButton
 import com.troves.designsystem.theme.Theme
 import com.troves.designsystem.util.bounceClick
@@ -44,15 +46,18 @@ fun MainCard(
     containerColor: Color = Color.Transparent,
 ) {
     val cardShape = Theme.shapes.large
+    val resolvedContainer = if (containerColor == Color.Transparent) Theme.colors.surface else containerColor
 
     Column(
         modifier = modifier
+            .shadow(elevation = 0.2.dp, shape = cardShape, clip = false)
+            .clip(cardShape)
+            .background(resolvedContainer)
+            .border(1.5.dp, Theme.colors.onPrimaryVariant, cardShape)
             .bounceClick(
-                shape = RoundedCornerShape(10.dp),
+                shape = cardShape,
                 onClick = onClick
             )
-            .background(containerColor, shape = cardShape)
-            .border(1.dp, Theme.colors.onPrimary.copy(alpha = 0.5f), cardShape)
     ) {
         Box(
             modifier = Modifier
@@ -95,8 +100,7 @@ fun MainCard(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 12.dp, vertical = 10.dp),
-            verticalArrangement = Arrangement.spacedBy(6.dp)
+                .padding(horizontal = 8.dp, vertical = 8.dp),
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -119,9 +123,10 @@ fun MainCard(
             BasicText(
                 text = title,
                 maxLines = 1,
-                style = Theme.typography.body.large.copy(
+                style = Theme.typography.body.medium.copy(
                     color = Theme.colors.primaryFont,
-                    fontWeight = FontWeight.Normal
+                    fontWeight = FontWeight.Normal,
+                    lineHeight = 0.sp
                 ),
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier
@@ -130,9 +135,10 @@ fun MainCard(
 
             BasicText(
                 text = price,
-                style = Theme.typography.body.large.copy(
+                style = Theme.typography.body.medium.copy(
                     color = Theme.colors.primaryFont,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    lineHeight = 0.sp
                 ),
                 modifier = Modifier.padding(bottom = 6.dp)
             )

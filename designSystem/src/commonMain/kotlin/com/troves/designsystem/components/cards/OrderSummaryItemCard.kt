@@ -1,6 +1,8 @@
 package com.troves.designsystem.components.cards
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -15,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
@@ -23,21 +26,19 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.troves.designsystem.theme.SpTheme
 import com.troves.designsystem.theme.Theme
-import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import troves.designsystem.generated.resources.Res
+import troves.designsystem.generated.resources.quantity_label
+import org.jetbrains.compose.resources.painterResource
 import troves.designsystem.generated.resources.img_placeholder
 
-/**
- * A read-only order line-item card: a 128dp-wide image spanning the full card
- * height, the item name, its specs (e.g. "Cream / M"), the quantity, and the
- * line price aligned to the trailing edge. Corners are rounded to 8dp.
- *
- * @param specs comma/slash-joined variant summary, e.g. "Cream / M".
- * @param priceFormatted pre-formatted line price, e.g. "$98.00".
- */
+
+import coil3.compose.AsyncImage
+
 @Composable
 fun OrderSummaryItemCard(
-    imagePainter: Painter,
+    imageUrl: String? = null,
+    imagePainter: Painter? = null,
     name: String,
     specs: String,
     quantity: Int,
@@ -47,24 +48,40 @@ fun OrderSummaryItemCard(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .height(100.dp)
-            .clip(Theme.shapes.medium),
+            .height(128.dp)
+           .shadow(elevation =0.4.dp, shape = Theme.shapes.medium, clip = false)
+            .clip(Theme.shapes.medium)
+            .background(Theme.colors.surface)
+            .border(1.dp, Theme.colors.onPrimaryVariant, Theme.shapes.medium)
+            .padding(Theme.spacing.small),
         horizontalArrangement = Arrangement.spacedBy(Theme.spacing.medium),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Image(
-            painter = imagePainter,
-            contentDescription = name,
-            contentScale = ContentScale.FillBounds,
-            modifier = Modifier
-                .width(128.dp)
-                .fillMaxHeight()
-                .clip(Theme.shapes.medium),
-        )
+        if (imageUrl != null) {
+            AsyncImage(
+                model = imageUrl,
+                contentDescription = name,
+                contentScale = ContentScale.FillBounds,
+                modifier = Modifier
+                    .width(110.dp)
+                    .fillMaxHeight()
+                    .clip(Theme.shapes.medium)
+                    .background(Theme.colors.surfaceVariant),
+            )
+        } else if (imagePainter != null) {
+            Image(
+                painter = imagePainter,
+                contentDescription = name,
+                contentScale = ContentScale.FillBounds,
+                modifier = Modifier
+                    .width(110.dp)
+                    .fillMaxHeight()
+                    .clip(Theme.shapes.medium),
+            )
+        }
 
         Column(
             modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(Theme.spacing.extraSmall),
         ) {
             BasicText(
                 text = name,
@@ -80,7 +97,7 @@ fun OrderSummaryItemCard(
                 style = Theme.typography.body.medium.copy(color = Theme.colors.secondaryFont),
             )
             BasicText(
-                text = "Qty: $quantity",
+                text = stringResource(Res.string.quantity_label, quantity),
                 style = Theme.typography.body.medium.copy(color = Theme.colors.secondaryFont),
             )
         }

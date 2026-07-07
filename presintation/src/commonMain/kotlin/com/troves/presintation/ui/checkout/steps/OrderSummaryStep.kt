@@ -7,13 +7,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
@@ -110,7 +109,7 @@ fun OrderSummaryStepContent(
         )
             Row(
                 modifier = Modifier.fillMaxWidth().padding(vertical = Theme.spacing.small),
-                horizontalArrangement = Arrangement.SpaceBetween,
+                horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small),
                 verticalAlignment = Alignment.Bottom,
             ) {
                 CustomTextField(
@@ -118,14 +117,14 @@ fun OrderSummaryStepContent(
                     onTextChange = onCouponChange,
                     hint = stringResource(StringRes.string.checkout_coupon_hint),
                     singleLine = true,
-                    modifier = Modifier.fillMaxHeight().width(280.dp).padding(end = 8.dp)
+                    modifier = Modifier.weight(1f)
                 )
                 PrimaryButton(
                     caption = stringResource(StringRes.string.apply),
                     onClick = onApplyCoupon,
                     isLoading = isApplyingCoupon,
                     isDisabled = couponInput.isBlank(),
-                    modifier = Modifier.width(80.dp).height(48.dp)
+                    modifier = Modifier.widthIn(min = 88.dp).height(48.dp)
                 )
             }
 
