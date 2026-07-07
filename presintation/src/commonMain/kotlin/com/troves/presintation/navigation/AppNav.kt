@@ -28,6 +28,7 @@ import com.troves.presintation.ui.address.ManageSavedAddressesScreen
 import com.troves.presintation.ui.address.NewAddressScreen
 import com.troves.presintation.ui.aichat.AiChatScreen
 import com.troves.presintation.ui.aichat.AiChatViewModel
+import com.troves.presintation.ui.auth.EmailVerificationScreen
 import com.troves.presintation.ui.auth.LoginScreen
 import com.troves.presintation.ui.auth.RegisterScreen
 import com.troves.presintation.ui.cart.CartScreen
@@ -63,6 +64,7 @@ private val navSavedStateConfiguration = SavedStateConfiguration {
             subclass(AppRoute.Onboarding::class, AppRoute.Onboarding.serializer())
             subclass(AppRoute.Login::class, AppRoute.Login.serializer())
             subclass(AppRoute.Register::class, AppRoute.Register.serializer())
+            subclass(AppRoute.EmailVerification::class, AppRoute.EmailVerification.serializer())
             subclass(AppRoute.Home::class, AppRoute.Home.serializer())
             subclass(AppRoute.Products::class, AppRoute.Products.serializer())
             subclass(AppRoute.SeeAll::class, AppRoute.SeeAll.serializer())
@@ -140,10 +142,10 @@ fun AppNav() {
                 },
                 onNavigateToProducts = { sourceType, sourceId, sourceName ->
                     backStack.add(
-                        AppRoute.SeeAll(
-                            type = AppRoute.SeeAllType.PRODUCTS,
-                            id = sourceId,
-                            name = sourceName,
+                        AppRoute.Products(
+                            sourceType = sourceType,
+                            sourceId = sourceId,
+                            sourceName = sourceName,
                         ),
                     )
                 },
@@ -183,6 +185,7 @@ fun AppNav() {
                 if (uiState.isLoading) null
                 else when (uiState.startDestination) {
                     StartDestination.Onboarding -> AppRoute.Onboarding
+                    StartDestination.EmailVerification -> AppRoute.EmailVerification
                     StartDestination.Home -> AppRoute.Home
                 }
             }
@@ -203,6 +206,7 @@ fun AppNav() {
             LoginScreen(
                 onNavigateToRegister = { backStack.add(AppRoute.Register) },
                 onLoginSuccess = { replaceWith(AppRoute.Home) },
+                onNavigateToEmailVerification = { backStack.add(AppRoute.EmailVerification) },
                 onLoggedIn = {
                 }
             )
@@ -211,8 +215,15 @@ fun AppNav() {
             RegisterScreen(
                 onNavigateToLogin = { backStack.add(AppRoute.Login) },
                 onRegisterSuccess = { replaceWith(AppRoute.Home) },
+                onNavigateToEmailVerification = { backStack.add(AppRoute.EmailVerification) },
                 onRegistered = {
                 }
+            )
+        }
+        entry<AppRoute.EmailVerification> {
+            EmailVerificationScreen(
+                onVerificationSuccess = { replaceWith(AppRoute.Home) },
+                onContinueAsGuest = { replaceWith(AppRoute.Home) }
             )
         }
         entry<AppRoute.SeeAll> { key ->
@@ -222,7 +233,13 @@ fun AppNav() {
                 name = key.name,
                 onNavigateBack = { backStack.removeLastOrNull() },
                 onNavigateToProducts = { sourceType, sourceId, sourceName ->
-                    backStack.add(AppRoute.SeeAll(AppRoute.SeeAllType.PRODUCTS, sourceId, sourceName))
+                    backStack.add(
+                        AppRoute.Products(
+                            sourceType = sourceType,
+                            sourceId = sourceId,
+                            sourceName = sourceName,
+                        )
+                    )
                 },
                 onNavigateToProductDetails = { productId ->
                     backStack.add(AppRoute.ProductDetails(productId))
