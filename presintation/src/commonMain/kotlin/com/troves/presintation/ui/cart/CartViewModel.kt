@@ -35,7 +35,6 @@ class CartViewModel(
 
     private val updatingLines = mutableSetOf<String>()
 
-    /** Cart is view-only while offline: block every mutation and tell the user why. */
     private fun ensureOnline(): Boolean {
         if (observeConnectivity.isOnlineNow()) return true
         sendEffect(CartEffect.ShowToast(NO_CONNECTION_MESSAGE))
@@ -108,15 +107,12 @@ class CartViewModel(
             sendEffect(CartEffect.ShowRemoveConfirmationDialog(item))
             return
         }
-        // Pre-validate against known inventory so we never fire a doomed update or a false "max" toast.
-        // (The old post-update check raced the async cart flow and misfired even on successful adds.)
         val max = item.maxQuantity
         if (delta > 0 && max != null && newQuantity > max) {
             sendEffect(CartEffect.ShowToast("You have reached the maximum quantity"))
             return
         }
         updatingLines.add(lineId)
-        // Optimistic bump for instant feedback; the cart flow then confirms/corrects with Shopify truth.
         updateState {
             copy(items = items.map { if (it.lineId == lineId) it.copy(quantity = newQuantity) else it })
         }
@@ -125,14 +121,13 @@ class CartViewModel(
             updatingLines.remove(lineId)
             when (result) {
                 CartOperationResult.RequiresLogin -> {
-                    refreshCart() // revert optimistic bump to authoritative state
+                    refreshCart()
                     sendEffect(CartEffect.ShowLoginRequiredDialog)
                 }
                 is CartOperationResult.Error -> {
                     refreshCart() // revert optimistic bump; re-sync from Shopify
                     sendEffect(CartEffect.ShowToast("Couldn't update cart"))
                 }
-                // On success the cart flow emits Shopify's authoritative quantity/total — no manual reconcile.
                 CartOperationResult.Success -> Unit
             }
         }
