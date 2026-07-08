@@ -4,15 +4,19 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.mapbox.geojson.Point
+import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.extension.compose.MapboxMap
 import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportState
 import com.mapbox.maps.extension.compose.annotation.ViewAnnotation
+import com.mapbox.maps.plugin.animation.MapAnimationOptions
 import com.mapbox.maps.viewannotation.geometry
 import com.mapbox.maps.viewannotation.viewAnnotationOptions
 import com.troves.designsystem.theme.Theme
+import com.troves.domain.entity.LocationCoordinates
 import org.jetbrains.compose.resources.painterResource
 import troves.designsystem.generated.resources.Res
 import troves.designsystem.generated.resources.ic_location
@@ -21,16 +25,31 @@ import troves.designsystem.generated.resources.ic_location
 actual fun MapBox(
     selectedLatitude: Double?,
     selectedLongitude: Double?,
+    currentLocation: LocationCoordinates,
     onMapClick: (latitude: Double, longitude: Double) -> Unit
 ) {
+    val viewportState = rememberMapViewportState {
+        setCameraOptions {
+            center(Point.fromLngLat(selectedLongitude ?: 0.0, selectedLatitude ?: 0.0))
+            zoom(12.0)
+        }
+    }
+    LaunchedEffect(currentLocation) {
+        onMapClick(currentLocation.lan, currentLocation.lon)
+         viewportState.flyTo(
+             cameraOptions = CameraOptions.Builder()
+                 .center(Point.fromLngLat(currentLocation.lan, currentLocation.lon))
+                 .zoom(10.0)
+                 .build(),
+             animationOptions = MapAnimationOptions.mapAnimationOptions {
+                 duration(2000)
+             }
+         )
+    }
+
     MapboxMap(
         Modifier.fillMaxSize(),
-        mapViewportState = rememberMapViewportState {
-            setCameraOptions {
-                center(Point.fromLngLat(31.2357, 30.0444))
-                zoom(12.0)
-            }
-        },
+        mapViewportState = viewportState,
         onMapClickListener = { point ->
             onMapClick(point.latitude(), point.longitude())
             true
