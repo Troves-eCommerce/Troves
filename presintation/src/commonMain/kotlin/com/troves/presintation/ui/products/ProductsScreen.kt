@@ -62,6 +62,8 @@ import troves.designsystem.generated.resources.products_retry
 import troves.designsystem.generated.resources.sort_title
 import troves.designsystem.generated.resources.products_empty_title
 import troves.designsystem.generated.resources.products_empty_desc
+import troves.presintation.generated.resources.Res as PresRes
+import troves.presintation.generated.resources.common_back
 import com.troves.designsystem.components.emptystate.EmptyState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
@@ -193,7 +195,7 @@ private fun ProductsToolbar(
     ) {
         IconBox(
             icon = painterResource(DesignRes.drawable.ic_arrow_back),
-            contentDescription = "Back",
+            contentDescription = stringResource(PresRes.string.common_back),
             onClick = onBackClick,
             autoMirror = true,
             border = BorderStroke(1.dp, Theme.colors.onPrimary)
@@ -212,7 +214,7 @@ private fun ProductsToolbar(
         Row(horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small)) {
             IconBox(
                 icon = rememberVectorPainter(Lucide.SlidersHorizontal),
-                contentDescription = "Filter",
+                contentDescription = stringResource(DesignRes.string.filter_title),
                 onClick = onFilterClick,
                 backgroundColor = if (filterActive) Theme.colors.primary else Theme.colors.surface,
                 iconTint = if (filterActive) Theme.colors.onPrimary else Theme.colors.primaryFont,
@@ -220,7 +222,7 @@ private fun ProductsToolbar(
             )
             IconBox(
                 icon = painterResource(DesignRes.drawable.ic_arrow_drop_down),
-                contentDescription = "Sort",
+                contentDescription = stringResource(DesignRes.string.sort_title),
                 onClick = onSortClick,
                 backgroundColor = if (sortActive) Theme.colors.primary else Theme.colors.surface,
                 iconTint = if (sortActive) Theme.colors.onPrimary else Theme.colors.primaryFont,

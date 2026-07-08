@@ -25,6 +25,14 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import troves.designsystem.generated.resources.Res
 import troves.designsystem.generated.resources.wishlist_auth_required_desc
+import troves.presintation.generated.resources.Res as ResP
+import troves.presintation.generated.resources.wishlist_clear_action
+import troves.presintation.generated.resources.wishlist_clear_message
+import troves.presintation.generated.resources.wishlist_clear_title
+import troves.presintation.generated.resources.wishlist_remove_action
+import troves.presintation.generated.resources.wishlist_remove_confirm
+import troves.presintation.generated.resources.wishlist_remove_item_title
+import troves.presintation.generated.resources.wishlist_view_login_required
 
 @Composable
 fun WishlistScreen(
@@ -63,7 +71,7 @@ fun WishlistScreen(
 
     if (showLoginRequiredDialog) {
         LoginRequiredDialog(
-            message = "You need to be logged in to view your wishlist.",
+            message = stringResource(ResP.string.wishlist_view_login_required),
             onLoginClick = {
                 showLoginRequiredDialog = false
                 onNavigateToRegister()
@@ -77,9 +85,9 @@ fun WishlistScreen(
     productToRemove?.let { product ->
 
         TrovesDialog(
-            title = "Remove Item",
-            message = "Are you sure you want to remove \"${product.title}\" from your wishlist?",
-            confirmText = "Remove",
+            title = stringResource(ResP.string.wishlist_remove_item_title),
+            message = stringResource(ResP.string.wishlist_remove_confirm, product.title),
+            confirmText = stringResource(ResP.string.wishlist_remove_action),
             onConfirm = {
                 viewModel.onIntent(WishlistIntent.RemoveClicked(product))
                 productToRemove = null
@@ -93,9 +101,9 @@ fun WishlistScreen(
     if (showClearDialog) {
 
         TrovesDialog(
-            title = "Clear Wishlist",
-            message = "This action will remove all wishlist items.",
-            confirmText = "Clear",
+            title = stringResource(ResP.string.wishlist_clear_title),
+            message = stringResource(ResP.string.wishlist_clear_message),
+            confirmText = stringResource(ResP.string.wishlist_clear_action),
             onConfirm = {
                 viewModel.onIntent(WishlistIntent.ClearAllClicked)
                 showClearDialog = false

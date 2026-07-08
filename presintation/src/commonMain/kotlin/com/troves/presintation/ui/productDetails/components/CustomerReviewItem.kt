@@ -30,6 +30,8 @@ import org.jetbrains.compose.resources.stringResource
 import troves.designsystem.generated.resources.Res
 import troves.designsystem.generated.resources.ic_star
 import troves.designsystem.generated.resources.product_details_reviews_your_badge
+import troves.presintation.generated.resources.Res as ResP
+import troves.presintation.generated.resources.product_details_review_anonymous
 
 @Composable
 fun CustomerReviewItem(
@@ -76,7 +78,7 @@ private fun ColumnScope.ReviewHeader(review: ReviewUi) {
     ) {
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = review.authorName,
+                text = review.authorName.ifBlank { stringResource(ResP.string.product_details_review_anonymous) },
                 style = Theme.typography.body.medium,
                 fontWeight = FontWeight.Bold,
                 color = Theme.colors.primaryFont,

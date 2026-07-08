@@ -16,6 +16,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.getString
+import troves.presintation.generated.resources.Res
+import troves.presintation.generated.resources.no_internet_connection
+import troves.presintation.generated.resources.wishlist_remove_failed
+import troves.presintation.generated.resources.wishlist_sync_failed
 
 class WishlistViewModel(
     private val getWishlist: GetWishlistUseCase,
@@ -67,7 +72,7 @@ class WishlistViewModel(
             try {
                 syncWishlist(forceRefresh = true)
             } catch (_: Exception) {
-                sendEffect(WishlistEffect.ShowToast("Failed to sync wishlist"))
+                sendEffect(WishlistEffect.ShowToast(getString(Res.string.wishlist_sync_failed)))
             } finally {
                 _state.update { it.copy(isRefreshing = false) }
             }
@@ -77,7 +82,7 @@ class WishlistViewModel(
     /** Wishlist is view-only while offline: block mutations with a clear message. */
     private fun ensureOnline(): Boolean {
         if (observeConnectivity.isOnlineNow()) return true
-        sendEffect(WishlistEffect.ShowToast(NO_CONNECTION_MESSAGE))
+        viewModelScope.launch { sendEffect(WishlistEffect.ShowToast(getString(Res.string.no_internet_connection))) }
         return false
     }
 
@@ -92,7 +97,7 @@ class WishlistViewModel(
                     loadWishlist()
                 }
                 else -> {
-                    sendEffect(WishlistEffect.ShowToast("Couldn't remove item"))
+                    sendEffect(WishlistEffect.ShowToast(getString(Res.string.wishlist_remove_failed)))
                     loadWishlist()
                 }
             }
@@ -114,7 +119,4 @@ class WishlistViewModel(
         viewModelScope.launch { _effect.send(newEffect) }
     }
 
-    private companion object {
-        const val NO_CONNECTION_MESSAGE = "No internet connection"
-    }
 }

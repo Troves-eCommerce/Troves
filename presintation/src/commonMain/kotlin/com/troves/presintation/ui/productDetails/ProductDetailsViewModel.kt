@@ -41,6 +41,17 @@ import troves.designsystem.generated.resources.product_details_review_rating_req
 import troves.designsystem.generated.resources.product_details_review_submitted
 import troves.designsystem.generated.resources.product_details_select_option
 import troves.designsystem.generated.resources.product_details_unavailable_combination
+import troves.presintation.generated.resources.Res as ResP
+import troves.presintation.generated.resources.favorites_update_failed
+import troves.presintation.generated.resources.product_details_add_to_cart_failed
+import troves.presintation.generated.resources.product_details_favorite_added
+import troves.presintation.generated.resources.product_details_favorite_removed
+import troves.presintation.generated.resources.product_details_unknown_error
+import troves.presintation.generated.resources.time_days_ago
+import troves.presintation.generated.resources.time_hours_ago
+import troves.presintation.generated.resources.time_just_now
+import troves.presintation.generated.resources.time_minutes_ago
+import troves.presintation.generated.resources.time_weeks_ago
 
 class ProductDetailsViewModel(
     private val getProductByIdUseCase: GetProductByIdUseCase,
@@ -132,11 +143,14 @@ class ProductDetailsViewModel(
             when (val product = getProductByIdUseCase(productId)) {
                 Result.Loading -> updateState { copy(isLoading = true) }
 
-                is Result.Error -> updateState {
-                    copy(
-                        isLoading = false,
-                        errorMessage = product.throwable.message ?: "Unknown error",
-                    )
+                is Result.Error -> {
+                    val fallback = getString(ResP.string.product_details_unknown_error)
+                    updateState {
+                        copy(
+                            isLoading = false,
+                            errorMessage = product.throwable.message ?: fallback,
+                        )
+                    }
                 }
 
                 is Result.Success<Product> -> {
@@ -176,7 +190,7 @@ class ProductDetailsViewModel(
         }
     }
 
-    private fun applyReviews(
+    private suspend fun applyReviews(
         productId: String,
         realReviews: List<Review>,
         currentUserId: String?,
@@ -260,7 +274,7 @@ class ProductDetailsViewModel(
         }
     }
 
-    private fun Review.toUi(currentUserId: String?, now: Long) = ReviewUi(
+    private suspend fun Review.toUi(currentUserId: String?, now: Long) = ReviewUi(
         id = id,
         userId = userId,
         firstName = firstName,
@@ -271,18 +285,18 @@ class ProductDetailsViewModel(
         isMine = currentUserId != null && userId == currentUserId,
     )
 
-    private fun relativeTime(now: Long, then: Long): String {
+    private suspend fun relativeTime(now: Long, then: Long): String {
         if (then <= 0L) return ""
         val diff = (now - then).coerceAtLeast(0L)
         val minutes = diff / 60_000
         val hours = diff / 3_600_000
         val days = diff / 86_400_000
         return when {
-            minutes < 1 -> "Just now"
-            minutes < 60 -> "${minutes}m ago"
-            hours < 24 -> "${hours}h ago"
-            days < 7 -> "${days}d ago"
-            else -> "${days / 7}w ago"
+            minutes < 1 -> getString(ResP.string.time_just_now)
+            minutes < 60 -> getString(ResP.string.time_minutes_ago, minutes.toInt())
+            hours < 24 -> getString(ResP.string.time_hours_ago, hours.toInt())
+            days < 7 -> getString(ResP.string.time_days_ago, days.toInt())
+            else -> getString(ResP.string.time_weeks_ago, (days / 7).toInt())
         }
     }
 
@@ -308,8 +322,11 @@ class ProductDetailsViewModel(
     }
 
     private fun onFavoriteClick() {
-        val product = currentState.product ?: run {
-            sendEffect(ProductDetailsEffect.ShowToast("Couldn't update favorites"))
+        val product = currentState.product
+        if (product == null) {
+            viewModelScope.launch {
+                sendEffect(ProductDetailsEffect.ShowToast(getString(ResP.string.favorites_update_failed)))
+            }
             return
         }
         val wasFavorite = currentState.isFavorite
@@ -319,10 +336,10 @@ class ProductDetailsViewModel(
         viewModelScope.launch {
             when (toggleFavoriteUseCase(product)) {
                 ToggleFavoriteResult.Added ->
-                    sendEffect(ProductDetailsEffect.ShowToast("Added to favorites successfully"))
+                    sendEffect(ProductDetailsEffect.ShowToast(getString(ResP.string.product_details_favorite_added)))
 
                 ToggleFavoriteResult.Removed ->
-                    sendEffect(ProductDetailsEffect.ShowToast("Removed from favorites successfully"))
+                    sendEffect(ProductDetailsEffect.ShowToast(getString(ResP.string.product_details_favorite_removed)))
 
                 ToggleFavoriteResult.RequiresLogin -> {
                     updateState { copy(isFavorite = wasFavorite) }
@@ -331,7 +348,7 @@ class ProductDetailsViewModel(
 
                 is ToggleFavoriteResult.Error -> {
                     updateState { copy(isFavorite = wasFavorite) }
-                    sendEffect(ProductDetailsEffect.ShowToast("Couldn't update favorites"))
+                    sendEffect(ProductDetailsEffect.ShowToast(getString(ResP.string.favorites_update_failed)))
                 }
             }
         }
@@ -367,7 +384,7 @@ class ProductDetailsViewModel(
                     sendEffect(ProductDetailsEffect.ShowLoginRequiredDialog())
 
                 is CartOperationResult.Error ->
-                    sendEffect(ProductDetailsEffect.ShowToast("Couldn't add to cart"))
+                    sendEffect(ProductDetailsEffect.ShowToast(getString(ResP.string.product_details_add_to_cart_failed)))
             }
         }
     }
