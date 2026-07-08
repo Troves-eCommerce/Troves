@@ -79,7 +79,8 @@ fun ProductImageCarousel(
                 .padding(start = 16.dp, top = 16.dp)
                 .size(46.dp)
                 .clip(RoundedCornerShape(12.dp))
-                .background(Color.White),
+                .background(Color.White)
+                .autoMirror(),
         ) {
             Icon(
                 painter = painterResource(Res.drawable.ic_arrow_back),
