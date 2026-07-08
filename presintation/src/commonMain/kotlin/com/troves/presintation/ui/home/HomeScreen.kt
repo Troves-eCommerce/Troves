@@ -60,6 +60,7 @@ import com.troves.designsystem.util.autoMirror
 import com.troves.designsystem.util.bounceClick
 import kotlin.math.abs
 
+import com.troves.designsystem.components.dialog.LoginRequiredDialog
 import com.troves.designsystem.components.dialog.TrovesDialog
 import com.troves.domain.entity.Ad
 import com.troves.domain.entity.Brand
@@ -148,6 +149,13 @@ fun HomeScreen(
         SignUpPromptDialog(
             onConfirm = { viewModel.onIntent(HomeIntent.SignUpPromptConfirmed) },
             onDismiss = { viewModel.onIntent(HomeIntent.SignUpPromptDismissed) },
+        )
+    }
+
+    if (state.showAiLoginPrompt) {
+        LoginRequiredDialog(
+            onLoginClick = { viewModel.onIntent(HomeIntent.AiLoginPromptConfirmed) },
+            onDismiss = { viewModel.onIntent(HomeIntent.AiLoginPromptDismissed) },
         )
     }
 

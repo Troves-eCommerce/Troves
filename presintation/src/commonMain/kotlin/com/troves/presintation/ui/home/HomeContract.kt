@@ -16,6 +16,7 @@ data class HomeUiState(
     val favoriteProductIds: Set<Long> = emptySet(),
     val errorMessage: String? = null,
     val showSignUpPrompt: Boolean = false,
+    val showAiLoginPrompt: Boolean = false,
     val isSurveyDone: Boolean = false,
     val isLoggedIn: Boolean = false,
     val cartItemCount: Int = 0,
@@ -64,6 +65,8 @@ sealed interface HomeIntent {
     data object SurveyBannerNeverShowAgain : HomeIntent
     data object SignUpPromptConfirmed : HomeIntent
     data object SignUpPromptDismissed : HomeIntent
+    data object AiLoginPromptConfirmed : HomeIntent
+    data object AiLoginPromptDismissed : HomeIntent
     data class AdClicked(val ad: Ad) : HomeIntent
     data class BrandClicked(val brand: Brand) : HomeIntent
     data class CategoryClicked(val category: Category) : HomeIntent

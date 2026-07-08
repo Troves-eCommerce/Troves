@@ -98,6 +98,11 @@ class HomeViewModel(
                 sendEffect(HomeEffect.NavigateToRegister)
             }
             HomeIntent.SignUpPromptDismissed -> updateState { copy(showSignUpPrompt = false) }
+            HomeIntent.AiLoginPromptConfirmed -> {
+                updateState { copy(showAiLoginPrompt = false) }
+                sendEffect(HomeEffect.NavigateToRegister)
+            }
+            HomeIntent.AiLoginPromptDismissed -> updateState { copy(showAiLoginPrompt = false) }
             HomeIntent.SeeAllBrandsClicked -> sendEffect(HomeEffect.NavigateToAllBrands)
             HomeIntent.ViewAllCategoriesClicked -> sendEffect(HomeEffect.NavigateToAllCategories)
             HomeIntent.ViewAllJustForYouClicked -> viewModelScope.launch {
@@ -156,13 +161,7 @@ class HomeViewModel(
             is HomeIntent.ProductClicked ->
                 sendEffect(NavigateToProduct(intent.product.id.toString()))
             is HomeIntent.FavoriteToggled -> toggleFavorite(intent.product)
-            HomeIntent.AiClicked -> {
-                if (currentState.isLoggedIn) {
-                    sendEffect(NavigateToAiChat)
-                } else {
-                    updateState { copy(showSignUpPrompt = true) }
-                }
-            }
+            HomeIntent.AiClicked -> onAiClicked()
         }
     }
 
@@ -252,6 +251,16 @@ class HomeViewModel(
                 sendEffect(HomeEffect.NavigateToCart)
             } else {
                 updateState { copy(showSignUpPrompt = true) }
+            }
+        }
+    }
+
+    private fun onAiClicked() {
+        viewModelScope.launch {
+            if (isLoggedIn()) {
+                sendEffect(NavigateToAiChat)
+            } else {
+                updateState { copy(showAiLoginPrompt = true) }
             }
         }
     }
