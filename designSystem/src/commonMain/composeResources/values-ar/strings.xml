@@ -211,4 +211,11 @@
     <string name="no_connection_desc">تحقق من اتصالك بالإنترنت وحاول مرة أخرى.</string>
     <string name="no_connection_retry">إعادة المحاولة</string>
     <string name="no_connection_action_blocked">أنت غير متصل بالإنترنت. اتصل بالإنترنت للمتابعة.</string>
+
+    <!-- Currencies -->
+    <string name="currency_egp">ج.م</string>
+    <string name="currency_gbp">£</string>
+    <string name="currency_jpy">¥</string>
+    <string name="currency_eur">€</string>
+    <string name="currency_usd">$</string>
 </resources>

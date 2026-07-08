@@ -43,6 +43,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -100,11 +101,13 @@ fun HomeScreen(
     val showSurveyPopup = state.isLoggedIn && !state.isSurveyDone && !dismissedSurveyPopup && !state.showOfflineState
 
     // Intercept wishlist REMOVALS to confirm first; adding a favorite (or any other intent) passes through.
+    val currentFavoriteIds by rememberUpdatedState(state.favoriteProductIds)
+    val currentViewModel by rememberUpdatedState(viewModel)
     val onIntent: (HomeIntent) -> Unit = { intent ->
-        if (intent is HomeIntent.FavoriteToggled && intent.product.id in state.favoriteProductIds) {
+        if (intent is HomeIntent.FavoriteToggled && intent.product.id in currentFavoriteIds) {
             productToRemove = intent.product
         } else {
-            viewModel.onIntent(intent)
+            currentViewModel.onIntent(intent)
         }
     }
 

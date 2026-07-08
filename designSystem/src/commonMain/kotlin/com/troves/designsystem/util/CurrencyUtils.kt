@@ -4,6 +4,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.compositionLocalOf
 import com.troves.domain.entity.ExchangeRate
+import org.jetbrains.compose.resources.stringResource
+import troves.designsystem.generated.resources.Res
+import troves.designsystem.generated.resources.*
 
 data class CurrencyState(
     val selectedCurrency: String = "EGP",
@@ -13,7 +16,6 @@ data class CurrencyState(
 val LocalCurrency = compositionLocalOf { CurrencyState() }
 
 @Composable
-@ReadOnlyComposable
 fun formatPrice(price: String): String {
     val cleanPrice = price.replace(Regex("[^0-9.-]"), "")
     val isNegative = price.contains("-")
@@ -23,7 +25,6 @@ fun formatPrice(price: String): String {
 }
 
 @Composable
-@ReadOnlyComposable
 fun formatPrice(price: Double): String {
     val currencyState = LocalCurrency.current
     val rates = currencyState.exchangeRate?.rates
@@ -40,11 +41,11 @@ fun formatPrice(price: Double): String {
     }
 
     val symbol = when (targetCurrency) {
-        "EGP" -> "EGP"
-        "GBP" -> "£"
-        "JPY" -> "¥"
-        "EUR" -> "€"
-        "USD" -> "$"
+        "EGP" -> stringResource(Res.string.currency_egp)
+        "GBP" -> stringResource(Res.string.currency_gbp)
+        "JPY" -> stringResource(Res.string.currency_jpy)
+        "EUR" -> stringResource(Res.string.currency_eur)
+        "USD" -> stringResource(Res.string.currency_usd)
         else -> targetCurrency
     }
 
@@ -52,11 +53,8 @@ fun formatPrice(price: Double): String {
     val parts = rounded.toString().split(".")
     val decimals = if (parts.size > 1) parts[1].padEnd(2, '0').take(2) else "00"
     
-    val result = if (targetCurrency == "EGP") {
-        "${parts[0]}.$decimals $symbol"
-    } else {
-        "$symbol${parts[0]}.$decimals"
-    }
+    // Use LTR Mark (\u200E) to ensure correct order in RTL languages if LTR characters are mixed
+    val result = "\u200E${parts[0]}.$decimals $symbol"
 
     return if (isNegative) "- $result" else result
 }

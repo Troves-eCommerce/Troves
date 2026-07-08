@@ -116,7 +116,7 @@ fun buildSurveyQuestions(): List<SurveyQuestion> = listOf(
     SurveyQuestion.SingleChip(
         title = Res.string.survey_gender_title,
         subtitle = null,
-        options = listOf(SurveyOption("Men", Res.string.survey_opt_men), SurveyOption("Women", Res.string.survey_opt_women), SurveyOption("Unisex", Res.string.survey_opt_unisex)),
+        options = listOf(SurveyOption("Men", Res.string.survey_opt_men), SurveyOption("Women", Res.string.survey_opt_women)),
     ),
 
 )

@@ -113,6 +113,7 @@ fun WishlistScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(Theme.colors.backGround)
+            .statusBarsPadding(),
     ) {
         BaseTopAppBar(title = stringResource(troves.presintation.generated.resources.Res.string.wishlist_header_title))
         
