@@ -7,8 +7,10 @@ import com.troves.data.source.local.preferenceses.TrovesPreferences
 import com.troves.data.source.remote.service.StorefrontApiService
 import com.troves.domain.entity.Address
 import com.troves.domain.repository.AddressRepository
+import com.troves.domain.repository.AuthenticationRepository
 import com.troves.domain.utils.Result
 import com.troves.domain.utils.ShopifyAuthRequiredException
+import com.troves.domain.utils.ShopifyProvisioningFailedException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -19,27 +21,54 @@ class AddressRepositoryImpl(
     private val storefront: StorefrontApiService,
     private val preferences: TrovesPreferences,
     private val addressDao: AddressDao,
+    private val authRepository: AuthenticationRepository,
 ) : AddressRepository {
 
     private val _addresses = MutableStateFlow<List<Address>>(emptyList())
     override val addresses: Flow<List<Address>> = _addresses.asStateFlow()
 
+
     private suspend fun requireToken(): Result<String> {
-        val token = preferences.shopifyCustomerAccessTokenOrNull.first()
-        return if (token.isNullOrBlank()) {
-            Result.Error(ShopifyAuthRequiredException())
-        } else {
-            Result.Success(token)
+        preferences.shopifyCustomerAccessTokenOrNull.first()?.takeIf { it.isNotBlank() }
+            ?.let { return Result.Success(it) }
+
+        return when (val healed = authRepository.ensureShopifyToken()) {
+            is Result.Success -> {
+                val token = preferences.shopifyCustomerAccessTokenOrNull.first()
+                if (token.isNullOrBlank()) Result.Error(ShopifyProvisioningFailedException())
+                else Result.Success(token)
+            }
+            is Result.Error -> Result.Error(healed.throwable)
+            is Result.Loading -> Result.Loading
         }
     }
 
-    override suspend fun refresh(): Result<Unit> {
+    private suspend fun <T> withToken(block: suspend (token: String) -> Result<T>): Result<T> {
         val token = when (val t = requireToken()) {
             is Result.Success -> t.value
-            is Result.Error -> { _addresses.value = emptyList(); return t }
+            is Result.Error -> return Result.Error(t.throwable)
             is Result.Loading -> return Result.Loading
         }
-        return when (val res = storefront.getCustomerAddresses(token)) {
+        val first = block(token)
+        if (first is Result.Error && isShopifyAuthError(first.throwable)) {
+            preferences.clearShopifyCustomerAccessToken()
+            return when (val t2 = requireToken()) {
+                is Result.Success -> block(t2.value)
+                is Result.Error -> Result.Error(t2.throwable)
+                is Result.Loading -> Result.Loading
+            }
+        }
+        return first
+    }
+
+    private fun isShopifyAuthError(t: Throwable): Boolean {
+        val m = t.message?.lowercase() ?: return false
+        return "token" in m || "unidentified" in m || "identify the customer" in m ||
+            "logged in" in m || "expired" in m || "access denied" in m
+    }
+
+    override suspend fun refresh(): Result<Unit> = withToken { token ->
+        when (val res = storefront.getCustomerAddresses(token)) {
             is Result.Success -> {
                 val decorations = addressDao.getDecorations().associateBy { it.addressId }
                 _addresses.value = res.value.map { it.applyDecoration(decorations[it.id]) }
@@ -48,15 +77,16 @@ class AddressRepositoryImpl(
             is Result.Error -> res
             is Result.Loading -> Result.Loading
         }
+    }.also {
+        // Only wipe the cached list when the session itself is invalid — not on a
+        // transient network error, so the user keeps seeing their addresses.
+        if (it is Result.Error &&
+            (it.throwable is ShopifyAuthRequiredException || it.throwable is ShopifyProvisioningFailedException)
+        ) _addresses.value = emptyList()
     }
 
-    override suspend fun addAddress(address: Address): Result<Address> {
-        val token = when (val t = requireToken()) {
-            is Result.Success -> t.value
-            is Result.Error -> return t
-            is Result.Loading -> return Result.Loading
-        }
-        return when (val res = storefront.createCustomerAddress(token, address)) {
+    override suspend fun addAddress(address: Address): Result<Address> = withToken { token ->
+        when (val res = storefront.createCustomerAddress(token, address)) {
             is Result.Success -> {
                 val created = res.value
                 addressDao.upsertDecoration(address.copy(id = created.id).toDecorationEntity())
@@ -69,13 +99,8 @@ class AddressRepositoryImpl(
         }
     }
 
-    override suspend fun updateAddress(address: Address): Result<Address> {
-        val token = when (val t = requireToken()) {
-            is Result.Success -> t.value
-            is Result.Error -> return t
-            is Result.Loading -> return Result.Loading
-        }
-        return when (val res = storefront.updateCustomerAddress(token, address.id, address)) {
+    override suspend fun updateAddress(address: Address): Result<Address> = withToken { token ->
+        when (val res = storefront.updateCustomerAddress(token, address.id, address)) {
             is Result.Success -> {
                 addressDao.upsertDecoration(address.toDecorationEntity())
                 if (address.isDefault) storefront.setDefaultCustomerAddress(token, address.id)
@@ -87,13 +112,8 @@ class AddressRepositoryImpl(
         }
     }
 
-    override suspend fun deleteAddress(addressId: String): Result<Unit> {
-        val token = when (val t = requireToken()) {
-            is Result.Success -> t.value
-            is Result.Error -> return t
-            is Result.Loading -> return Result.Loading
-        }
-        return when (val res = storefront.deleteCustomerAddress(token, addressId)) {
+    override suspend fun deleteAddress(addressId: String): Result<Unit> = withToken { token ->
+        when (val res = storefront.deleteCustomerAddress(token, addressId)) {
             is Result.Success -> {
                 addressDao.deleteDecoration(addressId)
                 refresh()
@@ -104,13 +124,8 @@ class AddressRepositoryImpl(
         }
     }
 
-    override suspend fun setDefaultAddress(addressId: String): Result<Unit> {
-        val token = when (val t = requireToken()) {
-            is Result.Success -> t.value
-            is Result.Error -> return t
-            is Result.Loading -> return Result.Loading
-        }
-        return when (val res = storefront.setDefaultCustomerAddress(token, addressId)) {
+    override suspend fun setDefaultAddress(addressId: String): Result<Unit> = withToken { token ->
+        when (val res = storefront.setDefaultCustomerAddress(token, addressId)) {
             is Result.Success -> { refresh(); Result.Success(Unit) }
             is Result.Error -> res
             is Result.Loading -> Result.Loading
