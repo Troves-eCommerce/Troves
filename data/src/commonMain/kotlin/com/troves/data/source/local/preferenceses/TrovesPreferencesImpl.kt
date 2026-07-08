@@ -74,6 +74,11 @@ class TrovesPreferencesImpl(
             .catchIOException()
             .map { it[AppPreferencesKeys.IS_SURVEY_DONE] ?: false }
 
+    override val isCartHintShown: Flow<Boolean>
+        get() = dataStore.data
+            .catchIOException()
+            .map { it[AppPreferencesKeys.IS_CART_HINT_SHOWN] ?: false }
+
     override val isLoggedIn: Flow<Boolean>
         get() = dataStore.data
             .catchIOException()
@@ -128,6 +133,10 @@ class TrovesPreferencesImpl(
 
     override suspend fun setSurveyDone(done: Boolean) {
         dataStore.edit { it[AppPreferencesKeys.IS_SURVEY_DONE] = done }
+    }
+
+    override suspend fun setCartHintShown(shown: Boolean) {
+        dataStore.edit { it[AppPreferencesKeys.IS_CART_HINT_SHOWN] = shown }
     }
 
     override suspend fun setLoggedIn(loggedIn: Boolean) {

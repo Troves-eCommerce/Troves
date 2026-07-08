@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 internal object AppPreferencesKeys {
     val IS_ONBOARDING_DONE    = booleanPreferencesKey("is_onboarding_done")
     val IS_SURVEY_DONE         = booleanPreferencesKey("is_survey_done")
+    val IS_CART_HINT_SHOWN    = booleanPreferencesKey("is_cart_hint_shown")
     val IS_LOGGED_IN          = booleanPreferencesKey("is_logged_in")
     val SELECTED_LANGUAGE     = stringPreferencesKey("selected_language")
     val THEME_MODE            = stringPreferencesKey("theme_mode")

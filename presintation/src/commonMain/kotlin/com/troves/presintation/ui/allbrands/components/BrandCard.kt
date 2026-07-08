@@ -3,6 +3,7 @@ package com.troves.presintation.ui.allbrands.components
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -44,17 +45,17 @@ fun BrandCard(
         Image(
             painter = imagePainter,
             contentDescription = name,
-            contentScale = ContentScale.Crop,
+            contentScale = ContentScale.FillHeight,
             colorFilter = ColorFilter.tint(
                 Theme.colors.primaryFont,
-                blendMode = BlendMode.SrcAtop
+                blendMode = BlendMode.SrcAtop,
             ),
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
         )
 
         Box(
             modifier = Modifier
-                .fillMaxSize()
+                .matchParentSize()
                 .background(
                     Brush.verticalGradient(
                         colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.65f)),

@@ -11,6 +11,8 @@ interface AuthenticationRepository {
 
     suspend fun signInWithGoogle(idToken: String, accessToken: String? = null): Result<Unit>
 
+    suspend fun ensureShopifyToken(): Result<Unit>
+
     suspend fun logout()
 
     val isLoggedInStream: Flow<Boolean>

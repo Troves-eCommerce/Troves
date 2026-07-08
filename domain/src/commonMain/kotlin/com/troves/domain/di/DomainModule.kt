@@ -17,6 +17,8 @@ import com.troves.domain.usecase.cart.GetCartStreamUseCase
 import com.troves.domain.usecase.cart.RefreshCartUseCase
 import com.troves.domain.usecase.cart.RemoveAllFromCartUseCase
 import com.troves.domain.usecase.cart.RemoveFromCartUseCase
+import com.troves.domain.usecase.cart.SetCartHintShownUseCase
+import com.troves.domain.usecase.cart.ShouldShowCartHintUseCase
 import com.troves.domain.usecase.cart.SyncCartUseCase
 import com.troves.domain.usecase.cart.UpdateCartQuantityUseCase
 import com.troves.domain.usecase.details.GetProductByIdUseCase
@@ -107,6 +109,8 @@ val domainModule = module {
     factory { UpdateCartQuantityUseCase(get(), get()) }
     factory { ApplyDiscountUseCase(get(), get()) }
     factory { RefreshCartUseCase(get(), get()) }
+    factory { ShouldShowCartHintUseCase(get()) }
+    factory { SetCartHintShownUseCase(get()) }
     single { SyncCartUseCase(get(), get()) }
 
     // Checkout / orders
