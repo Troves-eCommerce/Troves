@@ -4,7 +4,6 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
-import android.net.NetworkRequest
 import com.troves.domain.utils.connectivity.ConnectivityObserver
 import com.troves.domain.utils.connectivity.ConnectivityStatus
 import kotlinx.coroutines.channels.awaitClose
@@ -40,8 +39,7 @@ private class AndroidConnectivityObserver(context: Context) : ConnectivityObserv
             }
 
             override fun onLost(network: Network) {
-                // Re-check the active network — another transport may still be up.
-                trySend(if (isOnline()) ConnectivityStatus.Available else ConnectivityStatus.Unavailable)
+                trySend(ConnectivityStatus.Unavailable)
             }
 
             override fun onUnavailable() {
@@ -49,10 +47,7 @@ private class AndroidConnectivityObserver(context: Context) : ConnectivityObserv
             }
         }
 
-        val request = NetworkRequest.Builder()
-            .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-            .build()
-        connectivityManager.registerNetworkCallback(request, callback)
+        connectivityManager.registerDefaultNetworkCallback(callback)
 
         awaitClose { connectivityManager.unregisterNetworkCallback(callback) }
     }.distinctUntilChanged()
