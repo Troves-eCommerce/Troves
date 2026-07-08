@@ -135,7 +135,13 @@ class HomeViewModel(
             is HomeIntent.ProductClicked ->
                 sendEffect(NavigateToProduct(intent.product.id.toString()))
             is HomeIntent.FavoriteToggled -> toggleFavorite(intent.product)
-            HomeIntent.AiClicked -> {sendEffect(NavigateToAiChat)}
+            HomeIntent.AiClicked -> {
+                if (currentState.isLoggedIn) {
+                    sendEffect(NavigateToAiChat)
+                } else {
+                    updateState { copy(showSignUpPrompt = true) }
+                }
+            }
         }
     }
 

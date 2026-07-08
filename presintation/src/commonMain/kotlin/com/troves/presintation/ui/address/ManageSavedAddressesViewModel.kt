@@ -66,7 +66,7 @@ class ManageSavedAddressesViewModel(
     init {
         getSavedAddressesUseCase()
             .onEach { items ->
-                updateState { copy(addresses = items, isLoading = false) }
+                updateState { copy(addresses = items) }
             }
             .launchIn(viewModelScope)
 
@@ -102,6 +102,9 @@ class ManageSavedAddressesViewModel(
         if (!observeConnectivity.isOnlineNow()) {
             updateState { copy(isLoading = false) }
             return
+        }
+        if (state.value.addresses.isEmpty()) {
+            updateState { copy(isLoading = true) }
         }
         viewModelScope.launch {
             val result = refreshAddressesUseCase()

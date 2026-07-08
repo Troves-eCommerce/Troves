@@ -298,6 +298,18 @@ fun LoginScreen(
                     onClick = onNavigateToRegister
                 )
             )
+
+            Spacer(Modifier.height(24.dp))
+
+            androidx.compose.material3.TextButton(
+                onClick = onLoginSuccess,
+                colors = androidx.compose.material3.ButtonDefaults.textButtonColors(contentColor = Theme.colors.primaryFont)
+            ) {
+                BasicText(
+                    text = stringResource(Res.string.verify_email_continue_as_guest),
+                    style = Theme.typography.body.large.copy(fontWeight = FontWeight.Medium, color = Theme.colors.primaryFont)
+                )
+            }
         }
 
         TrovesToastHost(state = toast)
