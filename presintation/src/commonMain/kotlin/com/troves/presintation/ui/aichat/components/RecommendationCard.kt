@@ -54,25 +54,25 @@ fun RecommendationCard(
             }
         }
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable(onClick = onViewAll)
-                .padding(vertical = 4.dp),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                text = viewAllLabel,
-                style = Theme.typography.body.medium,
-                color = Theme.colors.primary,
-            )
-            Icon(
-                painter = painterResource(Res.drawable.ic_chevron_right),
-                contentDescription = null,
-                tint = Theme.colors.primary,
-                modifier = Modifier.size(18.dp),
-            )
-        }
+//        Row(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .clickable(onClick = onViewAll)
+//                .padding(vertical = 4.dp),
+//            horizontalArrangement = Arrangement.Center,
+//            verticalAlignment = Alignment.CenterVertically,
+//        ) {
+//            Text(
+//                text = viewAllLabel,
+//                style = Theme.typography.body.medium,
+//                color = Theme.colors.primary,
+//            )
+//            Icon(
+//                painter = painterResource(Res.drawable.ic_chevron_right),
+//                contentDescription = null,
+//                tint = Theme.colors.primary,
+//                modifier = Modifier.size(18.dp),
+//            )
+//        }
     }
 }

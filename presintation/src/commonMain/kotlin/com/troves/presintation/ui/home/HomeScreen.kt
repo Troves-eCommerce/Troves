@@ -24,8 +24,10 @@ import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import com.troves.designsystem.components.toast.TrovesSnackbarHost
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -71,12 +73,14 @@ import com.troves.presintation.ui.home.components.AdSlider
 import com.troves.presintation.ui.home.components.BrandItem
 import com.troves.presintation.ui.home.components.CategoryItem
 import com.troves.presintation.ui.survey.components.SurveyBannerCard
+import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import troves.designsystem.generated.resources.Res
 import troves.designsystem.generated.resources.*
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     onNavigateToProduct: (String) -> Unit,
@@ -189,20 +193,26 @@ fun HomeScreen(
                     onRetry = { viewModel.onIntent(HomeIntent.Retry) },
                 )
             } else {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .verticalScroll(rememberScrollState())
-                        .padding(top = 20.dp, bottom = 120.dp),
-                    verticalArrangement = Arrangement.spacedBy(20.dp),
+                PullToRefreshBox(
+                    isRefreshing = state.isRefreshing,
+                    onRefresh = { viewModel.onIntent(HomeIntent.Refresh) },
+                    modifier = Modifier.fillMaxSize(),
                 ) {
-                    if (state.isLoading) {
-                        HomeShimmer()
-                    } else {
-                        HomeContent(
-                            state = state,
-                            onIntent = onIntent,
-                        )
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .verticalScroll(rememberScrollState())
+                            .padding(top = 20.dp, bottom = 120.dp),
+                        verticalArrangement = Arrangement.spacedBy(20.dp),
+                    ) {
+                        if (state.isLoading) {
+                            HomeShimmer()
+                        } else {
+                            HomeContent(
+                                state = state,
+                                onIntent = onIntent,
+                            )
+                        }
                     }
                 }
             }
@@ -266,23 +276,34 @@ private fun HomeContent(
     val clipboardManager = LocalClipboardManager.current
     val copyCodeButtonText = stringResource(Res.string.home_copy_code_button)
 
-    if (state.ads.isNotEmpty()) {
+    val adSlides = if (state.ads.isNotEmpty()) {
+        state.ads.mapIndexed { index, ad ->
+            val imageRes = adImages[index % adImages.size]
+            val resolvedButtonText = when (ad.buttonText) {
+                "Shop now" -> stringResource(Res.string.home_preview_ad_button)
+                "Copy code" -> stringResource(Res.string.home_copy_code_button)
+                else -> ad.buttonText
+            }
+            AdData(
+                titleTop = ad.titleTop,
+                titleBottom = ad.titleBottom,
+                description = ad.description,
+                imagePainter = painterResource(imageRes),
+                buttonText = resolvedButtonText,
+            )
+        }
+    } else {
+        fallbackAdSlides(adImages)
+    }
+
+    if (adSlides.isNotEmpty()) {
         AdSlider(
-            ads = state.ads.mapIndexed { index, ad ->
-                val imageRes = adImages[index % adImages.size]
-                AdData(
-                    titleTop = ad.titleTop,
-                    titleBottom = ad.titleBottom,
-                    description = ad.description,
-                    imagePainter = painterResource(imageRes),
-                    buttonText = ad.buttonText,
-                )
-            },
+            ads = adSlides,
             arrowIconPainter = chevron,
             onShopNowClick = { clicked ->
                 val ad = state.ads.firstOrNull { it.titleTop == clicked.titleTop }
                 if (ad != null) {
-                    if (ad.buttonText == copyCodeButtonText) {
+                    if (ad.buttonText == "Copy code" || ad.buttonText == copyCodeButtonText) {
                         clipboardManager.setText(AnnotatedString(ad.titleTop))
                     }
                     onIntent(HomeIntent.AdClicked(ad))
@@ -410,6 +431,34 @@ private fun HomeContent(
             onIntent = onIntent,
         )
     }
+}
+
+@Composable
+private fun fallbackAdSlides(images: List<DrawableResource>): List<AdData> {
+    val buttonText = stringResource(Res.string.home_preview_ad_button)
+    return listOf(
+        AdData(
+            titleTop = stringResource(Res.string.home_preview_ad_title_top),
+            titleBottom = stringResource(Res.string.home_preview_ad_title_bottom),
+            description = stringResource(Res.string.home_preview_ad_desc),
+            imagePainter = painterResource(images[0 % images.size]),
+            buttonText = buttonText,
+        ),
+        AdData(
+            titleTop = stringResource(Res.string.home_fallback_ad2_top),
+            titleBottom = stringResource(Res.string.home_fallback_ad2_bottom),
+            description = stringResource(Res.string.home_fallback_ad2_desc),
+            imagePainter = painterResource(images[1 % images.size]),
+            buttonText = buttonText,
+        ),
+        AdData(
+            titleTop = stringResource(Res.string.home_fallback_ad3_top),
+            titleBottom = stringResource(Res.string.home_fallback_ad3_bottom),
+            description = stringResource(Res.string.home_fallback_ad3_desc),
+            imagePainter = painterResource(images[2 % images.size]),
+            buttonText = buttonText,
+        ),
+    )
 }
 
 @Composable
@@ -572,6 +621,7 @@ private fun HomeScreenPreview() {
     }
 }
 
+@Composable
 private fun previewHomeState(): HomeUiState {
     val products = List(4) { index ->
         Product(
@@ -588,10 +638,10 @@ private fun previewHomeState(): HomeUiState {
         ads = listOf(
             Ad(
                 id = 1L,
-                titleTop = "Summer",
-                titleBottom = "Collection",
-                description = "Up to 50% off on selected items",
-                buttonText = "Shop now",
+                titleTop = stringResource(Res.string.home_preview_ad_title_top),
+                titleBottom = stringResource(Res.string.home_preview_ad_title_bottom),
+                description = stringResource(Res.string.home_preview_ad_desc),
+                buttonText = stringResource(Res.string.home_preview_ad_button),
             ),
         ),
         brands = List(6) { index ->

@@ -54,6 +54,8 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import troves.designsystem.generated.resources.Res
 import troves.designsystem.generated.resources.*
+import troves.presintation.generated.resources.Res as PresRes
+import troves.presintation.generated.resources.auth_google_icon_desc
 
 @Composable
 fun RegisterScreen(
@@ -287,7 +289,7 @@ fun RegisterScreen(
                 } else {
                     Image(
                         painter = painterResource(Res.drawable.ic_google),
-                        contentDescription = "Google Icon",
+                        contentDescription = stringResource(PresRes.string.auth_google_icon_desc),
                         modifier = Modifier.size(22.dp)
                     )
                     Spacer(Modifier.width(12.dp))

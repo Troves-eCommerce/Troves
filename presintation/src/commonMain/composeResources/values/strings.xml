@@ -71,10 +71,10 @@
     <string name="currency_eur">Euro</string>
     <string name="currency_sar">Saudi Riyal</string>
     <string name="language_english">English</string>
-    <string name="language_arabic">Ø§Ù„Ø¹Ø±Ø¨ÙŠØ©</string>
+    <string name="language_arabic">العربية</string>
     <string name="profile_navigate">Navigate</string>
 
-    <!-- Checkout Â· shared -->
+    <!-- Checkout · shared -->
     <string name="checkout_continue">Continue</string>
     <string name="checkout_place_order">Place Order</string>
     <string name="checkout_order_summary">Order Summary</string>
@@ -83,7 +83,7 @@
     <string name="checkout_title_confirm_order">Confirm Order</string>
     <string name="checkout_login_required">You need to be logged in to place an order.</string>
 
-    <!-- Checkout Â· Order Summary step -->
+    <!-- Checkout · Order Summary step -->
     <string name="checkout_review_subtitle">Review your items and apply a coupon.</string>
     <string name="checkout_coupon_label">Coupon Code</string>
     <string name="checkout_coupon_hint">Enter coupon code</string>
@@ -93,14 +93,14 @@
     <string name="checkout_remove_coupon">Remove coupon</string>
     <string name="checkout_total">Total</string>
 
-    <!-- Checkout Â· Address step -->
+    <!-- Checkout · Address step -->
     <string name="checkout_address_step_title">Select Delivery Address</string>
     <string name="checkout_address_step_subtitle">Choose where you want your order to be delivered.</string>
     <string name="checkout_no_saved_addresses">You don\'t have any saved addresses yet.</string>
     <string name="checkout_address_default">Default</string>
     <string name="checkout_add_new_address">Add New Address</string>
 
-    <!-- Checkout Â· Payment step -->
+    <!-- Checkout · Payment step -->
     <string name="checkout_payment_step_title">Select Payment Method</string>
     <string name="checkout_payment_step_subtitle">Choose how you\'d like to pay for your order.</string>
     <string name="checkout_payment_cod_title">Cash on Delivery (COD)</string>
@@ -114,7 +114,7 @@
     <string name="checkout_secure_title">Secure Checkout</string>
     <string name="checkout_secure_desc">Your payment information is encrypted and safe with us.</string>
 
-    <!-- Checkout Â· Confirm &amp; Place Order step -->
+    <!-- Checkout · Confirm &amp; Place Order step -->
     <string name="checkout_confirm_step_title">Confirm &amp; Place Order</string>
     <string name="checkout_confirm_step_subtitle">Review your details and place your order.</string>
     <string name="checkout_section_payment_method">Payment Method</string>
@@ -128,7 +128,7 @@
     <!-- AI Assistant -->
     <string name="ai_assistant_name">Troves AI</string>
     <string name="ai_assistant_subtitle">Your smart shopping assistant</string>
-    <string name="ai_input_hint">Ask anythingâ€¦</string>
+    <string name="ai_input_hint">Ask anything…</string>
     <string name="ai_suggestion_header">You might also like</string>
     <string name="ai_view_all_recommendations">View all recommendations</string>
     <string name="ai_disclaimer">Troves AI can make mistakes. Please double-check important info.</string>
@@ -140,7 +140,7 @@
     <string name="ai_voice_permission_denied">Microphone permission is needed for voice input. Enable it in Settings.</string>
     <string name="ai_voice_no_speech">Didn\'t catch that. Please try again.</string>
     <string name="ai_voice_error">Voice input failed. Please try again.</string>
-    <string name="ai_voice_listening">Listeningâ€¦ tap the mic to stop</string>
+    <string name="ai_voice_listening">Listening… tap the mic to stop</string>
 
     <!-- Email Verification -->
     <string name="verify_email_title">Verify your email</string>
@@ -249,4 +249,197 @@
     <string name="survey_confirm_desc">We\'ll use your preferences to recommend products you\'ll love.</string>
     <string name="survey_confirm_shop">Continue Shopping</string>
     <string name="survey_question_header">Question %1$d of %2$d</string>
+    <string name="order_details_qty">Qty: %1$d</string>
+    <string name="order_details_order_number">Order #%1$s</string>
+    <string name="order_details_placed_on">Placed on %1$s</string>
+
+    <!-- Order status &amp; timeline (Orders + Order Details) -->
+    <string name="order_status_processing">Processing</string>
+    <string name="order_details_timeline_placed_title">Order Placed</string>
+    <string name="order_details_timeline_placed_desc">Your order has been placed successfully.</string>
+    <string name="order_details_timeline_processing_desc">We are preparing your order.</string>
+    <string name="order_details_timeline_shipped_title">Shipped</string>
+    <string name="order_details_timeline_shipped_desc">Your order is on the way.</string>
+    <string name="order_details_timeline_delivered_title">Delivered</string>
+    <string name="order_details_timeline_delivered_desc">Your order has been delivered.</string>
+    <string name="order_details_timeline_delivered_pending">Expected delivery soon</string>
+    <string name="order_details_timeline_cancelled_title">Cancelled</string>
+    <string name="order_details_timeline_cancelled_desc">Your order has been cancelled.</string>
+    <string name="order_details_shipping_free">Free</string>
+
+    <!-- Orders list screen -->
+    <string name="orders_error_load">Failed to load orders</string>
+    <string name="orders_view_details">View Details</string>
+    <string name="order_details_not_found">Order not found</string>
+    <string name="order_details_load_failed">Failed to load order</string>
+
+    <!-- Order Result Screen -->
+    <string name="order_result_go_home">Go to Home</string>
+    <string name="order_result_success_title">Order Placed!</string>
+    <string name="order_result_failed_title">Payment Failed</string>
+    <string name="order_result_error_generic">Something went wrong. Please try again.</string>
+    <string name="order_result_success_named">Your order %1$s has been placed successfully.</string>
+    <string name="order_result_success_generic">Your order has been placed successfully.</string>
+    <string name="order_result_delivery">Delivery</string>
+
+    <!-- Shared connectivity -->
+    <string name="no_internet_connection">No internet connection</string>
+
+    <!-- Auth -->
+    <string name="auth_login_success">Logged in successfully</string>
+    <string name="auth_login_failed">Login failed. Please try again.</string>
+    <string name="auth_passwords_no_match">Passwords do not match</string>
+    <string name="auth_account_created">Account created successfully</string>
+    <string name="auth_register_failed">Registration failed. Please try again.</string>
+    <string name="auth_google_success">Signed in with Google successfully</string>
+    <string name="auth_google_failed">Google Sign-In failed. Please try again.</string>
+    <string name="auth_google_icon_desc">Google icon</string>
+    <string name="auth_email_empty">Email cannot be empty</string>
+    <string name="auth_email_invalid">Please enter a valid email address</string>
+    <string name="auth_password_too_short">Password must be at least 6 characters</string>
+
+    <!-- Email verification (additional) -->
+    <string name="verify_email_sent">Verification email sent!</string>
+    <string name="verify_email_send_failed">Failed to send email</string>
+    <string name="verify_email_not_verified_yet">Email is not verified yet. Please check your inbox.</string>
+    <string name="verify_email_check_failed">Failed to check status</string>
+    <string name="verify_email_resend_cooldown">%1$s (%2$ds)</string>
+
+    <!-- Common / shared -->
+    <string name="common_back">Back</string>
+    <string name="generic_error">An error occurred</string>
+
+    <!-- Wishlist / favorites toasts -->
+    <string name="wishlist_login_required">Please login to add to wishlist</string>
+    <string name="wishlist_added">Added to wishlist</string>
+    <string name="wishlist_removed">Removed from wishlist</string>
+    <string name="favorites_added">Added to favorites</string>
+    <string name="favorites_removed">Removed from favorites</string>
+    <string name="favorites_update_failed">Couldn't update favorites</string>
+
+    <!-- Home / See All / Categories -->
+    <string name="home_source_just_for_you">Just For You</string>
+    <string name="home_source_trending_now">Trending Now</string>
+    <string name="home_copied_to_clipboard">Copied %1$s to clipboard</string>
+    <string name="all_categories_title">All Categories</string>
+
+    <!-- Products / Product Details -->
+    <string name="product_details_unknown_error">Unknown error</string>
+    <string name="product_details_favorite_added">Added to favorites successfully</string>
+    <string name="product_details_favorite_removed">Removed from favorites successfully</string>
+    <string name="product_details_add_to_cart_failed">Couldn't add to cart</string>
+    <string name="product_details_review_anonymous">Anonymous</string>
+    <string name="product_image_carousel_desc">Product image %1$d</string>
+
+    <!-- Relative time -->
+    <string name="time_just_now">Just now</string>
+    <string name="time_minutes_ago">%1$dm ago</string>
+    <string name="time_hours_ago">%1$dh ago</string>
+    <string name="time_days_ago">%1$dd ago</string>
+    <string name="time_weeks_ago">%1$dw ago</string>
+
+    <!-- Search -->
+    <string name="search_bar_hint">Search products, brands...</string>
+    <string name="search_trending">Trending</string>
+    <string name="search_remove_recent">Remove recent search</string>
+
+    <!-- Cart -->
+    <string name="cart_login_required">You need to be logged in to manage your cart.</string>
+    <string name="cart_remove_failed">Couldn't remove item from cart</string>
+    <string name="cart_max_quantity">You have reached the maximum quantity</string>
+    <string name="cart_update_failed">Couldn't update cart</string>
+    <string name="cart_clear_failed">Couldn't clear cart</string>
+
+    <!-- Checkout · ViewModel toasts &amp; order-result labels -->
+    <string name="checkout_select_address">Select a delivery address</string>
+    <string name="checkout_unavailable">Checkout is unavailable right now</string>
+    <string name="checkout_payment_start_failed">Couldn't start payment. Please try again.</string>
+    <string name="checkout_payment_start_failed_empty_cart">Couldn't start payment, cart ID is empty. Please try again.</string>
+    <string name="checkout_cart_empty">Your cart is empty</string>
+    <string name="checkout_choose_payment">Choose a payment method</string>
+    <string name="checkout_no_deliverable_address">Sorry you don't have an address to deliver to</string>
+    <string name="checkout_order_place_failed">We couldn't place your order. Please try again.</string>
+    <string name="checkout_enter_coupon">Enter a coupon code</string>
+    <string name="checkout_coupon_invalid">\"%1$s\" is not a valid or eligible code</string>
+    <string name="checkout_coupon_apply_failed">Couldn't apply discount</string>
+    <string name="checkout_coupon_removed">Discount removed</string>
+    <string name="checkout_coupon_remove_failed">Couldn't remove discount</string>
+    <string name="checkout_payment_failed">Payment failed. Please try again.</string>
+    <string name="checkout_payment_canceled">Payment cancelled</string>
+    <string name="checkout_discount_label">Discount</string>
+    <string name="checkout_card_payment">Card Payment</string>
+    <string name="checkout_payment_pending">Pending</string>
+
+    <!-- Profile -->
+    <string name="profile_style_survey_desc">Update your style preferences</string>
+    <string name="profile_rates_error">Rates: %1$s</string>
+    <string name="profile_user_fallback">User</string>
+    <string name="profile_logout_failed">Failed to logout</string>
+
+    <!-- Address -->
+    <string name="address_location_permission_required">Location permission is required to get current location</string>
+    <string name="address_geocode_failed">Couldn't get address details</string>
+    <string name="address_select_location_first">Please select a location on the map first</string>
+    <string name="address_fill_required_fields">Please fill all required fields</string>
+    <string name="address_invalid_phone">Please enter a valid Egyptian phone number</string>
+    <string name="address_updated">Address updated</string>
+    <string name="address_saved">Address saved successfully</string>
+    <string name="address_sign_in_again">Please sign in again</string>
+    <string name="address_save_failed">Couldn't save address</string>
+    <string name="address_load_failed">Couldn't load addresses</string>
+    <string name="address_delete_failed">Couldn't delete address</string>
+    <string name="address_set_default_failed">Couldn't set default</string>
+
+    <!-- Map picker -->
+    <string name="map_fly_to_location">Fly to current location</string>
+    <string name="map_confirm_location">Confirm location</string>
+    <string name="map_getting_address">Getting address details…</string>
+
+    <!-- Survey (display chrome) -->
+    <string name="survey_next">Next</string>
+    <string name="survey_finish">Finish</string>
+    <string name="survey_saving">Saving…</string>
+    <string name="survey_ok">OK</string>
+    <string name="survey_save_failed">Failed to save survey</string>
+    <string name="survey_question_counter">Question %1$d of %2$d</string>
+    <string name="survey_step_counter">%1$d / %2$d</string>
+    <string name="survey_banner_eyebrow">Personalised for you</string>
+    <string name="survey_banner_close">Close</string>
+    <string name="survey_banner_title">Help us know your style</string>
+    <string name="survey_banner_subtitle">Answer a few quick questions and we\'ll personalise your shopping experience.</string>
+    <string name="survey_banner_start">Start Survey</string>
+    <string name="survey_banner_dismiss">Don\'t show again</string>
+    <string name="survey_confirmation_title">You\'re all set!</string>
+    <string name="survey_confirmation_body">We\'ll use your preferences to recommend products you\'ll love.</string>
+    <string name="survey_confirmation_continue">Continue Shopping</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_page1_title">Discover\nCurated Styles</string>
+    <string name="onboarding_page1_desc">Explore thousands of trendy fashion pieces handpicked just for you.</string>
+    <string name="onboarding_page2_title">Find What\nFits You</string>
+    <string name="onboarding_page2_desc">Find looks that match your style, mood, and everyday moments.</string>
+    <string name="onboarding_page3_title">Shop. Love.\nRepeat.</string>
+    <string name="onboarding_page3_desc">Shop your favorites, save what you love, and stay ahead of trends.</string>
+    <string name="onboarding_skip">Skip</string>
+    <string name="onboarding_get_started">Let\'s get started</string>
+    <string name="onboarding_next">Next</string>
+
+    <!-- AI chat (additional) -->
+    <string name="ai_favorite_login_required">Please sign in to save favorites.</string>
+    <string name="ai_favorite_update_failed">Couldn't update favorites.</string>
+    <string name="ai_history_delete_failed">Couldn't delete the conversation.</string>
+    <string name="ai_time_now">Now</string>
+    <string name="ai_remove_image">Remove image</string>
+    <string name="ai_send">Send</string>
+
+    <!-- Wishlist (dialogs &amp; toasts) -->
+    <string name="wishlist_view_login_required">You need to be logged in to view your wishlist.</string>
+    <string name="wishlist_remove_item_title">Remove Item</string>
+    <string name="wishlist_remove_confirm">Are you sure you want to remove \"%1$s\" from your wishlist?</string>
+    <string name="wishlist_remove_action">Remove</string>
+    <string name="wishlist_clear_title">Clear Wishlist</string>
+    <string name="wishlist_clear_message">This action will remove all wishlist items.</string>
+    <string name="wishlist_clear_action">Clear</string>
+    <string name="wishlist_sync_failed">Failed to sync wishlist</string>
+    <string name="wishlist_remove_failed">Couldn't remove item</string>
 </resources>

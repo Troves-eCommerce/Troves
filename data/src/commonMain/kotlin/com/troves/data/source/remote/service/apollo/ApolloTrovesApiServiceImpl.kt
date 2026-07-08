@@ -2,6 +2,7 @@ package com.troves.data.source.remote.service.apollo
 
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.api.Optional
+import com.troves.data.source.local.preferenceses.TrovesPreferences
 import com.troves.data.source.remote.service.TrovesApiService
 import com.troves.data.source.remote.service.apollo.graphql.admin.GetCollectionsQuery
 import com.troves.data.source.remote.service.apollo.graphql.admin.GetProductByIdQuery
@@ -9,6 +10,7 @@ import com.troves.data.source.remote.service.apollo.graphql.admin.GetProductsByC
 import com.troves.data.source.remote.service.apollo.graphql.admin.GetProductsBySearchQuery
 import com.troves.data.source.remote.service.apollo.graphql.admin.GetProductsByVendorQuery
 import com.troves.data.source.remote.service.apollo.graphql.admin.GetProductsQuery
+import com.troves.data.source.remote.service.apollo.graphql.admin.GetLocalizedProductTitlesQuery
 import com.troves.data.source.remote.service.apollo.graphql.admin.GetDiscountCodeQuery
 import com.troves.data.source.remote.service.apollo.graphql.admin.CreateOrderMutation
 import com.troves.data.source.remote.service.apollo.graphql.admin.type.OrderCreateLineItemInput
@@ -16,10 +18,12 @@ import com.troves.data.source.remote.service.apollo.graphql.admin.type.OrderCrea
 import com.troves.data.source.remote.service.apollo.graphql.admin.type.MailingAddressInput
 import com.troves.data.source.remote.service.apollo.graphql.admin.type.ProductCollectionSortKeys
 
+import com.troves.data.source.remote.service.apollo.mapper.TRANSLATION_KEY_TITLE
 import com.troves.data.source.remote.service.apollo.mapper.toCustomCollectionDto
 import com.troves.data.source.remote.service.apollo.mapper.toDomainProduct
 import com.troves.data.source.remote.service.apollo.mapper.toProductDto
 import com.troves.data.source.remote.service.apollo.mapper.toSmartCollection
+import com.troves.data.source.remote.service.apollo.util.gidToLong
 import com.troves.data.source.remote.service.apollo.util.runMutation
 import com.troves.data.source.remote.service.apollo.util.runQuery
 import com.troves.data.source.remote.service.apollo.util.toCollectionGid
@@ -38,10 +42,12 @@ import com.troves.domain.entity.Product
 import com.troves.domain.entity.ProductSearchParams
 import com.troves.domain.entity.DiscountCode
 import com.troves.domain.utils.Result
+import kotlinx.coroutines.flow.first
 
 
 class ApolloTrovesApiServiceImpl(
-    private val apolloClient: ApolloClient
+    private val apolloClient: ApolloClient,
+    private val preferences: TrovesPreferences,
 ) : TrovesApiService {
 
     // region products
@@ -50,7 +56,7 @@ class ApolloTrovesApiServiceImpl(
     }
 
     override suspend fun getAllProducts(): Result<ProductResponse> =
-        apolloClient.runQuery(GetProductsQuery(first = DEFAULT_PAGE_SIZE)) { data ->
+        apolloClient.runQuery(GetProductsQuery(first = DEFAULT_PAGE_SIZE, locale = locale())) { data ->
             ProductResponse(products = data.products.edges.map { it.node.productCard.toProductDto() })
         }
 
@@ -59,29 +65,51 @@ class ApolloTrovesApiServiceImpl(
             GetProductsBySearchQuery(
                 first = queryMap["limit"]?.toIntOrNull() ?: DEFAULT_PAGE_SIZE,
                 query = queryMap.toShopifySearchQuery().toQueryOptional(),
+                locale = locale(),
             )
         ) { data ->
             ProductResponse(products = data.products.edges.map { it.node.productCard.toProductDto() })
         }
 
-    override suspend fun searchProducts(params: ProductSearchParams): Result<List<Product>> =
-        apolloClient.runQuery(
-            GetProductsBySearchQuery(
-                first = params.limit,
-                query = params.toShopifySearchQuery().toQueryOptional(),
-            )
-        ) { data ->
-            data.products.edges.map { it.node.productCard.toDomainProduct() }
+    override suspend fun searchProducts(params: ProductSearchParams): Result<List<Product>> {
+        val freeText = params.query?.trim().orEmpty()
+        // Shopify Admin `products(query:)` only searches the primary-locale (English) fields, so an
+        // Arabic term never matches its index. For an Arabic term, fetch the catalogue (with
+        // translations) and match client-side; for anything else keep Shopify's server search.
+        // Both branches then narrow to localized-title matches — this is the single search-text
+        // filter (TrovesRepositoryImpl.searchProducts no longer re-filters by title).
+        return if (freeText.containsArabic()) {
+            apolloClient.runQuery(
+                GetProductsBySearchQuery(
+                    first = DEFAULT_PAGE_SIZE,
+                    query = Optional.Absent,
+                    locale = locale(),
+                )
+            ) { data ->
+                data.products.edges.map { it.node.productCard.toDomainProduct() }.filterByTitle(freeText)
+            }
+        } else {
+            apolloClient.runQuery(
+                GetProductsBySearchQuery(
+                    first = params.limit,
+                    query = params.toShopifySearchQuery().toQueryOptional(),
+                    locale = locale(),
+                )
+            ) { data ->
+                data.products.edges.map { it.node.productCard.toDomainProduct() }.filterByTitle(freeText)
+            }
         }
+    }
 
     override suspend fun getProductsByVendor(vendorName: String): Result<List<Product>> =
         apolloClient.runQuery(
             GetProductsByVendorQuery(
                 first = SOURCE_PRODUCTS_PAGE_SIZE,
                 query = "vendor:'$vendorName'",
+                locale = locale(),
             )
         ) { data ->
-            data.products.edges.map { it.node.toDomainProduct() }
+            data.products.edges.map { it.node.productCard.toDomainProduct() }
         }
 
     override suspend fun getProductsByCollection(collectionId: String): Result<List<Product>> =
@@ -91,6 +119,7 @@ class ApolloTrovesApiServiceImpl(
                 first = SOURCE_PRODUCTS_PAGE_SIZE,
                 after = Optional.Absent,
                 sortKey = Optional.present(ProductCollectionSortKeys.BEST_SELLING),
+                locale = locale(),
             )
         ) { data ->
             val collection = data.collection
@@ -103,11 +132,26 @@ class ApolloTrovesApiServiceImpl(
     }
 
     override suspend fun getProductById(productId: String): Result<Product> =
-        apolloClient.runQuery(GetProductByIdQuery(id = productId.toProductGid())) { data ->
+        apolloClient.runQuery(GetProductByIdQuery(id = productId.toProductGid(), locale = locale())) { data ->
             val product = data.product?.productCard
                 ?: throw NoSuchElementException("Product not found: $productId")
             product.toDomainProduct()
         }
+
+    override suspend fun getLocalizedProductTitles(productIds: List<String>): Result<Map<Long, String>> {
+        if (productIds.isEmpty()) return Result.Success(emptyMap())
+        return apolloClient.runQuery(
+            GetLocalizedProductTitlesQuery(ids = productIds.map { it.toProductGid() }, locale = locale())
+        ) { data ->
+            data.nodes.mapNotNull { node ->
+                val product = node?.onProduct ?: return@mapNotNull null
+                val id = product.id.gidToLong() ?: return@mapNotNull null
+                val title = product.translations.firstOrNull { it.key == TRANSLATION_KEY_TITLE }
+                    ?.value?.takeIf { it.isNotBlank() } ?: product.title
+                id to title
+            }.toMap()
+        }
+    }
 
     override suspend fun updateProduct(productId: String) {
         TODO("Not yet implemented")
@@ -123,7 +167,8 @@ class ApolloTrovesApiServiceImpl(
         apolloClient.runQuery(
             GetCollectionsQuery(
                 first = DEFAULT_PAGE_SIZE,
-                query = Optional.present(BRANDS_QUERY)
+                query = Optional.present(BRANDS_QUERY),
+                locale = locale(),
             )
         ) { data ->
             Collection(smartCollections = data.collections.edges.map { it.node.toSmartCollection() })
@@ -133,7 +178,8 @@ class ApolloTrovesApiServiceImpl(
         apolloClient.runQuery(
             GetCollectionsQuery(
                 first = DEFAULT_PAGE_SIZE,
-                query = Optional.present(CATEGORIES_QUERY)
+                query = Optional.present(CATEGORIES_QUERY),
+                locale = locale(),
             )
         ) { data ->
             CustomCollectionResponse(customCollections = data.collections.edges.map { it.node.toCustomCollectionDto() })
@@ -178,6 +224,10 @@ class ApolloTrovesApiServiceImpl(
         }
     }
 
+    /** Current app language as a Shopify locale code ("ar"/"en") for `translations(locale:)`. */
+    private suspend fun locale(): String =
+        preferences.selectedLanguage.first().ifBlank { DEFAULT_LOCALE }
+
     private fun Address.toMailingAddressInput(): MailingAddressInput = MailingAddressInput(
         address1 = Optional.presentIfNotNull(address1),
         address2 = Optional.presentIfNotNull(address2),
@@ -192,12 +242,21 @@ class ApolloTrovesApiServiceImpl(
     )
 
 
+    /** True when the text has any Arabic characters (base, supplement, extended-A blocks). */
+    private fun String.containsArabic(): Boolean =
+        any { it in '؀'..'ۿ' || it in 'ݐ'..'ݿ' || it in 'ࢠ'..'ࣿ' }
+
+    /** Narrow to products whose (localized) title contains the search text; no-op when text is blank. */
+    private fun List<Product>.filterByTitle(text: String): List<Product> =
+        if (text.isEmpty()) this else filter { it.title.contains(text, ignoreCase = true) }
+
     private companion object {
         const val DEFAULT_PAGE_SIZE = 250
         const val SOURCE_PRODUCTS_PAGE_SIZE = 20
         const val BRANDS_QUERY = "collection_type:Vendor"
         const val CATEGORIES_QUERY = "collection_type:Collection"
         const val PRODUCT_TYPE_QUERY =  "collection_type:product_type"
+        const val DEFAULT_LOCALE = "en"
 
     }
 }

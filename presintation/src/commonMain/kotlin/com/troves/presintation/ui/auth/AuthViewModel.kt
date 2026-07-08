@@ -19,6 +19,16 @@ import com.troves.presintation.ui.auth.validator.AuthValidator
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
+import org.jetbrains.compose.resources.getString
+import troves.presintation.generated.resources.Res
+import troves.presintation.generated.resources.auth_account_created
+import troves.presintation.generated.resources.auth_google_failed
+import troves.presintation.generated.resources.auth_google_success
+import troves.presintation.generated.resources.auth_login_failed
+import troves.presintation.generated.resources.auth_login_success
+import troves.presintation.generated.resources.auth_passwords_no_match
+import troves.presintation.generated.resources.auth_register_failed
+import troves.presintation.generated.resources.no_internet_connection
 
 class AuthViewModel(
     private val loginUseCase: LoginUseCase,
@@ -57,21 +67,18 @@ class AuthViewModel(
     }
 
     private fun login() {
-        val email = currentState.email
-        val password = currentState.password
-        if (!validateInputs(email, password)) return
-        if (!ensureOnline()) return
-
         viewModelScope.launch {
+            val email = currentState.email
+            val password = currentState.password
+            if (!validateInputs(email, password)) return@launch
+            if (!ensureOnline()) return@launch
+
             updateState { copy(isLoading = true, errorMessage = null) }
             when (val result = loginUseCase(email, password)) {
-                is Result.Success -> onAuthenticated("Logged in successfully")
-                is Result.Error -> updateState {
-                    copy(
-                        isLoading = false,
-                        errorMessage = result.throwable.message
-                            ?: "Login failed. Please try again.",
-                    )
+                is Result.Success -> onAuthenticated(getString(Res.string.auth_login_success))
+                is Result.Error -> {
+                    val msg = result.throwable.message ?: getString(Res.string.auth_login_failed)
+                    updateState { copy(isLoading = false, errorMessage = msg) }
                 }
                 is Result.Loading -> Unit
             }
@@ -79,29 +86,27 @@ class AuthViewModel(
     }
 
     private fun register() {
-        val email = currentState.email
-        val password = currentState.password
-        val confirmPassword = currentState.confirmPassword
-        if (!validateInputs(email, password)) return
-        if (password != confirmPassword) {
-            updateState { copy(errorMessage = "Passwords do not match") }
-            return
-        }
-        if (!ensureOnline()) return
-
         viewModelScope.launch {
+            val email = currentState.email
+            val password = currentState.password
+            val confirmPassword = currentState.confirmPassword
+            if (!validateInputs(email, password)) return@launch
+            if (password != confirmPassword) {
+                val msg = getString(Res.string.auth_passwords_no_match)
+                updateState { copy(errorMessage = msg) }
+                return@launch
+            }
+            if (!ensureOnline()) return@launch
+
             updateState { copy(isLoading = true, errorMessage = null) }
             when (val result = registerUseCase(email, password)) {
                 is Result.Success -> {
                     runCatching { sendEmailVerificationUseCase() }
-                    onAuthenticated("Account created successfully")
+                    onAuthenticated(getString(Res.string.auth_account_created))
                 }
-                is Result.Error -> updateState {
-                    copy(
-                        isLoading = false,
-                        errorMessage = result.throwable.message
-                            ?: "Registration failed. Please try again.",
-                    )
+                is Result.Error -> {
+                    val msg = result.throwable.message ?: getString(Res.string.auth_register_failed)
+                    updateState { copy(isLoading = false, errorMessage = msg) }
                 }
                 is Result.Loading -> Unit
             }
@@ -109,19 +114,16 @@ class AuthViewModel(
     }
 
     private fun signInWithGoogle(idToken: String, accessToken: String?) {
-        if (!ensureOnline()) return
         viewModelScope.launch {
+            if (!ensureOnline()) return@launch
             updateState { copy(isGoogleLoading = true, errorMessage = null) }
             when (val result = signInWithGoogleUseCase(idToken, accessToken)) {
                 is Result.Success -> {
-                    onAuthenticated("Signed in with Google successfully", isGoogle = true)
+                    onAuthenticated(getString(Res.string.auth_google_success), isGoogle = true)
                 }
-                is Result.Error -> updateState {
-                    copy(
-                        isGoogleLoading = false,
-                        errorMessage = result.throwable.message
-                            ?: "Google Sign-In failed. Please try again.",
-                    )
+                is Result.Error -> {
+                    val msg = result.throwable.message ?: getString(Res.string.auth_google_failed)
+                    updateState { copy(isGoogleLoading = false, errorMessage = msg) }
                 }
                 is Result.Loading -> Unit
             }
@@ -159,14 +161,15 @@ class AuthViewModel(
      * inline (errorMessage) and as an error toast, and returns false so the
      * caller skips the network request entirely.
      */
-    private fun ensureOnline(): Boolean {
+    private suspend fun ensureOnline(): Boolean {
         if (observeConnectivity.isOnlineNow()) return true
-        updateState { copy(isLoading = false, isGoogleLoading = false, errorMessage = NO_CONNECTION_MESSAGE) }
-        sendEffect(AuthEffect.ShowError(NO_CONNECTION_MESSAGE))
+        val msg = getString(Res.string.no_internet_connection)
+        updateState { copy(isLoading = false, isGoogleLoading = false, errorMessage = msg) }
+        sendEffect(AuthEffect.ShowError(msg))
         return false
     }
 
-    private fun validateInputs(email: String, password: String): Boolean {
+    private suspend fun validateInputs(email: String, password: String): Boolean {
         val error = AuthValidator.validateEmail(email) ?: AuthValidator.validatePassword(password)
         if (error != null) {
             updateState { copy(errorMessage = error) }
@@ -177,6 +180,5 @@ class AuthViewModel(
 
     private companion object {
         const val SUCCESS_NAV_DELAY_MS = 1000L
-        const val NO_CONNECTION_MESSAGE = "No internet connection"
     }
 }

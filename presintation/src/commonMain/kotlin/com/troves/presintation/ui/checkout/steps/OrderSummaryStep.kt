@@ -52,6 +52,7 @@ import troves.presintation.generated.resources.checkout_order_summary
 import troves.presintation.generated.resources.checkout_review_subtitle
 import troves.presintation.generated.resources.checkout_subtotal_items
 import troves.presintation.generated.resources.checkout_total
+import troves.presintation.generated.resources.checkout_continue
 import troves.presintation.generated.resources.Res as StringRes
 
 data class OrderSummaryItemUi(
@@ -249,7 +250,47 @@ private fun OrderSummaryStepPreview() {
                 modifier = Modifier.weight(1f),
             )
             PrimaryButton(
-                caption = "Continue",
+                caption = stringResource(StringRes.string.checkout_continue),
+                onClick = {},
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(Theme.spacing.medium),
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun OrderSummaryStepPreviewArabic() {
+    SpTheme(isDarkTheme = false, languageCode = "ar") {
+        var coupon by remember { mutableStateOf("WELCOME10") }
+        var appliedCode by remember { mutableStateOf<String?>("WELCOME10") }
+        val image = painterResource(Res.drawable.img_placeholder)
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Theme.colors.backGround),
+        ) {
+            OrderSummaryStepContent(
+                couponInput = coupon,
+                onCouponChange = { coupon = it },
+                onApplyCoupon = { appliedCode = coupon },
+                onRemoveCoupon = { appliedCode = null },
+                items = listOf(
+                    OrderSummaryItemUi(image, "كنزة محبوكة ناعمة", "كريمي / M", 2, "\$98.00"),
+                    OrderSummaryItemUi(image, "بنطلون كتان", "رملي / 32", 1, "\$50.00"),
+                ),
+                itemCount = 3,
+                subtotalFormatted = "\$246.00",
+                totalFormatted = "\$221.40",
+                currentStep = 1,
+                discountCode = appliedCode,
+                discountValueFormatted = "- \$24.60",
+                modifier = Modifier.weight(1f),
+            )
+            PrimaryButton(
+                caption = stringResource(StringRes.string.checkout_continue),
                 onClick = {},
                 modifier = Modifier
                     .fillMaxWidth()

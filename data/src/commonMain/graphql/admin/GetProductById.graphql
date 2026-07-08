@@ -1,4 +1,4 @@
-query GetProductById($id: ID!) {
+query GetProductById($id: ID!, $locale: String!) {
     product(id: $id) {
         ...ProductCard
     }

@@ -315,6 +315,7 @@ fun LoginScreen(
         }
     }
 
-    TrovesToastHost(state = toast)
+        TrovesToastHost(state = toast)
+    }
 }
-}
+

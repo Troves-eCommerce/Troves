@@ -26,6 +26,7 @@ actual fun MapBox(
     selectedLatitude: Double?,
     selectedLongitude: Double?,
     currentLocation: LocationCoordinates,
+    flyToCurrentLocationTrigger: Int,
     onMapClick: (latitude: Double, longitude: Double) -> Unit
 ) {
     val viewportState = rememberMapViewportState {
@@ -34,17 +35,20 @@ actual fun MapBox(
             zoom(12.0)
         }
     }
-    LaunchedEffect(currentLocation) {
-        onMapClick(currentLocation.lan, currentLocation.lon)
-         viewportState.flyTo(
-             cameraOptions = CameraOptions.Builder()
-                 .center(Point.fromLngLat(currentLocation.lan, currentLocation.lon))
-                 .zoom(10.0)
-                 .build(),
-             animationOptions = MapAnimationOptions.mapAnimationOptions {
-                 duration(2000)
-             }
-         )
+    LaunchedEffect(currentLocation, flyToCurrentLocationTrigger) {
+        if (currentLocation.lan != 0.0 && currentLocation.lon != 0.0) {
+            if (flyToCurrentLocationTrigger > 0 || (selectedLatitude == null && selectedLongitude == null)) {
+                viewportState.flyTo(
+                    cameraOptions = CameraOptions.Builder()
+                        .center(Point.fromLngLat(currentLocation.lon, currentLocation.lan))
+                        .zoom(14.0)
+                        .build(),
+                    animationOptions = MapAnimationOptions.mapAnimationOptions {
+                        duration(2000)
+                    }
+                )
+            }
+        }
     }
 
     MapboxMap(

@@ -1,6 +1,7 @@
 package com.troves.presintation.ui.aichat.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,6 +28,7 @@ import coil3.compose.AsyncImage
 import com.troves.designsystem.theme.Theme
 import com.troves.presintation.ui.aichat.AiProductUi
 import androidx.compose.foundation.layout.Row
+import com.troves.designsystem.util.bounceClick
 import org.jetbrains.compose.resources.painterResource
 import troves.designsystem.generated.resources.Res
 import troves.designsystem.generated.resources.ic_heart
@@ -43,7 +45,13 @@ fun AiProductCard(
         modifier = modifier
             .width(150.dp)
             .clip(Theme.shapes.large)
-            .clickable(onClick = onClick),
+            .clickable(onClick = onClick)
+            .border(1.5.dp, Theme.colors.onPrimaryVariant, Theme.shapes.large)
+            .bounceClick(
+                shape = Theme.shapes.large,
+                onClick = onClick
+            )
+        ,
         verticalArrangement = Arrangement.spacedBy(6.dp),
     ) {
         Box(
@@ -80,6 +88,7 @@ fun AiProductCard(
 
         Text(
             text = product.title,
+            modifier = Modifier.padding(horizontal = 6.dp),
             style = Theme.typography.body.small,
             color = Theme.colors.primaryFont,
             maxLines = 2,
@@ -87,6 +96,7 @@ fun AiProductCard(
         )
         Text(
             text = product.priceFormatted,
+            modifier = Modifier.padding(horizontal = 6.dp),
             style = Theme.typography.body.medium.copy(fontWeight = FontWeight.Bold),
             color = Theme.colors.primary,
         )
@@ -95,6 +105,7 @@ fun AiProductCard(
             val rating = "4.${5 + (id % 5)}"          // app-wide placeholder convention (no real rating data)
             val reviews = (id * 17) % 150 + 50
             Row(
+                modifier = Modifier.padding(horizontal = 6.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
             ) {

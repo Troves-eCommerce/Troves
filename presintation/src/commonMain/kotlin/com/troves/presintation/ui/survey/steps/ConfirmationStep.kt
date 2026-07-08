@@ -21,6 +21,10 @@ import com.troves.designsystem.theme.Theme
 import org.jetbrains.compose.resources.painterResource
 import troves.designsystem.generated.resources.Res as DesignRes
 import troves.designsystem.generated.resources.ic_ai_sparkles
+import troves.presintation.generated.resources.Res as ResP
+import troves.presintation.generated.resources.survey_confirmation_body
+import troves.presintation.generated.resources.survey_confirmation_continue
+import troves.presintation.generated.resources.survey_confirmation_title
 
 @Composable
 fun ConfirmationStep(
@@ -44,7 +48,7 @@ fun ConfirmationStep(
         Spacer(Modifier.height(Theme.spacing.medium))
 
         BasicText(
-            text = stringResource(Res.string.survey_confirm_title),
+            text = stringResource(ResP.string.survey_confirmation_title),
             style = Theme.typography.display.copy(
                 color = Theme.colors.primaryFont,
                 fontWeight = FontWeight.Bold,
@@ -53,7 +57,7 @@ fun ConfirmationStep(
         )
 
         BasicText(
-            text = stringResource(Res.string.survey_confirm_desc),
+            text = stringResource(ResP.string.survey_confirmation_body),
             style = Theme.typography.body.large.copy(
                 color = Theme.colors.secondaryFont,
                 textAlign = TextAlign.Center,
@@ -63,7 +67,7 @@ fun ConfirmationStep(
         Spacer(Modifier.height(Theme.spacing.extraLarge))
 
         PrimaryButton(
-            caption = stringResource(Res.string.survey_confirm_shop),
+            caption = stringResource(ResP.string.survey_confirmation_continue),
             onClick = onContinue,
             modifier = Modifier.fillMaxWidth(),
         )

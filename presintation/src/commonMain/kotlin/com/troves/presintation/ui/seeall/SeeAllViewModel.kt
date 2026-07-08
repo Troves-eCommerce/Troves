@@ -22,6 +22,12 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.getString
+import troves.presintation.generated.resources.Res
+import troves.presintation.generated.resources.generic_error
+import troves.presintation.generated.resources.wishlist_added
+import troves.presintation.generated.resources.wishlist_login_required
+import troves.presintation.generated.resources.wishlist_removed
 
 class SeeAllViewModel(
     private val getBrands: GetBrandsUseCase,
@@ -87,16 +93,16 @@ class SeeAllViewModel(
                 viewModelScope.launch {
                     when (val result = toggleFavoriteUseCase(intent.product)) {
                         is com.troves.domain.usecase.wishlist.ToggleFavoriteResult.RequiresLogin -> {
-                            sendEffect(SeeAllEffect.ShowToast("Please login to add to wishlist"))
+                            sendEffect(SeeAllEffect.ShowToast(getString(Res.string.wishlist_login_required)))
                         }
                         is com.troves.domain.usecase.wishlist.ToggleFavoriteResult.Error -> {
-                            sendEffect(SeeAllEffect.ShowToast(result.throwable.message ?: "An error occurred"))
+                            sendEffect(SeeAllEffect.ShowToast(result.throwable.message ?: getString(Res.string.generic_error)))
                         }
                         com.troves.domain.usecase.wishlist.ToggleFavoriteResult.Added -> {
-                            sendEffect(SeeAllEffect.ShowToast("Added to wishlist"))
+                            sendEffect(SeeAllEffect.ShowToast(getString(Res.string.wishlist_added)))
                         }
                         com.troves.domain.usecase.wishlist.ToggleFavoriteResult.Removed -> {
-                            sendEffect(SeeAllEffect.ShowToast("Removed from wishlist"))
+                            sendEffect(SeeAllEffect.ShowToast(getString(Res.string.wishlist_removed)))
                         }
                     }
                 }

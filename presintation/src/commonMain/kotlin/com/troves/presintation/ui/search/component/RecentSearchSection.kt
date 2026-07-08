@@ -34,6 +34,7 @@ import org.jetbrains.compose.resources.stringResource
 import troves.presintation.generated.resources.Res
 import troves.presintation.generated.resources.recent_searches
 import troves.presintation.generated.resources.clear_all
+import troves.presintation.generated.resources.search_remove_recent
 
 /**
  * Copyright (c) 2026 Wahid Ali Wahid Hussien.
@@ -145,7 +146,7 @@ private fun RecentSearchItem(
         ) {
             Icon(
                 imageVector = Lucide.X,
-                contentDescription = "Remove recent search",
+                contentDescription = stringResource(Res.string.search_remove_recent),
                 tint = Theme.colors.hint,
                 modifier = Modifier.size(16.dp)
             )

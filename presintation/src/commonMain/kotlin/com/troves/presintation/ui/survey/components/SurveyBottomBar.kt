@@ -14,6 +14,10 @@ import com.troves.designsystem.theme.Theme
 import org.jetbrains.compose.resources.painterResource
 import troves.designsystem.generated.resources.Res as DesignRes
 import troves.designsystem.generated.resources.ic_arrow_back
+import troves.presintation.generated.resources.Res as ResP
+import troves.presintation.generated.resources.common_back
+import troves.presintation.generated.resources.survey_finish
+import troves.presintation.generated.resources.survey_next
 
 @Composable
 fun SurveyBottomBar(
@@ -31,7 +35,7 @@ fun SurveyBottomBar(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         PrimaryButton(
-            caption = if (isLastStep) stringResource(Res.string.survey_btn_finish) else stringResource(Res.string.survey_btn_next),
+            caption = if (isLastStep) stringResource(ResP.string.survey_finish) else stringResource(ResP.string.survey_next),
             onClick = onNext,
             modifier = Modifier.fillMaxWidth(),
             isDisabled = !isAnswered,
@@ -39,7 +43,7 @@ fun SurveyBottomBar(
         )
         if (canGoBack) {
             SecondaryButton(
-                caption = stringResource(Res.string.survey_btn_back),
+                caption = stringResource(ResP.string.common_back),
                 onClick = onBack,
                 modifier = Modifier.fillMaxWidth(),
                 iconPainter = painterResource(DesignRes.drawable.ic_arrow_back),

@@ -33,6 +33,12 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.getString
+import troves.presintation.generated.resources.Res
+import troves.presintation.generated.resources.generic_error
+import troves.presintation.generated.resources.wishlist_added
+import troves.presintation.generated.resources.wishlist_login_required
+import troves.presintation.generated.resources.wishlist_removed
 import kotlin.time.Duration.Companion.milliseconds
 
 /**
@@ -217,23 +223,23 @@ class SearchScreenViewModel(
 
                     when (val result = toggleFavoriteUseCase(product)) {
                         is ToggleFavoriteResult.RequiresLogin -> {
-                            sendEffect(ShowMessage("Please login to add to wishlist"))
+                            sendEffect(ShowMessage(getString(Res.string.wishlist_login_required)))
                         }
 
                         is ToggleFavoriteResult.Error -> {
                             sendEffect(
                                 ShowMessage(
-                                    result.throwable.message ?: "An error occurred"
+                                    result.throwable.message ?: getString(Res.string.generic_error)
                                 )
                             )
                         }
 
                         ToggleFavoriteResult.Added -> {
-                            sendEffect(ShowMessage("Added to wishlist"))
+                            sendEffect(ShowMessage(getString(Res.string.wishlist_added)))
                         }
 
                         ToggleFavoriteResult.Removed -> {
-                            sendEffect(ShowMessage("Removed from wishlist"))
+                            sendEffect(ShowMessage(getString(Res.string.wishlist_removed)))
                         }
                     }
                 }

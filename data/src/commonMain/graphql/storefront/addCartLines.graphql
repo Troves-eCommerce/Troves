@@ -1,7 +1,8 @@
 mutation AddCartLines(
     $cartId: ID!,
-    $lines: [CartLineInput!]!
-) {
+    $lines: [CartLineInput!]!,
+    $language: LanguageCode!
+) @inContext(language: $language) {
     cartLinesAdd(
         cartId: $cartId,
         lines: $lines

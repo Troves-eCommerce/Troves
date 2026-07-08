@@ -27,6 +27,8 @@ import com.troves.data.source.remote.service.apollo.graphql.storefront.type.Cart
 import com.troves.data.source.remote.service.apollo.graphql.storefront.type.CartLineInput
 import com.troves.data.source.remote.service.apollo.graphql.storefront.type.CartLineUpdateInput
 import com.troves.data.source.remote.service.apollo.graphql.storefront.type.CustomerCreateInput
+import com.troves.data.source.remote.service.apollo.graphql.storefront.type.LanguageCode
+import com.troves.data.source.local.preferenceses.TrovesPreferences
 import com.troves.data.source.remote.service.apollo.mapper.toCartSelectableAddressInput
 import com.troves.data.source.remote.service.apollo.mapper.toDomainCart
 import com.troves.data.source.remote.service.apollo.mapper.toDomainAddress
@@ -42,10 +44,17 @@ import com.troves.domain.entity.Cart
 import com.troves.domain.entity.Order
 import com.troves.domain.entity.OrderSummary
 import com.troves.domain.utils.Result
+import kotlinx.coroutines.flow.first
 
 class ApolloStorefrontApiServiceImpl(
     private val apolloClient: ApolloClient,
+    private val preferences: TrovesPreferences,
 ) : StorefrontApiService {
+
+    /** App language as a Storefront `LanguageCode` for `@inContext`, so cart/order product titles localize. */
+    private suspend fun languageCode(): LanguageCode =
+        if (preferences.selectedLanguage.first().equals("ar", ignoreCase = true)) LanguageCode.AR
+        else LanguageCode.EN
 
     // region customer auth
     override suspend fun createCustomer(email: String, password: String): Result<Unit> =
@@ -99,7 +108,9 @@ class ApolloStorefrontApiServiceImpl(
             ),
             buyerIdentity = buyerIdentity,
         )
-        return apolloClient.runMutation(CreateCartMutation(input = Optional.present(input))) { data ->
+        return apolloClient.runMutation(
+            CreateCartMutation(input = Optional.present(input), language = languageCode())
+        ) { data ->
             val payload = data.cartCreate
             payload?.userErrors?.firstOrNull()?.let { error(it.message) }
             payload?.cart?.cartFields?.toDomainCart() ?: error("Cart creation returned no cart")
@@ -111,6 +122,7 @@ class ApolloStorefrontApiServiceImpl(
             AddCartLinesMutation(
                 cartId = cartId,
                 lines = listOf(CartLineInput(merchandiseId = variantId.toVariantGid(), quantity = Optional.present(quantity))),
+                language = languageCode(),
             )
         ) { data ->
             val payload = data.cartLinesAdd
@@ -123,6 +135,7 @@ class ApolloStorefrontApiServiceImpl(
             UpdateCartLinesMutation(
                 cartId = cartId,
                 lines = listOf(CartLineUpdateInput(id = lineId, quantity = Optional.present(quantity))),
+                language = languageCode(),
             )
         ) { data ->
             val payload = data.cartLinesUpdate
@@ -132,7 +145,7 @@ class ApolloStorefrontApiServiceImpl(
 
     override suspend fun removeLines(cartId: String, lineIds: List<String>): Result<Cart> =
         apolloClient.runMutation(
-            RemoveCartLinesMutation(cartId = cartId, lineIds = lineIds)
+            RemoveCartLinesMutation(cartId = cartId, lineIds = lineIds, language = languageCode())
         ) { data ->
             val payload = data.cartLinesRemove
             payload?.userErrors?.firstOrNull()?.let { error(it.message) }
@@ -141,7 +154,7 @@ class ApolloStorefrontApiServiceImpl(
 
     override suspend fun updateDiscountCodes(cartId: String, codes: List<String>): Result<Cart> =
         apolloClient.runMutation(
-            UpdateDiscountCodesMutation(cartId = cartId, discountCodes = codes)
+            UpdateDiscountCodesMutation(cartId = cartId, discountCodes = codes, language = languageCode())
         ) { data ->
             val payload = data.cartDiscountCodesUpdate
             payload?.userErrors?.firstOrNull()?.let { error(it.message) }
@@ -149,7 +162,7 @@ class ApolloStorefrontApiServiceImpl(
         }
 
     override suspend fun getCart(cartId: String): Result<Cart?> =
-        apolloClient.runQuery(GetCartQuery(cartId = cartId)) { data ->
+        apolloClient.runQuery(GetCartQuery(cartId = cartId, language = languageCode())) { data ->
             data.cart?.cartFields?.toDomainCart()
         }
     // endregion
@@ -244,13 +257,13 @@ class ApolloStorefrontApiServiceImpl(
 
     override suspend fun getOrders(customerAccessToken: String): Result<List<OrderSummary>> =
         apolloClient.runQuery(
-            GetOrdersQuery(customerAccessToken = customerAccessToken)
+            GetOrdersQuery(customerAccessToken = customerAccessToken, language = languageCode())
         ) { data ->
             data.customer?.orders?.nodes?.map { it.toDomainOrderSummary() }.orEmpty()
         }
 
     override suspend fun getOrderById(customerAccessToken: String, orderId: String): Result<Order?> =
-        apolloClient.runQuery(GetOrderByIdQuery(customerAccessToken = customerAccessToken)) { data ->
+        apolloClient.runQuery(GetOrderByIdQuery(customerAccessToken = customerAccessToken, language = languageCode())) { data ->
             val orderNode = data.customer?.orders?.nodes?.find { it.orderCoreFields.id == orderId } ?: return@runQuery null
             orderNode.orderCoreFields.toDomainOrder(
                 lineItems = orderNode.lineItems.nodes.map { it.orderLineItemFields.toDomainLineItem() }

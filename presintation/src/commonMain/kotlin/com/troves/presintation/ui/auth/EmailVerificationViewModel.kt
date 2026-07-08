@@ -17,6 +17,13 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
+import org.jetbrains.compose.resources.getString
+import troves.presintation.generated.resources.Res
+import troves.presintation.generated.resources.no_internet_connection
+import troves.presintation.generated.resources.verify_email_check_failed
+import troves.presintation.generated.resources.verify_email_not_verified_yet
+import troves.presintation.generated.resources.verify_email_send_failed
+import troves.presintation.generated.resources.verify_email_sent
 
 class EmailVerificationViewModel(
     private val sendEmailVerificationUseCase: SendEmailVerificationUseCase,
@@ -54,23 +61,19 @@ class EmailVerificationViewModel(
 
     private fun resendEmail() {
         if (!currentState.canResend) return
-        if (!ensureOnline()) return
 
         viewModelScope.launch {
+            if (!ensureOnline()) return@launch
             updateState { copy(isResending = true, errorMessage = null) }
             when (val result = sendEmailVerificationUseCase()) {
                 is Result.Success -> {
                     updateState { copy(isResending = false) }
-                    sendEffect(EmailVerificationEffect.ShowMessage("Verification email sent!"))
+                    sendEffect(EmailVerificationEffect.ShowMessage(getString(Res.string.verify_email_sent)))
                     startResendCooldown()
                 }
                 is Result.Error -> {
-                    updateState {
-                        copy(
-                            isResending = false,
-                            errorMessage = result.throwable.message ?: "Failed to send email"
-                        )
-                    }
+                    val msg = result.throwable.message ?: getString(Res.string.verify_email_send_failed)
+                    updateState { copy(isResending = false, errorMessage = msg) }
                 }
                 is Result.Loading -> Unit
             }
@@ -91,18 +94,19 @@ class EmailVerificationViewModel(
     }
 
     private fun checkStatus() {
-        if (!ensureOnline()) return
         viewModelScope.launch {
+            if (!ensureOnline()) return@launch
             updateState { copy(isChecking = true, errorMessage = null) }
             when (val result = reloadUserUseCase()) {
                 is Result.Success -> {
                     val profile = authenticationRepository.getCurrentUserProfile()
                     val verified = profile?.isEmailVerified ?: false
+                    val notVerifiedMsg = if (verified) null else getString(Res.string.verify_email_not_verified_yet)
                     updateState {
                         copy(
                             isChecking = false,
                             isEmailVerified = verified,
-                            errorMessage = if (verified) null else "Email is not verified yet. Please check your inbox."
+                            errorMessage = notVerifiedMsg
                         )
                     }
                     if (verified) {
@@ -110,12 +114,8 @@ class EmailVerificationViewModel(
                     }
                 }
                 is Result.Error -> {
-                    updateState {
-                        copy(
-                            isChecking = false,
-                            errorMessage = result.throwable.message ?: "Failed to check status"
-                        )
-                    }
+                    val msg = result.throwable.message ?: getString(Res.string.verify_email_check_failed)
+                    updateState { copy(isChecking = false, errorMessage = msg) }
                 }
                 is Result.Loading -> Unit
             }
@@ -126,10 +126,11 @@ class EmailVerificationViewModel(
      * Pre-flight connectivity guard: when offline, show the message and skip the
      * network call rather than spinning.
      */
-    private fun ensureOnline(): Boolean {
+    private suspend fun ensureOnline(): Boolean {
         if (observeConnectivity.isOnlineNow()) return true
-        updateState { copy(isResending = false, isChecking = false, errorMessage = NO_CONNECTION_MESSAGE) }
-        sendEffect(EmailVerificationEffect.ShowError(NO_CONNECTION_MESSAGE))
+        val msg = getString(Res.string.no_internet_connection)
+        updateState { copy(isResending = false, isChecking = false, errorMessage = msg) }
+        sendEffect(EmailVerificationEffect.ShowError(msg))
         return false
     }
 
@@ -140,6 +141,5 @@ class EmailVerificationViewModel(
 
     private companion object {
         const val RESEND_COOLDOWN_SECONDS = 60
-        const val NO_CONNECTION_MESSAGE = "No internet connection"
     }
 }

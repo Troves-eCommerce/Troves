@@ -23,6 +23,9 @@ import com.composables.icons.lucide.TrendingUp
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import com.troves.designsystem.components.chip.AppChip
 import com.troves.designsystem.theme.Theme
+import org.jetbrains.compose.resources.stringResource
+import troves.presintation.generated.resources.Res
+import troves.presintation.generated.resources.search_trending
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -45,12 +48,12 @@ fun TrendingSection(
         ) {
             Icon(
                 painter = rememberVectorPainter(Lucide.TrendingUp),
-                contentDescription = "Trending",
+                contentDescription = stringResource(Res.string.search_trending),
                 tint = Theme.colors.secondaryFont,
                 modifier = Modifier.size(20.dp)
             )
             BasicText(
-                text = "Trending",
+                text = stringResource(Res.string.search_trending),
                 style = Theme.typography.body.small.copy(
                     fontWeight = FontWeight.Bold,
                     color = Theme.colors.primaryFont

@@ -1,7 +1,8 @@
 mutation UpdateCartLines(
     $cartId: ID!,
-    $lines: [CartLineUpdateInput!]!
-) {
+    $lines: [CartLineUpdateInput!]!,
+    $language: LanguageCode!
+) @inContext(language: $language) {
     cartLinesUpdate(
         cartId: $cartId,
         lines: $lines

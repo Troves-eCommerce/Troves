@@ -1,17 +1,23 @@
 package com.troves.presintation.ui.auth.validator
 
+import org.jetbrains.compose.resources.getString
+import troves.presintation.generated.resources.Res
+import troves.presintation.generated.resources.auth_email_empty
+import troves.presintation.generated.resources.auth_email_invalid
+import troves.presintation.generated.resources.auth_password_too_short
+
 object AuthValidator {
-    fun validateEmail(email: String): String? {
+    suspend fun validateEmail(email: String): String? {
         return when {
-            email.isBlank() -> "Email cannot be empty"
-            !isValidEmail(email) -> "Please enter a valid email address"
+            email.isBlank() -> getString(Res.string.auth_email_empty)
+            !isValidEmail(email) -> getString(Res.string.auth_email_invalid)
             else -> null
         }
     }
 
-    fun validatePassword(password: String): String? {
+    suspend fun validatePassword(password: String): String? {
         return if (password.length < 6) {
-            "Password must be at least 6 characters"
+            getString(Res.string.auth_password_too_short)
         } else {
             null
         }

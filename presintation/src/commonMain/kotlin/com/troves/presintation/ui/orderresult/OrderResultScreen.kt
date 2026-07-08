@@ -32,6 +32,20 @@ import com.troves.designsystem.components.button.PrimaryButton
 import com.troves.designsystem.components.cards.SectionCard
 import com.troves.designsystem.theme.Theme
 import com.troves.presintation.navigation.AppRoute
+import com.troves.presintation.ui.orderresult.components.ConfettiCelebration
+import org.jetbrains.compose.resources.stringResource
+import troves.presintation.generated.resources.Res as ResP
+import troves.presintation.generated.resources.checkout_items_count
+import troves.presintation.generated.resources.checkout_order_summary
+import troves.presintation.generated.resources.checkout_total
+import troves.presintation.generated.resources.order_details_subtotal
+import troves.presintation.generated.resources.order_result_delivery
+import troves.presintation.generated.resources.order_result_error_generic
+import troves.presintation.generated.resources.order_result_failed_title
+import troves.presintation.generated.resources.order_result_go_home
+import troves.presintation.generated.resources.order_result_success_generic
+import troves.presintation.generated.resources.order_result_success_named
+import troves.presintation.generated.resources.order_result_success_title
 
 
 @Composable
@@ -39,12 +53,13 @@ fun OrderResultScreen(
     args: AppRoute.OrderResult,
     onGoHome: () -> Unit,
 ) {
+    Box(modifier = Modifier.fillMaxSize().background(Theme.colors.backGround)) {
     Scaffold(
         modifier = Modifier.fillMaxSize().statusBarsPadding(),
-        containerColor = Theme.colors.backGround,
+        containerColor = Color.Transparent,
         bottomBar = {
             PrimaryButton(
-                caption = "Go to Home",
+                caption = stringResource(ResP.string.order_result_go_home),
                 onClick = onGoHome,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -63,7 +78,7 @@ fun OrderResultScreen(
         ) {
             StatusHeader(args)
 
-            SectionCard(title = "Order Summary") {
+            SectionCard(title = stringResource(ResP.string.checkout_order_summary)) {
                 if (args.itemImageUrls.isNotEmpty()) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -81,19 +96,19 @@ fun OrderResultScreen(
                             }
                         }
                         BasicText(
-                            text = "${args.itemCount} items",
+                            text = stringResource(ResP.string.checkout_items_count, args.itemCount),
                             style = Theme.typography.body.medium.copy(color = Theme.colors.secondaryFont),
                         )
                     }
                     Divider()
                 }
-                SummaryRow("Subtotal", args.subtotalFormatted, Theme.colors.primaryFont)
+                SummaryRow(stringResource(ResP.string.order_details_subtotal), args.subtotalFormatted, Theme.colors.primaryFont)
                 if (args.discountLabel != null && args.discountValueFormatted != null) {
                     SummaryRow(args.discountLabel, args.discountValueFormatted, Theme.colors.success)
                 }
                 Divider()
                 SummaryRow(
-                    label = "Total",
+                    label = stringResource(ResP.string.checkout_total),
                     value = args.totalFormatted,
                     color = Theme.colors.primaryFont,
                     style = Theme.typography.body.large,
@@ -102,7 +117,7 @@ fun OrderResultScreen(
             }
 
             if (args.recipientName.isNotBlank() || args.addressLines.isNotEmpty()) {
-                SectionCard(title = "Delivery") {
+                SectionCard(title = stringResource(ResP.string.order_result_delivery)) {
                     if (args.paymentLabel.isNotBlank()) {
                         BasicText(
                             text = args.paymentLabel,
@@ -134,17 +149,28 @@ fun OrderResultScreen(
             }
         }
     }
+
+        if (args.success) {
+            ConfettiCelebration(
+                modifier = Modifier.fillMaxSize().statusBarsPadding(),
+            )
+        }
+    }
 }
 
 @Composable
 private fun StatusHeader(args: AppRoute.OrderResult) {
     val accent = if (args.success) Theme.colors.success else Theme.colors.error
     val glyph = if (args.success) "✓" else "!" // check / exclamation
-    val title = if (args.success) "Order Placed!" else "Payment Failed"
+    val title = if (args.success) {
+        stringResource(ResP.string.order_result_success_title)
+    } else {
+        stringResource(ResP.string.order_result_failed_title)
+    }
     val message = when {
-        !args.success -> args.errorMessage ?: "Something went wrong. Please try again."
-        args.orderName != null -> "Your order ${args.orderName} has been placed successfully."
-        else -> "Your order has been placed successfully."
+        !args.success -> args.errorMessage ?: stringResource(ResP.string.order_result_error_generic)
+        args.orderName != null -> stringResource(ResP.string.order_result_success_named, args.orderName)
+        else -> stringResource(ResP.string.order_result_success_generic)
     }
     Column(
         modifier = Modifier.fillMaxWidth().padding(top = Theme.spacing.large),

@@ -30,6 +30,10 @@ import com.troves.designsystem.theme.Theme
 import com.troves.designsystem.util.autoMirror
 import com.troves.designsystem.util.bounceClick
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
+import troves.presintation.generated.resources.Res as ResP
+import troves.presintation.generated.resources.common_back
+import troves.presintation.generated.resources.product_image_carousel_desc
 import troves.designsystem.generated.resources.Res
 import troves.designsystem.generated.resources.ic_arrow_back
 import troves.designsystem.generated.resources.img_placeholder
@@ -59,7 +63,7 @@ fun ProductImageCarousel(
         ) { page ->
             AsyncImage(
                 model = imageUrls.getOrNull(page),
-                contentDescription = "Product image $page",
+                contentDescription = stringResource(ResP.string.product_image_carousel_desc, page + 1),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize(),
                 placeholder = painterResource(Res.drawable.img_placeholder),
@@ -75,11 +79,12 @@ fun ProductImageCarousel(
                 .padding(start = 16.dp, top = 16.dp)
                 .size(46.dp)
                 .clip(RoundedCornerShape(12.dp))
-                .background(Color.White),
+                .background(Color.White)
+                .autoMirror(),
         ) {
             Icon(
                 painter = painterResource(Res.drawable.ic_arrow_back),
-                contentDescription = "Back",
+                contentDescription = stringResource(ResP.string.common_back),
                 tint = Color.Black,
                 modifier = Modifier
                     .size(20.dp)

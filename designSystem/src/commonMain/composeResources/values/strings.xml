@@ -138,7 +138,6 @@
     <string name="register_password_not_match">Passwords do not match</string>
     <string name="login_google_failed">Google Sign-In failed</string>
     <string name="login_google_unsupported">Google Sign-In is not supported on this platform</string>
-    <string name="verify_email_continue_as_guest">Continue as Guest</string>
 
     <!-- Home Screen -->
     <string name="home_login_required">Please login to continue</string>
@@ -214,7 +213,7 @@
     <!-- Connectivity / offline -->
     <string name="connectivity_offline_banner">No internet connection</string>
     <string name="connectivity_back_online_banner">Back online</string>
-    <string name="no_connection_title">You\'re offline</string>
+    <string name="no_connection_title">You're offline</string>
     <string name="no_connection_desc">Check your internet connection and try again.</string>
     <string name="no_connection_retry">Try again</string>
     <string name="no_connection_action_blocked">You\'re offline. Connect to the internet to continue.</string>
@@ -225,4 +224,25 @@
     <string name="currency_jpy">¥</string>
     <string name="currency_eur">€</string>
     <string name="currency_usd">$</string>
+    <string name="no_connection_action_blocked">You're offline. Connect to the internet to continue.</string>
+
+    <!-- Splash Screen -->
+    <string name="splash_logo_content_description">Troves Logo</string>
+    <string name="splash_tagline">Discover Your Next Treasure.</string>
+    <string name="app_name_first_letter">T</string>
+    <string name="app_name_rest">roves</string>
+
+    <!-- Home Preview Slider -->
+    <string name="home_preview_ad_title_top">Summer</string>
+    <string name="home_preview_ad_title_bottom">Collection</string>
+    <string name="home_preview_ad_desc">Up to 50% off on selected items</string>
+    <string name="home_preview_ad_button">Shop now</string>
+
+    <!-- Home Fallback Banners -->
+    <string name="home_fallback_ad2_top">New</string>
+    <string name="home_fallback_ad2_bottom">Arrivals</string>
+    <string name="home_fallback_ad2_desc">Fresh styles just landed</string>
+    <string name="home_fallback_ad3_top">Best</string>
+    <string name="home_fallback_ad3_bottom">Sellers</string>
+    <string name="home_fallback_ad3_desc">Shop what everyone loves</string>
 </resources>

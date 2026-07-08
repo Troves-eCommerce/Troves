@@ -21,6 +21,12 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.getString
+import troves.presintation.generated.resources.Res
+import troves.presintation.generated.resources.address_delete_failed
+import troves.presintation.generated.resources.address_load_failed
+import troves.presintation.generated.resources.address_set_default_failed
+import troves.presintation.generated.resources.address_sign_in_again
 
 data class ManageSavedAddressesUiState(
     val addresses: List<Address> = emptyList(),
@@ -109,29 +115,29 @@ class ManageSavedAddressesViewModel(
         viewModelScope.launch {
             val result = refreshAddressesUseCase()
             updateState { copy(isLoading = false) }
-            if (result is Result.Error) reportError(result.throwable, "Couldn't load addresses")
+            if (result is Result.Error) reportError(result.throwable, getString(Res.string.address_load_failed))
         }
     }
 
     private fun deleteAddress(addressId: String) {
         viewModelScope.launch {
             val result = deleteAddressUseCase(addressId)
-            if (result is Result.Error) reportError(result.throwable, "Couldn't delete address")
+            if (result is Result.Error) reportError(result.throwable, getString(Res.string.address_delete_failed))
         }
     }
 
     private fun setDefault(addressId: String) {
         viewModelScope.launch {
             val result = setDefaultAddressUseCase(addressId)
-            if (result is Result.Error) reportError(result.throwable, "Couldn't set default")
+            if (result is Result.Error) reportError(result.throwable, getString(Res.string.address_set_default_failed))
         }
     }
 
-    private fun reportError(throwable: Throwable, fallback: String) {
+    private suspend fun reportError(throwable: Throwable, fallback: String) {
         if (throwable is ShopifyAuthRequiredException) {
             if (loginRequested) return
             loginRequested = true
-            sendEffect(ManageSavedAddressesEffect.RequireLogin(throwable.message ?: "Please sign in again"))
+            sendEffect(ManageSavedAddressesEffect.RequireLogin(throwable.message ?: getString(Res.string.address_sign_in_again)))
         } else {
             sendEffect(ManageSavedAddressesEffect.ShowToast(throwable.message ?: fallback))
         }

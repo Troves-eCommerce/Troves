@@ -9,21 +9,20 @@ import androidx.compose.ui.unit.dp             // Added
 import com.troves.designsystem.theme.SpTheme
 import org.jetbrains.compose.resources.painterResource
 import troves.designsystem.generated.resources.Res
+import troves.designsystem.generated.resources.app_name
 import troves.designsystem.generated.resources.ic_ai_sparkles
 import troves.designsystem.generated.resources.ic_cart
 import troves.designsystem.generated.resources.ic_search
+import org.jetbrains.compose.resources.stringResource
 
-/**
- * The Home screen top bar: the "Troves" wordmark with trailing search and cart
- * actions. A thin, opinionated wrapper over [BaseTopAppBar].
- */
+
 @Composable
 fun TrovesTopBar(
     onSearchClick: () -> Unit,
     onCartClick: () -> Unit,
     onAiClick: () -> Unit,
     modifier: Modifier = Modifier,
-    title: String = "Troves",
+    title: String = stringResource(Res.string.app_name),
     cartBadgeCount: Int = 0,
     border: BorderStroke? = null,
 ) {

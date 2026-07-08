@@ -50,24 +50,17 @@ import troves.designsystem.generated.resources.Res
 import troves.designsystem.generated.resources.img_onboarding
 import troves.designsystem.generated.resources.img_onboarding0
 import troves.designsystem.generated.resources.img_onboarding_1
-
-private val onboardingPages = listOf(
-    OnboardingPageInfo(
-        title = "Discover\nCurated Styles",
-        description = "Explore thousands of trendy fashion pieces handpicked just for you.",
-        imageRes = Res.drawable.img_onboarding0
-    ),
-    OnboardingPageInfo(
-        title = "Find What\nFits You",
-        description = "Find looks that match your style, mood, and everyday moments.",
-        imageRes = Res.drawable.img_onboarding_1
-    ),
-    OnboardingPageInfo(
-        title = "Shop. Love.\nRepeat.",
-        description = "Shop your favorites, save what you love, and stay ahead of trends.",
-        imageRes = Res.drawable.img_onboarding
-    )
-)
+import org.jetbrains.compose.resources.stringResource
+import troves.presintation.generated.resources.Res as ResP
+import troves.presintation.generated.resources.onboarding_get_started
+import troves.presintation.generated.resources.onboarding_next
+import troves.presintation.generated.resources.onboarding_page1_desc
+import troves.presintation.generated.resources.onboarding_page1_title
+import troves.presintation.generated.resources.onboarding_page2_desc
+import troves.presintation.generated.resources.onboarding_page2_title
+import troves.presintation.generated.resources.onboarding_page3_desc
+import troves.presintation.generated.resources.onboarding_page3_title
+import troves.presintation.generated.resources.onboarding_skip
 
 @Composable
 fun OnboardingScreen(
@@ -75,6 +68,23 @@ fun OnboardingScreen(
     viewModel: OnboardingViewModel = koinViewModel()
 ) {
     val uiState by viewModel.state.collectAsStateWithLifecycle()
+    val onboardingPages = listOf(
+        OnboardingPageInfo(
+            title = stringResource(ResP.string.onboarding_page1_title),
+            description = stringResource(ResP.string.onboarding_page1_desc),
+            imageRes = Res.drawable.img_onboarding0
+        ),
+        OnboardingPageInfo(
+            title = stringResource(ResP.string.onboarding_page2_title),
+            description = stringResource(ResP.string.onboarding_page2_desc),
+            imageRes = Res.drawable.img_onboarding_1
+        ),
+        OnboardingPageInfo(
+            title = stringResource(ResP.string.onboarding_page3_title),
+            description = stringResource(ResP.string.onboarding_page3_desc),
+            imageRes = Res.drawable.img_onboarding
+        )
+    )
     val pagerState = rememberPagerState(pageCount = { onboardingPages.size })
     val scope = rememberCoroutineScope()
 
@@ -137,7 +147,7 @@ fun OnboardingScreen(
             ) {
                 TextButton(onClick = { viewModel.onIntent(OnboardingIntent.CompleteOnboarding) }) {
                     Text(
-                        text = "Skip",
+                        text = stringResource(ResP.string.onboarding_skip),
                         style = Theme.typography.body.medium,
                         color = Theme.colors.secondaryFont
                     )
@@ -189,7 +199,7 @@ fun OnboardingScreen(
             Spacer(modifier = Modifier.height(32.dp))
 
             PrimaryButton(
-                caption = if (uiState.isLastPage) "Let's get started" else "Next",
+                caption = if (uiState.isLastPage) stringResource(ResP.string.onboarding_get_started) else stringResource(ResP.string.onboarding_next),
                 onClick = {
                     if (uiState.isLastPage) {
                         viewModel.onIntent(OnboardingIntent.CompleteOnboarding)

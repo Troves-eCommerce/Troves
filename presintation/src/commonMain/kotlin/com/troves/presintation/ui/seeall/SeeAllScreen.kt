@@ -32,6 +32,8 @@ import com.troves.presintation.ui.home.components.CategoryItem
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import troves.presintation.generated.resources.Res as PresRes
+import troves.presintation.generated.resources.common_back
 import org.koin.compose.viewmodel.koinViewModel
 import troves.designsystem.generated.resources.*
 
@@ -141,7 +143,7 @@ private fun SeeAllToolbar(
     ) {
         IconBox(
             icon = painterResource(Res.drawable.ic_arrow_back),
-            contentDescription = "Back",
+            contentDescription = stringResource(PresRes.string.common_back),
             onClick = onBackClick,
             autoMirror = true,
         )

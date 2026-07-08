@@ -46,6 +46,11 @@ import troves.designsystem.generated.resources.orders_empty_title
 import troves.designsystem.generated.resources.orders_empty_desc
 import troves.designsystem.generated.resources.orders_title
 import org.jetbrains.compose.resources.stringResource
+import troves.presintation.generated.resources.Res as ResP
+import troves.presintation.generated.resources.checkout_items_count
+import troves.presintation.generated.resources.order_details_order_number
+import troves.presintation.generated.resources.orders_error_load
+import troves.presintation.generated.resources.orders_view_details
 import com.troves.designsystem.components.emptystate.EmptyState
 import com.troves.presintation.ui.components.NoConnectionState
 import com.troves.presintation.ui.components.SignInRequiredState
@@ -96,7 +101,7 @@ fun OrdersScreen(
                 )
 
                 state.isError -> BasicText(
-                    text = state.errorMessage ?: "Failed to load orders",
+                    text = state.errorMessage ?: stringResource(ResP.string.orders_error_load),
                     style = Theme.typography.body.large.copy(color = Theme.colors.error),
                     modifier = Modifier.align(Alignment.Center),
                 )
@@ -286,7 +291,7 @@ private fun OrderCard(order: OrderUi, onClick: () -> Unit) {
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     BasicText(
-                        text = "Order #${order.name}",
+                        text = stringResource(ResP.string.order_details_order_number, order.name),
                         style = Theme.typography.body.large.copy(
                             color = Theme.colors.primaryFont,
                             fontWeight = FontWeight.Bold,
@@ -307,7 +312,7 @@ private fun OrderCard(order: OrderUi, onClick: () -> Unit) {
                         style = Theme.typography.body.small.copy(color = Theme.colors.secondaryFont),
                     )
                     BasicText(
-                        text = "  ·  ${order.itemCount} items",
+                        text = "  ·  " + stringResource(ResP.string.checkout_items_count, order.itemCount),
                         style = Theme.typography.body.small.copy(color = Theme.colors.secondaryFont),
                     )
                 }
@@ -329,7 +334,7 @@ private fun OrderCard(order: OrderUi, onClick: () -> Unit) {
             
             Icon(
                 painter = painterResource(Res.drawable.ic_chevron_right),
-                contentDescription = "View Details",
+                contentDescription = stringResource(ResP.string.orders_view_details),
                 tint = Theme.colors.primaryFont,
                 modifier = Modifier.size(20.dp)
             )

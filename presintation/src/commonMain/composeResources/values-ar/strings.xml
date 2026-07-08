@@ -252,4 +252,197 @@
     <string name="survey_confirm_desc">سنستخدم تفضيلاتك للتوصية بمنتجات ستحبها.</string>
     <string name="survey_confirm_shop">مواصلة التسوق</string>
     <string name="survey_question_header">السؤال %1$d من %2$d</string>
+    <string name="order_details_qty">الكمية: %1$d</string>
+    <string name="order_details_order_number">طلب رقم %1$s</string>
+    <string name="order_details_placed_on">تم الطلب في %1$s</string>
+
+    <!-- Order status &amp; timeline (Orders + Order Details) -->
+    <string name="order_status_processing">قيد المعالجة</string>
+    <string name="order_details_timeline_placed_title">تم تأكيد الطلب</string>
+    <string name="order_details_timeline_placed_desc">تم تأكيد طلبك بنجاح.</string>
+    <string name="order_details_timeline_processing_desc">نقوم بتجهيز طلبك.</string>
+    <string name="order_details_timeline_shipped_title">تم الشحن</string>
+    <string name="order_details_timeline_shipped_desc">طلبك في الطريق إليك.</string>
+    <string name="order_details_timeline_delivered_title">تم التوصيل</string>
+    <string name="order_details_timeline_delivered_desc">تم توصيل طلبك.</string>
+    <string name="order_details_timeline_delivered_pending">من المتوقع التوصيل قريبًا</string>
+    <string name="order_details_timeline_cancelled_title">تم الإلغاء</string>
+    <string name="order_details_timeline_cancelled_desc">تم إلغاء طلبك.</string>
+    <string name="order_details_shipping_free">مجاني</string>
+
+    <!-- Orders list screen -->
+    <string name="orders_error_load">تعذّر تحميل الطلبات</string>
+    <string name="orders_view_details">عرض التفاصيل</string>
+    <string name="order_details_not_found">الطلب غير موجود</string>
+    <string name="order_details_load_failed">تعذّر تحميل الطلب</string>
+
+    <!-- Order Result Screen -->
+    <string name="order_result_go_home">الذهاب إلى الرئيسية</string>
+    <string name="order_result_success_title">تم تأكيد الطلب!</string>
+    <string name="order_result_failed_title">فشل الدفع</string>
+    <string name="order_result_error_generic">حدث خطأ ما. حاول مرة أخرى.</string>
+    <string name="order_result_success_named">تم تأكيد طلبك %1$s بنجاح.</string>
+    <string name="order_result_success_generic">تم تأكيد طلبك بنجاح.</string>
+    <string name="order_result_delivery">التوصيل</string>
+
+    <!-- Shared connectivity -->
+    <string name="no_internet_connection">لا يوجد اتصال بالإنترنت</string>
+
+    <!-- Auth -->
+    <string name="auth_login_success">تم تسجيل الدخول بنجاح</string>
+    <string name="auth_login_failed">فشل تسجيل الدخول. حاول مرة أخرى.</string>
+    <string name="auth_passwords_no_match">كلمتا المرور غير متطابقتين</string>
+    <string name="auth_account_created">تم إنشاء الحساب بنجاح</string>
+    <string name="auth_register_failed">فشل إنشاء الحساب. حاول مرة أخرى.</string>
+    <string name="auth_google_success">تم تسجيل الدخول عبر جوجل بنجاح</string>
+    <string name="auth_google_failed">فشل تسجيل الدخول عبر جوجل. حاول مرة أخرى.</string>
+    <string name="auth_google_icon_desc">أيقونة جوجل</string>
+    <string name="auth_email_empty">لا يمكن ترك البريد الإلكتروني فارغًا</string>
+    <string name="auth_email_invalid">يرجى إدخال بريد إلكتروني صالح</string>
+    <string name="auth_password_too_short">يجب أن تتكوّن كلمة المرور من 6 أحرف على الأقل</string>
+
+    <!-- Email verification (additional) -->
+    <string name="verify_email_sent">تم إرسال بريد التأكيد!</string>
+    <string name="verify_email_send_failed">تعذّر إرسال البريد الإلكتروني</string>
+    <string name="verify_email_not_verified_yet">لم يتم تأكيد بريدك الإلكتروني بعد. يرجى التحقق من صندوق الوارد.</string>
+    <string name="verify_email_check_failed">تعذّر التحقق من الحالة</string>
+    <string name="verify_email_resend_cooldown">%1$s (%2$d ث)</string>
+
+    <!-- Common / shared -->
+    <string name="common_back">رجوع</string>
+    <string name="generic_error">حدث خطأ</string>
+
+    <!-- Wishlist / favorites toasts -->
+    <string name="wishlist_login_required">يرجى تسجيل الدخول للإضافة إلى المفضلة</string>
+    <string name="wishlist_added">تمت الإضافة إلى المفضلة</string>
+    <string name="wishlist_removed">تمت الإزالة من المفضلة</string>
+    <string name="favorites_added">تمت الإضافة إلى المفضلة</string>
+    <string name="favorites_removed">تمت الإزالة من المفضلة</string>
+    <string name="favorites_update_failed">تعذّر تحديث المفضلة</string>
+
+    <!-- Home / See All / Categories -->
+    <string name="home_source_just_for_you">مختارة لك</string>
+    <string name="home_source_trending_now">الأكثر رواجًا</string>
+    <string name="home_copied_to_clipboard">تم نسخ %1$s إلى الحافظة</string>
+    <string name="all_categories_title">كل الفئات</string>
+
+    <!-- Products / Product Details -->
+    <string name="product_details_unknown_error">خطأ غير معروف</string>
+    <string name="product_details_favorite_added">تمت الإضافة إلى المفضلة بنجاح</string>
+    <string name="product_details_favorite_removed">تمت الإزالة من المفضلة بنجاح</string>
+    <string name="product_details_add_to_cart_failed">تعذّرت الإضافة إلى السلة</string>
+    <string name="product_details_review_anonymous">مستخدم مجهول</string>
+    <string name="product_image_carousel_desc">صورة المنتج %1$d</string>
+
+    <!-- Relative time -->
+    <string name="time_just_now">الآن</string>
+    <string name="time_minutes_ago">منذ %1$d دقيقة</string>
+    <string name="time_hours_ago">منذ %1$d ساعة</string>
+    <string name="time_days_ago">منذ %1$d يوم</string>
+    <string name="time_weeks_ago">منذ %1$d أسبوع</string>
+
+    <!-- Search -->
+    <string name="search_bar_hint">ابحث عن المنتجات والعلامات التجارية...</string>
+    <string name="search_trending">الأكثر رواجًا</string>
+    <string name="search_remove_recent">إزالة البحث الأخير</string>
+
+    <!-- Cart -->
+    <string name="cart_login_required">يجب تسجيل الدخول لإدارة سلتك.</string>
+    <string name="cart_remove_failed">تعذّرت إزالة العنصر من السلة</string>
+    <string name="cart_max_quantity">لقد وصلت إلى الحد الأقصى للكمية</string>
+    <string name="cart_update_failed">تعذّر تحديث السلة</string>
+    <string name="cart_clear_failed">تعذّر إفراغ السلة</string>
+
+    <!-- Checkout · ViewModel toasts &amp; order-result labels -->
+    <string name="checkout_select_address">اختر عنوان التوصيل</string>
+    <string name="checkout_unavailable">الدفع غير متاح حاليًا</string>
+    <string name="checkout_payment_start_failed">تعذّر بدء عملية الدفع. حاول مرة أخرى.</string>
+    <string name="checkout_payment_start_failed_empty_cart">تعذّر بدء الدفع، معرّف السلة فارغ. حاول مرة أخرى.</string>
+    <string name="checkout_cart_empty">سلتك فارغة</string>
+    <string name="checkout_choose_payment">اختر طريقة الدفع</string>
+    <string name="checkout_no_deliverable_address">عذرًا، لا يوجد لديك عنوان للتوصيل إليه</string>
+    <string name="checkout_order_place_failed">تعذّر إتمام طلبك. حاول مرة أخرى.</string>
+    <string name="checkout_enter_coupon">أدخل كوبون الخصم</string>
+    <string name="checkout_coupon_invalid">\"%1$s\" ليس كودًا صالحًا أو مؤهلًا</string>
+    <string name="checkout_coupon_apply_failed">تعذّر تطبيق الخصم</string>
+    <string name="checkout_coupon_removed">تمت إزالة الخصم</string>
+    <string name="checkout_coupon_remove_failed">تعذّر إزالة الخصم</string>
+    <string name="checkout_payment_failed">فشل الدفع. حاول مرة أخرى.</string>
+    <string name="checkout_payment_canceled">تم إلغاء الدفع</string>
+    <string name="checkout_discount_label">خصم</string>
+    <string name="checkout_card_payment">الدفع بالبطاقة</string>
+    <string name="checkout_payment_pending">قيد الانتظار</string>
+
+    <!-- Profile -->
+    <string name="profile_style_survey_desc">حدّث تفضيلات أسلوبك</string>
+    <string name="profile_rates_error">الأسعار: %1$s</string>
+    <string name="profile_user_fallback">مستخدم</string>
+    <string name="profile_logout_failed">فشل تسجيل الخروج</string>
+
+    <!-- Address -->
+    <string name="address_location_permission_required">يلزم إذن الموقع للحصول على الموقع الحالي</string>
+    <string name="address_geocode_failed">تعذّر الحصول على تفاصيل العنوان</string>
+    <string name="address_select_location_first">يرجى تحديد موقع على الخريطة أولاً</string>
+    <string name="address_fill_required_fields">يرجى ملء جميع الحقول المطلوبة</string>
+    <string name="address_invalid_phone">يرجى إدخال رقم هاتف مصري صالح</string>
+    <string name="address_updated">تم تحديث العنوان</string>
+    <string name="address_saved">تم حفظ العنوان بنجاح</string>
+    <string name="address_sign_in_again">يرجى تسجيل الدخول مرة أخرى</string>
+    <string name="address_save_failed">تعذّر حفظ العنوان</string>
+    <string name="address_load_failed">تعذّر تحميل العناوين</string>
+    <string name="address_delete_failed">تعذّر حذف العنوان</string>
+    <string name="address_set_default_failed">تعذّر تعيين العنوان الافتراضي</string>
+
+    <!-- Map picker -->
+    <string name="map_fly_to_location">الانتقال إلى الموقع الحالي</string>
+    <string name="map_confirm_location">تأكيد الموقع</string>
+    <string name="map_getting_address">جارٍ الحصول على تفاصيل العنوان…</string>
+
+    <!-- Survey (display chrome) -->
+    <string name="survey_next">التالي</string>
+    <string name="survey_finish">إنهاء</string>
+    <string name="survey_saving">جارٍ الحفظ…</string>
+    <string name="survey_ok">حسنًا</string>
+    <string name="survey_save_failed">تعذّر حفظ الاستبيان</string>
+    <string name="survey_question_counter">السؤال %1$d من %2$d</string>
+    <string name="survey_step_counter">%1$d / %2$d</string>
+    <string name="survey_banner_eyebrow">مخصّص لك</string>
+    <string name="survey_banner_close">إغلاق</string>
+    <string name="survey_banner_title">دعنا نتعرّف على أسلوبك</string>
+    <string name="survey_banner_subtitle">أجب عن بضعة أسئلة سريعة وسنخصّص لك تجربة تسوّق مميزة.</string>
+    <string name="survey_banner_start">ابدأ الاستبيان</string>
+    <string name="survey_banner_dismiss">عدم الإظهار مرة أخرى</string>
+    <string name="survey_confirmation_title">كل شيء جاهز!</string>
+    <string name="survey_confirmation_body">سنستخدم تفضيلاتك لنوصي لك بمنتجات ستحبها.</string>
+    <string name="survey_confirmation_continue">متابعة التسوّق</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_page1_title">اكتشف\nأنماطًا مختارة</string>
+    <string name="onboarding_page1_desc">استكشف آلاف القطع العصرية المختارة خصيصًا لك.</string>
+    <string name="onboarding_page2_title">اعثر على ما\nيناسبك</string>
+    <string name="onboarding_page2_desc">اعثر على إطلالات تناسب أسلوبك ومزاجك ولحظاتك اليومية.</string>
+    <string name="onboarding_page3_title">تسوّق. أحبب.\nكرّر.</string>
+    <string name="onboarding_page3_desc">تسوّق مفضّلاتك، احفظ ما تحب، وكن دائمًا في طليعة الموضة.</string>
+    <string name="onboarding_skip">تخطّي</string>
+    <string name="onboarding_get_started">لنبدأ</string>
+    <string name="onboarding_next">التالي</string>
+
+    <!-- AI chat (additional) -->
+    <string name="ai_favorite_login_required">يرجى تسجيل الدخول لحفظ المفضلة.</string>
+    <string name="ai_favorite_update_failed">تعذّر تحديث المفضلة.</string>
+    <string name="ai_history_delete_failed">تعذّر حذف المحادثة.</string>
+    <string name="ai_time_now">الآن</string>
+    <string name="ai_remove_image">إزالة الصورة</string>
+    <string name="ai_send">إرسال</string>
+
+    <!-- Wishlist (dialogs &amp; toasts) -->
+    <string name="wishlist_view_login_required">يجب تسجيل الدخول لعرض قائمة المفضلة.</string>
+    <string name="wishlist_remove_item_title">إزالة العنصر</string>
+    <string name="wishlist_remove_confirm">هل أنت متأكد أنك تريد إزالة \"%1$s\" من قائمة المفضلة؟</string>
+    <string name="wishlist_remove_action">إزالة</string>
+    <string name="wishlist_clear_title">إفراغ قائمة المفضلة</string>
+    <string name="wishlist_clear_message">سيؤدي هذا الإجراء إلى إزالة جميع عناصر المفضلة.</string>
+    <string name="wishlist_clear_action">مسح</string>
+    <string name="wishlist_sync_failed">تعذّرت مزامنة المفضلة</string>
+    <string name="wishlist_remove_failed">تعذّرت إزالة العنصر</string>
 </resources>

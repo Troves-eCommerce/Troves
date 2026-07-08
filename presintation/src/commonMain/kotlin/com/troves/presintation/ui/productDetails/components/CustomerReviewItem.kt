@@ -21,7 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.troves.designsystem.theme.Theme
@@ -31,12 +30,13 @@ import org.jetbrains.compose.resources.stringResource
 import troves.designsystem.generated.resources.Res
 import troves.designsystem.generated.resources.ic_star
 import troves.designsystem.generated.resources.product_details_reviews_your_badge
+import troves.presintation.generated.resources.Res as ResP
+import troves.presintation.generated.resources.product_details_review_anonymous
 
 @Composable
 fun CustomerReviewItem(
     review: ReviewUi,
     modifier: Modifier = Modifier,
-    fixedHeight: Dp? = null,
 ) {
     val shape = RoundedCornerShape(12.dp)
     val background = if (review.isMine) Theme.colors.primary.copy(alpha = 0.08f) else Theme.colors.surface
@@ -44,53 +44,27 @@ fun CustomerReviewItem(
 
     val containerModifier = modifier
         .fillMaxWidth()
-        .let { if (fixedHeight != null) it.height(fixedHeight) else it }
         .clip(shape)
         .background(background)
         .border(width = 1.dp, color = borderColor, shape = shape)
-        .padding(16.dp)
+        .padding(12.dp)
 
-    if (fixedHeight != null) {
-        // Fixed-size card (horizontal preview row): comment flexes, date pinned to the bottom.
-        Column(modifier = containerModifier, verticalArrangement = Arrangement.Top) {
-            ReviewHeader(review)
+    Column(modifier = containerModifier, verticalArrangement = Arrangement.Top) {
+        ReviewHeader(review)
+        if (review.comment.isNotEmpty()) {
             Spacer(modifier = Modifier.height(8.dp))
-            if (review.comment.isNotEmpty()) {
-                Text(
-                    text = review.comment,
-                    style = Theme.typography.body.small,
-                    color = Theme.colors.secondaryFont,
-                    overflow = TextOverflow.Ellipsis,
-                    lineHeight = 20.sp,
-                    modifier = Modifier.weight(1f),
-                )
-            } else {
-                Spacer(modifier = Modifier.weight(1f))
-            }
-            if (review.date.isNotBlank()) {
-                Spacer(modifier = Modifier.height(8.dp))
-                ReviewDate(review.date)
-            }
+            Text(
+                text = review.comment,
+                style = Theme.typography.body.small,
+                color = Theme.colors.secondaryFont,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                lineHeight = 20.sp,
+            )
         }
-    } else {
-        // Wrap-height card (bottom-sheet list).
-        Column(modifier = containerModifier, verticalArrangement = Arrangement.Top) {
-            ReviewHeader(review)
-            if (review.comment.isNotEmpty()) {
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = review.comment,
-                    style = Theme.typography.body.small,
-                    color = Theme.colors.secondaryFont,
-                    maxLines = 4,
-                    overflow = TextOverflow.Ellipsis,
-                    lineHeight = 20.sp,
-                )
-            }
-            if (review.date.isNotBlank()) {
-                Spacer(modifier = Modifier.height(8.dp))
-                ReviewDate(review.date)
-            }
+        if (review.date.isNotBlank()) {
+            Spacer(modifier = Modifier.height(8.dp))
+            ReviewDate(review.date)
         }
     }
 }
@@ -104,7 +78,7 @@ private fun ColumnScope.ReviewHeader(review: ReviewUi) {
     ) {
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = review.authorName,
+                text = review.authorName.ifBlank { stringResource(ResP.string.product_details_review_anonymous) },
                 style = Theme.typography.body.medium,
                 fontWeight = FontWeight.Bold,
                 color = Theme.colors.primaryFont,
@@ -112,7 +86,6 @@ private fun ColumnScope.ReviewHeader(review: ReviewUi) {
                 overflow = TextOverflow.Ellipsis,
             )
             if (review.isMine) {
-                Spacer(modifier = Modifier.height(2.dp))
                 Text(
                     text = stringResource(Res.string.product_details_reviews_your_badge),
                     style = Theme.typography.body.small,
@@ -121,8 +94,6 @@ private fun ColumnScope.ReviewHeader(review: ReviewUi) {
                 )
             }
         }
-
-        Spacer(modifier = Modifier.width(8.dp))
 
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(
@@ -133,7 +104,7 @@ private fun ColumnScope.ReviewHeader(review: ReviewUi) {
             )
             Spacer(modifier = Modifier.width(4.dp))
             Text(
-                text = review.rating.toString(),
+                text = review.rating.toString() + ".0",
                 style = Theme.typography.body.medium,
                 fontWeight = FontWeight.Bold,
                 color = Theme.colors.primaryFont,

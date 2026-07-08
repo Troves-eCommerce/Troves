@@ -15,6 +15,10 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.getString
+import troves.presintation.generated.resources.Res
+import troves.presintation.generated.resources.order_details_load_failed
+import troves.presintation.generated.resources.order_details_not_found
 
 class OrderDetailsViewModel(
     private val getOrderById: GetOrderByIdUseCase,
@@ -59,17 +63,20 @@ class OrderDetailsViewModel(
             try {
                 val order = getOrderById(orderId)
                 if (order != null) {
-                    updateState { 
+                    val ui = order.toDetailsUi()
+                    updateState {
                         copy(
-                            isLoading = false, 
-                            orderDetails = order.toDetailsUi(),
-                        ) 
+                            isLoading = false,
+                            orderDetails = ui,
+                        )
                     }
                 } else {
-                    updateState { copy(isLoading = false, isError = true, errorMessage = "Order not found") }
+                    val notFound = getString(Res.string.order_details_not_found)
+                    updateState { copy(isLoading = false, isError = true, errorMessage = notFound) }
                 }
             } catch (e: Exception) {
-                updateState { copy(isLoading = false, isError = true, errorMessage = e.message ?: "Failed to load order") }
+                val fallback = getString(Res.string.order_details_load_failed)
+                updateState { copy(isLoading = false, isError = true, errorMessage = e.message ?: fallback) }
             }
         }
     }

@@ -20,6 +20,9 @@ import coil3.compose.AsyncImage
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.X
 import com.troves.designsystem.theme.Theme
+import org.jetbrains.compose.resources.stringResource
+import troves.presintation.generated.resources.Res
+import troves.presintation.generated.resources.ai_remove_image
 import com.troves.presintation.ui.aichat.PendingImageUi
 
 /** Thumbnail of the attached-but-not-yet-sent image, with a remove affordance. */
@@ -51,7 +54,7 @@ fun PendingImagePreview(
         ) {
             Icon(
                 painter = rememberVectorPainter(Lucide.X),
-                contentDescription = "Remove image",
+                contentDescription = stringResource(Res.string.ai_remove_image),
                 tint = Theme.colors.primaryFont,
                 modifier = Modifier.size(14.dp),
             )

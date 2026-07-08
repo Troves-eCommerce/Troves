@@ -43,6 +43,7 @@ import troves.presintation.generated.resources.verify_email_continue_as_guest
 import troves.presintation.generated.resources.verify_email_desc
 import troves.presintation.generated.resources.verify_email_not_received
 import troves.presintation.generated.resources.verify_email_resend_button
+import troves.presintation.generated.resources.verify_email_resend_cooldown
 import troves.presintation.generated.resources.verify_email_title
 
 @Composable
@@ -128,7 +129,11 @@ fun EmailVerificationScreen(
             Spacer(Modifier.height(8.dp))
 
             val resendCaption = if (state.resendCooldownSeconds > 0) {
-                "${stringResource(Res.string.verify_email_resend_button)} (${state.resendCooldownSeconds}s)"
+                stringResource(
+                    Res.string.verify_email_resend_cooldown,
+                    stringResource(Res.string.verify_email_resend_button),
+                    state.resendCooldownSeconds,
+                )
             } else {
                 stringResource(Res.string.verify_email_resend_button)
             }

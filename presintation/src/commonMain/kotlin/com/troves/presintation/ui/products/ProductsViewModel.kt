@@ -27,6 +27,14 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import com.troves.domain.utils.Result
+import org.jetbrains.compose.resources.getString
+import troves.presintation.generated.resources.Res
+import troves.presintation.generated.resources.error_view_title
+import troves.presintation.generated.resources.generic_error
+import troves.presintation.generated.resources.products_title
+import troves.presintation.generated.resources.wishlist_added
+import troves.presintation.generated.resources.wishlist_login_required
+import troves.presintation.generated.resources.wishlist_removed
 
 class ProductsViewModel(
     private val getProducts: GetProductsUseCase,
@@ -142,23 +150,23 @@ class ProductsViewModel(
                 viewModelScope.launch {
                     when (val result = toggleFavoriteUseCase(intent.product)) {
                         is com.troves.domain.usecase.wishlist.ToggleFavoriteResult.RequiresLogin -> {
-                            sendEffect(ProductsEffect.ShowToast("Please login to add to wishlist"))
+                            sendEffect(ProductsEffect.ShowToast(getString(Res.string.wishlist_login_required)))
                         }
 
                         is com.troves.domain.usecase.wishlist.ToggleFavoriteResult.Error -> {
                             sendEffect(
                                 ProductsEffect.ShowToast(
-                                    result.throwable.message ?: "An error occurred"
+                                    result.throwable.message ?: getString(Res.string.generic_error)
                                 )
                             )
                         }
 
                         com.troves.domain.usecase.wishlist.ToggleFavoriteResult.Added -> {
-                            sendEffect(ProductsEffect.ShowToast("Added to wishlist"))
+                            sendEffect(ProductsEffect.ShowToast(getString(Res.string.wishlist_added)))
                         }
 
                         com.troves.domain.usecase.wishlist.ToggleFavoriteResult.Removed -> {
-                            sendEffect(ProductsEffect.ShowToast("Removed from wishlist"))
+                            sendEffect(ProductsEffect.ShowToast(getString(Res.string.wishlist_removed)))
                         }
                     }
                 }
@@ -167,8 +175,8 @@ class ProductsViewModel(
     }
 
     private fun loadProducts(init: ProductsIntent.Init) {
-        val title = init.sourceName.ifBlank { "Products" }
         viewModelScope.launch {
+            val title = init.sourceName.ifBlank { getString(Res.string.products_title) }
             updateState { copy(isLoading = true, errorMessage = null, screenTitle = title) }
 
             val categoriesDeferred = async { getCategories() }
@@ -202,12 +210,15 @@ class ProductsViewModel(
                     }
                 }
 
-                is Result.Error -> updateState {
-                    copy(
-                        isLoading = false,
-                        screenTitle = title,
-                        errorMessage = productsResult.throwable.message ?: "Something went wrong",
-                    )
+                is Result.Error -> {
+                    val fallback = getString(Res.string.error_view_title)
+                    updateState {
+                        copy(
+                            isLoading = false,
+                            screenTitle = title,
+                            errorMessage = productsResult.throwable.message ?: fallback,
+                        )
+                    }
                 }
 
                 is Result.Loading -> Unit

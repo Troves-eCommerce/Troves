@@ -3,6 +3,7 @@ package com.troves.presintation.ui.address
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.interop.UIKitView
@@ -25,6 +26,7 @@ actual fun MapBox(
     selectedLatitude: Double?,
     selectedLongitude: Double?,
     currentLocation: LocationCoordinates,
+    flyToCurrentLocationTrigger: Int,
     onMapClick: (latitude: Double, longitude: Double) -> Unit
 ) {
     val tapDelegate = remember {
@@ -39,6 +41,16 @@ actual fun MapBox(
             tapDelegate.mapView = this
         } 
     }
+    
+    LaunchedEffect(currentLocation, flyToCurrentLocationTrigger) {
+        if (currentLocation.lan != 0.0 && currentLocation.lon != 0.0) {
+            if (flyToCurrentLocationTrigger > 0 || (selectedLatitude == null && selectedLongitude == null)) {
+                val center = CLLocationCoordinate2DMake(currentLocation.lan, currentLocation.lon)
+                val region = MKCoordinateRegionMakeWithDistance(center, 10000.0, 10000.0)
+                mkMapView.setRegion(region, animated = true)
+            }
+        }
+    }
 
     UIKitView(
         factory = {
@@ -46,10 +58,6 @@ actual fun MapBox(
         },
         modifier = Modifier.fillMaxSize(),
         update = { mapView ->
-            val center = CLLocationCoordinate2DMake(currentLocation.lan, currentLocation.lon)
-            val region = MKCoordinateRegionMakeWithDistance(center, 10000.0, 10000.0)
-            mapView.setRegion(region, animated = true)
-
             mapView.removeAnnotations(mapView.annotations)
             if (selectedLatitude != null && selectedLongitude != null) {
                 val annotation = MKPointAnnotation()

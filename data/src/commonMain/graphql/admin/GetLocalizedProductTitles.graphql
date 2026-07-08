@@ -1,0 +1,15 @@
+# Batch lookup of localized product titles used to overlay Arabic titles onto Storefront cart /
+# order line items (whose `@inContext` titles depend on the locale being *published* on the sales
+# channel, whereas Admin `translations` only needs the translation to be registered).
+query GetLocalizedProductTitles($ids: [ID!]!, $locale: String!) {
+    nodes(ids: $ids) {
+        ... on Product {
+            id
+            title
+            translations(locale: $locale) {
+                key
+                value
+            }
+        }
+    }
+}

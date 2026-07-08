@@ -9,6 +9,14 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
+import org.jetbrains.compose.resources.stringResource
+import troves.presintation.generated.resources.Res
+import troves.presintation.generated.resources.error_view_title
+import troves.presintation.generated.resources.survey_finish
+import troves.presintation.generated.resources.survey_next
+import troves.presintation.generated.resources.survey_ok
+import troves.presintation.generated.resources.survey_saving
+import troves.presintation.generated.resources.survey_step_counter
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -90,10 +98,10 @@ fun SurveyBottomSheet(
     if (errorMessage != null) {
         AlertDialog(
             onDismissRequest = { errorMessage = null },
-            title = { Text(stringResource(Res.string.survey_error_generic)) },
+            title = { Text(stringResource(Res.string.error_view_title)) },
             text = { Text(errorMessage!!) },
             confirmButton = {
-                TextButton(onClick = { errorMessage = null }) { Text(stringResource(Res.string.survey_error_ok)) }
+                TextButton(onClick = { errorMessage = null }) { Text(stringResource(Res.string.survey_ok)) }
             },
         )
     }
@@ -165,7 +173,7 @@ fun SurveyBottomSheet(
                 ) {
                     // Step counter label  e.g. "1 / 4"
                     androidx.compose.foundation.text.BasicText(
-                        text = "${step + 1} / ${state.totalSteps}",
+                        text = stringResource(Res.string.survey_step_counter, step + 1, state.totalSteps),
                         style = Theme.typography.body.small.copy(
                             color = Theme.colors.hint,
                             fontWeight = FontWeight.Medium,
@@ -203,7 +211,7 @@ fun SurveyBottomSheet(
                     // Only show explicit "Next" button for multi-select steps
                     if (!isSingleSelect) {
                         PrimaryButton(
-                            caption = if (state.isLastStep) stringResource(Res.string.survey_btn_finish) else stringResource(Res.string.survey_btn_next),
+                            caption = if (state.isLastStep) stringResource(Res.string.survey_finish) else stringResource(Res.string.survey_next),
                             onClick = { advance() },
                             modifier = Modifier.fillMaxWidth(),
                             isDisabled = !state.isCurrentAnswered,
@@ -211,7 +219,7 @@ fun SurveyBottomSheet(
                         )
                     } else if (state.isSubmitting) {
                         PrimaryButton(
-                            caption = stringResource(Res.string.survey_btn_saving),
+                            caption = stringResource(Res.string.survey_saving),
                             onClick = {},
                             modifier = Modifier.fillMaxWidth(),
                             isLoading = true,

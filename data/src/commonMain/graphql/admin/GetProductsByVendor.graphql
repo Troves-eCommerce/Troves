@@ -1,15 +1,8 @@
-query GetProductsByVendor($first: Int!, $query: String!) {
+query GetProductsByVendor($first: Int!, $query: String!, $locale: String!) {
     products(first: $first, query: $query) {
         edges {
             node {
-                id
-                title
-                vendor
-                handle
-                featuredImage {
-                    url
-                    altText
-                }
+                ...ProductCard
             }
         }
         pageInfo {

@@ -33,6 +33,20 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.getString
+import troves.presintation.generated.resources.Res
+import troves.presintation.generated.resources.ai_favorite_login_required
+import troves.presintation.generated.resources.ai_favorite_update_failed
+import troves.presintation.generated.resources.ai_history_delete_failed
+import troves.presintation.generated.resources.ai_history_error
+import troves.presintation.generated.resources.ai_history_new_chat
+import troves.presintation.generated.resources.ai_time_now
+import troves.presintation.generated.resources.error_view_title
+import troves.presintation.generated.resources.time_days_ago
+import troves.presintation.generated.resources.time_hours_ago
+import troves.presintation.generated.resources.time_just_now
+import troves.presintation.generated.resources.time_minutes_ago
+import troves.presintation.generated.resources.time_weeks_ago
 import kotlinx.coroutines.withContext
 
 class AiChatViewModel(
@@ -146,9 +160,9 @@ class AiChatViewModel(
         viewModelScope.launch {
             when (val result = toggleFavorite(domainProduct)) {
                 ToggleFavoriteResult.RequiresLogin ->
-                    sendEffect(AiChatEffect.ShowMessage("Please sign in to save favorites."))
+                    sendEffect(AiChatEffect.ShowMessage(getString(Res.string.ai_favorite_login_required)))
                 is ToggleFavoriteResult.Error ->
-                    sendEffect(AiChatEffect.ShowMessage(result.throwable.message ?: "Couldn't update favorites."))
+                    sendEffect(AiChatEffect.ShowMessage(result.throwable.message ?: getString(Res.string.ai_favorite_update_failed)))
                 ToggleFavoriteResult.Added, ToggleFavoriteResult.Removed -> Unit // wishlist flow updates state
             }
         }
@@ -240,12 +254,14 @@ class AiChatViewModel(
             },
         )
 
-    private fun handleError(t: Throwable) {
+    private suspend fun handleError(t: Throwable) {
         when (t) {
             is RateLimitException ->
                 updateState { copy(isSending = false, rateLimitedSeconds = t.retryAfterSeconds) }
-            else ->
-                updateState { copy(isSending = false, errorMessage = t.message ?: "Something went wrong") }
+            else -> {
+                val fallback = getString(Res.string.error_view_title)
+                updateState { copy(isSending = false, errorMessage = t.message ?: fallback) }
+            }
         }
     }
 
@@ -269,18 +285,22 @@ class AiChatViewModel(
             when (val result = getConversations()) {
                 is AiHistoryListResult.Success -> {
                     loadedConversations = result.conversations
+                    val summaries = buildSummaries(result.conversations)
                     updateState {
-                        copy(historyLoading = false, conversations = buildSummaries(result.conversations))
+                        copy(historyLoading = false, conversations = summaries)
                     }
                 }
                 AiHistoryListResult.RequiresLogin -> updateState {
                     copy(historyLoading = false, historyRequiresLogin = true, conversations = emptyList())
                 }
-                is AiHistoryListResult.Error -> updateState {
-                    copy(
-                        historyLoading = false,
-                        historyError = result.throwable.message ?: "Couldn't load your chat history.",
-                    )
+                is AiHistoryListResult.Error -> {
+                    val historyFallback = getString(Res.string.ai_history_error)
+                    updateState {
+                        copy(
+                            historyLoading = false,
+                            historyError = result.throwable.message ?: historyFallback,
+                        )
+                    }
                 }
             }
         }
@@ -324,7 +344,7 @@ class AiChatViewModel(
         if (id == activeConversationId) activeConversationId = null
         viewModelScope.launch {
             if (!deleteConversation(id)) {
-                sendEffect(AiChatEffect.ShowMessage("Couldn't delete the conversation."))
+                sendEffect(AiChatEffect.ShowMessage(getString(Res.string.ai_history_delete_failed)))
                 loadHistory() // resync so the row reappears
             }
         }
@@ -349,30 +369,33 @@ class AiChatViewModel(
 
 
     private fun persistCurrentConversation() {
-        val snapshot = buildExitSnapshot() ?: return
-        CoroutineScope(Dispatchers.Default).launch { saveConversation(snapshot) }
+        CoroutineScope(Dispatchers.Default).launch {
+            val snapshot = buildExitSnapshot() ?: return@launch
+            saveConversation(snapshot)
+        }
     }
 
-    private fun buildExitSnapshot(): AiConversation? {
+    private suspend fun buildExitSnapshot(): AiConversation? {
         val messages = currentState.messages
         if (messages.none { it.sender == AiSender.ASSISTANT }) return null
         return AiConversation(
             id = activeConversationId ?: "",
-            title = deriveTitle(messages),
+            title = deriveTitle(messages, getString(Res.string.ai_history_new_chat)),
             updatedAt = nowEpochMillis(),
             messages = messages.map { it.toStored() },
         )
     }
 
-    private fun buildSummaries(remote: List<AiConversation>): List<ConversationSummaryUi> {
+    private suspend fun buildSummaries(remote: List<AiConversation>): List<ConversationSummaryUi> {
         val now = nowEpochMillis()
         val current = currentSessionSummary()
+        val newChatLabel = getString(Res.string.ai_history_new_chat)
         val rows = remote
             .filter { it.id != activeConversationId }
             .map {
                 ConversationSummaryUi(
                     id = it.id,
-                    title = it.title.ifBlank { "New chat" },
+                    title = it.title.ifBlank { newChatLabel },
                     timeLabel = relativeTime(now, it.updatedAt),
                     isActive = it.id == activeConversationId,
                 )
@@ -380,35 +403,35 @@ class AiChatViewModel(
         return listOfNotNull(current) + rows
     }
 
-    private fun currentSessionSummary(): ConversationSummaryUi? {
+    private suspend fun currentSessionSummary(): ConversationSummaryUi? {
         val messages = currentState.messages
         if (messages.none { it.sender == AiSender.ASSISTANT }) return null
         return ConversationSummaryUi(
             id = activeConversationId ?: CURRENT_SESSION_ID,
-            title = deriveTitle(messages),
-            timeLabel = "Now",
+            title = deriveTitle(messages, getString(Res.string.ai_history_new_chat)),
+            timeLabel = getString(Res.string.ai_time_now),
             isActive = true,
         )
     }
 
-    private fun deriveTitle(messages: List<ChatMessageUi>): String {
+    private fun deriveTitle(messages: List<ChatMessageUi>, newChatLabel: String): String {
         val firstUser = messages.firstOrNull { it.sender == AiSender.USER }?.text?.trim().orEmpty()
-        val base = firstUser.ifBlank { "New chat" }
+        val base = firstUser.ifBlank { newChatLabel }
         return if (base.length > TITLE_MAX) base.take(TITLE_MAX).trimEnd() + "…" else base
     }
 
-    private fun relativeTime(now: Long, then: Long): String {
+    private suspend fun relativeTime(now: Long, then: Long): String {
         if (then <= 0L) return ""
         val diff = (now - then).coerceAtLeast(0L)
         val minutes = diff / 60_000
         val hours = diff / 3_600_000
         val days = diff / 86_400_000
         return when {
-            minutes < 1 -> "Just now"
-            minutes < 60 -> "${minutes}m ago"
-            hours < 24 -> "${hours}h ago"
-            days < 7 -> "${days}d ago"
-            else -> "${days / 7}w ago"
+            minutes < 1 -> getString(Res.string.time_just_now)
+            minutes < 60 -> getString(Res.string.time_minutes_ago, minutes.toInt())
+            hours < 24 -> getString(Res.string.time_hours_ago, hours.toInt())
+            days < 7 -> getString(Res.string.time_days_ago, days.toInt())
+            else -> getString(Res.string.time_weeks_ago, (days / 7).toInt())
         }
     }
 

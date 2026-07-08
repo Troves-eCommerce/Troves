@@ -9,6 +9,9 @@ import com.troves.presintation.core.mvi.DefaultStateHolder
 import com.troves.presintation.core.mvi.EffectPublisher
 import com.troves.presintation.core.mvi.StateHolder
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.getString
+import troves.presintation.generated.resources.Res
+import troves.presintation.generated.resources.error_view_title
 
 class AllBrandsViewModel(
     private val getBrands: GetBrandsUseCase,
@@ -42,11 +45,14 @@ class AllBrandsViewModel(
                     copy(isLoading = false, errorMessage = null, brands = result.value)
                 }
 
-                is Result.Error -> updateState {
-                    copy(
-                        isLoading = false,
-                        errorMessage = result.throwable.message ?: "Something went wrong",
-                    )
+                is Result.Error -> {
+                    val fallback = getString(Res.string.error_view_title)
+                    updateState {
+                        copy(
+                            isLoading = false,
+                            errorMessage = result.throwable.message ?: fallback,
+                        )
+                    }
                 }
 
                 is Result.Loading -> Unit

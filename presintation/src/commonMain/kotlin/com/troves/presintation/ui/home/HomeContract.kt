@@ -7,6 +7,7 @@ import com.troves.domain.entity.Product
 
 data class HomeUiState(
     val isLoading: Boolean = true,
+    val isRefreshing: Boolean = false,
     val ads: List<Ad> = emptyList(),
     val brands: List<Brand> = emptyList(),
     val justForYou: List<Product> = emptyList(),
@@ -51,6 +52,7 @@ sealed interface HomeEffect {
 sealed interface HomeIntent {
     data object Load : HomeIntent
     data object Retry : HomeIntent
+    data object Refresh : HomeIntent
     data object ViewAllCategoriesClicked : HomeIntent
     data object ViewAllJustForYouClicked : HomeIntent
     data object ViewAllTrendingClicked : HomeIntent

@@ -3,12 +3,26 @@ package com.troves.presintation.ui.orderdetails
 import com.troves.domain.entity.CartMoney
 import com.troves.domain.entity.Order
 import com.troves.presintation.ui.orderdetails.components.TimelineStepData
+import org.jetbrains.compose.resources.getString
+import troves.presintation.generated.resources.Res
+import troves.presintation.generated.resources.order_details_shipping_free
+import troves.presintation.generated.resources.order_details_timeline_cancelled_desc
+import troves.presintation.generated.resources.order_details_timeline_cancelled_title
+import troves.presintation.generated.resources.order_details_timeline_delivered_desc
+import troves.presintation.generated.resources.order_details_timeline_delivered_pending
+import troves.presintation.generated.resources.order_details_timeline_delivered_title
+import troves.presintation.generated.resources.order_details_timeline_placed_desc
+import troves.presintation.generated.resources.order_details_timeline_placed_title
+import troves.presintation.generated.resources.order_details_timeline_processing_desc
+import troves.presintation.generated.resources.order_details_timeline_shipped_desc
+import troves.presintation.generated.resources.order_details_timeline_shipped_title
+import troves.presintation.generated.resources.order_status_processing
 
-fun Order.toDetailsUi(): OrderDetailsUi {
+suspend fun Order.toDetailsUi(): OrderDetailsUi {
     val statusStr = listOfNotNull(financialStatus, fulfillmentStatus)
         .filter { it.isNotBlank() }
         .joinToString(" · ") { it.lowercase().replaceFirstChar(Char::uppercase) }
-        .ifBlank { "Processing" }
+        .ifBlank { getString(Res.string.order_status_processing) }
 
     val isDelivered = fulfillmentStatus?.lowercase() == "fulfilled"
     val isShipped = fulfillmentStatus?.lowercase() == "shipped" || isDelivered
@@ -17,9 +31,9 @@ fun Order.toDetailsUi(): OrderDetailsUi {
     val timeline = buildList {
         add(
             TimelineStepData(
-                title = "Order Placed",
+                title = getString(Res.string.order_details_timeline_placed_title),
                 date = processedAt.take(10),
-                description = "Your order has been placed successfully.",
+                description = getString(Res.string.order_details_timeline_placed_desc),
                 isCompleted = true,
                 isCurrent = !isShipped && !isDelivered && !isCancelled
             )
@@ -27,24 +41,24 @@ fun Order.toDetailsUi(): OrderDetailsUi {
         if (!isCancelled) {
             add(
                 TimelineStepData(
-                    title = "Processing",
-                    description = "We are preparing your order.",
+                    title = getString(Res.string.order_status_processing),
+                    description = getString(Res.string.order_details_timeline_processing_desc),
                     isCompleted = isShipped || isDelivered,
                     isCurrent = !isShipped && !isDelivered
                 )
             )
             add(
                 TimelineStepData(
-                    title = "Shipped",
-                    description = "Your order is on the way.",
+                    title = getString(Res.string.order_details_timeline_shipped_title),
+                    description = getString(Res.string.order_details_timeline_shipped_desc),
                     isCompleted = isDelivered,
                     isCurrent = isShipped && !isDelivered
                 )
             )
             add(
                 TimelineStepData(
-                    title = "Delivered",
-                    description = if (isDelivered) "Your order has been delivered." else "Expected delivery soon",
+                    title = getString(Res.string.order_details_timeline_delivered_title),
+                    description = if (isDelivered) getString(Res.string.order_details_timeline_delivered_desc) else getString(Res.string.order_details_timeline_delivered_pending),
                     isCompleted = isDelivered,
                     isCurrent = isDelivered
                 )
@@ -52,8 +66,8 @@ fun Order.toDetailsUi(): OrderDetailsUi {
         } else {
             add(
                 TimelineStepData(
-                    title = "Cancelled",
-                    description = "Your order has been cancelled.",
+                    title = getString(Res.string.order_details_timeline_cancelled_title),
+                    description = getString(Res.string.order_details_timeline_cancelled_desc),
                     isCompleted = true,
                     isCurrent = true
                 )
@@ -80,7 +94,7 @@ fun Order.toDetailsUi(): OrderDetailsUi {
             )
         },
         subtotal = format(subtotal),
-        shipping = shipping?.let { format(it) } ?: "Free",
+        shipping = shipping?.let { format(it) } ?: getString(Res.string.order_details_shipping_free),
         tax = tax?.let { format(it) } ?: "-",
         total = format(total)
     )
