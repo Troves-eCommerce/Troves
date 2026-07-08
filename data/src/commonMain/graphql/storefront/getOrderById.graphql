@@ -1,4 +1,4 @@
-query GetOrderById($customerAccessToken: String!) {
+query GetOrderById($customerAccessToken: String!, $language: LanguageCode!) @inContext(language: $language) {
     customer(customerAccessToken: $customerAccessToken) {
         id
         orders(first: 250, reverse: true) {

@@ -1,7 +1,8 @@
 mutation UpdateDiscountCodes(
     $cartId: ID!,
-    $discountCodes: [String!]!
-) {
+    $discountCodes: [String!]!,
+    $language: LanguageCode!
+) @inContext(language: $language) {
     cartDiscountCodesUpdate(
         cartId: $cartId,
         discountCodes: $discountCodes

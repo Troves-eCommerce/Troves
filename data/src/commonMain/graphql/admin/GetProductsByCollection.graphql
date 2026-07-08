@@ -1,4 +1,4 @@
-query GetProductsByCollection($id: ID!, $first: Int!, $after: String, $sortKey: ProductCollectionSortKeys) {
+query GetProductsByCollection($id: ID!, $first: Int!, $after: String, $sortKey: ProductCollectionSortKeys, $locale: String!) {
     collection(id: $id) {
         id
         title
@@ -8,6 +8,10 @@ query GetProductsByCollection($id: ID!, $first: Int!, $after: String, $sortKey: 
                     id
                     title
                     handle
+                    translations(locale: $locale) {
+                        key
+                        value
+                    }
                     featuredImage {
                         url
                         altText
