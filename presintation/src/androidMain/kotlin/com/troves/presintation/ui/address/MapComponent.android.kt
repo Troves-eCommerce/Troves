@@ -40,8 +40,8 @@ actual fun MapBox(
             if (flyToCurrentLocationTrigger > 0 || (selectedLatitude == null && selectedLongitude == null)) {
                 viewportState.flyTo(
                     cameraOptions = CameraOptions.Builder()
-                        .center(Point.fromLngLat(currentLocation.lan, currentLocation.lon))
-                        .zoom(10.0)
+                        .center(Point.fromLngLat(currentLocation.lon, currentLocation.lan))
+                        .zoom(14.0)
                         .build(),
                     animationOptions = MapAnimationOptions.mapAnimationOptions {
                         duration(2000)
