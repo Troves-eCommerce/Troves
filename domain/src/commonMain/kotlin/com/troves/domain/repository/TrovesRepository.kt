@@ -31,9 +31,11 @@ interface TrovesRepository {
     val selectedLanguage: Flow<String>
     val themeMode: Flow<String>
     val selectedCurrency: Flow<String>
+    val isCartHintShown: Flow<Boolean>
     suspend fun setSelectedLanguage(language: String)
     suspend fun setThemeMode(mode: String)
     suspend fun setSelectedCurrency(currency: String)
+    suspend fun setCartHintShown(shown: Boolean)
 
     // ── Cart (Shopify = source of truth) ─────────────────────────────────────
     val cart: Flow<Cart?>

@@ -319,6 +319,9 @@ fun AppNav() {
                     }
                 },
                 onNavigateToLogin = { backStack.add(AppRoute.Login) },
+                onNavigateToProductDetails = { productId ->
+                    backStack.add(AppRoute.ProductDetails(productId))
+                }
             )
         }
         entry<AppRoute.Checkout> {

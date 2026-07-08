@@ -35,7 +35,6 @@ import com.troves.designsystem.theme.Theme
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import troves.designsystem.generated.resources.Res
-import troves.designsystem.generated.resources.ic_home_selected
 import troves.designsystem.generated.resources.ic_location
 import troves.presintation.generated.resources.Res as StringRes
 import troves.presintation.generated.resources.checkout_add_new_address
@@ -160,7 +159,7 @@ private fun AddAddressButton(onClick: () -> Unit) {
 private fun AddressStepPreview() {
     SpTheme(isDarkTheme = false, languageCode = "en") {
         var selectedId by remember { mutableStateOf("home") }
-        val homeIcon = painterResource(Res.drawable.ic_home_selected)
+        val homeIcon = painterResource(Res.drawable.ic_location)
         val workIcon = painterResource(Res.drawable.ic_location)
         Column(
             modifier = Modifier
