@@ -14,8 +14,12 @@ data class SeeAllUiState(
     val products: List<Product> = emptyList(),
     val favoriteProductIds: Set<String> = emptySet(),
     val errorMessage: String? = null,
+    val isOffline: Boolean = false,
 ) {
     val hasError: Boolean get() = errorMessage != null
+
+    val showOfflineState: Boolean
+        get() = isOffline && brands.isEmpty() && categories.isEmpty() && products.isEmpty() && !isLoading
 }
 
 sealed interface SeeAllEffect {

@@ -55,13 +55,19 @@ class HomeViewModel(
         observeReconnect()
     }
 
-    /** Re-fetch the feed automatically when connectivity returns. */
+
     private fun observeReconnect() {
-        observeConnectivity()
+        val online = observeConnectivity()
             .map { it == ConnectivityStatus.Available }
             .distinctUntilChanged()
+
+        online
+            .onEach { isOnline -> updateState { copy(isOffline = !isOnline) } }
+            .launchIn(viewModelScope)
+
+        online
             .drop(1) // ignore the initial value
-            .onEach { online -> if (online) loadHomeFeed() }
+            .onEach { isOnline -> if (isOnline) loadHomeFeed() }
             .launchIn(viewModelScope)
     }
 
@@ -169,7 +175,6 @@ class HomeViewModel(
                     trending = trendingResult.getOrElse(emptyList()),
                     errorMessage = firstError?.message,
                     isLoggedIn = loggedIn,
-                    isOffline = firstError != null && !observeConnectivity.isOnlineNow(),
                 )
             }
         }

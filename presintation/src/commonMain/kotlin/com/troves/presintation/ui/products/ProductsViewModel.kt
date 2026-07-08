@@ -51,12 +51,17 @@ class ProductsViewModel(
             }
             .launchIn(viewModelScope)
 
-        // Re-fetch the current listing when connectivity returns.
-        observeConnectivity()
+        val online = observeConnectivity()
             .map { it == ConnectivityStatus.Available }
             .distinctUntilChanged()
+
+        online
+            .onEach { isOnline -> updateState { copy(isOffline = !isOnline) } }
+            .launchIn(viewModelScope)
+
+        online
             .drop(1)
-            .onEach { online -> if (online) loadProducts(pendingInit ?: ProductsIntent.Init("", "", "")) }
+            .onEach { isOnline -> if (isOnline) loadProducts(pendingInit ?: ProductsIntent.Init("", "", "")) }
             .launchIn(viewModelScope)
     }
 
@@ -202,7 +207,6 @@ class ProductsViewModel(
                         isLoading = false,
                         screenTitle = title,
                         errorMessage = productsResult.throwable.message ?: "Something went wrong",
-                        isOffline = !observeConnectivity.isOnlineNow(),
                     )
                 }
 

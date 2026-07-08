@@ -71,13 +71,18 @@ class SearchScreenViewModel(
     private val searchQueryFlow = MutableStateFlow("")
 
     init {
-        // On reconnect, re-initialise filters and re-run the active search.
-        observeConnectivity()
+        val online = observeConnectivity()
             .map { it == ConnectivityStatus.Available }
             .distinctUntilChanged()
+
+        online
+            .onEach { isOnline -> updateState { copy(isOffline = !isOnline) } }
+            .launchIn(viewModelScope)
+
+        online
             .drop(1)
-            .onEach { online ->
-                if (online) {
+            .onEach { isOnline ->
+                if (isOnline) {
                     load()
                     if (state.value.query.isNotBlank()) runSearch(state.value.query)
                 }
@@ -267,16 +272,10 @@ class SearchScreenViewModel(
 
         searchProductsUseCase(params = params).fold(
             onSuccess = { products ->
-                updateState { copy(isLoading = false, products = products, errorMessage = null, isOffline = false) }
+                updateState { copy(isLoading = false, products = products, errorMessage = null) }
             },
             onError = { throwable ->
-                updateState {
-                    copy(
-                        isLoading = false,
-                        errorMessage = throwable.message,
-                        isOffline = !observeConnectivity.isOnlineNow(),
-                    )
-                }
+                updateState { copy(isLoading = false, errorMessage = throwable.message) }
             },
             onLoading = { /* searchProductsUseCase resolves directly to Success/Error; unreachable here */ },
         )
@@ -300,7 +299,6 @@ class SearchScreenViewModel(
                     brands = brandsResult.getOrElse { emptyList() },
                     categories = categoryResult.getOrElse { emptyList() },
                     errorMessage = hasError?.message,
-                    isOffline = hasError != null && !observeConnectivity.isOnlineNow(),
                 )
             }
         }
