@@ -269,6 +269,7 @@
     <!-- Splash Screen -->
     <string name="splash_logo_content_description">Troves Logo</string>
     <string name="splash_tagline">Discover Your Next Treasure.</string>
+    <string name="app_name">Troves</string>
     <string name="app_name_first_letter">T</string>
     <string name="app_name_rest">roves</string>
 

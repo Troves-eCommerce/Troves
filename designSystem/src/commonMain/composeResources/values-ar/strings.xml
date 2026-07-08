@@ -14,7 +14,6 @@
 
     <!-- Products screen -->
     <string name="products_title">المنتجات</string>
-    <string name="products_empty">لا توجد منتجات</string>
     <string name="products_empty_title">لم يتم العثور على منتجات</string>
     <string name="products_empty_desc">حاول تعديل الفلاتر أو مصطلحات البحث للعثور على ما تبحث عنه.</string>
     <string name="products_retry">إعادة المحاولة</string>
@@ -50,7 +49,6 @@
 
     <!-- Wishlist Screen -->
     <string name="wishlist_title">قائمة الأمنيات</string>
-    <string name="wishlist_empty">قائمة الأمنيات الخاصة بك فارغة</string>
     <string name="wishlist_remove_title">حذف المنتج</string>
     <string name="wishlist_remove_msg">هل أنت متأكد أنك تريد حذف هذا المنتج من قائمة الأمنيات؟</string>
     <string name="wishlist_clear_title">مسح قائمة الأمنيات</string>
@@ -60,7 +58,6 @@
 
     <!-- Cart Screen -->
     <string name="cart_title">السلة</string>
-    <string name="cart_empty">سلتك فارغة</string>
     <string name="cart_remove_title">حذف المنتج</string>
     <string name="cart_remove_msg">هل أنت متأكد أنك تريد حذف هذا المنتج من سلتك؟</string>
     <string name="cart_clear_title">مسح السلة</string>
