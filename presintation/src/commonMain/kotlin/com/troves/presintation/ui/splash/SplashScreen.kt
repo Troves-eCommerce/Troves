@@ -31,6 +31,8 @@ import kotlinx.coroutines.launch
 import com.troves.designsystem.theme.Theme
 import coil3.compose.rememberAsyncImagePainter
 import troves.designsystem.generated.resources.Res
+import troves.designsystem.generated.resources.*
+import org.jetbrains.compose.resources.stringResource
 import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
@@ -107,7 +109,7 @@ fun SplashScreen(onNavigateToOnboarding: () -> Unit) {
 
             Image(
                 painter = rememberAsyncImagePainter(Res.getUri("drawable/troves_logo_animated.gif")),
-                contentDescription = "Troves Logo",
+                contentDescription = stringResource(Res.string.splash_logo_content_description),
                 modifier = Modifier
                     .size(220.dp)
                     .graphicsLayer(
@@ -121,10 +123,10 @@ fun SplashScreen(onNavigateToOnboarding: () -> Unit) {
             Text(
                 text = buildAnnotatedString {
                     withStyle(style = SpanStyle(color = Theme.colors.primary)) {
-                        append("T")
+                        append(stringResource(Res.string.app_name_first_letter))
                     }
                     withStyle(style = SpanStyle(color = Theme.colors.primaryFont)) {
-                        append("roves")
+                        append(stringResource(Res.string.app_name_rest))
                     }
                 },
                 style = Theme.typography.display.copy(
@@ -135,7 +137,7 @@ fun SplashScreen(onNavigateToOnboarding: () -> Unit) {
                     .alpha(textAlpha.value)
             )
             Text(
-                text = "Discover Your Next Treasure.",
+                text = stringResource(Res.string.splash_tagline),
                 style = Theme.typography.body.medium,
                 color = Theme.colors.secondaryFont,
                 textAlign = TextAlign.Center,

@@ -569,6 +569,7 @@ private fun HomeScreenPreview() {
     }
 }
 
+@Composable
 private fun previewHomeState(): HomeUiState {
     val products = List(4) { index ->
         Product(
@@ -585,10 +586,10 @@ private fun previewHomeState(): HomeUiState {
         ads = listOf(
             Ad(
                 id = 1L,
-                titleTop = "Summer",
-                titleBottom = "Collection",
-                description = "Up to 50% off on selected items",
-                buttonText = "Shop now",
+                titleTop = stringResource(Res.string.home_preview_ad_title_top),
+                titleBottom = stringResource(Res.string.home_preview_ad_title_bottom),
+                description = stringResource(Res.string.home_preview_ad_desc),
+                buttonText = stringResource(Res.string.home_preview_ad_button),
             ),
         ),
         brands = List(6) { index ->

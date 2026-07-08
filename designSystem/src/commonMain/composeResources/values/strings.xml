@@ -218,4 +218,16 @@
     <string name="no_connection_desc">Check your internet connection and try again.</string>
     <string name="no_connection_retry">Try again</string>
     <string name="no_connection_action_blocked">You're offline. Connect to the internet to continue.</string>
+
+    <!-- Splash Screen -->
+    <string name="splash_logo_content_description">Troves Logo</string>
+    <string name="splash_tagline">Discover Your Next Treasure.</string>
+    <string name="app_name_first_letter">T</string>
+    <string name="app_name_rest">roves</string>
+
+    <!-- Home Preview Slider -->
+    <string name="home_preview_ad_title_top">Summer</string>
+    <string name="home_preview_ad_title_bottom">Collection</string>
+    <string name="home_preview_ad_desc">Up to 50% off on selected items</string>
+    <string name="home_preview_ad_button">Shop now</string>
 </resources>

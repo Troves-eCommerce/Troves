@@ -211,4 +211,16 @@
     <string name="no_connection_desc">تحقق من اتصالك بالإنترنت وحاول مرة أخرى.</string>
     <string name="no_connection_retry">إعادة المحاولة</string>
     <string name="no_connection_action_blocked">أنت غير متصل بالإنترنت. اتصل بالإنترنت للمتابعة.</string>
+
+    <!-- Splash Screen -->
+    <string name="splash_logo_content_description">شعار تروفز</string>
+    <string name="splash_tagline">اكتشف كنزك القادم.</string>
+    <string name="app_name_first_letter">تـ</string>
+    <string name="app_name_rest">روفز</string>
+
+    <!-- Home Preview Slider -->
+    <string name="home_preview_ad_title_top">الصيف</string>
+    <string name="home_preview_ad_title_bottom">تشكيلة</string>
+    <string name="home_preview_ad_desc">خصم يصل إلى 50٪ على عناصر محددة</string>
+    <string name="home_preview_ad_button">تسوق الآن</string>
 </resources>
