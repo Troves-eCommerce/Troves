@@ -43,6 +43,9 @@ import com.troves.designsystem.util.autoMirror
 import com.troves.designsystem.util.bounceClick
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 
 data class AdData(
     val titleTop: String,
@@ -64,7 +67,7 @@ fun AdSlider(
     arrowIconPainter: Painter? = null,
     onShopNowClick: (AdData) -> Unit,
     modifier: Modifier = Modifier,
-    autoScrollDurationMillis: Long = 4000L
+    autoScrollDurationMillis: Duration = 2.6.seconds
 ) {
     if (ads.isEmpty()) return
 
