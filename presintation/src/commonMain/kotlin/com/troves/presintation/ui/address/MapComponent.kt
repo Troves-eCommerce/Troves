@@ -27,6 +27,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,6 +43,7 @@ import com.troves.domain.entity.LocationCoordinates
 import org.jetbrains.compose.resources.painterResource
 import troves.designsystem.generated.resources.Res
 import troves.designsystem.generated.resources.ic_arrow_back
+import troves.designsystem.generated.resources.ic_location
 
 /**
  * Copyright (c) 2026 Wahid Ali Wahid Hussien.
@@ -63,6 +66,7 @@ expect fun MapBox(
     selectedLatitude: Double?,
     selectedLongitude: Double?,
     currentLocation: LocationCoordinates,
+    flyToCurrentLocationTrigger: Int,
     onMapClick: (latitude: Double, longitude: Double) -> Unit
 )
 
@@ -78,6 +82,8 @@ fun MapSelectionScreenContent(
     onAddNewAddressClick: () -> Unit,
     onMapClick: (latitude: Double, longitude: Double) -> Unit
 ) {
+    var flyToTrigger by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(0) }
+
     Box(
         modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -86,7 +92,8 @@ fun MapSelectionScreenContent(
             selectedLatitude = selectedLatitude,
             selectedLongitude = selectedLongitude,
             onMapClick = onMapClick,
-            currentLocation = currentLocation
+            currentLocation = currentLocation,
+            flyToCurrentLocationTrigger = flyToTrigger
         )
         Box(
             modifier = Modifier
@@ -124,6 +131,22 @@ fun MapSelectionScreenContent(
                     modifier = Modifier.fillMaxWidth()
                 )
             }
+        }
+        
+        IconButton(
+            onClick = { flyToTrigger++ },
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(bottom = 100.dp, end = Theme.spacing.medium)
+                .shadow(4.dp, CircleShape)
+                .background(Theme.colors.surface, CircleShape)
+                .size(56.dp)
+        ) {
+            Icon(
+                painter = painterResource(Res.drawable.ic_location),
+                contentDescription = "Fly to current location",
+                tint = Theme.colors.primaryFont
+            )
         }
 
         PrimaryButton(
