@@ -45,6 +45,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 
 data class AdData(
     val titleTop: String,
@@ -66,7 +67,7 @@ fun AdSlider(
     arrowIconPainter: Painter? = null,
     onShopNowClick: (AdData) -> Unit,
     modifier: Modifier = Modifier,
-    autoScrollDurationMillis: Duration = 2000.milliseconds
+    autoScrollDurationMillis: Duration = 2.6.seconds
 ) {
     if (ads.isEmpty()) return
 
