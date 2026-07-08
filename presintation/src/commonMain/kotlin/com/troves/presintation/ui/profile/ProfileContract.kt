@@ -13,6 +13,7 @@ data class ProfileState(
     val selectedCurrency: String = "EGP",
     val exchangeRate: ExchangeRate? = null,
     val showLogoutDialog: Boolean = false,
+    val showOfflineDialog: Boolean = false,
     val errorMessage: String? = null
 )
 
@@ -71,6 +72,8 @@ sealed interface ProfileIntent {
     data object LogoutConfirmed : ProfileIntent
 
     data object LogoutDismissed : ProfileIntent
+
+    data object DismissOfflineDialog : ProfileIntent
 
     data object LoginClicked : ProfileIntent
 }

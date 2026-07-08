@@ -34,8 +34,7 @@ fun TrovesTopBar(
         actions = listOf(
             TopBarAction(
                 icon = painterResource(Res.drawable.ic_ai_sparkles),
-                contentDescription = "Cart",
-                badgeCount = cartBadgeCount,
+                contentDescription = "AI Chat",
                 onClick = onAiClick,
             ),
             TopBarAction(

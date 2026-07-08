@@ -141,6 +141,7 @@
     <string name="home_categories_title">الفئات</string>
     <string name="home_view_all">عرض الكل</string>
     <string name="home_view_all_brands">عرض الكل</string>
+    <string name="see_all">عرض الكل</string>
     <string name="home_just_for_you">مختار لك</string>
     <string name="home_top_brands">أفضل العلامات التجارية</string>
     <string name="home_trending_now">الأكثر رواجاً</string>
@@ -190,6 +191,11 @@
     <string name="login_required_title">تسجيل الدخول مطلوب</string>
     <string name="login_required_msg">يجب عليك تسجيل الدخول للقيام بهذا الإجراء.</string>
     <string name="login_required_btn">تسجيل الدخول</string>
+
+    <!-- Orders Screen -->
+    <string name="orders_title">طلباتي</string>
+    <string name="orders_empty_title">لا توجد طلبات بعد</string>
+    <string name="orders_empty_desc">سيظهر سجل طلباتك هنا بمجرد تقديم طلبك الأول.</string>
 
     <!-- Sign-in required (guest) empty states -->
     <string name="auth_required_title">لم تقم بتسجيل الدخول</string>

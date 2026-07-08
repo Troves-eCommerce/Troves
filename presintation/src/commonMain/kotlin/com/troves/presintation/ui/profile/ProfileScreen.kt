@@ -79,6 +79,17 @@ fun ProfileScreen(
         )
     }
 
+    if (uiState.showOfflineDialog) {
+        TrovesDialog(
+            title = stringResource(Res.string.no_connection_title),
+            message = stringResource(Res.string.no_connection_action_blocked),
+            confirmText = stringResource(ResP.string.profile_cancel),
+            dismissText = null,
+            onConfirm = { viewModel.onIntent(ProfileIntent.DismissOfflineDialog) },
+            onDismiss = { viewModel.onIntent(ProfileIntent.DismissOfflineDialog) }
+        )
+    }
+
     if (showLanguageSheet) {
         LanguageBottomSheet(
             selectedLanguage = uiState.selectedLanguage,
@@ -158,7 +169,7 @@ fun ProfileScreen(
                                 thickness = 1.dp,
                                 modifier = Modifier.padding(horizontal = 16.dp)
                             )
-
+                            
                             ProfileRowItem(
                                 icon = Res.drawable.ic_location,
                                 title = stringResource(ResP.string.profile_manage_addresses),
@@ -217,7 +228,7 @@ fun ProfileScreen(
                                 icon = Res.drawable.ic_ai_sparkles,
                                 title = stringResource(ResP.string.profile_style_survey),
                                 description = "Update your style preferences",
-                                onClick = { showSurveySheet = true }
+                                onClick = { viewModel.onIntent(ProfileIntent.SurveyClicked) }
                             )
                         }
 
