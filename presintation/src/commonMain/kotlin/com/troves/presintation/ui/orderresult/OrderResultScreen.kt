@@ -32,6 +32,7 @@ import com.troves.designsystem.components.button.PrimaryButton
 import com.troves.designsystem.components.cards.SectionCard
 import com.troves.designsystem.theme.Theme
 import com.troves.presintation.navigation.AppRoute
+import com.troves.presintation.ui.orderresult.components.ConfettiCelebration
 
 
 @Composable
@@ -39,9 +40,10 @@ fun OrderResultScreen(
     args: AppRoute.OrderResult,
     onGoHome: () -> Unit,
 ) {
+    Box(modifier = Modifier.fillMaxSize().background(Theme.colors.backGround)) {
     Scaffold(
         modifier = Modifier.fillMaxSize().statusBarsPadding(),
-        containerColor = Theme.colors.backGround,
+        containerColor = Color.Transparent,
         bottomBar = {
             PrimaryButton(
                 caption = "Go to Home",
@@ -132,6 +134,13 @@ fun OrderResultScreen(
                     }
                 }
             }
+        }
+    }
+
+        if (args.success) {
+            ConfettiCelebration(
+                modifier = Modifier.fillMaxSize().statusBarsPadding(),
+            )
         }
     }
 }
