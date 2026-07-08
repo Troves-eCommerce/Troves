@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 import com.troves.designsystem.theme.Theme
 import org.jetbrains.compose.resources.stringResource
 import troves.presintation.generated.resources.Res
-import troves.presintation.generated.resources.wishlist_header_title
+
 import troves.presintation.generated.resources.wishlist_header_items_count
 import troves.presintation.generated.resources.clear_all
 
@@ -34,12 +34,7 @@ fun WishlistHeader(
             .padding(horizontal = 16.dp)
     ) {
 
-         Text(
-             text = stringResource(Res.string.wishlist_header_title),
-             style = Theme.typography.title,
-             color = Theme.colors.primaryFont,
-         )
- 
+
          Row(
              modifier = Modifier
                  .fillMaxWidth()
