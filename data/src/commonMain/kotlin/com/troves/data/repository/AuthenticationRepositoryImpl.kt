@@ -84,13 +84,21 @@ class AuthenticationRepositoryFirebaseImpl(
         preferences.setLoggedIn(false)
     }
 
+    private val reloadTrigger = kotlinx.coroutines.flow.MutableSharedFlow<Unit>(
+        extraBufferCapacity = 1,
+        onBufferOverflow = kotlinx.coroutines.channels.BufferOverflow.DROP_OLDEST
+    )
+
     // NOTE: currentUserStream must be declared BEFORE isLoggedInStream, because
     // isLoggedInStream's initializer references it inside combine(...) at
     // construction time. Kotlin initializes properties top-to-bottom, so if
     // this stayed below, currentUserStream would still be uninitialized when
     // isLoggedInStream tries to read it — that's the exact error you hit.
     override val currentUserStream: Flow<UserProfile?> =
-        firebaseAuth.idTokenChanged.map { user ->
+        kotlinx.coroutines.flow.merge(
+            firebaseAuth.idTokenChanged,
+            reloadTrigger.map { firebaseAuth.currentUser }
+        ).map { user ->
             user?.let {
                 UserProfile(
                     id = it.uid,
@@ -162,6 +170,7 @@ class AuthenticationRepositoryFirebaseImpl(
 
     override suspend fun reloadUser(): Result<Unit> = try {
         firebaseAuth.currentUser?.reload()
+        reloadTrigger.tryEmit(Unit)
         Result.Success(Unit)
     } catch (e: Exception) {
         Result.Error(e)
