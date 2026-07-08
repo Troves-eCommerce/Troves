@@ -80,7 +80,8 @@ fun MapSelectionScreenContent(
     onDismissRequest: () -> Unit,
     currentLocation: LocationCoordinates,
     onAddNewAddressClick: () -> Unit,
-    onMapClick: (latitude: Double, longitude: Double) -> Unit
+    onMapClick: (latitude: Double, longitude: Double) -> Unit,
+    onGetCurrentLocationClick: () -> Unit
 ) {
     var flyToTrigger by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(0) }
 
@@ -134,10 +135,13 @@ fun MapSelectionScreenContent(
         }
         
         IconButton(
-            onClick = { flyToTrigger++ },
+            onClick = { 
+                flyToTrigger++
+                onGetCurrentLocationClick() 
+            },
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(bottom = 100.dp, end = Theme.spacing.medium)
+                .padding(bottom = 100.dp, end = Theme.spacing.medium) // Above the confirm button
                 .shadow(4.dp, CircleShape)
                 .background(Theme.colors.surface, CircleShape)
                 .size(56.dp)
