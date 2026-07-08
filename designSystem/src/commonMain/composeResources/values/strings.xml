@@ -176,6 +176,7 @@
     <string name="common_error_icon">Error icon</string>
 
     <!-- Orders Screen -->
+    <string name="orders_title">My Orders</string>
     <string name="orders_empty_title">No Orders Yet</string>
     <string name="orders_empty_desc">Your order history will show up here once you place your first order.</string>
     <string name="quantity_label">Qty: %1$d</string>

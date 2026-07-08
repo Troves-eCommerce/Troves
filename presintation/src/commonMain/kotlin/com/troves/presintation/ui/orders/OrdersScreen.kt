@@ -43,6 +43,7 @@ import troves.designsystem.generated.resources.ic_chevron_right
 import troves.designsystem.generated.resources.img_placeholder
 import troves.designsystem.generated.resources.orders_empty_title
 import troves.designsystem.generated.resources.orders_empty_desc
+import troves.designsystem.generated.resources.orders_title
 import org.jetbrains.compose.resources.stringResource
 import com.troves.designsystem.components.emptystate.EmptyState
 import com.troves.presintation.ui.components.SignInRequiredState
@@ -111,7 +112,7 @@ fun OrdersScreen(
                 ) {
                     item {
                         BasicText(
-                            text = "My Orders",
+                            text = stringResource(Res.string.orders_title),
                             style = Theme.typography.title.copy(
                                 color = Theme.colors.primaryFont,
                                 fontWeight = FontWeight.Bold,

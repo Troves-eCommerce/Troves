@@ -218,7 +218,10 @@ fun HomeScreen(
                 contentAlignment = Alignment.Center
             ) {
                 SurveyBannerCard(
-                    onStartSurvey = { viewModel.onIntent(HomeIntent.SurveyBannerClicked) },
+                    onStartSurvey = {
+                        dismissedSurveyPopup = true
+                        viewModel.onIntent(HomeIntent.SurveyBannerClicked)
+                    },
                     onDismiss = { dismissedSurveyPopup = true },
                     onNeverShowAgain = { viewModel.onIntent(HomeIntent.SurveyBannerNeverShowAgain) },
                     modifier = Modifier.padding(horizontal = 24.dp),
@@ -318,7 +321,7 @@ private fun HomeContent(
 
     if (state.justForYou.isNotEmpty()) {
         SectionHeader(
-            title = stringResource(Res.string.see_all),
+            title = stringResource(Res.string.home_just_for_you),
             actionIcon = chevron,
             actionLabel = stringResource(Res.string.see_all),
             onAction = { onIntent(HomeIntent.ViewAllJustForYouClicked) }
@@ -383,7 +386,7 @@ private fun HomeContent(
 
     if (state.trending.isNotEmpty()) {
         SectionHeader(
-            title = stringResource(Res.string.see_all),
+            title = stringResource(Res.string.home_trending_now),
             actionIcon = chevron,
             actionLabel = stringResource(Res.string.see_all),
             onAction = { onIntent(HomeIntent.ViewAllTrendingClicked) }
