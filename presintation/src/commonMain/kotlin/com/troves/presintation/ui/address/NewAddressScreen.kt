@@ -225,7 +225,7 @@ fun NewAddressScreenContent(
                 PrimaryButton(
                     onClick = { onIntent(NewAddressIntent.ShowMap) },
                     caption = stringResource(Res.string.button_caption_select_address_from_map),
-                    modifier = Modifier.fillMaxWidth(fraction = 0.9f)
+                    modifier = Modifier.fillMaxWidth()
                 )
 
                 CustomTextField(
