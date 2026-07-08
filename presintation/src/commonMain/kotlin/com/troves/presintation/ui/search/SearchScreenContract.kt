@@ -32,7 +32,7 @@ data class SheetFilterOptions(
     val selectedBrands: Set<String> = emptySet(),
 )
 
-enum class SearchDisplayState { Idle, Loading, Results, NoResults, Error }
+enum class SearchDisplayState { Idle, Loading, Results, NoResults, Error, Offline }
 
 @Immutable
 data class SearchUiState(
@@ -49,6 +49,7 @@ data class SearchUiState(
     val errorMessage: String? = null,
     val showFilterSheet: Boolean = false,
     val favoriteProductIds: Set<String> = emptySet(),
+    val isOffline: Boolean = false,
 ) {
     val hasActiveFilter: Boolean
         get() = sheetFilterOptions.selectedCategories.isNotEmpty()
@@ -59,6 +60,7 @@ data class SearchUiState(
         get() = when {
             isInitializing -> SearchDisplayState.Loading
             isLoading -> SearchDisplayState.Loading
+            errorMessage != null && isOffline -> SearchDisplayState.Offline
             errorMessage != null -> SearchDisplayState.Error
             query.isBlank() && !hasActiveFilter -> SearchDisplayState.Idle
             products.isEmpty() -> SearchDisplayState.NoResults

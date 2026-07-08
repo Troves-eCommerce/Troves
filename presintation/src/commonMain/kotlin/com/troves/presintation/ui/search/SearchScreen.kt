@@ -36,6 +36,7 @@ import com.troves.designsystem.util.formatPrice
 import com.troves.presintation.core.mvi.ObserveEffect
 import com.troves.presintation.ui.components.FilterBottomSheet
 import com.troves.presintation.ui.components.FilterOption
+import com.troves.presintation.ui.components.NoConnectionState
 import com.troves.presintation.ui.search.component.EmptySearchResult
 import com.troves.presintation.ui.search.component.ErrorView
 import com.troves.presintation.ui.search.component.IdleSearchScreen
@@ -163,6 +164,13 @@ fun SearchScreen(
                             ErrorView(
                                 message = state.errorMessage.orEmpty(),
                                 onRetry = { onIntent(SearchIntent.Retry) },
+                            )
+                        }
+
+                        SearchDisplayState.Offline -> {
+                            NoConnectionState(
+                                onRetry = { onIntent(SearchIntent.Retry) },
+                                modifier = Modifier.fillMaxSize(),
                             )
                         }
 

@@ -3,7 +3,10 @@ package com.troves.domain.usecase.review
 import com.troves.domain.entity.Review
 import com.troves.domain.repository.AuthenticationRepository
 import com.troves.domain.repository.TrovesRepository
+import com.troves.domain.utils.NoConnectionException
 import com.troves.domain.utils.Result
+import com.troves.domain.utils.connectivity.ConnectivityObserver
+import com.troves.domain.utils.connectivity.ConnectivityStatus
 
 sealed interface SubmitReviewResult {
     data object Success : SubmitReviewResult
@@ -19,6 +22,7 @@ sealed interface SubmitReviewResult {
 class SubmitReviewUseCase(
     private val repository: TrovesRepository,
     private val authenticationRepository: AuthenticationRepository,
+    private val connectivityObserver: ConnectivityObserver,
 ) {
     suspend operator fun invoke(
         productId: String,
@@ -28,6 +32,9 @@ class SubmitReviewUseCase(
         comment: String,
         createdAt: Long,
     ): SubmitReviewResult {
+        if (connectivityObserver.currentStatus() != ConnectivityStatus.Available) {
+            return SubmitReviewResult.Error(NoConnectionException())
+        }
         if (!authenticationRepository.isLoggedIn()) return SubmitReviewResult.RequiresLogin
         val userId = authenticationRepository.getCurrentUserId()
             ?: return SubmitReviewResult.RequiresLogin

@@ -7,6 +7,7 @@ import com.troves.domain.usecase.auth.LoginUseCase
 import com.troves.domain.usecase.auth.RegisterUseCase
 import com.troves.domain.usecase.auth.SendEmailVerificationUseCase
 import com.troves.domain.usecase.auth.SignInWithGoogleUseCase
+import com.troves.domain.usecase.shared.ObserveConnectivityUseCase
 import com.troves.domain.usecase.wishlist.SyncWishlistUseCase
 import com.troves.domain.usecase.cart.SyncCartUseCase
 import com.troves.domain.utils.Result
@@ -26,7 +27,8 @@ class AuthViewModel(
     private val syncWishlistUseCase: SyncWishlistUseCase,
     private val syncCartUseCase: SyncCartUseCase,
     private val sendEmailVerificationUseCase: SendEmailVerificationUseCase,
-    private val authenticationRepository: AuthenticationRepository
+    private val authenticationRepository: AuthenticationRepository,
+    private val observeConnectivity: ObserveConnectivityUseCase,
 ) : ViewModel(),
     StateHolder<AuthState> by DefaultStateHolder(AuthState()),
     EffectPublisher<AuthEffect> by DefaultEffectPublisher() {
@@ -58,6 +60,7 @@ class AuthViewModel(
         val email = currentState.email
         val password = currentState.password
         if (!validateInputs(email, password)) return
+        if (!ensureOnline()) return
 
         viewModelScope.launch {
             updateState { copy(isLoading = true, errorMessage = null) }
@@ -84,6 +87,7 @@ class AuthViewModel(
             updateState { copy(errorMessage = "Passwords do not match") }
             return
         }
+        if (!ensureOnline()) return
 
         viewModelScope.launch {
             updateState { copy(isLoading = true, errorMessage = null) }
@@ -105,6 +109,7 @@ class AuthViewModel(
     }
 
     private fun signInWithGoogle(idToken: String, accessToken: String?) {
+        if (!ensureOnline()) return
         viewModelScope.launch {
             updateState { copy(isGoogleLoading = true, errorMessage = null) }
             when (val result = signInWithGoogleUseCase(idToken, accessToken)) {
@@ -149,6 +154,18 @@ class AuthViewModel(
         }
     }
 
+    /**
+     * Pre-flight connectivity guard. When offline, surfaces the message both
+     * inline (errorMessage) and as an error toast, and returns false so the
+     * caller skips the network request entirely.
+     */
+    private fun ensureOnline(): Boolean {
+        if (observeConnectivity.isOnlineNow()) return true
+        updateState { copy(isLoading = false, isGoogleLoading = false, errorMessage = NO_CONNECTION_MESSAGE) }
+        sendEffect(AuthEffect.ShowError(NO_CONNECTION_MESSAGE))
+        return false
+    }
+
     private fun validateInputs(email: String, password: String): Boolean {
         val error = AuthValidator.validateEmail(email) ?: AuthValidator.validatePassword(password)
         if (error != null) {
@@ -160,5 +177,6 @@ class AuthViewModel(
 
     private companion object {
         const val SUCCESS_NAV_DELAY_MS = 1000L
+        const val NO_CONNECTION_MESSAGE = "No internet connection"
     }
 }

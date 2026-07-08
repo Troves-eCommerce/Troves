@@ -6,8 +6,12 @@ data class OrdersUiState(
     val isError: Boolean = false,
     val errorMessage: String? = null,
     val isNotSignedIn: Boolean = false,
+    val isOffline: Boolean = false,
 ) {
     val isEmpty: Boolean get() = !isLoading && orders.isEmpty()
+
+    /** Show the offline placeholder only when offline AND there's nothing cached to show. */
+    val showOfflineState: Boolean get() = isOffline && orders.isEmpty() && !isLoading
 }
 
 data class OrderUi(

@@ -7,7 +7,10 @@ data class OrderDetailsUiState(
     val isError: Boolean = false,
     val errorMessage: String? = null,
     val orderDetails: OrderDetailsUi? = null,
-)
+    val isOffline: Boolean = false,
+) {
+    val showOfflineState: Boolean get() = isOffline && orderDetails == null && !isLoading
+}
 
 data class OrderDetailsUi(
     val id: String,

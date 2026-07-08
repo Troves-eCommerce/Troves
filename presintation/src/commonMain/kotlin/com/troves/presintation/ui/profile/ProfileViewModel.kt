@@ -9,6 +9,7 @@ import com.troves.domain.usecase.settings.ObserveProfilePreferencesUseCase
 import com.troves.domain.usecase.settings.SetCurrencyUseCase
 import com.troves.domain.usecase.settings.SetLanguageUseCase
 import com.troves.domain.usecase.settings.SetThemeModeUseCase
+import com.troves.domain.usecase.shared.ObserveConnectivityUseCase
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -26,6 +27,7 @@ class ProfileViewModel(
     private val setCurrencyUseCase: SetCurrencyUseCase,
     private val getExchangeRatesUseCase: GetExchangeRatesUseCase,
     private val fetchLatestRatesUseCase: FetchLatestRatesUseCase,
+    private val observeConnectivity: ObserveConnectivityUseCase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ProfileState())
@@ -49,6 +51,9 @@ class ProfileViewModel(
     }
 
     private fun refreshExchangeRates() {
+        // Profile is fully usable offline (prefs are local). Don't attempt a rates
+        // refresh — and don't nag with an error toast — while disconnected.
+        if (!observeConnectivity.isOnlineNow()) return
         viewModelScope.launch {
             fetchLatestRatesUseCase("EGP").onFailure { e ->
                 _effect.emit(ProfileEffect.ShowError("Rates: ${e.message}"))

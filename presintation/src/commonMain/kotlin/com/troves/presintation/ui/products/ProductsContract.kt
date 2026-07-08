@@ -28,8 +28,12 @@ data class ProductsUiState(
     val showFilterSheet: Boolean = false,
     val showSortSheet: Boolean = false,
     val favoriteProductIds: Set<String> = emptySet(),
+    val isOffline: Boolean = false,
 ) {
     val hasError: Boolean get() = errorMessage != null
+
+    /** Show the offline placeholder only when offline AND nothing loaded to show. */
+    val showOfflineState: Boolean get() = isOffline && allProducts.isEmpty() && !isLoading
 
     val hasActiveFilters: Boolean
         get() = selectedCategoryIds.isNotEmpty() ||
