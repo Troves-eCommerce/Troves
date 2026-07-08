@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -28,13 +29,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
@@ -46,6 +40,7 @@ import com.troves.designsystem.components.toast.TrovesSnackbarHost
 import com.troves.designsystem.components.topbar.BaseTopAppBar
 import com.troves.designsystem.theme.Theme
 import com.troves.presintation.core.mvi.ObserveEffect
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
@@ -93,17 +88,25 @@ fun NewAddressScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     var showMap by remember { mutableStateOf(false) }
+    var requestLocationPermissionTrigger by remember { mutableStateOf(false) }
 
     LaunchedEffect(addressId) {
         viewModel.onIntent(NewAddressIntent.Load(addressId))
     }
+    RequestLocationPermissionHandler(
+        trigger = requestLocationPermissionTrigger,
+        onDismiss = { granted ->
+            requestLocationPermissionTrigger = false
+            viewModel.onIntent(NewAddressIntent.OnLocationPermissionResult(granted))
+        },
+        snackbarHostState = snackbarHostState,
+        scope = scope
+    )
 
     ObserveEffect(viewModel.effect) { effect ->
         when (effect) {
             NewAddressEffect.NavigateBack -> onNavigateBack()
             is NewAddressEffect.SavedAndClose -> {
-                // Briefly confirm the save, then return to the list (which reflects it reactively and
-                // re-fetches on resume). The snackbar is short-lived; navigation shouldn't wait on it.
                 scope.launch {
                     snackbarHostState.showSnackbar(
                         effect.message,
@@ -129,6 +132,10 @@ fun NewAddressScreen(
             NewAddressEffect.HideMap -> {
                 showMap = false
             }
+
+            NewAddressEffect.RequestLocationPermission -> {
+                requestLocationPermissionTrigger = true
+            }
         }
     }
 
@@ -141,6 +148,7 @@ fun NewAddressScreen(
             onDismissRequest = { viewModel.onIntent(NewAddressIntent.HideMap) },
             onMapClick = { lat, lng -> viewModel.onIntent(NewAddressIntent.OnMapClick(lat, lng)) },
             onAddNewAddressClick = { viewModel.onIntent(NewAddressIntent.OnNewMapAddressSelected) },
+            currentLocation = state.currentLocation
         )
     } else {
         NewAddressScreenContent(
@@ -150,6 +158,14 @@ fun NewAddressScreen(
         )
     }
 }
+
+@Composable
+expect fun RequestLocationPermissionHandler(
+    trigger: Boolean,
+    onDismiss: (Boolean) -> Unit,
+    snackbarHostState: SnackbarHostState,
+    scope: CoroutineScope
+)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

@@ -11,6 +11,7 @@ import com.troves.domain.usecase.address.GetSavedAddressByIdUseCase
 import com.troves.domain.usecase.address.UpdateAddressUseCase
 import com.troves.domain.usecase.shared.GetCitiesUseCase
 import com.troves.domain.usecase.shared.GetCountriesUseCase
+import com.troves.domain.usecase.shared.GetCurrentLocationCoordinatesUseCase
 import com.troves.domain.usecase.shared.ReverseGeocodingUseCase
 import com.troves.domain.utils.Result
 import com.troves.domain.utils.ShopifyAuthRequiredException
@@ -19,7 +20,9 @@ import com.troves.presintation.core.mvi.DefaultEffectPublisher
 import com.troves.presintation.core.mvi.DefaultStateHolder
 import com.troves.presintation.core.mvi.EffectPublisher
 import com.troves.presintation.core.mvi.StateHolder
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import okio.IOException
 
 data class NewAddressUiState(
     val label: String = "",
@@ -35,7 +38,9 @@ data class NewAddressUiState(
     val icon: AddressIcon = AddressIcon.HOME,
     val selectedMapLocation: LocationCoordinates = LocationCoordinates(0.0, 0.0),
     val selectedLocationAddress: LocationAddress? = null,
+    val currentLocation: LocationCoordinates = LocationCoordinates(31.0, 31.0),
     val isGeocodingLoading: Boolean = false,
+    val hasLocationPermission: Boolean = false,
 
     val isEditMode: Boolean = false,
 
@@ -54,6 +59,8 @@ sealed interface NewAddressIntent {
     data class OnPhoneChange(val phone: String) : NewAddressIntent
     data class OnCountryChange(val country: String) : NewAddressIntent
     data object ShowMap : NewAddressIntent
+    data object GetCurrentLocation : NewAddressIntent
+    data class OnLocationPermissionResult(val granted: Boolean) : NewAddressIntent
     data object HideMap : NewAddressIntent
     data class OnMapClick(val latitude: Double, val longitude: Double) : NewAddressIntent
     data class OnCityChange(val city: String) : NewAddressIntent
@@ -73,6 +80,8 @@ sealed interface NewAddressIntent {
 
 sealed interface NewAddressEffect {
     data object NavigateBack : NewAddressEffect
+    data object RequestLocationPermission : NewAddressEffect
+
     /** Address persisted on Shopify — show [message], then close. */
     data class SavedAndClose(val message: String) : NewAddressEffect
     /** Shopify customer token missing — route the user to re-authenticate. */
@@ -89,6 +98,7 @@ class NewAddressViewModel(
     private val updateAddressUseCase: UpdateAddressUseCase,
     private val getSavedAddressByIdUseCase: GetSavedAddressByIdUseCase,
     private val reverseGeocodingUseCase: ReverseGeocodingUseCase,
+    private val getCurrentLocationCoordinatesUseCase: GetCurrentLocationCoordinatesUseCase
 ) : ViewModel(),
     StateHolder<NewAddressUiState> by DefaultStateHolder(NewAddressUiState()),
     EffectPublisher<NewAddressEffect> by DefaultEffectPublisher() {
@@ -120,10 +130,32 @@ class NewAddressViewModel(
             NewAddressIntent.OnBackClick -> sendEffect(NewAddressEffect.NavigateBack)
             NewAddressIntent.OnSaveClick -> saveAddress()
             NewAddressIntent.LoadCountries -> loadCountries()
-            NewAddressIntent.ShowMap -> sendEffect(NewAddressEffect.ShowMap)
+            NewAddressIntent.ShowMap -> {
+                onIntent(NewAddressIntent.GetCurrentLocation)
+                sendEffect(NewAddressEffect.ShowMap)
+            }
             NewAddressIntent.HideMap -> sendEffect(NewAddressEffect.HideMap)
             is NewAddressIntent.OnMapClick -> onMapClick(intent.latitude, intent.longitude)
             NewAddressIntent.OnNewMapAddressSelected -> saveMapAddress()
+            NewAddressIntent.GetCurrentLocation -> {
+                sendEffect(NewAddressEffect.RequestLocationPermission)
+            }
+            is NewAddressIntent.OnLocationPermissionResult -> {
+                updateState { copy(hasLocationPermission = intent.granted) }
+                if (!intent.granted) {
+                    sendEffect(NewAddressEffect.ShowToast("Location permission is required to get current location"))
+                } else {
+                    viewModelScope.launch {
+                        getCurrentLocationCoordinatesUseCase().also { currentLocation ->
+                            updateState {
+                                copy(
+                                    currentLocation = currentLocation
+                                )
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -156,12 +188,13 @@ class NewAddressViewModel(
                         zip = locationAddress.postcode.ifBlank { zip },
                     )
                 }
-            } catch (e: Exception) {
+            } catch (e: IOException) {
                 updateState { copy(isGeocodingLoading = false) }
                 sendEffect(NewAddressEffect.ShowToast("Couldn't get address details"))
             }
         }
     }
+
     private fun saveMapAddress() {
         val state = currentState
         if (state.selectedLocationAddress == null) {
@@ -234,8 +267,11 @@ class NewAddressViewModel(
             sendEffect(NewAddressEffect.ShowToast("Please fill all required fields"))
             return
         }
-        
-        val isEgypt = state.country.equals("Egypt", ignoreCase = true) || state.country.equals("EG", ignoreCase = true)
+
+        val isEgypt = state.country.equals("Egypt", ignoreCase = true) || state.country.equals(
+            "EG",
+            ignoreCase = true
+        )
         val cleanPhone = state.phone.filter { !it.isWhitespace() }
 
         if (isEgypt && !com.troves.domain.utils.PhoneUtils.isValidEgyptianPhone(cleanPhone)) {

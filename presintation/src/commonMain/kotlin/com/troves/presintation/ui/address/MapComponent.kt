@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import com.troves.designsystem.components.button.PrimaryButton
 import com.troves.designsystem.theme.Theme
 import com.troves.domain.entity.LocationAddress
+import com.troves.domain.entity.LocationCoordinates
 import org.jetbrains.compose.resources.painterResource
 import troves.designsystem.generated.resources.Res
 import troves.designsystem.generated.resources.ic_arrow_back
@@ -61,6 +62,7 @@ import troves.designsystem.generated.resources.ic_arrow_back
 expect fun MapBox(
     selectedLatitude: Double?,
     selectedLongitude: Double?,
+    currentLocation: LocationCoordinates,
     onMapClick: (latitude: Double, longitude: Double) -> Unit
 )
 
@@ -72,6 +74,7 @@ fun MapSelectionScreenContent(
     selectedLongitude: Double?,
     modifier: Modifier = Modifier,
     onDismissRequest: () -> Unit,
+    currentLocation: LocationCoordinates,
     onAddNewAddressClick: () -> Unit,
     onMapClick: (latitude: Double, longitude: Double) -> Unit
 ) {
@@ -82,7 +85,8 @@ fun MapSelectionScreenContent(
         MapBox(
             selectedLatitude = selectedLatitude,
             selectedLongitude = selectedLongitude,
-            onMapClick = onMapClick
+            onMapClick = onMapClick,
+            currentLocation = currentLocation
         )
         Box(
             modifier = Modifier
