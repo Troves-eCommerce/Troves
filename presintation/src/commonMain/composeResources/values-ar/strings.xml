@@ -237,8 +237,6 @@
     <string name="survey_opt_men">رجال</string>
     <string name="survey_opt_women">نساء</string>
     <string name="survey_opt_unisex">للجنسين</string>
-    <string name="survey_banner_title">مخصص لك</string>
-    <string name="survey_banner_subtitle">ساعدنا في معرفة ستايلك</string>
     <string name="survey_banner_desc">أجب على بعض الأسئلة السريعة وسنقوم بتخصيص تجربة التسوق الخاصة بك.</string>
     <string name="survey_banner_start">ابدأ الاستبيان</string>
     <string name="survey_banner_never">لا تظهر مرة أخرى</string>
@@ -411,7 +409,6 @@
     <string name="survey_banner_close">إغلاق</string>
     <string name="survey_banner_title">دعنا نتعرّف على أسلوبك</string>
     <string name="survey_banner_subtitle">أجب عن بضعة أسئلة سريعة وسنخصّص لك تجربة تسوّق مميزة.</string>
-    <string name="survey_banner_start">ابدأ الاستبيان</string>
     <string name="survey_banner_dismiss">عدم الإظهار مرة أخرى</string>
     <string name="survey_confirmation_title">كل شيء جاهز!</string>
     <string name="survey_confirmation_body">سنستخدم تفضيلاتك لنوصي لك بمنتجات ستحبها.</string>

@@ -205,6 +205,7 @@
     <string name="product_details_color_label">Color: %1$s</string>
     <string name="product_details_reviews_count">(%1$d reviews)</string>
     <string name="product_details_login_required_favorites">You need to be logged in to manage your favorites.</string>
+    <string name="product_details_size">Size:</string>
 
     <!-- Accessibility -->
     <string name="common_leading_icon">Leading icon</string>
@@ -252,7 +253,6 @@
     <string name="no_connection_title">You're offline</string>
     <string name="no_connection_desc">Check your internet connection and try again.</string>
     <string name="no_connection_retry">Try again</string>
-    <string name="no_connection_action_blocked">You\'re offline. Connect to the internet to continue.</string>
 
     <!-- Currencies -->
     <string name="currency_egp">EGP</string>
