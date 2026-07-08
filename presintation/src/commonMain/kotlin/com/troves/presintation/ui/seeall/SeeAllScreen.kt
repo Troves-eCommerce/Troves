@@ -100,9 +100,15 @@ fun SeeAllScreen(
             .background(Theme.colors.backGround)
             .statusBarsPadding(),
     ) {
+        val toolbarTitle = when (state.type) {
+            AppRoute.SeeAllType.CATEGORIES -> stringResource(Res.string.seeall_categories_title)
+            AppRoute.SeeAllType.BRANDS -> stringResource(Res.string.seeall_brands_title)
+            AppRoute.SeeAllType.PRODUCTS -> state.title
+        }
+
         Column(modifier = Modifier.fillMaxSize()) {
             SeeAllToolbar(
-                title = state.title,
+                title = toolbarTitle,
                 onBackClick = { viewModel.onIntent(SeeAllIntent.OnBackClick) }
             )
 
@@ -145,7 +151,6 @@ private fun SeeAllToolbar(
             icon = painterResource(Res.drawable.ic_arrow_back),
             contentDescription = stringResource(PresRes.string.common_back),
             onClick = onBackClick,
-            autoMirror = true,
         )
         BasicText(
             text = title,
@@ -177,20 +182,35 @@ private fun SeeAllContent(
             ) {
                 items(state.categories, key = { it.id }) { category ->
                     val categoryIcon = when (category.name.lowercase().trim()) {
-                        "footwear" -> Res.drawable.ic_category_footwear
-                        "outerwear" -> Res.drawable.ic_category_man
-                        "accessories" -> Res.drawable.ic_category_accessories
-                        "sale" -> Res.drawable.ic_category_sales
-                        "new arrivals" -> Res.drawable.ic_category_sales
-                        "best sellers" -> Res.drawable.ic_best_seller
-                        "men" -> Res.drawable.ic_category_man
-                        "kid" -> Res.drawable.ic_category_kids
-                        "women" -> Res.drawable.ic_category_women
+                        "footwear", "الأحذية" -> Res.drawable.ic_category_footwear
+                        "outerwear", "ملابس خارجية" -> Res.drawable.ic_category_man
+                        "accessories", "اكسسوارات" -> Res.drawable.ic_category_accessories
+                        "sale", "تخفيضات" -> Res.drawable.ic_category_sales
+                        "new arrivals", "وصل حديثا" -> Res.drawable.ic_category_sales
+                        "best sellers", "الاعلي مبيعا"->Res.drawable.ic_best_seller
+                        "men", "رجال" -> Res.drawable.ic_category_man
+                        "women", "نسائي" -> Res.drawable.ic_category_women
+                        "dr martens", "دكتور مارتنز" -> Res.drawable.ic_brand_dr_martens
+                        "kid", "اطفال" -> Res.drawable.ic_category_kids
                         else -> Res.drawable.ic_star
                     }
 
+                    val categoryTitle = when (category.name.lowercase().trim()) {
+                        "footwear", "الأحذية" -> stringResource(Res.string.category_footwear)
+                        "outerwear", "ملابس خارجية" -> stringResource(Res.string.category_outerwear)
+                        "accessories", "اكسسوارات" -> stringResource(Res.string.category_accessories)
+                        "sale", "تخفيضات" -> stringResource(Res.string.category_sale)
+                        "new arrivals", "وصل حديثا" -> stringResource(Res.string.category_new_arrivals)
+                        "best sellers", "الاعلي مبيعا" -> stringResource(Res.string.category_best_sellers)
+                        "men", "رجال" -> stringResource(Res.string.category_men)
+                        "women", "نسائي" -> stringResource(Res.string.category_women)
+                        "dr martens", "دكتور مارتنز" -> stringResource(Res.string.brand_dr_martens)
+                        "kid", "اطفال" -> stringResource(Res.string.category_kids)
+                        else -> category.name
+                    }
+
                     CategoryItem(
-                        name = category.name,
+                        name = categoryTitle,
                         iconPainter = categoryIcon,
                         onClick = { onIntent(SeeAllIntent.CategoryClicked(category)) },
                         modifier = Modifier
@@ -223,8 +243,24 @@ private fun SeeAllContent(
                         else -> Res.drawable.ic_star
                     }
 
+                    val brandTitle = when (brand.name.lowercase().trim()) {
+                        "dr martens" -> stringResource(Res.string.brand_dr_martens)
+                        "herschel" -> stringResource(Res.string.brand_herschel)
+                        "flex fit" -> stringResource(Res.string.brand_flexfit)
+                        "puma" -> stringResource(Res.string.brand_puma)
+                        "supra" -> stringResource(Res.string.brand_supra)
+                        "timberland" -> stringResource(Res.string.brand_timberland)
+                        "converse" -> stringResource(Res.string.brand_converse)
+                        "asics tiger" -> stringResource(Res.string.brand_asics_tiger)
+                        "palladuim" -> stringResource(Res.string.brand_palladium)
+                        "vans" -> stringResource(Res.string.brand_vans)
+                        "adidas" -> stringResource(Res.string.brand_adidas)
+                        "nike" -> stringResource(Res.string.brand_nike)
+                        else -> brand.name
+                    }
+
                     BrandCard(
-                        name = brand.name,
+                        name = brandTitle,
                         imagePainter = painterResource(brandIconRes),
                         onClick = { onIntent(SeeAllIntent.BrandClicked(brand)) },
                         modifier = Modifier

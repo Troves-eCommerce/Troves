@@ -150,6 +150,10 @@
     <string name="home_trending_now">Trending Now</string>
     <string name="home_copy_code_button">Copy code</string>
 
+    <!-- See All screen headers -->
+    <string name="seeall_categories_title">Categories</string>
+    <string name="seeall_brands_title">Brands</string>
+
     <!-- Home Categories (localized titles, fallback to API name) -->
     <string name="category_footwear">Footwear</string>
     <string name="category_outerwear">Outerwear</string>

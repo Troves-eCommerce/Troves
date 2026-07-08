@@ -26,8 +26,10 @@ import com.troves.designsystem.components.toast.TrovesSnackbarHost
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,6 +43,7 @@ import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.SlidersHorizontal
 import com.troves.designsystem.components.button.PrimaryButton
 import com.troves.designsystem.components.cards.MainCard
+import com.troves.designsystem.components.dialog.TrovesDialog
 import com.troves.designsystem.components.shimmer.shimmerEffect
 import com.troves.designsystem.components.topbar.IconBox
 import com.troves.designsystem.theme.Theme
@@ -81,6 +84,15 @@ fun ProductsScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+    var productToRemoveFromFav by remember { mutableStateOf<Product?>(null) }
+
+    val onFavoriteClick: (Product) -> Unit = { product ->
+        if (product.id.toString() in state.favoriteProductIds) {
+            productToRemoveFromFav = product
+        } else {
+            viewModel.onIntent(ProductsIntent.ToggleFavorite(product))
+        }
+    }
 
     LaunchedEffect(sourceType, sourceId, sourceName) {
         viewModel.onIntent(
@@ -137,7 +149,7 @@ fun ProductsScreen(
                     products = state.displayedProducts,
                     favoriteProductIds = state.favoriteProductIds,
                     onProductClick = { viewModel.onIntent(ProductsIntent.ProductClicked(it)) },
-                    onFavoriteClick = { viewModel.onIntent(ProductsIntent.ToggleFavorite(it)) },
+                    onFavoriteClick = onFavoriteClick,
                 )
             }
         }
@@ -165,6 +177,21 @@ fun ProductsScreen(
                 onSelect = { viewModel.onIntent(ProductsIntent.SelectSort(it)) },
                 onApply = { viewModel.onIntent(ProductsIntent.ApplySort) },
                 onDismiss = { viewModel.onIntent(ProductsIntent.DismissSheet) },
+            )
+        }
+
+        productToRemoveFromFav?.let { product ->
+            TrovesDialog(
+                title = stringResource(DesignRes.string.wishlist_remove_title),
+                message = stringResource(DesignRes.string.wishlist_remove_msg),
+                confirmText = stringResource(DesignRes.string.wishlist_remove),
+                dismissText = stringResource(DesignRes.string.profile_cancel),
+                icon = painterResource(DesignRes.drawable.ic_solid_heart),
+                onConfirm = {
+                    viewModel.onIntent(ProductsIntent.ToggleFavorite(product))
+                    productToRemoveFromFav = null
+                },
+                onDismiss = { productToRemoveFromFav = null },
             )
         }
 
