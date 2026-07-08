@@ -196,4 +196,12 @@
     <string name="auth_required_action">تسجيل الدخول</string>
     <string name="orders_auth_required_desc">سجّل الدخول لعرض وتتبع طلباتك.</string>
     <string name="wishlist_auth_required_desc">سجّل الدخول لعرض العناصر التي حفظتها.</string>
+
+    <!-- Connectivity / offline -->
+    <string name="connectivity_offline_banner">لا يوجد اتصال بالإنترنت</string>
+    <string name="connectivity_back_online_banner">عاد الاتصال</string>
+    <string name="no_connection_title">أنت غير متصل بالإنترنت</string>
+    <string name="no_connection_desc">تحقق من اتصالك بالإنترنت وحاول مرة أخرى.</string>
+    <string name="no_connection_retry">إعادة المحاولة</string>
+    <string name="no_connection_action_blocked">أنت غير متصل بالإنترنت. اتصل بالإنترنت للمتابعة.</string>
 </resources>
