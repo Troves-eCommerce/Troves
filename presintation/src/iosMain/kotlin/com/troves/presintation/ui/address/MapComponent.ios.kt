@@ -3,6 +3,7 @@ package com.troves.presintation.ui.address
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.interop.UIKitView
@@ -41,7 +42,7 @@ actual fun MapBox(
         } 
     }
     
-    androidx.compose.runtime.LaunchedEffect(currentLocation, flyToCurrentLocationTrigger) {
+    LaunchedEffect(currentLocation, flyToCurrentLocationTrigger) {
         if (currentLocation.lan != 0.0 && currentLocation.lon != 0.0) {
             if (flyToCurrentLocationTrigger > 0 || (selectedLatitude == null && selectedLongitude == null)) {
                 val center = CLLocationCoordinate2DMake(currentLocation.lan, currentLocation.lon)

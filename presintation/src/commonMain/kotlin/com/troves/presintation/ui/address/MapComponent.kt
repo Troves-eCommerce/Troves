@@ -28,6 +28,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -83,7 +84,7 @@ fun MapSelectionScreenContent(
     onMapClick: (latitude: Double, longitude: Double) -> Unit,
     onGetCurrentLocationClick: () -> Unit
 ) {
-    var flyToTrigger by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(0) }
+    var flyToTrigger by remember { androidx.compose.runtime.mutableStateOf(0) }
 
     Box(
         modifier = modifier.fillMaxSize(),
@@ -137,7 +138,8 @@ fun MapSelectionScreenContent(
         IconButton(
             onClick = { 
                 flyToTrigger++
-                onGetCurrentLocationClick() 
+                onGetCurrentLocationClick()
+                onMapClick(currentLocation.lan,currentLocation.lon)
             },
             modifier = Modifier
                 .align(Alignment.BottomEnd)
