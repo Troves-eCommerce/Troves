@@ -7,8 +7,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.LaunchedEffect
 import com.troves.data.source.remote.service.TrovesApiService
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
+import com.troves.designsystem.components.connectivity.ConnectivityBanner
+import com.troves.designsystem.components.connectivity.OfflineBanner
 import com.troves.designsystem.theme.SpTheme
 import com.troves.designsystem.util.CurrencyState
 import com.troves.designsystem.util.LocalCurrency
@@ -21,6 +30,8 @@ import org.koin.compose.koinInject
 fun App() {
     val mainViewModel: MainViewModel = koinViewModel()
     val appState by mainViewModel.uiState.collectAsState()
+    val banner by mainViewModel.banner.collectAsState()
+    val isOnline by mainViewModel.isOnline.collectAsState()
 
     val isDark = when (appState.themeMode) {
         "dark" -> true
@@ -44,10 +55,29 @@ fun App() {
             LocalCurrency provides currencyState
         ) {
             val apiService = koinInject<TrovesApiService>()
-            LaunchedEffect(key1 = Unit) {
-                apiService.getAllProducts()
+            // Prefetch on first launch and re-run whenever connectivity returns,
+            // so cold-start-offline and reconnect both end up with fresh data.
+            LaunchedEffect(key1 = isOnline) {
+                if (isOnline) apiService.getAllProducts()
             }
-            AppNav()
+
+            val bannerVisible = banner != ConnectivityBanner.Hidden
+            Column(Modifier.fillMaxSize()) {
+                OfflineBanner(banner)
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        // While the banner occupies the status-bar area, tell the
+                        // content below that the inset is already consumed so
+                        // screens' own statusBarsPadding() don't double-pad.
+                        .then(
+                            if (bannerVisible) Modifier.consumeWindowInsets(WindowInsets.statusBars)
+                            else Modifier
+                        )
+                ) {
+                    AppNav()
+                }
+            }
         }
     }
 }
