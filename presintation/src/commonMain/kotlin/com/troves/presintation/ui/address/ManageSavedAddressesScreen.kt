@@ -115,10 +115,15 @@ fun ManageSavedAddressesScreenContent(
         )
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
-    Scaffold(
-        modifier = Modifier.fillMaxSize().statusBarsPadding(),
-        containerColor = Theme.colors.backGround,
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Theme.colors.backGround)
+            .statusBarsPadding()
+    ) {
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
+            containerColor = Theme.colors.backGround,
         topBar = {
             BaseTopAppBar(
                 title = stringResource(Res.string.address_manage_title),
@@ -158,7 +163,11 @@ fun ManageSavedAddressesScreenContent(
                 modifier = Modifier.padding(bottom = Theme.spacing.medium)
             )
 
-            if (state.showOfflineState) {
+            if (state.isLoading) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator(color = Theme.colors.primary)
+                }
+            } else if (state.showOfflineState) {
                 NoConnectionState(
                     onRetry = { onIntent(ManageSavedAddressesIntent.OnRefresh) },
                 )
