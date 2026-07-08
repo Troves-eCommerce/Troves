@@ -71,13 +71,9 @@ class TrovesRepositoryImpl(
     override suspend fun searchProducts(params: ProductSearchParams): Result<List<Product>> {
         return try {
             withContext(coroutineDispatcher) {
+                // Search-text matching (incl. Arabic) is handled in ApolloTrovesApiServiceImpl.
                 var products =
                     remoteDataSource.searchProducts(params = params).getOrElse { emptyList() }
-                if (!params.query.isNullOrBlank()) {
-                    products = products.filter {
-                        it.title.contains(params.query ?: "", ignoreCase = true)
-                    }
-                }
                 val vendors = params.vendors
                 if (!vendors.isNullOrEmpty()) {
                     products = products.filter {
@@ -187,22 +183,19 @@ class TrovesRepositoryImpl(
         } else {
             storefront.addLines(existingCartId, variantId, quantity).getOrThrow()
         }
-        _cart.value = updated
-        return updated
+        return publishCart(updated)
     }
 
     override suspend fun updateQuantity(lineId: String, quantity: Int): Cart {
         val cartId = requireCartId()
         val updated = storefront.updateLineQuantity(cartId, lineId, quantity).getOrThrow()
-        _cart.value = updated
-        return updated
+        return publishCart(updated)
     }
 
     override suspend fun removeFromCart(lineId: String): Cart {
         val cartId = requireCartId()
         val updated = storefront.removeLines(cartId, listOf(lineId)).getOrThrow()
-        _cart.value = updated
-        return updated
+        return publishCart(updated)
     }
 
     override suspend fun removeAllItems(): Cart {
@@ -211,19 +204,16 @@ class TrovesRepositoryImpl(
         if (lineIds.isEmpty()) {
             // Nothing to remove; reconcile to the authoritative empty cart.
             val current = storefront.getCart(cartId).getOrThrow()
-            if (current != null) _cart.value = current
-            return current ?: throw IllegalStateException("No active cart")
+            return current?.let { publishCart(it) } ?: throw IllegalStateException("No active cart")
         }
         val updated = storefront.removeLines(cartId, lineIds).getOrThrow()
-        _cart.value = updated
-        return updated
+        return publishCart(updated)
     }
 
     override suspend fun applyDiscountCodes(codes: List<String>): Cart {
         val cartId = requireCartId()
         val updated = storefront.updateDiscountCodes(cartId, codes).getOrThrow()
-        _cart.value = updated
-        return updated
+        return publishCart(updated)
     }
 
     override suspend fun refreshCart() {
@@ -234,9 +224,13 @@ class TrovesRepositoryImpl(
             clearCartPointer()
             _cart.value = null
         } else {
-            _cart.value = cart
+            publishCart(cart)
         }
     }
+
+    /** Overlay localized product titles, publish to the observable cart, and return it. */
+    private suspend fun publishCart(cart: Cart): Cart =
+        cart.withLocalizedTitles().also { _cart.value = it }
 
     override suspend fun clearCart() {
         clearCartPointer()
@@ -290,7 +284,7 @@ class TrovesRepositoryImpl(
 
     override suspend fun getOrderById(orderId: String): Order? {
         val token = dataSource.shopifyCustomerAccessTokenOrNull.first() ?: return null
-        return storefront.getOrderById(token, orderId).getOrNull()
+        return storefront.getOrderById(token, orderId).getOrNull()?.withLocalizedTitles()
     }
 
     override suspend fun placeCodOrder(cart: Cart, address: Address): String {
@@ -304,6 +298,35 @@ class TrovesRepositoryImpl(
         val email = authenticationRepository.getCurrentUserEmail()
         storefront.updateCartBuyerIdentity(cartId, token, email)
         storefront.updateCartDeliveryAddress(cartId, address)
+    }
+
+    // ── Localized titles overlay ──────────────────────────────────────────────
+    // Storefront line-item titles rely on `@inContext`, which only returns Arabic when the locale
+    // is *published* on the sales channel. To stay consistent with the product screens (which read
+    // Admin `translations`, needing only a *registered* translation), overlay Admin titles here.
+    // No-op in English mode, so the default path pays nothing.
+
+    private suspend fun isArabic(): Boolean =
+        dataSource.selectedLanguage.first().equals("ar", ignoreCase = true)
+
+    private suspend fun Cart.withLocalizedTitles(): Cart {
+        if (!isArabic() || lines.isEmpty()) return this
+        val titles = trovesApiService
+            .getLocalizedProductTitles(lines.map { it.productId.toString() }.distinct())
+            .getOrElse { emptyMap() }
+        if (titles.isEmpty()) return this
+        return copy(lines = lines.map { line -> titles[line.productId]?.let { line.copy(productTitle = it) } ?: line })
+    }
+
+    private suspend fun Order.withLocalizedTitles(): Order {
+        if (!isArabic()) return this
+        val ids = lineItems.mapNotNull { it.productId }.distinct()
+        if (ids.isEmpty()) return this
+        val titles = trovesApiService
+            .getLocalizedProductTitles(ids.map { it.toString() })
+            .getOrElse { emptyMap() }
+        if (titles.isEmpty()) return this
+        return copy(lineItems = lineItems.map { item -> item.productId?.let { titles[it] }?.let { item.copy(title = it) } ?: item })
     }
 
     // ── Product reviews (Firestore) ───────────────────────────────────────────

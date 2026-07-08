@@ -23,4 +23,5 @@ data class OrderLineItem(
     val imageUrl: String?,
     val quantity: Int,
     val price: CartMoney,
+    val productId: Long? = null,
 )
