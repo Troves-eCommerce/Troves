@@ -343,29 +343,29 @@ private fun HomeContent(
         ) {
             items(state.categories.take(5), key = { it.id }) { category ->
                 val categoryIcon = when (category.name.lowercase().trim()) {
-                    "footwear" -> Res.drawable.ic_category_footwear
-                    "outerwear" -> Res.drawable.ic_category_man
-                    "accessories" -> Res.drawable.ic_category_accessories
-                    "sale" -> Res.drawable.ic_category_sales
-                    "new arrivals" -> Res.drawable.ic_category_sales
-                    "best sellers" -> Res.drawable.ic_best_seller
-                    "men" -> Res.drawable.ic_category_man
-                    "women" -> Res.drawable.ic_category_women
-                    "dr martens" -> Res.drawable.ic_brand_dr_martens
-                    "kid" -> Res.drawable.ic_category_kids
+                    "footwear", "الأحذية" -> Res.drawable.ic_category_footwear
+                    "outerwear", "ملابس خارجية" -> Res.drawable.ic_category_man
+                    "accessories", "اكسسوارات" -> Res.drawable.ic_category_accessories
+                    "sale", "تخفيضات" -> Res.drawable.ic_category_sales
+                    "new arrivals", "وصل حديثا" -> Res.drawable.ic_category_sales
+                    "best sellers", "الاعلي مبيعا"->Res.drawable.ic_best_seller
+                    "men", "رجال" -> Res.drawable.ic_category_man
+                    "women", "نسائي" -> Res.drawable.ic_category_women
+                    "dr martens", "دكتور مارتنز" -> Res.drawable.ic_brand_dr_martens
+                    "kid", "أطفال" -> Res.drawable.ic_category_kids
                     else -> Res.drawable.ic_star
                 }
 
                 val categoryTitle = when (category.name.lowercase().trim()) {
-                    "footwear" -> stringResource(Res.string.category_footwear)
-                    "outerwear" -> stringResource(Res.string.category_outerwear)
-                    "accessories" -> stringResource(Res.string.category_accessories)
-                    "sale" -> stringResource(Res.string.category_sale)
-                    "new arrivals" -> stringResource(Res.string.category_new_arrivals)
-                    "best sellers" -> stringResource(Res.string.category_best_sellers)
-                    "men" -> stringResource(Res.string.category_men)
+                    "footwear"  -> stringResource(Res.string.category_footwear)
+                    "outerwear"  -> stringResource(Res.string.category_outerwear)
+                    "accessories"  -> stringResource(Res.string.category_accessories)
+                    "sale"  -> stringResource(Res.string.category_sale)
+                    "new arrivals"  -> stringResource(Res.string.category_new_arrivals)
+                    "best sellers"  -> stringResource(Res.string.category_best_sellers)
+                    "men"  -> stringResource(Res.string.category_men)
                     "women" -> stringResource(Res.string.category_women)
-                    "dr martens" -> stringResource(Res.string.brand_dr_martens)
+                    "dr martens"  -> stringResource(Res.string.brand_dr_martens)
                     "kid" -> stringResource(Res.string.category_kids)
                     else -> category.name
                 }

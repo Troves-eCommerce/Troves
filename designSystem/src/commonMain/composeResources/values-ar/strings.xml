@@ -148,6 +148,10 @@
     <string name="home_trending_now">الأكثر رواجاً</string>
     <string name="home_copy_code_button">نسخ الكود</string>
 
+    <!-- See All screen headers -->
+    <string name="seeall_categories_title">الفئات</string>
+    <string name="seeall_brands_title">العلامات التجارية</string>
+
     <!-- Home Categories (localized titles, fallback to API name) -->
     <string name="category_footwear">أحذية</string>
     <string name="category_outerwear">ملابس خارجية</string>

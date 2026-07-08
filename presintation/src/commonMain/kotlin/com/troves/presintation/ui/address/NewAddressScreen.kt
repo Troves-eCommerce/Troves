@@ -179,7 +179,11 @@ fun NewAddressScreenContent(
     var expanded by remember { mutableStateOf(false) }
     var cityExpanded by remember { mutableStateOf(false) }
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Theme.colors.backGround)
+    ) {
         Scaffold(
             modifier = Modifier.fillMaxSize().statusBarsPadding(),
             containerColor = Theme.colors.backGround,
@@ -191,7 +195,6 @@ fun NewAddressScreenContent(
                     leadingIcon = painterResource(Res.drawable.ic_arrow_back),
                     onLeadingClick = { onIntent(NewAddressIntent.OnBackClick) },
                     modifier = Modifier.background(Theme.colors.backGround),
-                    autoMirrorLeadingIcon = true
                 )
             },
             bottomBar = {
