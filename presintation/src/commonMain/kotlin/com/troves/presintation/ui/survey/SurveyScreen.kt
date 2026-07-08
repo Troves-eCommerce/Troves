@@ -1,6 +1,8 @@
 package com.troves.presintation.ui.survey
 
 import androidx.compose.animation.AnimatedContent
+import org.jetbrains.compose.resources.stringResource
+import troves.presintation.generated.resources.*
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -237,3 +239,6 @@ fun SurveyScreen(
 ) {
     SurveyBottomSheet(onDismiss = onNavigateBack, viewModel = viewModel)
 }
+
+
+

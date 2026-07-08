@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name">Troves</string>
     <!-- Common bottom sheet actions -->
     <string name="apply">Apply</string>
     <string name="reset">Reset</string>
@@ -156,7 +155,6 @@
     <string name="product_details_read_more">Read more</string>
     <string name="product_details_read_less">Read less</string>
     <string name="product_details_size_guide">Size Guide</string>
-    <string name="product_details_size">Size</string>
     <string name="product_details_reviews_title">Customer Reviews</string>
     <string name="product_details_reviews_see_all">See all ></string>
     <string name="product_details_reviews_show_less">Show less</string>
@@ -218,6 +216,14 @@
     <string name="no_connection_title">You're offline</string>
     <string name="no_connection_desc">Check your internet connection and try again.</string>
     <string name="no_connection_retry">Try again</string>
+    <string name="no_connection_action_blocked">You\'re offline. Connect to the internet to continue.</string>
+
+    <!-- Currencies -->
+    <string name="currency_egp">EGP</string>
+    <string name="currency_gbp">£</string>
+    <string name="currency_jpy">¥</string>
+    <string name="currency_eur">€</string>
+    <string name="currency_usd">$</string>
     <string name="no_connection_action_blocked">You're offline. Connect to the internet to continue.</string>
 
     <!-- Splash Screen -->

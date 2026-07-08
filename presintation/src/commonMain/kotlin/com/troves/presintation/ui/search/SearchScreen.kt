@@ -88,19 +88,12 @@ fun SearchScreen(
         }
     }
 
-    Scaffold(
+    Box(
         modifier = modifier
             .fillMaxSize()
-            .statusBarsPadding(),
-        containerColor = Theme.colors.backGround,
-    ) { paddingValues ->
-
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .background(Theme.colors.backGround),
-        ) screenBox@{
+            .background(Theme.colors.backGround)
+            .statusBarsPadding()
+    ) screenBox@{
             Column(modifier = Modifier.fillMaxSize()) {
                 SearchBarSection(
                     query = state.query,
@@ -252,5 +245,4 @@ fun SearchScreen(
                 )
             }
         }
-    }
 }

@@ -18,8 +18,10 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.rememberAsyncImagePainter
 import com.troves.designsystem.components.cards.MainCard
+import com.troves.designsystem.components.dialog.TrovesDialog
 import com.troves.designsystem.components.shimmer.shimmerEffect
 import com.troves.designsystem.components.topbar.IconBox
+import com.troves.domain.entity.Product
 import com.troves.designsystem.theme.Theme
 import com.troves.designsystem.util.formatPrice
 import com.troves.presintation.core.mvi.ObserveEffect
@@ -48,9 +50,20 @@ fun SeeAllScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+    var productToRemoveFromFav by remember { mutableStateOf<Product?>(null) }
 
     LaunchedEffect(type, id, name) {
         viewModel.onIntent(SeeAllIntent.Init(type, id, name))
+    }
+
+    val currentFavoriteIds by rememberUpdatedState(state.favoriteProductIds)
+    val currentViewModel by rememberUpdatedState(viewModel)
+    val onIntent: (SeeAllIntent) -> Unit = { intent ->
+        if (intent is SeeAllIntent.ToggleFavorite && intent.product.id.toString() in currentFavoriteIds) {
+            productToRemoveFromFav = intent.product
+        } else {
+            currentViewModel.onIntent(intent)
+        }
     }
 
     ObserveEffect(viewModel.effect) { effect ->
@@ -62,6 +75,23 @@ fun SeeAllScreen(
                 scope.launch { snackbarHostState.showSnackbar(effect.message) }
             }
         }
+    }
+
+    productToRemoveFromFav?.let { product ->
+        TrovesDialog(
+            title = stringResource(Res.string.wishlist_remove_title),
+            message = stringResource(Res.string.wishlist_remove_msg),
+            confirmText = stringResource(Res.string.wishlist_remove),
+            dismissText = stringResource(Res.string.profile_cancel),
+            icon = painterResource(Res.drawable.ic_solid_heart),
+            onConfirm = {
+                viewModel.onIntent(SeeAllIntent.ToggleFavorite(product))
+                productToRemoveFromFav = null
+            },
+            onDismiss = {
+                productToRemoveFromFav = null
+            }
+        )
     }
 
     Box(
@@ -85,7 +115,7 @@ fun SeeAllScreen(
             } else {
                 SeeAllContent(
                     state = state,
-                    onIntent = viewModel::onIntent
+                    onIntent = onIntent,
                 )
             }
         }
@@ -225,7 +255,9 @@ private fun SeeAllContent(
                         ratingIconPainter = starIcon,
                         favoriteIconPainter = heartIcon,
                         onClick = { onIntent(SeeAllIntent.ProductClicked(product)) },
-                        onFavoriteClick = { onIntent(SeeAllIntent.ToggleFavorite(product)) },
+                        onFavoriteClick = {
+                            onIntent(SeeAllIntent.ToggleFavorite(product))
+                        },
                         isFavorite = product.id.toString() in state.favoriteProductIds,
                         modifier = Modifier
                             .fillMaxWidth()

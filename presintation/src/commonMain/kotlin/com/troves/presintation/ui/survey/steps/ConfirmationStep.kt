@@ -1,6 +1,8 @@
 package com.troves.presintation.ui.survey.steps
 
 import androidx.compose.foundation.layout.Arrangement
+import org.jetbrains.compose.resources.stringResource
+import troves.presintation.generated.resources.*
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,8 +19,7 @@ import androidx.compose.ui.unit.dp
 import com.troves.designsystem.components.button.PrimaryButton
 import com.troves.designsystem.theme.Theme
 import org.jetbrains.compose.resources.painterResource
-import org.jetbrains.compose.resources.stringResource
-import troves.designsystem.generated.resources.Res
+import troves.designsystem.generated.resources.Res as DesignRes
 import troves.designsystem.generated.resources.ic_ai_sparkles
 import troves.presintation.generated.resources.Res as ResP
 import troves.presintation.generated.resources.survey_confirmation_body
@@ -38,7 +39,7 @@ fun ConfirmationStep(
         Spacer(Modifier.height(Theme.spacing.extraLarge))
 
         Icon(
-            painter = painterResource(Res.drawable.ic_ai_sparkles),
+            painter = painterResource(DesignRes.drawable.ic_ai_sparkles),
             contentDescription = null,
             tint = Theme.colors.primary,
             modifier = Modifier.size(80.dp),
@@ -72,3 +73,7 @@ fun ConfirmationStep(
         )
     }
 }
+
+
+
+

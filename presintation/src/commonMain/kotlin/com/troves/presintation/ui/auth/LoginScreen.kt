@@ -52,8 +52,8 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import troves.designsystem.generated.resources.*
-import troves.presintation.generated.resources.Res as PresRes
-import troves.presintation.generated.resources.auth_google_icon_desc
+import troves.presintation.generated.resources.*
+import troves.presintation.generated.resources.Res as ResP
 
 import com.troves.presintation.ui.auth.google.LocalGoogleAuthHandler
 
@@ -262,7 +262,7 @@ fun LoginScreen(
                 } else {
                     Image(
                         painter = painterResource(Res.drawable.ic_google),
-                        contentDescription = stringResource(PresRes.string.auth_google_icon_desc),
+                        contentDescription = "Google Icon",
                         modifier = Modifier.size(22.dp)
                     )
                     Spacer(Modifier.width(12.dp))
@@ -300,9 +300,22 @@ fun LoginScreen(
                     onClick = onNavigateToRegister
                 )
             )
+
+            Spacer(Modifier.height(24.dp))
+
+            androidx.compose.material3.TextButton(
+                onClick = onLoginSuccess,
+                colors = androidx.compose.material3.ButtonDefaults.textButtonColors(contentColor = Theme.colors.primaryFont)
+            ) {
+                BasicText(
+                    text = stringResource(ResP.string.verify_email_continue_as_guest),
+                    style = Theme.typography.body.large.copy(fontWeight = FontWeight.Medium, color = Theme.colors.primaryFont)
+                )
+            }
         }
+    }
 
         TrovesToastHost(state = toast)
     }
 }
-}
+

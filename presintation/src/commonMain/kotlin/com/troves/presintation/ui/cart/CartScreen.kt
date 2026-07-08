@@ -329,12 +329,14 @@ private fun CartScreenContent(
                 }
             }
         }
-        CartBottomBar(
-            totalFormatted = formatPrice(state.total?.amount ?: "0.00"),
-            onCheckout = { onIntent(CartIntent.OnCheckout) },
-            isLoading = state.isLoading,
-            isEmpty = state.isEmpty,
-        )
+        if (!state.isEmpty) {
+            CartBottomBar(
+                totalFormatted = formatPrice(state.total?.amount ?: "0.00"),
+                onCheckout = { onIntent(CartIntent.OnCheckout) },
+                isLoading = state.isLoading,
+                isEmpty = state.isEmpty,
+            )
+        }
     }
 }
 

@@ -26,7 +26,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.troves.designsystem.theme.Theme
-import com.troves.designsystem.util.bounceClick
+import com.troves.designsystem.util.noRippleClickable
 import com.troves.presintation.ui.survey.StyleIcon
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
@@ -84,7 +84,7 @@ fun SurveyOptionCard(
             .clip(shape)
             .background(containerColor)
             .border(1.dp, borderColor, shape)
-            .bounceClick(shape = shape, onClick = onClick)
+            .noRippleClickable(onClick = onClick)
             .padding(horizontal = Theme.spacing.medium, vertical = Theme.spacing.medium),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(Theme.spacing.medium),

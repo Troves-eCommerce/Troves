@@ -1,6 +1,8 @@
 package com.troves.presintation.ui.survey.components
 
 import androidx.compose.foundation.layout.Arrangement
+import org.jetbrains.compose.resources.stringResource
+import troves.presintation.generated.resources.*
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
@@ -10,8 +12,7 @@ import com.troves.designsystem.components.button.PrimaryButton
 import com.troves.designsystem.components.button.SecondaryButton
 import com.troves.designsystem.theme.Theme
 import org.jetbrains.compose.resources.painterResource
-import org.jetbrains.compose.resources.stringResource
-import troves.designsystem.generated.resources.Res
+import troves.designsystem.generated.resources.Res as DesignRes
 import troves.designsystem.generated.resources.ic_arrow_back
 import troves.presintation.generated.resources.Res as ResP
 import troves.presintation.generated.resources.common_back
@@ -45,8 +46,12 @@ fun SurveyBottomBar(
                 caption = stringResource(ResP.string.common_back),
                 onClick = onBack,
                 modifier = Modifier.fillMaxWidth(),
-                iconPainter = painterResource(Res.drawable.ic_arrow_back),
+                iconPainter = painterResource(DesignRes.drawable.ic_arrow_back),
             )
         }
     }
 }
+
+
+
+
