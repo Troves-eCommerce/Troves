@@ -17,8 +17,13 @@ import androidx.compose.ui.unit.dp
 import com.troves.designsystem.components.button.PrimaryButton
 import com.troves.designsystem.theme.Theme
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import troves.designsystem.generated.resources.Res
 import troves.designsystem.generated.resources.ic_ai_sparkles
+import troves.presintation.generated.resources.Res as ResP
+import troves.presintation.generated.resources.survey_confirmation_body
+import troves.presintation.generated.resources.survey_confirmation_continue
+import troves.presintation.generated.resources.survey_confirmation_title
 
 @Composable
 fun ConfirmationStep(
@@ -42,7 +47,7 @@ fun ConfirmationStep(
         Spacer(Modifier.height(Theme.spacing.medium))
 
         BasicText(
-            text = "You're all set!",
+            text = stringResource(ResP.string.survey_confirmation_title),
             style = Theme.typography.display.copy(
                 color = Theme.colors.primaryFont,
                 fontWeight = FontWeight.Bold,
@@ -51,7 +56,7 @@ fun ConfirmationStep(
         )
 
         BasicText(
-            text = "We'll use your preferences to recommend products you'll love.",
+            text = stringResource(ResP.string.survey_confirmation_body),
             style = Theme.typography.body.large.copy(
                 color = Theme.colors.secondaryFont,
                 textAlign = TextAlign.Center,
@@ -61,7 +66,7 @@ fun ConfirmationStep(
         Spacer(Modifier.height(Theme.spacing.extraLarge))
 
         PrimaryButton(
-            caption = "Continue Shopping",
+            caption = stringResource(ResP.string.survey_confirmation_continue),
             onClick = onContinue,
             modifier = Modifier.fillMaxWidth(),
         )

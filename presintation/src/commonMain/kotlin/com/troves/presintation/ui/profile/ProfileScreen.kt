@@ -32,6 +32,7 @@ import org.koin.compose.viewmodel.koinViewModel
 import troves.designsystem.generated.resources.*
 import troves.designsystem.generated.resources.Res
 import troves.presintation.generated.resources.Res as ResP
+import troves.presintation.generated.resources.profile_style_survey_desc
 import troves.presintation.generated.resources.*
 
 @Composable
@@ -227,7 +228,7 @@ fun ProfileScreen(
                             ProfileRowItem(
                                 icon = Res.drawable.ic_ai_sparkles,
                                 title = stringResource(ResP.string.profile_style_survey),
-                                description = "Update your style preferences",
+                                description = stringResource(ResP.string.profile_style_survey_desc),
                                 onClick = { viewModel.onIntent(ProfileIntent.SurveyClicked) }
                             )
                         }

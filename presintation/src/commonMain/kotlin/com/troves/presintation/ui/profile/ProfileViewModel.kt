@@ -18,6 +18,11 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.getString
+import troves.presintation.generated.resources.Res
+import troves.presintation.generated.resources.profile_logout_failed
+import troves.presintation.generated.resources.profile_rates_error
+import troves.presintation.generated.resources.profile_user_fallback
 
 class ProfileViewModel(
     private val logoutUseCase: LogoutUseCase,
@@ -56,7 +61,7 @@ class ProfileViewModel(
         if (!observeConnectivity.isOnlineNow()) return
         viewModelScope.launch {
             fetchLatestRatesUseCase("EGP").onFailure { e ->
-                _effect.emit(ProfileEffect.ShowError("Rates: ${e.message}"))
+                _effect.emit(ProfileEffect.ShowError(getString(Res.string.profile_rates_error, e.message ?: "")))
             }
         }
     }
@@ -108,7 +113,7 @@ class ProfileViewModel(
                 val resolvedName = when {
                     !prefs.displayName.isNullOrEmpty() -> prefs.displayName!!
                     fallbackEmail.contains("@") -> fallbackEmail.substringBefore("@")
-                    else -> "User"
+                    else -> getString(Res.string.profile_user_fallback)
                 }
 
                 _uiState.update {
@@ -153,7 +158,7 @@ class ProfileViewModel(
                 logoutUseCase()
                 _effect.emit(ProfileEffect.NavigateToLogin)
             } catch (e: Exception) {
-                _effect.emit(ProfileEffect.ShowError(e.message ?: "Failed to logout"))
+                _effect.emit(ProfileEffect.ShowError(e.message ?: getString(Res.string.profile_logout_failed)))
             } finally {
                 _uiState.update { it.copy(isLoading = false) }
             }

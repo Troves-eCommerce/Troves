@@ -10,6 +10,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.troves.designsystem.theme.Theme
+import org.jetbrains.compose.resources.stringResource
+import troves.presintation.generated.resources.Res
+import troves.presintation.generated.resources.survey_question_counter
 
 @Composable
 fun SurveyQuestionHeader(
@@ -24,7 +27,7 @@ fun SurveyQuestionHeader(
         verticalArrangement = Arrangement.spacedBy(Theme.spacing.extraSmall),
     ) {
         BasicText(
-            text = "Question ${currentStep + 1} of $totalSteps",
+            text = stringResource(Res.string.survey_question_counter, currentStep + 1, totalSteps),
             style = Theme.typography.body.small.copy(
                 color = Theme.colors.secondaryFont,
             ),

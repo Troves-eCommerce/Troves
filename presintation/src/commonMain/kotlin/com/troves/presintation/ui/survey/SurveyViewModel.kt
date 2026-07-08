@@ -10,6 +10,9 @@ import com.troves.presintation.core.mvi.DefaultStateHolder
 import com.troves.presintation.core.mvi.EffectPublisher
 import com.troves.presintation.core.mvi.StateHolder
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.getString
+import troves.presintation.generated.resources.Res
+import troves.presintation.generated.resources.survey_save_failed
 
 class SurveyViewModel(
     private val isSurveyDone: IsSurveyDoneUseCase,
@@ -86,7 +89,7 @@ class SurveyViewModel(
                     sendEffect(SurveyEffect.SurveyCompleted)
                 }
                 is com.troves.domain.utils.Result.Error -> {
-                    sendEffect(SurveyEffect.ShowError(result.throwable.message ?: "Failed to save survey"))
+                    sendEffect(SurveyEffect.ShowError(result.throwable.message ?: getString(Res.string.survey_save_failed)))
                 }
                 is com.troves.domain.utils.Result.Loading -> Unit
             }

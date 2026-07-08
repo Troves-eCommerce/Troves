@@ -23,6 +23,17 @@ import com.troves.presintation.core.mvi.StateHolder
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import okio.IOException
+import org.jetbrains.compose.resources.getString
+import troves.presintation.generated.resources.Res
+import troves.presintation.generated.resources.address_fill_required_fields
+import troves.presintation.generated.resources.address_geocode_failed
+import troves.presintation.generated.resources.address_invalid_phone
+import troves.presintation.generated.resources.address_location_permission_required
+import troves.presintation.generated.resources.address_saved
+import troves.presintation.generated.resources.address_save_failed
+import troves.presintation.generated.resources.address_select_location_first
+import troves.presintation.generated.resources.address_sign_in_again
+import troves.presintation.generated.resources.address_updated
 
 data class NewAddressUiState(
     val label: String = "",
@@ -143,7 +154,7 @@ class NewAddressViewModel(
             is NewAddressIntent.OnLocationPermissionResult -> {
                 updateState { copy(hasLocationPermission = intent.granted) }
                 if (!intent.granted) {
-                    sendEffect(NewAddressEffect.ShowToast("Location permission is required to get current location"))
+                    viewModelScope.launch { sendEffect(NewAddressEffect.ShowToast(getString(Res.string.address_location_permission_required))) }
                 } else {
                     viewModelScope.launch {
                         getCurrentLocationCoordinatesUseCase().also { currentLocation ->
@@ -190,7 +201,7 @@ class NewAddressViewModel(
                 }
             } catch (e: IOException) {
                 updateState { copy(isGeocodingLoading = false) }
-                sendEffect(NewAddressEffect.ShowToast("Couldn't get address details"))
+                sendEffect(NewAddressEffect.ShowToast(getString(Res.string.address_geocode_failed)))
             }
         }
     }
@@ -198,7 +209,7 @@ class NewAddressViewModel(
     private fun saveMapAddress() {
         val state = currentState
         if (state.selectedLocationAddress == null) {
-            sendEffect(NewAddressEffect.ShowToast("Please select a location on the map first"))
+            viewModelScope.launch { sendEffect(NewAddressEffect.ShowToast(getString(Res.string.address_select_location_first))) }
             return
         }
         sendEffect(NewAddressEffect.HideMap)
@@ -264,7 +275,7 @@ class NewAddressViewModel(
         if (state.recipientName.isBlank() || state.phone.isBlank() ||
             state.country.isBlank() || state.city.isBlank() || state.street.isBlank()
         ) {
-            sendEffect(NewAddressEffect.ShowToast("Please fill all required fields"))
+            viewModelScope.launch { sendEffect(NewAddressEffect.ShowToast(getString(Res.string.address_fill_required_fields))) }
             return
         }
 
@@ -275,7 +286,7 @@ class NewAddressViewModel(
         val cleanPhone = state.phone.filter { !it.isWhitespace() }
 
         if (isEgypt && !com.troves.domain.utils.PhoneUtils.isValidEgyptianPhone(cleanPhone)) {
-            sendEffect(NewAddressEffect.ShowToast("Please enter a valid Egyptian phone number"))
+            viewModelScope.launch { sendEffect(NewAddressEffect.ShowToast(getString(Res.string.address_invalid_phone))) }
             return
         }
 
@@ -316,20 +327,20 @@ class NewAddressViewModel(
             when (result) {
                 is Result.Success -> sendEffect(
                     NewAddressEffect.SavedAndClose(
-                        if (isEdit) "Address updated" else "Address saved successfully"
+                        if (isEdit) getString(Res.string.address_updated) else getString(Res.string.address_saved)
                     )
                 )
 
                 is Result.Error -> if (result.throwable is ShopifyAuthRequiredException) {
                     sendEffect(
                         NewAddressEffect.RequireLogin(
-                            result.throwable.message ?: "Please sign in again"
+                            result.throwable.message ?: getString(Res.string.address_sign_in_again)
                         )
                     )
                 } else {
                     sendEffect(
                         NewAddressEffect.ShowToast(
-                            result.throwable.message ?: "Couldn't save address"
+                            result.throwable.message ?: getString(Res.string.address_save_failed)
                         )
                     )
                 }
