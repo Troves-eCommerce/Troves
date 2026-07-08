@@ -10,6 +10,7 @@ import com.troves.domain.usecase.cart.RefreshCartUseCase
 import com.troves.domain.usecase.cart.RemoveAllFromCartUseCase
 import com.troves.domain.usecase.cart.RemoveFromCartUseCase
 import com.troves.domain.usecase.cart.UpdateCartQuantityUseCase
+import com.troves.domain.usecase.shared.ObserveConnectivityUseCase
 import com.troves.presintation.core.mvi.DefaultEffectPublisher
 import com.troves.presintation.core.mvi.DefaultStateHolder
 import com.troves.presintation.core.mvi.EffectPublisher
@@ -24,11 +25,19 @@ class CartViewModel(
     private val removeFromCart: RemoveFromCartUseCase,
     private val removeAllFromCart: RemoveAllFromCartUseCase,
     private val refreshCart: RefreshCartUseCase,
+    private val observeConnectivity: ObserveConnectivityUseCase,
 ) : ViewModel(),
     StateHolder<CartUiState> by DefaultStateHolder(CartUiState()),
     EffectPublisher<CartEffect> by DefaultEffectPublisher() {
 
     private val updatingLines = mutableSetOf<String>()
+
+    /** Cart is view-only while offline: block every mutation and tell the user why. */
+    private fun ensureOnline(): Boolean {
+        if (observeConnectivity.isOnlineNow()) return true
+        sendEffect(CartEffect.ShowToast(NO_CONNECTION_MESSAGE))
+        return false
+    }
 
     init {
         getCartStream()
@@ -56,6 +65,7 @@ class CartViewModel(
     }
 
     private fun removeItem(lineId: String) {
+        if (!ensureOnline()) return
         viewModelScope.launch {
             when (removeFromCart(lineId)) {
                 CartOperationResult.RequiresLogin -> sendEffect(CartEffect.ShowLoginRequiredDialog)
@@ -70,6 +80,7 @@ class CartViewModel(
         // Ignore taps while this line already has an update in flight — prevents rapid taps from
         // computing the next target off a stale quantity and desyncing from Shopify.
         if (lineId in updatingLines) return
+        if (!ensureOnline()) return
         val item = currentState.items.find { it.lineId == lineId } ?: return
         val newQuantity = item.quantity + delta
         if (newQuantity <= 0) {
@@ -107,6 +118,7 @@ class CartViewModel(
     }
 
     private fun clearCart() {
+        if (!ensureOnline()) return
         viewModelScope.launch {
             when (removeAllFromCart()) {
                 CartOperationResult.RequiresLogin -> sendEffect(CartEffect.ShowLoginRequiredDialog)
@@ -137,6 +149,10 @@ class CartViewModel(
             checkoutUrl = cart.checkoutUrl,
             isLoading = false,
         )
+    }
+
+    private companion object {
+        const val NO_CONNECTION_MESSAGE = "No internet connection"
     }
 }
 

@@ -28,6 +28,9 @@ import androidx.navigation3.ui.NavDisplay
 import androidx.savedstate.serialization.SavedStateConfiguration
 import com.troves.designsystem.components.bottomnav.BottomNavItem
 import com.troves.designsystem.components.bottomnav.SPFloatingBottomNavigation
+import com.troves.designsystem.components.toast.TrovesToastHost
+import com.troves.designsystem.components.toast.ToastType
+import com.troves.designsystem.components.toast.rememberTrovesToastState
 import com.troves.presintation.ui.MainViewModel
 import com.troves.presintation.ui.StartDestination
 import com.troves.presintation.ui.address.ManageSavedAddressesScreen
@@ -59,6 +62,7 @@ import kotlinx.serialization.modules.polymorphic
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import troves.designsystem.generated.resources.Res
+import troves.designsystem.generated.resources.no_connection_action_blocked
 import troves.designsystem.generated.resources.ic_home
 import troves.designsystem.generated.resources.ic_home_selected
 import troves.designsystem.generated.resources.ic_order
@@ -106,6 +110,10 @@ private val navSavedStateConfiguration = SavedStateConfiguration {
 fun AppNav() {
     val mainViewModel: MainViewModel = koinViewModel()
     val uiState by mainViewModel.uiState.collectAsState()
+
+    // Root toast for app-level guards (e.g. blocking checkout while offline).
+    val rootToast = rememberTrovesToastState()
+    val offlineBlockedMessage = stringResource(Res.string.no_connection_action_blocked)
 
     val initialRoute: NavKey = AppRoute.Splash
 
@@ -302,7 +310,14 @@ fun AppNav() {
         entry<AppRoute.Cart> {
             CartScreen(
                 onNavigateBack = { backStack.removeLastOrNull() },
-                onNavigateToCheckout = { backStack.add(AppRoute.Checkout) },
+                onNavigateToCheckout = {
+                    // Read the live value at click time so this is never stale.
+                    if (mainViewModel.isOnline.value) {
+                        backStack.add(AppRoute.Checkout)
+                    } else {
+                        rootToast.show(offlineBlockedMessage, ToastType.Warning)
+                    }
+                },
                 onNavigateToLogin = { backStack.add(AppRoute.Login) },
             )
         }
@@ -429,6 +444,11 @@ fun AppNav() {
                         .padding(bottom = paddingValues.calculateBottomPadding()),
                 )
             }
+
+            TrovesToastHost(
+                state = rootToast,
+                modifier = Modifier.align(Alignment.TopCenter),
+            )
         }
     }
 }

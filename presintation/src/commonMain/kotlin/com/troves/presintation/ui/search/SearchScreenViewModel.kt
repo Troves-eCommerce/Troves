@@ -7,10 +7,14 @@ import com.troves.domain.usecase.home.GetBrandsUseCase
 import com.troves.domain.usecase.home.GetCategoriesUseCase
 import com.troves.domain.usecase.search.SearchProductsUseCase
 import com.troves.domain.usecase.shared.GetProductsUseCase
+import com.troves.domain.usecase.shared.ObserveConnectivityUseCase
 import com.troves.domain.usecase.wishlist.GetWishlistUseCase
 import com.troves.domain.usecase.wishlist.ToggleFavoriteResult
 import com.troves.domain.usecase.wishlist.ToggleFavoriteUseCase
 import com.troves.domain.utils.Result
+import com.troves.domain.utils.connectivity.ConnectivityStatus
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.map
 import com.troves.domain.utils.fold
 import com.troves.domain.utils.getOrElse
 import com.troves.presintation.core.mvi.DefaultEffectPublisher
@@ -59,6 +63,7 @@ class SearchScreenViewModel(
     private val searchProductsUseCase: SearchProductsUseCase,
     private val toggleFavoriteUseCase: ToggleFavoriteUseCase,
     private val getWishlistUseCase: GetWishlistUseCase,
+    private val observeConnectivity: ObserveConnectivityUseCase,
 ) : ViewModel(),
     StateHolder<SearchUiState> by DefaultStateHolder(SearchUiState()),
     EffectPublisher<SearchEffect> by DefaultEffectPublisher() {
@@ -66,6 +71,19 @@ class SearchScreenViewModel(
     private val searchQueryFlow = MutableStateFlow("")
 
     init {
+        // On reconnect, re-initialise filters and re-run the active search.
+        observeConnectivity()
+            .map { it == ConnectivityStatus.Available }
+            .distinctUntilChanged()
+            .drop(1)
+            .onEach { online ->
+                if (online) {
+                    load()
+                    if (state.value.query.isNotBlank()) runSearch(state.value.query)
+                }
+            }
+            .launchIn(viewModelScope)
+
         searchQueryFlow
             .filterNot { it.isBlank() }
             .debounce(500.milliseconds)
@@ -249,10 +267,16 @@ class SearchScreenViewModel(
 
         searchProductsUseCase(params = params).fold(
             onSuccess = { products ->
-                updateState { copy(isLoading = false, products = products, errorMessage = null) }
+                updateState { copy(isLoading = false, products = products, errorMessage = null, isOffline = false) }
             },
             onError = { throwable ->
-                updateState { copy(isLoading = false, errorMessage = throwable.message) }
+                updateState {
+                    copy(
+                        isLoading = false,
+                        errorMessage = throwable.message,
+                        isOffline = !observeConnectivity.isOnlineNow(),
+                    )
+                }
             },
             onLoading = { /* searchProductsUseCase resolves directly to Success/Error; unreachable here */ },
         )
@@ -276,6 +300,7 @@ class SearchScreenViewModel(
                     brands = brandsResult.getOrElse { emptyList() },
                     categories = categoryResult.getOrElse { emptyList() },
                     errorMessage = hasError?.message,
+                    isOffline = hasError != null && !observeConnectivity.isOnlineNow(),
                 )
             }
         }

@@ -18,8 +18,17 @@ data class HomeUiState(
     val isSurveyDone: Boolean = false,
     val isLoggedIn: Boolean = false,
     val cartItemCount: Int = 0,
+    val isOffline: Boolean = false,
 ) {
     val hasError: Boolean get() = errorMessage != null
+
+    /** True when the whole feed has nothing to show. */
+    val isEmpty: Boolean
+        get() = ads.isEmpty() && brands.isEmpty() && categories.isEmpty() &&
+            justForYou.isEmpty() && trending.isEmpty()
+
+    /** Show the full-screen offline placeholder only when offline AND nothing is cached to show. */
+    val showOfflineState: Boolean get() = isOffline && isEmpty && !isLoading
 }
 
 sealed interface HomeEffect {
