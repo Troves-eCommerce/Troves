@@ -148,7 +148,8 @@ fun NewAddressScreen(
             onDismissRequest = { viewModel.onIntent(NewAddressIntent.HideMap) },
             onMapClick = { lat, lng -> viewModel.onIntent(NewAddressIntent.OnMapClick(lat, lng)) },
             onAddNewAddressClick = { viewModel.onIntent(NewAddressIntent.OnNewMapAddressSelected) },
-            currentLocation = state.currentLocation
+            currentLocation = state.currentLocation,
+            onGetCurrentLocationClick = { viewModel.onIntent(NewAddressIntent.GetCurrentLocation) }
         )
     } else {
         NewAddressScreenContent(
