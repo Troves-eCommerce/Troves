@@ -6,6 +6,9 @@ import com.troves.data.source.remote.service.ktor.dto.CustomCollectionDto
 import com.troves.data.source.remote.service.ktor.dto.SmartCollection
 
 
+// Brands (vendor collections) keep their original title: it must stay equal to `Product.vendor`
+// (which is not localized) so the vendor facet filter in TrovesRepositoryImpl.searchProducts still
+// matches. Brand names are proper nouns and generally aren't translated anyway.
 internal fun GetCollectionsQuery.Node.toSmartCollection(): SmartCollection = SmartCollection(
     adminGraphqlApiId = null,
     bodyHtml = null,
@@ -30,6 +33,11 @@ internal fun GetCollectionsQuery.Node.toCustomCollectionDto(): CustomCollectionD
     publishedAt = null,
     publishedScope = null,
     sortOrder = null,
-    title = title,
+    title = localizedTitle(),
     updatedAt = null,
 )
+
+/** Registered locale title (e.g. Arabic) for the collection, falling back to the base English title. */
+private fun GetCollectionsQuery.Node.localizedTitle(): String =
+    translations.firstOrNull { it.key == TRANSLATION_KEY_TITLE }?.value?.takeIf { it.isNotBlank() }
+        ?: title
