@@ -4,6 +4,7 @@ import com.troves.data.source.remote.service.apollo.graphql.storefront.fragment.
 import com.troves.data.source.remote.service.apollo.graphql.storefront.fragment.OrderCoreFields
 import com.troves.data.source.remote.service.apollo.graphql.storefront.fragment.OrderLineItemFields
 import com.troves.data.source.remote.service.apollo.graphql.storefront.GetOrdersQuery
+import com.troves.data.source.remote.service.apollo.util.gidToLong
 import com.troves.domain.entity.Address
 import com.troves.domain.entity.CartMoney
 import com.troves.domain.entity.Order
@@ -72,7 +73,9 @@ internal fun GetOrdersQuery.Node.toDomainOrderSummary(): OrderSummary = OrderSum
 )
 
 internal fun OrderLineItemFields.toDomainLineItem(): OrderLineItem = OrderLineItem(
-    title = title,
+    // Prefer the live product title (localized by @inContext) over the frozen line snapshot; the
+    // repository additionally overlays the Admin translation by productId as a reliable fallback.
+    title = variant?.product?.title ?: title,
     variantTitle = variant?.title,
     imageUrl = variant?.image?.url?.toString(),
     quantity = quantity,
@@ -80,4 +83,5 @@ internal fun OrderLineItemFields.toDomainLineItem(): OrderLineItem = OrderLineIt
         amount = originalTotalPrice.moneyFields.amount.toString(),
         currencyCode = originalTotalPrice.moneyFields.currencyCode.rawValue,
     ),
+    productId = variant?.product?.id?.gidToLong(),
 )

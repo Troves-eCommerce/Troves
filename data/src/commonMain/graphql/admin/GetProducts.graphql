@@ -1,4 +1,4 @@
-query GetProducts($first: Int!) {
+query GetProducts($first: Int!, $locale: String!) {
     products(first: $first) {
         edges {
             cursor

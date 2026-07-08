@@ -3,7 +3,8 @@ query GetProductsBySearch(
     $query: String,
     $after: String,
     $sortKey: ProductSortKeys,
-    $reverse: Boolean
+    $reverse: Boolean,
+    $locale: String!
 ) {
     products(first: $first, query: $query, after: $after, sortKey: $sortKey, reverse: $reverse) {
         edges {

@@ -1,11 +1,18 @@
 # Shared product selection (Shopify Admin API) used by every product query so a single
 # Kotlin mapper (ProductCard.toProductDto) can populate the REST-shaped ProductDto.
+# `translations(locale:)` overlays registered locale content (e.g. Arabic title/body_html)
+# onto the base English fields in the mapper; every operation using this fragment must
+# declare a `$locale: String!` variable.
 fragment ProductCard on Product {
     id
     title
     vendor
     status
     descriptionHtml
+    translations(locale: $locale) {
+        key
+        value
+    }
     featuredImage {
         url
     }

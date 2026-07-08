@@ -88,6 +88,7 @@ class HomeViewModel(
     fun onIntent(intent: HomeIntent) {
         when (intent) {
             HomeIntent.Load, HomeIntent.Retry -> loadHomeFeed()
+            HomeIntent.Refresh -> loadHomeFeed(isRefresh = true)
             HomeIntent.SearchClicked -> sendEffect(HomeEffect.NavigateToSearch)
             HomeIntent.CartClicked -> onCartClicked()
             HomeIntent.SurveyBannerClicked -> sendEffect(HomeEffect.NavigateToSurvey)
@@ -159,9 +160,15 @@ class HomeViewModel(
         }
     }
 
-    private fun loadHomeFeed() {
+    private fun loadHomeFeed(isRefresh: Boolean = false) {
         viewModelScope.launch {
-            updateState { copy(isLoading = true, errorMessage = null) }
+            updateState {
+                copy(
+                    isLoading = !isRefresh,
+                    isRefreshing = isRefresh,
+                    errorMessage = null,
+                )
+            }
 
             val adsDeferred = async { getAds() }
             val brandsDeferred = async { getBrands() }
@@ -188,6 +195,7 @@ class HomeViewModel(
             updateState {
                 copy(
                     isLoading = false,
+                    isRefreshing = false,
                     ads = adsResult.getOrElse(emptyList()),
                     brands = brandsResult.getOrElse(emptyList()).take(12),
                     categories = categoriesResult.getOrElse(emptyList()).take(9),

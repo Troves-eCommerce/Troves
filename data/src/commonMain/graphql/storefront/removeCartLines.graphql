@@ -1,7 +1,8 @@
 mutation RemoveCartLines(
     $cartId: ID!,
-    $lineIds: [ID!]!
-) {
+    $lineIds: [ID!]!,
+    $language: LanguageCode!
+) @inContext(language: $language) {
     cartLinesRemove(
         cartId: $cartId,
         lineIds: $lineIds

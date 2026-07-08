@@ -1,6 +1,7 @@
 query GetOrders(
-    $customerAccessToken: String!
-) {
+    $customerAccessToken: String!,
+    $language: LanguageCode!
+) @inContext(language: $language) {
     customer(customerAccessToken: $customerAccessToken) {
         id
 

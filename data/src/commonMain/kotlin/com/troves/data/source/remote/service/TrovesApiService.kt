@@ -23,6 +23,12 @@ interface TrovesApiService {
 
     suspend fun getProductImages(productId: String): Result<List<CollectionImage>>
     suspend fun getProductById(productId: String): Result<Product>
+
+    /**
+     * Localized (per current app language) product titles for the given product IDs, keyed by
+     * numeric product id. Used to overlay Arabic titles onto Storefront cart/order line items.
+     */
+    suspend fun getLocalizedProductTitles(productIds: List<String>): Result<Map<Long, String>>
     suspend fun updateProduct(productId: String)
     suspend fun deleteProduct(productDto: ProductDto)
     // endregion

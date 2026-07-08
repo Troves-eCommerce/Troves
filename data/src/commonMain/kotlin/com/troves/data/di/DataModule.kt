@@ -77,8 +77,10 @@ val dataModule = module {
 
 
     // GraphQL (Apollo) is now the active TrovesApiService implementation.
-    single<TrovesApiService> { ApolloTrovesApiServiceImpl(get(named(ADMIN_CLIENT))) }
-    single<StorefrontApiService> { ApolloStorefrontApiServiceImpl(get(named(STORE_CLIENT))) }
+    // Both services read the persisted app language (TrovesPreferences.selectedLanguage) to
+    // localize Shopify content — Admin `translations(locale:)` / Storefront `@inContext(language:)`.
+    single<TrovesApiService> { ApolloTrovesApiServiceImpl(get(named(ADMIN_CLIENT)), get()) }
+    single<StorefrontApiService> { ApolloStorefrontApiServiceImpl(get(named(STORE_CLIENT)), get()) }
 
     single<ShopifyAdminCustomerService> { ShopifyAdminCustomerServiceImpl(get()) }
 

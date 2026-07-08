@@ -1,9 +1,13 @@
-query GetCollections($first: Int!, $query: String, $after: String) {
+query GetCollections($first: Int!, $query: String, $after: String, $locale: String!) {
     collections(first: $first, query: $query, after: $after) {
         edges {
             node {
                 id
                 title
+                translations(locale: $locale) {
+                    key
+                    value
+                }
                 image {
                     url
                 }

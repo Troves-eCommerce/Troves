@@ -88,6 +88,9 @@ class KtorTrovesApiServiceImpl(
         }
     }
 
+    override suspend fun getLocalizedProductTitles(productIds: List<String>): Result<Map<Long, String>> =
+        Result.Success(emptyMap()) // REST path unused; localization runs on the Apollo Admin service.
+
     override suspend fun updateProduct(productId: String) {
         TODO("Not yet implemented")
     }
