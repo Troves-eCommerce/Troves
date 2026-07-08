@@ -15,10 +15,7 @@ import troves.designsystem.generated.resources.ic_cart
 import troves.designsystem.generated.resources.ic_search
 import org.jetbrains.compose.resources.stringResource
 
-/**
- * The Home screen top bar: the "Troves" wordmark with trailing search and cart
- * actions. A thin, opinionated wrapper over [BaseTopAppBar].
- */
+
 @Composable
 fun TrovesTopBar(
     onSearchClick: () -> Unit,

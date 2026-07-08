@@ -42,6 +42,7 @@ class HomeViewModel(
     private val observeSurveyDone: com.troves.domain.usecase.survey.ObserveSurveyDoneUseCase,
     private val completeSurvey: com.troves.domain.usecase.survey.CompleteSurveyUseCase,
     private val getCartStream: com.troves.domain.usecase.cart.GetCartStreamUseCase,
+    private val refreshCart: com.troves.domain.usecase.cart.RefreshCartUseCase,
     private val observeConnectivity: ObserveConnectivityUseCase,
 ) : ViewModel(),
     StateHolder<HomeUiState> by DefaultStateHolder(HomeUiState()),
@@ -53,6 +54,11 @@ class HomeViewModel(
         loadSurveyStatus()
         observeCartCount()
         observeReconnect()
+        refreshCartCount()
+    }
+
+    private fun refreshCartCount() {
+        viewModelScope.launch { refreshCart() }
     }
 
 

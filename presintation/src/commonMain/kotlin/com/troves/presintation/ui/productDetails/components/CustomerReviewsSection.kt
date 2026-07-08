@@ -34,7 +34,6 @@ import troves.designsystem.generated.resources.product_details_reviews_write
 private const val PREVIEW_COUNT = 3
 
 private val CARD_WIDTH = 280.dp
-private val CARD_HEIGHT = 160.dp
 
 @Composable
 fun CustomerReviewsSection(
@@ -67,7 +66,6 @@ fun CustomerReviewsSection(
                     CustomerReviewItem(
                         review = review,
                         modifier = Modifier.width(CARD_WIDTH),
-                        fixedHeight = CARD_HEIGHT,
                     )
                 }
             }
