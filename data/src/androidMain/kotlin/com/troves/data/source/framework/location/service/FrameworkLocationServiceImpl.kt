@@ -9,6 +9,7 @@ import com.google.android.gms.location.CurrentLocationRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.tasks.CancellationTokenSource
 import com.troves.data.util.AndroidApp
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.tasks.await
 
 
@@ -32,19 +33,25 @@ class FrameworkLocationServiceImpl : FrameworkLocationService {
     )
     override suspend fun getCurrentLocationCoordinates(): LocationCoordinates {
         if (!requestPermission()) {
-            throw SecurityException("Location permission denied")
+            return LocationCoordinates()
         }
 
-        val provider =
-            LocationServices.getFusedLocationProviderClient(AndroidApp.androidApp)
+        return try {
+            val provider =
+                LocationServices.getFusedLocationProviderClient(AndroidApp.androidApp)
 
-        val location = provider
-            .getCurrentLocation(
-                CurrentLocationRequest.Builder().build(),
-                CancellationTokenSource().token
-            )
-            .await()
-        return location.toCoordinates()
+            val location = provider
+                .getCurrentLocation(
+                    CurrentLocationRequest.Builder().build(),
+                    CancellationTokenSource().token
+                )
+                .await()
+            location?.toCoordinates() ?: LocationCoordinates()
+        } catch (c: CancellationException) {
+            throw c
+        } catch (t: Throwable) {
+            LocationCoordinates()
+        }
     }
 }
 

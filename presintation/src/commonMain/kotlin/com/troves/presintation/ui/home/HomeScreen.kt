@@ -284,10 +284,28 @@ private fun HomeContent(
                 "Copy code" -> stringResource(Res.string.home_copy_code_button)
                 else -> ad.buttonText
             }
+            val titleTop = when (ad.id) {
+                1L -> stringResource(Res.string.home_ad_nike_top)
+                2L -> stringResource(Res.string.home_ad_puma_top)
+                3L -> stringResource(Res.string.home_ad_adidas_top)
+                else -> ad.titleTop
+            }
+            val titleBottom = when (ad.id) {
+                1L -> stringResource(Res.string.home_ad_nike_bottom)
+                2L -> stringResource(Res.string.home_ad_puma_bottom)
+                3L -> stringResource(Res.string.home_ad_adidas_bottom)
+                else -> ad.titleBottom
+            }
+            val description = when (ad.id) {
+                1L -> stringResource(Res.string.home_ad_nike_desc)
+                2L -> stringResource(Res.string.home_ad_puma_desc)
+                3L -> stringResource(Res.string.home_ad_adidas_desc)
+                else -> ad.description
+            }
             AdData(
-                titleTop = ad.titleTop,
-                titleBottom = ad.titleBottom,
-                description = ad.description,
+                titleTop = titleTop,
+                titleBottom = titleBottom,
+                description = description,
                 imagePainter = painterResource(imageRes),
                 buttonText = resolvedButtonText,
             )
@@ -301,7 +319,7 @@ private fun HomeContent(
             ads = adSlides,
             arrowIconPainter = chevron,
             onShopNowClick = { clicked ->
-                val ad = state.ads.firstOrNull { it.titleTop == clicked.titleTop }
+                val ad = state.ads.getOrNull(adSlides.indexOf(clicked))
                 if (ad != null) {
                     if (ad.buttonText == "Copy code" || ad.buttonText == copyCodeButtonText) {
                         clipboardManager.setText(AnnotatedString(ad.titleTop))
@@ -338,8 +356,22 @@ private fun HomeContent(
                     else -> Res.drawable.ic_star
                 }
 
+                val categoryTitle = when (category.name.lowercase().trim()) {
+                    "footwear" -> stringResource(Res.string.category_footwear)
+                    "outerwear" -> stringResource(Res.string.category_outerwear)
+                    "accessories" -> stringResource(Res.string.category_accessories)
+                    "sale" -> stringResource(Res.string.category_sale)
+                    "new arrivals" -> stringResource(Res.string.category_new_arrivals)
+                    "best sellers" -> stringResource(Res.string.category_best_sellers)
+                    "men" -> stringResource(Res.string.category_men)
+                    "women" -> stringResource(Res.string.category_women)
+                    "dr martens" -> stringResource(Res.string.brand_dr_martens)
+                    "kid" -> stringResource(Res.string.category_kids)
+                    else -> category.name
+                }
+
                 CategoryItem(
-                    name = category.name,
+                    name = categoryTitle,
                     iconPainter = categoryIcon,
                     onClick = { onIntent(HomeIntent.CategoryClicked(category)) },
                     modifier = Modifier
@@ -396,8 +428,24 @@ private fun HomeContent(
                     else -> null
                 }
 
+                val brandTitle = when (brand.name.trim().lowercase()) {
+                    "dr martens" -> stringResource(Res.string.brand_dr_martens)
+                    "herschel" -> stringResource(Res.string.brand_herschel)
+                    "flex fit" -> stringResource(Res.string.brand_flexfit)
+                    "puma" -> stringResource(Res.string.brand_puma)
+                    "supra" -> stringResource(Res.string.brand_supra)
+                    "timberland" -> stringResource(Res.string.brand_timberland)
+                    "converse" -> stringResource(Res.string.brand_converse)
+                    "asics tiger" -> stringResource(Res.string.brand_asics_tiger)
+                    "palladuim" -> stringResource(Res.string.brand_palladium)
+                    "vans" -> stringResource(Res.string.brand_vans)
+                    "adidas" -> stringResource(Res.string.brand_adidas)
+                    "nike" -> stringResource(Res.string.brand_nike)
+                    else -> brand.name
+                }
+
                 BrandItem(
-                    name = brand.name,
+                    name = brandTitle,
                     imagePainter = if (localBrandImage != null) {
                         painterResource(localBrandImage)
                     } else {

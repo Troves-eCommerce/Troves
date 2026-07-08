@@ -197,7 +197,6 @@ private fun ProductsToolbar(
             icon = painterResource(DesignRes.drawable.ic_arrow_back),
             contentDescription = stringResource(PresRes.string.common_back),
             onClick = onBackClick,
-            autoMirror = true,
             border = BorderStroke(1.dp, Theme.colors.onPrimary)
         )
         Spacer(Modifier.width(Theme.spacing.medium))

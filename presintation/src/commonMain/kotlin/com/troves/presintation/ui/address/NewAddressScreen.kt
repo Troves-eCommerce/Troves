@@ -143,6 +143,7 @@ fun NewAddressScreen(
         MapSelectionScreenContent(
             selectedLocationAddress = state.selectedLocationAddress,
             isGeocodingLoading = state.isGeocodingLoading,
+            geocodingFailed = state.geocodingFailed,
             selectedLatitude = state.selectedMapLocation.lan.takeIf { it != 0.0 },
             selectedLongitude = state.selectedMapLocation.lon.takeIf { it != 0.0 },
             onDismissRequest = { viewModel.onIntent(NewAddressIntent.HideMap) },

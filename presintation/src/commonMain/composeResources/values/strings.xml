@@ -234,10 +234,7 @@
     <string name="survey_opt_men">Men</string>
     <string name="survey_opt_women">Women</string>
     <string name="survey_opt_unisex">Unisex</string>
-    <string name="survey_banner_title">Personalised for you</string>
-    <string name="survey_banner_subtitle">Help us know your style</string>
     <string name="survey_banner_desc">Answer a few quick questions and we\'ll personalise your shopping experience.</string>
-    <string name="survey_banner_start">Start Survey</string>
     <string name="survey_banner_never">Don\'t show again</string>
     <string name="survey_error_generic">Something went wrong</string>
     <string name="survey_error_ok">OK</string>
@@ -394,6 +391,7 @@
     <string name="map_fly_to_location">Fly to current location</string>
     <string name="map_confirm_location">Confirm location</string>
     <string name="map_getting_address">Getting address details…</string>
+    <string name="address_map_no_address">We couldn\'t identify an address here. You can still use this spot and fill the details manually.</string>
 
     <!-- Survey (display chrome) -->
     <string name="survey_next">Next</string>
@@ -406,7 +404,7 @@
     <string name="survey_banner_eyebrow">Personalised for you</string>
     <string name="survey_banner_close">Close</string>
     <string name="survey_banner_title">Help us know your style</string>
-    <string name="survey_banner_subtitle">Answer a few quick questions and we\'ll personalise your shopping experience.</string>
+    <string name="survey_banner_subtitle">Answer a few quick questions and we'll personalise your shopping experience.</string>
     <string name="survey_banner_start">Start Survey</string>
     <string name="survey_banner_dismiss">Don\'t show again</string>
     <string name="survey_confirmation_title">You\'re all set!</string>

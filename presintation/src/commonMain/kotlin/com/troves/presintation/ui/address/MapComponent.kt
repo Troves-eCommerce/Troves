@@ -47,6 +47,7 @@ import troves.designsystem.generated.resources.Res
 import troves.designsystem.generated.resources.ic_arrow_back
 import troves.designsystem.generated.resources.ic_location
 import troves.presintation.generated.resources.Res as ResP
+import troves.presintation.generated.resources.address_map_no_address
 import troves.presintation.generated.resources.common_back
 import troves.presintation.generated.resources.map_confirm_location
 import troves.presintation.generated.resources.map_fly_to_location
@@ -81,6 +82,7 @@ expect fun MapBox(
 fun MapSelectionScreenContent(
     selectedLocationAddress: LocationAddress?,
     isGeocodingLoading: Boolean,
+    geocodingFailed: Boolean,
     selectedLatitude: Double?,
     selectedLongitude: Double?,
     modifier: Modifier = Modifier,
@@ -126,7 +128,7 @@ fun MapSelectionScreenContent(
             }
 
             AnimatedVisibility(
-                visible = selectedLocationAddress != null || isGeocodingLoading,
+                visible = selectedLocationAddress != null || isGeocodingLoading || geocodingFailed,
                 enter = slideInVertically { -it } + fadeIn(),
                 exit = slideOutVertically { -it } + fadeOut(),
                 modifier = Modifier
@@ -136,6 +138,7 @@ fun MapSelectionScreenContent(
                 LocationInfoCard(
                     locationAddress = selectedLocationAddress,
                     isLoading = isGeocodingLoading,
+                    geocodingFailed = geocodingFailed,
                     modifier = Modifier.fillMaxWidth()
                 )
             }
@@ -177,6 +180,7 @@ fun MapSelectionScreenContent(
 fun LocationInfoCard(
     locationAddress: LocationAddress?,
     isLoading: Boolean,
+    geocodingFailed: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -203,6 +207,26 @@ fun LocationInfoCard(
                 Spacer(modifier = Modifier.width(Theme.spacing.small))
                 Text(
                     text = stringResource(ResP.string.map_getting_address),
+                    style = Theme.typography.body.medium,
+                    color = Theme.colors.secondaryFont
+                )
+            }
+        } else if (geocodingFailed) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(Theme.spacing.medium),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    painter = painterResource(Res.drawable.ic_location),
+                    contentDescription = null,
+                    tint = Theme.colors.secondaryFont,
+                    modifier = Modifier.size(20.dp)
+                )
+                Spacer(modifier = Modifier.width(Theme.spacing.small))
+                Text(
+                    text = stringResource(ResP.string.address_map_no_address),
                     style = Theme.typography.body.medium,
                     color = Theme.colors.secondaryFont
                 )

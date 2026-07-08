@@ -1,7 +1,9 @@
 package com.troves.domain.usecase.shared
 
+import com.troves.domain.entity.LocationAddress
 import com.troves.domain.entity.LocationCoordinates
 import com.troves.domain.repository.LocationRepository
+import com.troves.domain.utils.Result
 
 /**
  * Copyright (c) 2026 Wahid Ali Wahid Hussien.
@@ -27,6 +29,6 @@ class ReverseGeocodingUseCase(
     private val repository: LocationRepository
 ) {
 
-    suspend operator fun invoke(coordinates: LocationCoordinates) =
+    suspend operator fun invoke(coordinates: LocationCoordinates): Result<LocationAddress> =
         repository.reverseGeocode(coordinates = coordinates)
 }

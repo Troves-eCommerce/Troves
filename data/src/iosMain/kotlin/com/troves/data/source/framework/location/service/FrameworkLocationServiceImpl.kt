@@ -10,42 +10,48 @@ import platform.Foundation.NSError
 import platform.darwin.NSObject
 import kotlin.coroutines.resume
 
-class FrameworkLocationServiceImpl: FrameworkLocationService {
+class FrameworkLocationServiceImpl : FrameworkLocationService {
 
     @OptIn(ExperimentalForeignApi::class)
-    override suspend fun getCurrentLocationCoordinates(): LocationCoordinates = suspendCancellableCoroutine { continuation ->
-        val locationManager = CLLocationManager()
-        
-        val delegate = object : NSObject(), CLLocationManagerDelegateProtocol {
-            override fun locationManager(manager: CLLocationManager, didUpdateLocations: List<*>) {
-                val location = didUpdateLocations.lastOrNull() as? CLLocation
-                if (location != null) {
-                    val lat = location.coordinate.useContents { latitude }
-                    val lon = location.coordinate.useContents { longitude }
-                    manager.stopUpdatingLocation()
-                    manager.delegate = null
-                    if (continuation.isActive) {
-                        continuation.resume(LocationCoordinates(lan = lat, lon = lon))
+    override suspend fun getCurrentLocationCoordinates(): LocationCoordinates =
+        suspendCancellableCoroutine { continuation ->
+            val locationManager = CLLocationManager()
+
+            fun finish(coordinates: LocationCoordinates) {
+                if (continuation.isActive) {
+                    locationManager.delegate = null
+                    continuation.resume(coordinates)
+                }
+            }
+
+            val delegate = object : NSObject(), CLLocationManagerDelegateProtocol {
+                override fun locationManager(
+                    manager: CLLocationManager,
+                    didUpdateLocations: List<*>
+                ) {
+                    val location = didUpdateLocations.lastOrNull() as? CLLocation
+                    if (location != null) {
+                        val lat = location.coordinate.useContents { latitude }
+                        val lon = location.coordinate.useContents { longitude }
+                        finish(LocationCoordinates(lan = lat, lon = lon))
+                    } else {
+                        finish(LocationCoordinates())
                     }
                 }
-            }
 
-            override fun locationManager(manager: CLLocationManager, didFailWithError: NSError) {
-                manager.stopUpdatingLocation()
-                manager.delegate = null
-                if (continuation.isActive) {
-                    continuation.resume(LocationCoordinates(0.0, 0.0))
+                override fun locationManager(
+                    manager: CLLocationManager,
+                    didFailWithError: NSError
+                ) {
+                    finish(LocationCoordinates())
                 }
             }
-        }
-        
-        locationManager.delegate = delegate
-        locationManager.startUpdatingLocation()
 
-        continuation.invokeOnCancellation {
-            locationManager.stopUpdatingLocation()
-            locationManager.delegate = null
-            val keepDelegate = delegate
+            locationManager.delegate = delegate
+            locationManager.requestLocation()
+
+            continuation.invokeOnCancellation {
+                locationManager.delegate = null
+            }
         }
-    }
 }

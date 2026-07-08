@@ -150,6 +150,42 @@
     <string name="home_trending_now">Trending Now</string>
     <string name="home_copy_code_button">Copy code</string>
 
+    <!-- Home Categories (localized titles, fallback to API name) -->
+    <string name="category_footwear">Footwear</string>
+    <string name="category_outerwear">Outerwear</string>
+    <string name="category_accessories">Accessories</string>
+    <string name="category_sale">Sale</string>
+    <string name="category_new_arrivals">New Arrivals</string>
+    <string name="category_best_sellers">Best Sellers</string>
+    <string name="category_men">Men</string>
+    <string name="category_women">Women</string>
+    <string name="category_kids">Kids</string>
+
+    <!-- Home Brands (localized titles, fallback to API name) -->
+    <string name="brand_nike">Nike</string>
+    <string name="brand_adidas">Adidas</string>
+    <string name="brand_puma">Puma</string>
+    <string name="brand_dr_martens">Dr. Martens</string>
+    <string name="brand_herschel">Herschel</string>
+    <string name="brand_flexfit">Flexfit</string>
+    <string name="brand_supra">Supra</string>
+    <string name="brand_timberland">Timberland</string>
+    <string name="brand_converse">Converse</string>
+    <string name="brand_asics_tiger">Asics Tiger</string>
+    <string name="brand_palladium">Palladium</string>
+    <string name="brand_vans">Vans</string>
+
+    <!-- Home Local Ads (localized static ads, fallback to raw values) -->
+    <string name="home_ad_nike_top">NIKE SALE</string>
+    <string name="home_ad_nike_bottom">30% DISCOUNT</string>
+    <string name="home_ad_nike_desc">Get a massive discount on all Nike products. Valid for today only!</string>
+    <string name="home_ad_puma_top">PUMA NEW</string>
+    <string name="home_ad_puma_bottom">Summer 2026</string>
+    <string name="home_ad_puma_desc">Fresh Puma styles just landed. Explore the latest collection.</string>
+    <string name="home_ad_adidas_top">ADIDAS FREE</string>
+    <string name="home_ad_adidas_bottom">Free Shipping</string>
+    <string name="home_ad_adidas_desc">Shop Adidas and save more with free delivery on big orders.</string>
+
     <!-- Product Details -->
     <string name="product_details_description">Description</string>
     <string name="product_details_read_more">Read more</string>
@@ -169,6 +205,7 @@
     <string name="product_details_color_label">Color: %1$s</string>
     <string name="product_details_reviews_count">(%1$d reviews)</string>
     <string name="product_details_login_required_favorites">You need to be logged in to manage your favorites.</string>
+    <string name="product_details_size">Size:</string>
 
     <!-- Accessibility -->
     <string name="common_leading_icon">Leading icon</string>
@@ -216,7 +253,6 @@
     <string name="no_connection_title">You're offline</string>
     <string name="no_connection_desc">Check your internet connection and try again.</string>
     <string name="no_connection_retry">Try again</string>
-    <string name="no_connection_action_blocked">You\'re offline. Connect to the internet to continue.</string>
 
     <!-- Currencies -->
     <string name="currency_egp">EGP</string>

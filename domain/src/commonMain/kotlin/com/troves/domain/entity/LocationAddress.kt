@@ -32,4 +32,14 @@ data class LocationAddress(
     val road: String,
     val state: String,
     val suburb: String
-)
+) {
+    /** True when the geocoder returned no usable address fields. */
+    val isEmpty: Boolean
+        get() = city.isBlank() && country.isBlank() && road.isBlank() &&
+                state.isBlank() && postcode.isBlank() && neighbourhood.isBlank() &&
+                suburb.isBlank() && houseNumber.isBlank()
+
+    companion object {
+        val EMPTY = LocationAddress("", "", "", "", "", "", "", "", "")
+    }
+}

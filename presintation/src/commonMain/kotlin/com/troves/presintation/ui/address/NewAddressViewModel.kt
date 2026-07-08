@@ -20,13 +20,12 @@ import com.troves.presintation.core.mvi.DefaultEffectPublisher
 import com.troves.presintation.core.mvi.DefaultStateHolder
 import com.troves.presintation.core.mvi.EffectPublisher
 import com.troves.presintation.core.mvi.StateHolder
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import okio.IOException
 import org.jetbrains.compose.resources.getString
 import troves.presintation.generated.resources.Res
 import troves.presintation.generated.resources.address_fill_required_fields
-import troves.presintation.generated.resources.address_geocode_failed
 import troves.presintation.generated.resources.address_invalid_phone
 import troves.presintation.generated.resources.address_location_permission_required
 import troves.presintation.generated.resources.address_saved
@@ -51,6 +50,7 @@ data class NewAddressUiState(
     val selectedLocationAddress: LocationAddress? = null,
     val currentLocation: LocationCoordinates = LocationCoordinates(31.0, 31.0),
     val isGeocodingLoading: Boolean = false,
+    val geocodingFailed: Boolean = false,
     val hasLocationPermission: Boolean = false,
 
     val isEditMode: Boolean = false,
@@ -157,12 +157,17 @@ class NewAddressViewModel(
                     viewModelScope.launch { sendEffect(NewAddressEffect.ShowToast(getString(Res.string.address_location_permission_required))) }
                 } else {
                     viewModelScope.launch {
-                        getCurrentLocationCoordinatesUseCase().also { currentLocation ->
-                            updateState {
-                                copy(
-                                    currentLocation = currentLocation
-                                )
+                        try {
+                            getCurrentLocationCoordinatesUseCase().also { currentLocation ->
+                                updateState {
+                                    copy(
+                                        currentLocation = currentLocation
+                                    )
+                                }
                             }
+                        } catch (c: CancellationException) {
+                            throw c
+                        } catch (t: Throwable) {
                         }
                     }
                 }
@@ -176,42 +181,79 @@ class NewAddressViewModel(
             copy(
                 selectedMapLocation = coordinates,
                 isGeocodingLoading = true,
+                geocodingFailed = false,
                 selectedLocationAddress = null
             )
         }
         viewModelScope.launch {
             try {
-                val locationAddress = reverseGeocodingUseCase(coordinates)
+                reverseGeocodingUseCase(coordinates).fold(
+                    onSuccess = { locationAddress ->
+                        if (locationAddress.isEmpty) {
+                            // 200 but nothing usable — treat like "not found".
+                            updateState {
+                                copy(isGeocodingLoading = false, geocodingFailed = true)
+                            }
+                        } else {
+                            updateState {
+                                copy(
+                                    selectedLocationAddress = locationAddress,
+                                    isGeocodingLoading = false,
+                                    geocodingFailed = false,
+                                    country = locationAddress.country.ifBlank { country },
+                                    city = locationAddress.city.ifBlank { city },
+                                    street = buildString {
+                                        if (locationAddress.houseNumber.isNotBlank()) {
+                                            append(locationAddress.houseNumber)
+                                            append(" ")
+                                        }
+                                        append(locationAddress.road)
+                                    }.trim().ifBlank { street },
+                                    province = locationAddress.state.ifBlank { province },
+                                    zip = locationAddress.postcode.ifBlank { zip },
+                                )
+                            }
+                        }
+                    },
+                    onError = {
+                        // 404 "Unable to geocode", network error, etc.
+                        // No crash, no wrong data — keep the pin usable.
+                        updateState {
+                            copy(
+                                isGeocodingLoading = false,
+                                geocodingFailed = true,
+                                selectedLocationAddress = null
+                            )
+                        }
+                    },
+                    onLoading = {
+                        updateState { copy(isGeocodingLoading = true) }
+                    }
+                )
+            } catch (c: CancellationException) {
+                throw c
+            } catch (t: Throwable) {
+                // Defensive backstop: nothing from this path may ever crash.
                 updateState {
                     copy(
-                        selectedLocationAddress = locationAddress,
                         isGeocodingLoading = false,
-                        country = locationAddress.country.ifBlank { country },
-                        city = locationAddress.city.ifBlank { city },
-                        street = buildString {
-                            if (locationAddress.houseNumber.isNotBlank()) {
-                                append(locationAddress.houseNumber)
-                                append(" ")
-                            }
-                            append(locationAddress.road)
-                        }.trim().ifBlank { street },
-                        province = locationAddress.state.ifBlank { province },
-                        zip = locationAddress.postcode.ifBlank { zip },
+                        geocodingFailed = true,
+                        selectedLocationAddress = null
                     )
                 }
-            } catch (e: IOException) {
-                updateState { copy(isGeocodingLoading = false) }
-                sendEffect(NewAddressEffect.ShowToast(getString(Res.string.address_geocode_failed)))
             }
         }
     }
 
     private fun saveMapAddress() {
         val state = currentState
-        if (state.selectedLocationAddress == null) {
+        val hasPin = state.selectedMapLocation.lan != 0.0 || state.selectedMapLocation.lon != 0.0
+        if (!hasPin) {
             viewModelScope.launch { sendEffect(NewAddressEffect.ShowToast(getString(Res.string.address_select_location_first))) }
             return
         }
+        // Pin is usable even if reverse-geocoding returned nothing;
+        // the user completes the remaining fields manually.
         sendEffect(NewAddressEffect.HideMap)
     }
 

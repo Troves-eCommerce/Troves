@@ -10,6 +10,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.request.parameter
 import io.ktor.http.HttpMethod
 import io.ktor.http.path
+import kotlinx.coroutines.withTimeoutOrNull
 
 /**
  * Copyright (c) 2026 Wahid Ali Wahid Hussien.
@@ -31,12 +32,16 @@ import io.ktor.http.path
  * Author: Wahid Ali Wahid Hussien
  * Created: 07/07/2026
  */
+private const val LOCATION_TIMEOUT_MS = 15_000L
+
 class FrameworkLocationDatasourceImpl(
     private val frameworkLocationService: FrameworkLocationService,
     private val locationClient: HttpClient
 ) : FrameworkLocationDatasource {
     override suspend fun getCurrentLocationCoordinates(): LocationCoordinates =
-        frameworkLocationService.getCurrentLocationCoordinates()
+        withTimeoutOrNull(LOCATION_TIMEOUT_MS) {
+            frameworkLocationService.getCurrentLocationCoordinates()
+        } ?: LocationCoordinates()
 
     override suspend fun reverseGeocode(
         coordinates: LocationCoordinates
