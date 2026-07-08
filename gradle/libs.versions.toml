@@ -1,5 +1,6 @@
 [versions]
 agp = "9.2.1"
+maboxAndroid = "11.25.1"
 android-compileSdk = "37"
 android-minSdk = "24"
 android-targetSdk = "36"
@@ -18,12 +19,14 @@ iconsLucideCmp = "2.2.1"
 junit = "4.13.2"
 koinCore = "4.2.2"
 kotlin = "2.4.0"
+mapsCompose = "11.25.1"
 material3 = "1.11.0-alpha07"
 ktor = "3.5.0"
 kotlinxSerializationPlugin = "2.4.0"
 kotlinSeralization = "1.11.0"
 ksp = "2.3.9"
 paymobSdk = "1.9.2"
+playServicesLocation = "21.3.0"
 room = "2.8.4"
 sqlite = "2.6.2"
 kermit = "2.0.5"
@@ -128,6 +131,17 @@ apollo-runtime = { module = "com.apollographql.apollo:apollo-runtime", version.r
 apollo-normalized-cache = { module = "com.apollographql.apollo:apollo-normalized-cache", version.ref = "apollo" }
 apollo-normalized-cache-sqlite = { module = "com.apollographql.apollo:apollo-normalized-cache-sqlite", version.ref = "apollo" }
 paymob-sdk = { module = "com.paymob.sdk:Paymob-SDK", version.ref = "paymobSdk" }
+
+
+
+# Mapbox
+mapbox-android = { module = "com.mapbox.maps:android", version.ref = "maboxAndroid" }
+mapbox-compose = { module = "com.mapbox.extension:maps-compose", version.ref = "mapsCompose" }
+
+
+# Play services
+play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
+
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

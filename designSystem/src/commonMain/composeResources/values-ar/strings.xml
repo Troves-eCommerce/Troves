@@ -107,6 +107,7 @@
     <string name="address_loading">جارٍ التحميل...</string>
     <string name="address_error_countries">خطأ في تحميل الدول</string>
     <string name="address_error_cities">تعذر تحميل المدن. يمكنك كتابة مدينتك يدوياً.</string>
+    <string name="button_caption_select_address_from_map">ختر المكان من علي الخريطه</string>
 
     <!-- Auth Screens -->
     <string name="login_welcome">مرحباً بعودتك!</string>

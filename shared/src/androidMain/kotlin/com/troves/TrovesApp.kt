@@ -13,6 +13,7 @@ class TrovesApp: Application() {
     override fun onCreate() {
         super.onCreate()
         trovesApplication = this
+        com.troves.data.util.AndroidApp.androidApp = this
         initKoin {
             androidLogger()
             androidContext(this@TrovesApp)

@@ -61,7 +61,7 @@ fun AddressStepContent(
     selectedAddressId: String?,
     onSelectAddress: (String) -> Unit,
     onEditAddress: (String) -> Unit,
-    onAddAddress: () -> Unit,
+    onAddAddressClick: () -> Unit,
     currentStep: Int,
     modifier: Modifier = Modifier,
     totalSteps: Int = 4,
@@ -109,7 +109,7 @@ fun AddressStepContent(
             }
         }
 
-        AddAddressButton(onClick = onAddAddress)
+        AddAddressButton(onClick = onAddAddressClick)
     }
 }
 
@@ -190,7 +190,7 @@ private fun AddressStepPreview() {
                 selectedAddressId = selectedId,
                 onSelectAddress = { selectedId = it },
                 onEditAddress = {},
-                onAddAddress = {},
+                onAddAddressClick = {},
                 currentStep = 2,
                 modifier = Modifier.weight(1f),
             )

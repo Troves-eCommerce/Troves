@@ -65,7 +65,7 @@ class CheckoutViewModel(
             CheckoutIntent.OnApplyCoupon -> applyCoupon()
             CheckoutIntent.OnRemoveCoupon -> removeCoupon()
             is CheckoutIntent.OnSelectAddress -> updateState { copy(selectedAddressId = intent.id) }
-            CheckoutIntent.OnAddAddress -> sendEffect(CheckoutEffect.NavigateToNewAddress(null))
+            CheckoutIntent.OnAddAddressClick -> sendEffect(CheckoutEffect.NavigateToNewAddress(null))
             is CheckoutIntent.OnEditAddress -> sendEffect(CheckoutEffect.NavigateToNewAddress(intent.id))
             is CheckoutIntent.OnSelectPaymentMethod -> updateState { copy(paymentMethod = intent.method) }
             CheckoutIntent.OnChangePayment -> updateState { copy(step = CheckoutStep.Payment) }
@@ -472,21 +472,7 @@ class CheckoutViewModel(
     override fun onFailure(msg: String?) {
         if (isPaymentHandled) return
         isPaymentHandled = true
-        val snapshot = currentState
-        val address = currentState.selectedAddress
-        resetCheckoutProgress()
-        sendEffect(
-            CheckoutEffect.NavigateToOrderResult(
-                buildResultFromState(
-                    state = snapshot,
-                    address = address,
-                    success = false,
-                    orderName = null,
-                    errorMessage = msg ?: "Payment failed. Please try again.",
-                    paymentLabel = "Card Payment",
-                )
-            )
-        )
+        sendEffect(CheckoutEffect.ShowToast("Payment Cancelled"))
     }
 
     override fun onPending() {

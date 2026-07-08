@@ -52,7 +52,7 @@ kotlin {
         commonMain.dependencies {
             implementation(libs.koin.core)
             implementation(project(":domain"))
-            implementation(project(":data"))
+            api(project(":data"))
             implementation(project(":designSystem"))
             api(project(":presintation"))
             implementation(libs.compose.runtime)

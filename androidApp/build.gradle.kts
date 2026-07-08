@@ -29,7 +29,9 @@ dependencies {
     //Koin
     implementation("io.insert-koin:koin-android:3.5.3")
     implementation("io.insert-koin:koin-androidx-compose:3.5.3")
-
+    //Mapbox
+    implementation(libs.mapbox.android)
+    implementation(libs.mapbox.compose)
     // Firebase
     implementation(project.dependencies.platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
