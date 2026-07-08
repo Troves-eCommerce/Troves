@@ -23,9 +23,12 @@ import com.troves.designsystem.components.textfield.CustomTextField
 import com.troves.designsystem.components.topbar.IconBox
 import com.troves.designsystem.theme.Theme
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import troves.designsystem.generated.resources.Res
 import troves.designsystem.generated.resources.ic_arrow_back
 import troves.designsystem.generated.resources.ic_search
+import troves.presintation.generated.resources.Res as PresRes
+import troves.presintation.generated.resources.search_bar_hint
 
 @Composable
 fun SearchBarSection(
@@ -60,7 +63,7 @@ fun SearchBarSection(
             text = query,
             onTextChange = onQueryChange,
             modifier = Modifier.weight(1f),
-            hint = "Search products, brands...",
+            hint = stringResource(PresRes.string.search_bar_hint),
             leadingIcon = painterResource(Res.drawable.ic_search),
             trailingIcon = if (query.isNotEmpty()) rememberVectorPainter(Lucide.X) else null,
             singleLine = true,

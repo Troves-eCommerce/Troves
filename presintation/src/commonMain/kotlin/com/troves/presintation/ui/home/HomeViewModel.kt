@@ -28,6 +28,14 @@ import com.troves.presintation.core.mvi.StateHolder
 import com.troves.presintation.ui.home.HomeEffect.*
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.getString
+import troves.presintation.generated.resources.Res
+import troves.presintation.generated.resources.favorites_added
+import troves.presintation.generated.resources.favorites_removed
+import troves.presintation.generated.resources.favorites_update_failed
+import troves.presintation.generated.resources.home_copied_to_clipboard
+import troves.presintation.generated.resources.home_source_just_for_you
+import troves.presintation.generated.resources.home_source_trending_now
 
 
 class HomeViewModel(
@@ -91,27 +99,33 @@ class HomeViewModel(
             HomeIntent.SignUpPromptDismissed -> updateState { copy(showSignUpPrompt = false) }
             HomeIntent.SeeAllBrandsClicked -> sendEffect(HomeEffect.NavigateToAllBrands)
             HomeIntent.ViewAllCategoriesClicked -> sendEffect(HomeEffect.NavigateToAllCategories)
-            HomeIntent.ViewAllJustForYouClicked -> sendEffect(
-                NavigateToProducts(
-                    sourceType = "collection",
-                    sourceId = "just-for-you",
-                    sourceName = "Just For You",
-                ),
-            )
-            HomeIntent.ViewAllTrendingClicked -> sendEffect(
-                NavigateToProducts(
-                    sourceType = "collection",
-                    sourceId = "trending",
-                    sourceName = "Trending Now",
-                ),
-            )
+            HomeIntent.ViewAllJustForYouClicked -> viewModelScope.launch {
+                sendEffect(
+                    NavigateToProducts(
+                        sourceType = "collection",
+                        sourceId = "just-for-you",
+                        sourceName = getString(Res.string.home_source_just_for_you),
+                    ),
+                )
+            }
+            HomeIntent.ViewAllTrendingClicked -> viewModelScope.launch {
+                sendEffect(
+                    NavigateToProducts(
+                        sourceType = "collection",
+                        sourceId = "trending",
+                        sourceName = getString(Res.string.home_source_trending_now),
+                    ),
+                )
+            }
             is HomeIntent.AdClicked -> {
                 val targetType = intent.ad.targetType
                 val targetId = intent.ad.targetId
                 val targetName = intent.ad.targetName
                 
                 if (intent.ad.buttonText == "Copy code") {
-                    sendEffect(ShowToast("Copied ${intent.ad.titleTop} to clipboard"))
+                    viewModelScope.launch {
+                        sendEffect(ShowToast(getString(Res.string.home_copied_to_clipboard, intent.ad.titleTop)))
+                    }
                 } else if (targetType != null && targetId != null && targetName != null) {
                     sendEffect(
                         NavigateToProducts(
@@ -241,10 +255,10 @@ class HomeViewModel(
         viewModelScope.launch {
             when (toggleFavoriteUseCase(product)) {
                 ToggleFavoriteResult.Added ->
-                    sendEffect(HomeEffect.ShowToast("Added to favorites"))
+                    sendEffect(HomeEffect.ShowToast(getString(Res.string.favorites_added)))
 
                 ToggleFavoriteResult.Removed ->
-                    sendEffect(HomeEffect.ShowToast("Removed from favorites"))
+                    sendEffect(HomeEffect.ShowToast(getString(Res.string.favorites_removed)))
 
                 ToggleFavoriteResult.RequiresLogin -> {
                     updateState {
@@ -263,7 +277,7 @@ class HomeViewModel(
                         }
                         copy(favoriteProductIds = reverted)
                     }
-                    sendEffect(HomeEffect.ShowToast("Couldn't update favorites"))
+                    sendEffect(HomeEffect.ShowToast(getString(Res.string.favorites_update_failed)))
                 }
             }
         }

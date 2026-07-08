@@ -28,6 +28,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import org.jetbrains.compose.resources.stringResource
+import troves.presintation.generated.resources.Res
+import troves.presintation.generated.resources.filter_brands
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -73,7 +76,7 @@ fun BrandRow(
     ) {
 
         BasicText(
-            text = "Brands",
+            text = stringResource(Res.string.filter_brands),
             style = Theme.typography.body.large.copy(
                 color = Theme.colors.primaryFont
             ),
