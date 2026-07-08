@@ -69,14 +69,27 @@ class ProfileViewModel(
             is ProfileIntent.OrderHistoryClicked -> emitEffect(ProfileEffect.NavigateToOrders)
             is ProfileIntent.PaymentMethodsClicked -> emitEffect(ProfileEffect.NavigateToPaymentMethods)
             is ProfileIntent.AiAssistantClicked -> emitEffect(ProfileEffect.NavigateToAiAssistant)
-            is ProfileIntent.SurveyClicked -> emitEffect(ProfileEffect.NavigateToSurvey)
+            is ProfileIntent.SurveyClicked -> {
+                if (observeConnectivity.isOnlineNow()) {
+                    emitEffect(ProfileEffect.NavigateToSurvey)
+                } else {
+                    _uiState.update { it.copy(showOfflineDialog = true) }
+                }
+            }
             is ProfileIntent.LanguageClicked -> Unit
             is ProfileIntent.LanguageSelected -> selectLanguage(intent.language)
             is ProfileIntent.ThemeModeSelected -> setThemeMode(intent.mode)
             is ProfileIntent.CurrencySelected -> selectCurrency(intent.currency)
-            is ProfileIntent.LogoutClicked -> _uiState.update { it.copy(showLogoutDialog = true) }
+            is ProfileIntent.LogoutClicked -> {
+                if (observeConnectivity.isOnlineNow()) {
+                    _uiState.update { it.copy(showLogoutDialog = true) }
+                } else {
+                    _uiState.update { it.copy(showOfflineDialog = true) }
+                }
+            }
             is ProfileIntent.LogoutConfirmed -> logout()
             is ProfileIntent.LogoutDismissed -> _uiState.update { it.copy(showLogoutDialog = false) }
+            is ProfileIntent.DismissOfflineDialog -> _uiState.update { it.copy(showOfflineDialog = false) }
             is ProfileIntent.LoginClicked -> emitEffect(ProfileEffect.NavigateToLogin)
         }
     }

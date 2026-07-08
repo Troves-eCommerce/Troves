@@ -97,7 +97,7 @@ fun HomeScreen(
     var productToRemove by remember { mutableStateOf<Product?>(null) }
 
     val loginRequiredText = stringResource(Res.string.home_login_required)
-    val showSurveyPopup = state.isLoggedIn && !state.isSurveyDone && !dismissedSurveyPopup
+    val showSurveyPopup = state.isLoggedIn && !state.isSurveyDone && !dismissedSurveyPopup && !state.showOfflineState
 
     // Intercept wishlist REMOVALS to confirm first; adding a favorite (or any other intent) passes through.
     val onIntent: (HomeIntent) -> Unit = { intent ->
