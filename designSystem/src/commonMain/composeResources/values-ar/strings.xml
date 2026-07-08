@@ -224,4 +224,12 @@
     <string name="home_preview_ad_title_bottom">تشكيلة</string>
     <string name="home_preview_ad_desc">خصم يصل إلى 50٪ على عناصر محددة</string>
     <string name="home_preview_ad_button">تسوق الآن</string>
+
+    <!-- Home Fallback Banners -->
+    <string name="home_fallback_ad2_top">وصل</string>
+    <string name="home_fallback_ad2_bottom">حديثاً</string>
+    <string name="home_fallback_ad2_desc">أحدث التشكيلات وصلت للتو</string>
+    <string name="home_fallback_ad3_top">الأكثر</string>
+    <string name="home_fallback_ad3_bottom">مبيعاً</string>
+    <string name="home_fallback_ad3_desc">تسوق ما يحبه الجميع</string>
 </resources>

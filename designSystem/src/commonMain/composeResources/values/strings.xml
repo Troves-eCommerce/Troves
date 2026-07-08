@@ -231,4 +231,12 @@
     <string name="home_preview_ad_title_bottom">Collection</string>
     <string name="home_preview_ad_desc">Up to 50% off on selected items</string>
     <string name="home_preview_ad_button">Shop now</string>
+
+    <!-- Home Fallback Banners -->
+    <string name="home_fallback_ad2_top">New</string>
+    <string name="home_fallback_ad2_bottom">Arrivals</string>
+    <string name="home_fallback_ad2_desc">Fresh styles just landed</string>
+    <string name="home_fallback_ad3_top">Best</string>
+    <string name="home_fallback_ad3_bottom">Sellers</string>
+    <string name="home_fallback_ad3_desc">Shop what everyone loves</string>
 </resources>
