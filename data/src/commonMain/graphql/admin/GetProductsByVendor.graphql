@@ -2,14 +2,7 @@ query GetProductsByVendor($first: Int!, $query: String!) {
     products(first: $first, query: $query) {
         edges {
             node {
-                id
-                title
-                vendor
-                handle
-                featuredImage {
-                    url
-                    altText
-                }
+                ...ProductCard
             }
         }
         pageInfo {
