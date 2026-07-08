@@ -9,11 +9,18 @@ import com.troves.domain.usecase.home.GetBrandsUseCase
 import com.troves.domain.usecase.home.GetCategoriesUseCase
 import com.troves.domain.usecase.home.GetJustForYouProductsUseCase
 import com.troves.domain.usecase.home.GetTrendingProductsUseCase
+import com.troves.domain.usecase.shared.ObserveConnectivityUseCase
 import com.troves.domain.usecase.wishlist.GetWishlistUseCase
 import com.troves.domain.usecase.wishlist.ToggleFavoriteResult
 import com.troves.domain.usecase.wishlist.ToggleFavoriteUseCase
 import com.troves.domain.utils.Result
+import com.troves.domain.utils.connectivity.ConnectivityStatus
 import com.troves.domain.utils.getOrElse
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.launchIn
 import com.troves.presintation.core.mvi.DefaultEffectPublisher
 import com.troves.presintation.core.mvi.DefaultStateHolder
 import com.troves.presintation.core.mvi.EffectPublisher
@@ -35,6 +42,7 @@ class HomeViewModel(
     private val observeSurveyDone: com.troves.domain.usecase.survey.ObserveSurveyDoneUseCase,
     private val completeSurvey: com.troves.domain.usecase.survey.CompleteSurveyUseCase,
     private val getCartStream: com.troves.domain.usecase.cart.GetCartStreamUseCase,
+    private val observeConnectivity: ObserveConnectivityUseCase,
 ) : ViewModel(),
     StateHolder<HomeUiState> by DefaultStateHolder(HomeUiState()),
     EffectPublisher<HomeEffect> by DefaultEffectPublisher() {
@@ -44,6 +52,23 @@ class HomeViewModel(
         observeWishlist()
         loadSurveyStatus()
         observeCartCount()
+        observeReconnect()
+    }
+
+
+    private fun observeReconnect() {
+        val online = observeConnectivity()
+            .map { it == ConnectivityStatus.Available }
+            .distinctUntilChanged()
+
+        online
+            .onEach { isOnline -> updateState { copy(isOffline = !isOnline) } }
+            .launchIn(viewModelScope)
+
+        online
+            .drop(1) // ignore the initial value
+            .onEach { isOnline -> if (isOnline) loadHomeFeed() }
+            .launchIn(viewModelScope)
     }
 
     fun onIntent(intent: HomeIntent) {

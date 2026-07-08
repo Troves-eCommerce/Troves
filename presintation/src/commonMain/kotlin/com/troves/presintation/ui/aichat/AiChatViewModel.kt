@@ -13,11 +13,13 @@ import com.troves.domain.usecase.ai.DeleteAiConversationUseCase
 import com.troves.domain.usecase.ai.GetAiConversationsUseCase
 import com.troves.domain.usecase.ai.SaveAiConversationUseCase
 import com.troves.domain.usecase.ai.SendAiMessageUseCase
+import com.troves.domain.usecase.shared.ObserveConnectivityUseCase
 import com.troves.domain.usecase.wishlist.GetWishlistUseCase
 import com.troves.domain.usecase.wishlist.ToggleFavoriteResult
 import com.troves.domain.usecase.wishlist.ToggleFavoriteUseCase
 import com.troves.domain.utils.RateLimitException
 import com.troves.domain.utils.Result
+import com.troves.domain.utils.connectivity.ConnectivityStatus
 import com.troves.presintation.core.mvi.DefaultEffectPublisher
 import com.troves.presintation.core.mvi.DefaultStateHolder
 import com.troves.presintation.core.mvi.EffectPublisher
@@ -26,7 +28,9 @@ import com.troves.presintation.ui.aichat.image.encodeBase64
 import com.troves.presintation.ui.aichat.image.processImageForUpload
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -38,6 +42,7 @@ class AiChatViewModel(
     private val getConversations: GetAiConversationsUseCase,
     private val saveConversation: SaveAiConversationUseCase,
     private val deleteConversation: DeleteAiConversationUseCase,
+    private val observeConnectivity: ObserveConnectivityUseCase,
 ) : ViewModel(),
     StateHolder<AiChatUiState> by DefaultStateHolder(AiChatUiState()),
     EffectPublisher<AiChatEffect> by DefaultEffectPublisher() {
@@ -56,6 +61,12 @@ class AiChatViewModel(
                 val favIds = favorites.map { it.id.toString() }.toSet()
                 updateState { copy(favoriteProductIds = favIds).applyFavorites(favIds) }
             }
+            .launchIn(viewModelScope)
+
+        observeConnectivity()
+            .map { it == ConnectivityStatus.Available }
+            .distinctUntilChanged()
+            .onEach { isOnline -> updateState { copy(isOffline = !isOnline) } }
             .launchIn(viewModelScope)
     }
 

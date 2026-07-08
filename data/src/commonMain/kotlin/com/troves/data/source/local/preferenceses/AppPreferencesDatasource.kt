@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.Flow
 interface TrovesPreferences {
     val isOnboardingDone: Flow<Boolean>
     val isSurveyDone: Flow<Boolean>
+    val isCartHintShown: Flow<Boolean>
     val isLoggedIn: Flow<Boolean>
     val selectedLanguage: Flow<String>
 
@@ -33,6 +34,7 @@ interface TrovesPreferences {
 
     suspend fun setOnboardingDone(done: Boolean)
     suspend fun setSurveyDone(done: Boolean)
+    suspend fun setCartHintShown(shown: Boolean)
     suspend fun setLoggedIn(loggedIn: Boolean)
     suspend fun setSelectedLanguage(language: String)
     suspend fun setSelectedCurrency(currency: String)

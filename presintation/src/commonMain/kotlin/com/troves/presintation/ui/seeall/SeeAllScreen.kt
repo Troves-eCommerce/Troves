@@ -24,6 +24,7 @@ import com.troves.designsystem.theme.Theme
 import com.troves.designsystem.util.formatPrice
 import com.troves.presintation.core.mvi.ObserveEffect
 import com.troves.presintation.navigation.AppRoute
+import com.troves.presintation.ui.components.NoConnectionState
 import com.troves.presintation.ui.allbrands.components.BrandCard
 import com.troves.presintation.ui.home.components.CategoryItem
 import kotlinx.coroutines.launch
@@ -74,6 +75,10 @@ fun SeeAllScreen(
 
             if (state.isLoading) {
                 SeeAllShimmer(type)
+            } else if (state.showOfflineState) {
+                NoConnectionState(
+                    onRetry = { viewModel.onIntent(SeeAllIntent.Refresh) },
+                )
             } else {
                 SeeAllContent(
                     state = state,

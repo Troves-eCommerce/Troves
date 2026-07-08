@@ -19,7 +19,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -27,9 +26,11 @@ import androidx.compose.ui.unit.dp
 import com.troves.designsystem.theme.SpTheme
 import com.troves.designsystem.theme.Theme
 import com.troves.designsystem.util.noRippleClickable
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import troves.designsystem.generated.resources.Res
 import troves.designsystem.generated.resources.address_edit
+import troves.designsystem.generated.resources.ic_location
 
 @Composable
 fun AddressCard(
@@ -201,7 +202,7 @@ private fun AddressCardPreview() {
                 recipientName = "Sophia Johnson",
                 addressLines = listOf("123 Maple Street, Apartment 4B", "San Francisco, CA 94107", "United States"),
                 phone = "+1 415 555 0123",
-                icon = androidx.compose.ui.graphics.painter.ColorPainter(Theme.colors.primaryFont),
+                icon = painterResource(Res.drawable.ic_location),
                 selected = true,
                 onClick = {},
                 label = "Default",
@@ -212,7 +213,7 @@ private fun AddressCardPreview() {
                 recipientName = "Sophia Johnson",
                 addressLines = listOf("456 Business Park, Suite 200", "San Francisco, CA 94108", "United States"),
                 phone = "+1 415 555 0456",
-                icon = androidx.compose.ui.graphics.painter.ColorPainter(Theme.colors.primaryFont),
+                icon = painterResource(Res.drawable.ic_location),
                 selected = false,
                 onClick = {},
                 onEditClick = {},

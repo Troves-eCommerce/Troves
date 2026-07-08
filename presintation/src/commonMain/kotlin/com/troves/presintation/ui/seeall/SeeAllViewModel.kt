@@ -6,15 +6,20 @@ import com.troves.domain.usecase.home.GetBrandsUseCase
 import com.troves.domain.usecase.home.GetCategoriesUseCase
 import com.troves.domain.usecase.home.GetJustForYouProductsUseCase
 import com.troves.domain.usecase.home.GetTrendingProductsUseCase
+import com.troves.domain.usecase.shared.ObserveConnectivityUseCase
 import com.troves.domain.usecase.wishlist.GetWishlistUseCase
 import com.troves.domain.usecase.wishlist.ToggleFavoriteUseCase
+import com.troves.domain.utils.connectivity.ConnectivityStatus
 import com.troves.domain.utils.getOrElse
 import com.troves.presintation.core.mvi.DefaultEffectPublisher
 import com.troves.presintation.core.mvi.DefaultStateHolder
 import com.troves.presintation.core.mvi.EffectPublisher
 import com.troves.presintation.core.mvi.StateHolder
 import com.troves.presintation.navigation.AppRoute
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
@@ -25,15 +30,31 @@ class SeeAllViewModel(
     private val getTrending: GetTrendingProductsUseCase,
     private val getWishlistUseCase: GetWishlistUseCase,
     private val toggleFavoriteUseCase: ToggleFavoriteUseCase,
+    private val observeConnectivity: ObserveConnectivityUseCase,
 ) : ViewModel(),
     StateHolder<SeeAllUiState> by DefaultStateHolder(SeeAllUiState()),
     EffectPublisher<SeeAllEffect> by DefaultEffectPublisher() {
+
+    private var lastId: String? = null
 
     init {
         getWishlistUseCase()
             .onEach { wishlist ->
                 updateState { copy(favoriteProductIds = wishlist.map { it.id.toString() }.toSet()) }
             }
+            .launchIn(viewModelScope)
+
+        val online = observeConnectivity()
+            .map { it == ConnectivityStatus.Available }
+            .distinctUntilChanged()
+
+        online
+            .onEach { isOnline -> updateState { copy(isOffline = !isOnline) } }
+            .launchIn(viewModelScope)
+
+        online
+            .drop(1)
+            .onEach { isOnline -> if (isOnline) loadData(state.value.type, lastId) }
             .launchIn(viewModelScope)
     }
 
@@ -84,6 +105,7 @@ class SeeAllViewModel(
     }
 
     private fun loadData(type: AppRoute.SeeAllType, id: String?) {
+        lastId = id
         viewModelScope.launch {
             updateState { copy(isLoading = true, errorMessage = null) }
             when (type) {

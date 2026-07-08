@@ -40,6 +40,8 @@ import com.troves.data.source.remote.location.LocationDataSource
 import com.troves.data.source.remote.location.LocationDataSourceImpl
 import com.troves.data.source.remote.service.TrovesApiService
 import com.troves.data.source.remote.service.StorefrontApiService
+import com.troves.data.source.remote.service.admin.ShopifyAdminCustomerService
+import com.troves.data.source.remote.service.admin.ShopifyAdminCustomerServiceImpl
 import com.troves.data.source.remote.service.apollo.ApolloStorefrontApiServiceImpl
 import com.troves.data.source.remote.service.apollo.ApolloTrovesApiServiceImpl
 import com.troves.data.source.remote.service.paymob.PaymobApiService
@@ -78,6 +80,8 @@ val dataModule = module {
     single<TrovesApiService> { ApolloTrovesApiServiceImpl(get(named(ADMIN_CLIENT))) }
     single<StorefrontApiService> { ApolloStorefrontApiServiceImpl(get(named(STORE_CLIENT))) }
 
+    single<ShopifyAdminCustomerService> { ShopifyAdminCustomerServiceImpl(get()) }
+
 
 
     single<PaymobApiService> { PaymobServiceImpl(get(named(PAYMOB))) }
@@ -115,11 +119,11 @@ val dataModule = module {
 
     // ── Repositories ──────────────────────────────────────────────────────────
     single<TrovesRepository>          { TrovesRepositoryImpl(get(), get(), get(), get(), get(), get()) }
-    single<AuthenticationRepository>  { createAuthenticationRepository(get(), get(), get()) }
+    single<AuthenticationRepository>  { createAuthenticationRepository(get(), get(), get(), get()) }
     single<PaymentRepository>         { PaymentRepositoryImpl(get()) }
     single<WishlistRepository>        { WishlistRepositoryImpl(get() , get()) }
     single<LocationRepository>        { LocationRepositoryImpl(get(),get()) }
-    single<AddressRepository>         { AddressRepositoryImpl(get(), get(), get()) }
+    single<AddressRepository>         { AddressRepositoryImpl(get(), get(), get(), get()) }
     single { AiAssistantRepositoryImpl(get(), get(), get()) }
     single<AiAssistantRepository>     { get<AiAssistantRepositoryImpl>() }
     single<CurrencyRepository>        { CurrencyRepositoryImpl(get(), get()) }

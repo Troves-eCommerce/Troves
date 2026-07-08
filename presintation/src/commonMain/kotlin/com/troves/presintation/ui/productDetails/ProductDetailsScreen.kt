@@ -57,6 +57,7 @@ import com.troves.designsystem.theme.Theme
 import com.troves.designsystem.util.formatPrice
 import com.troves.designsystem.util.stripHtml
 import com.troves.presintation.core.mvi.ObserveEffect
+import com.troves.presintation.ui.components.NoConnectionState
 import com.troves.presintation.ui.productDetails.components.AddToCartButton
 import com.troves.presintation.ui.productDetails.components.CustomerReviewsSection
 import com.troves.presintation.ui.productDetails.components.OptionSelectorRow
@@ -173,6 +174,11 @@ fun ProductDetailsScreen(
         when {
             uiState.isLoading -> {
                 ProductDetailsShimmer(modifier = Modifier.fillMaxSize())
+            }
+            uiState.showOfflineState -> {
+                NoConnectionState(
+                    onRetry = { viewModel.onIntent(ProductDetailsIntent.Retry(productId)) },
+                )
             }
             uiState.hasError -> {
                 Text("${uiState.errorMessage}")
@@ -434,15 +440,17 @@ fun ProductDetailsScreenContent(
                             maxLines = if (isDescriptionExpanded) Int.MAX_VALUE else 3,
                             overflow = TextOverflow.Ellipsis
                         )
-                        Spacer(Modifier.height(6.dp))
-                        Text(
-                            text = if (isDescriptionExpanded) stringResource(Res.string.product_details_read_less) else stringResource(Res.string.product_details_read_more),
-                            style = Theme.typography.body.small,
-                            color = Theme.colors.primary,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 14.sp,
-                            modifier = Modifier.clickable { isDescriptionExpanded = !isDescriptionExpanded }
-                        )
+                        if (!isDescriptionExpanded) {
+                            Spacer(Modifier.height(6.dp))
+                            Text(
+                                text = "... " + stringResource(Res.string.product_details_read_more),
+                                style = Theme.typography.body.small,
+                                color = Theme.colors.primary,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 14.sp,
+                                modifier = Modifier.clickable { isDescriptionExpanded = true }
+                            )
+                        }
                     }
 
                     Spacer(Modifier.height(16.dp))

@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.troves.domain.entity.Product
 import com.troves.domain.usecase.auth.IsLoggedInUseCase
+import com.troves.domain.usecase.shared.ObserveConnectivityUseCase
 import com.troves.domain.usecase.wishlist.GetWishlistUseCase
 import com.troves.domain.usecase.wishlist.SyncWishlistUseCase
 import com.troves.domain.usecase.wishlist.ToggleFavoriteResult
@@ -21,6 +22,7 @@ class WishlistViewModel(
     private val toggleFavoriteUseCase: ToggleFavoriteUseCase,
     private val syncWishlist: SyncWishlistUseCase,
     private val isLoggedIn: IsLoggedInUseCase,
+    private val observeConnectivity: ObserveConnectivityUseCase,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(WishlistState())
@@ -58,6 +60,8 @@ class WishlistViewModel(
     }
 
     private fun refresh() {
+        // Offline: keep showing the cached Room-backed list; don't nag with a sync error.
+        if (!observeConnectivity.isOnlineNow()) return
         viewModelScope.launch {
             _state.update { it.copy(isRefreshing = true) }
             try {
@@ -70,7 +74,15 @@ class WishlistViewModel(
         }
     }
 
+    /** Wishlist is view-only while offline: block mutations with a clear message. */
+    private fun ensureOnline(): Boolean {
+        if (observeConnectivity.isOnlineNow()) return true
+        sendEffect(WishlistEffect.ShowToast(NO_CONNECTION_MESSAGE))
+        return false
+    }
+
     private fun removeFavorite(product: Product) {
+        if (!ensureOnline()) return
         _state.update { current -> current.copy(items = current.items.filterNot { it.id == product.id }) }
         viewModelScope.launch {
             when (toggleFavoriteUseCase(product)) {
@@ -88,6 +100,7 @@ class WishlistViewModel(
     }
 
     private fun clearAll() {
+        if (!ensureOnline()) return
         val toRemove = _state.value.items
         if (toRemove.isEmpty()) return
         _state.update { it.copy(items = emptyList()) }
@@ -99,5 +112,9 @@ class WishlistViewModel(
 
     private fun sendEffect(newEffect: WishlistEffect) {
         viewModelScope.launch { _effect.send(newEffect) }
+    }
+
+    private companion object {
+        const val NO_CONNECTION_MESSAGE = "No internet connection"
     }
 }

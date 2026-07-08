@@ -69,7 +69,7 @@
     <string name="cart_checkout">Checkout</string>
     <string name="cart_total">Total Price</string>
     <string name="cart_discount_code">Discount code</string>
-    <string name="cart_items_count">%s item(s)</string>
+    <string name="cart_items_count">%1$d item(s)</string>
 
     <!-- Address Management -->
     <string name="address_manage_title">Saved Addresses</string>
@@ -208,4 +208,12 @@
     <string name="login_required_title">Login Required</string>
     <string name="login_required_msg">You need to be logged in to perform this action.</string>
     <string name="login_required_btn">Log In</string>
+
+    <!-- Connectivity / offline -->
+    <string name="connectivity_offline_banner">No internet connection</string>
+    <string name="connectivity_back_online_banner">Back online</string>
+    <string name="no_connection_title">You're offline</string>
+    <string name="no_connection_desc">Check your internet connection and try again.</string>
+    <string name="no_connection_retry">Try again</string>
+    <string name="no_connection_action_blocked">You're offline. Connect to the internet to continue.</string>
 </resources>

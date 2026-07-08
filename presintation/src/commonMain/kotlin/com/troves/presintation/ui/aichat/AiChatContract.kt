@@ -59,6 +59,7 @@ data class AiChatUiState(
     val historyError: String? = null,
     val historyRequiresLogin: Boolean = false,
     val conversations: List<ConversationSummaryUi> = emptyList(),
+    val isOffline: Boolean = false,
 ) {
     val canSend: Boolean
         get() = !isSending && rateLimitedSeconds == null &&
@@ -68,6 +69,9 @@ data class AiChatUiState(
         get() = !isSending && rateLimitedSeconds == null
 
     val isEmpty: Boolean get() = messages.isEmpty()
+
+
+    val showOfflineState: Boolean get() = isOffline && messages.isEmpty() && !isSending
 }
 
 sealed interface AiChatIntent {

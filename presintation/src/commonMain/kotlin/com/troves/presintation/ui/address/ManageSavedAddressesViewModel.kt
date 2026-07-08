@@ -7,13 +7,18 @@ import com.troves.domain.usecase.address.DeleteAddressUseCase
 import com.troves.domain.usecase.address.GetSavedAddressesUseCase
 import com.troves.domain.usecase.address.RefreshAddressesUseCase
 import com.troves.domain.usecase.address.SetDefaultAddressUseCase
+import com.troves.domain.usecase.shared.ObserveConnectivityUseCase
 import com.troves.domain.utils.Result
 import com.troves.domain.utils.ShopifyAuthRequiredException
+import com.troves.domain.utils.connectivity.ConnectivityStatus
 import com.troves.presintation.core.mvi.DefaultEffectPublisher
 import com.troves.presintation.core.mvi.DefaultStateHolder
 import com.troves.presintation.core.mvi.EffectPublisher
 import com.troves.presintation.core.mvi.StateHolder
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
@@ -21,7 +26,10 @@ data class ManageSavedAddressesUiState(
     val addresses: List<Address> = emptyList(),
     val isLoading: Boolean = true,
     val error: String? = null,
-)
+    val isOffline: Boolean = false,
+) {
+    val showOfflineState: Boolean get() = isOffline && addresses.isEmpty() && !isLoading
+}
 
 sealed interface ManageSavedAddressesIntent {
     data class OnDelete(val addressId: String) : ManageSavedAddressesIntent
@@ -47,6 +55,7 @@ class ManageSavedAddressesViewModel(
     private val refreshAddressesUseCase: RefreshAddressesUseCase,
     private val deleteAddressUseCase: DeleteAddressUseCase,
     private val setDefaultAddressUseCase: SetDefaultAddressUseCase,
+    private val observeConnectivity: ObserveConnectivityUseCase,
 ) : ViewModel(),
     StateHolder<ManageSavedAddressesUiState> by DefaultStateHolder(ManageSavedAddressesUiState()),
     EffectPublisher<ManageSavedAddressesEffect> by DefaultEffectPublisher() {
@@ -59,6 +68,19 @@ class ManageSavedAddressesViewModel(
             .onEach { items ->
                 updateState { copy(addresses = items, isLoading = false) }
             }
+            .launchIn(viewModelScope)
+
+        val online = observeConnectivity()
+            .map { it == ConnectivityStatus.Available }
+            .distinctUntilChanged()
+
+        online
+            .onEach { isOnline -> updateState { copy(isOffline = !isOnline) } }
+            .launchIn(viewModelScope)
+
+        online
+            .drop(1)
+            .onEach { isOnline -> if (isOnline) refresh() }
             .launchIn(viewModelScope)
     }
 
@@ -75,6 +97,12 @@ class ManageSavedAddressesViewModel(
     }
 
     private fun refresh() {
+        // Offline: keep showing cached addresses; the offline placeholder covers the
+        // empty case. Don't hit the network or nag with an error toast.
+        if (!observeConnectivity.isOnlineNow()) {
+            updateState { copy(isLoading = false) }
+            return
+        }
         viewModelScope.launch {
             val result = refreshAddressesUseCase()
             updateState { copy(isLoading = false) }

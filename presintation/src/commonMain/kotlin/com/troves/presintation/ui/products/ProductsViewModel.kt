@@ -9,8 +9,10 @@ import com.troves.domain.usecase.products.GetProductsByBrandUseCase
 import com.troves.domain.usecase.products.GetProductsByCategoryUseCase
 import com.troves.domain.usecase.products.SortProductsUseCase
 import com.troves.domain.usecase.shared.GetProductsUseCase
+import com.troves.domain.usecase.shared.ObserveConnectivityUseCase
 import com.troves.domain.usecase.wishlist.GetWishlistUseCase
 import com.troves.domain.usecase.wishlist.ToggleFavoriteUseCase
+import com.troves.domain.utils.connectivity.ConnectivityStatus
 import com.troves.presintation.core.mvi.DefaultEffectPublisher
 import com.troves.presintation.core.mvi.DefaultStateHolder
 import com.troves.presintation.core.mvi.EffectPublisher
@@ -18,7 +20,10 @@ import com.troves.presintation.core.mvi.StateHolder
 import com.troves.presintation.ui.components.FilterOption
 import com.troves.presintation.ui.components.SortOption
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import com.troves.domain.utils.Result
@@ -32,6 +37,7 @@ class ProductsViewModel(
     private val sortProducts: SortProductsUseCase,
     private val getWishlistUseCase: GetWishlistUseCase,
     private val toggleFavoriteUseCase: ToggleFavoriteUseCase,
+    private val observeConnectivity: ObserveConnectivityUseCase,
 ) : ViewModel(),
     StateHolder<ProductsUiState> by DefaultStateHolder(ProductsUiState()),
     EffectPublisher<ProductsEffect> by DefaultEffectPublisher() {
@@ -43,6 +49,19 @@ class ProductsViewModel(
             .onEach { wishlist ->
                 updateState { copy(favoriteProductIds = wishlist.map { it.id.toString() }.toSet()) }
             }
+            .launchIn(viewModelScope)
+
+        val online = observeConnectivity()
+            .map { it == ConnectivityStatus.Available }
+            .distinctUntilChanged()
+
+        online
+            .onEach { isOnline -> updateState { copy(isOffline = !isOnline) } }
+            .launchIn(viewModelScope)
+
+        online
+            .drop(1)
+            .onEach { isOnline -> if (isOnline) loadProducts(pendingInit ?: ProductsIntent.Init("", "", "")) }
             .launchIn(viewModelScope)
     }
 

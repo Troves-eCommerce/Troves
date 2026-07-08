@@ -45,6 +45,7 @@ import troves.designsystem.generated.resources.orders_empty_title
 import troves.designsystem.generated.resources.orders_empty_desc
 import org.jetbrains.compose.resources.stringResource
 import com.troves.designsystem.components.emptystate.EmptyState
+import com.troves.presintation.ui.components.NoConnectionState
 import com.troves.presintation.ui.components.SignInRequiredState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.List
@@ -84,6 +85,10 @@ fun OrdersScreen(
                 )
 
                 state.isLoading -> OrdersLoadingContent()
+
+                state.showOfflineState -> NoConnectionState(
+                    onRetry = { viewModel.onIntent(OrdersIntent.Load) },
+                )
 
                 state.isError -> BasicText(
                     text = state.errorMessage ?: "Failed to load orders",

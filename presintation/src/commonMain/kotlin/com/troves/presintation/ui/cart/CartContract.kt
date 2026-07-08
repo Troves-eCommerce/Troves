@@ -1,17 +1,20 @@
 package com.troves.presintation.ui.cart
+import com.troves.domain.entity.CartMoney
 
 data class CartUiState(
     val items: List<CartLineUi> = emptyList(),
-    val subtotalFormatted: String = "$0.00",
-    val totalFormatted: String = "$0.00",
+    val subtotal: CartMoney? = null,
+    val total: CartMoney? = null,
     val checkoutUrl: String? = null,
     val isLoading: Boolean = true,
+    val shouldShowCartHint: Boolean = false,
 ) {
     val isEmpty: Boolean get() = !isLoading && items.isEmpty()
 }
 
 data class CartLineUi(
     val lineId: String,
+    val productId: String,
     val title: String,
     val variantTitle: String,
     val imageUrl: String,
@@ -29,6 +32,7 @@ sealed interface CartEffect {
     data class ShowToast(val message: String) : CartEffect
     data class ShowRemoveConfirmationDialog(val item: CartLineUi) : CartEffect
     data object ShowClearCartConfirmationDialog : CartEffect
+    data class NavigateToProductDetails(val productId: String) : CartEffect
 }
 
 sealed interface CartIntent {
@@ -40,4 +44,6 @@ sealed interface CartIntent {
     data class OnRemoveItemConfirm(val lineId: String) : CartIntent
     data object OnClearCartClick : CartIntent
     data object OnClearCartConfirm : CartIntent
+    data class OnItemClick(val lineId: String) : CartIntent
+    data object OnDismissCartHint : CartIntent
 }

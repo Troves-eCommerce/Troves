@@ -48,6 +48,7 @@ import com.troves.designsystem.util.formatPrice
 import com.troves.domain.entity.Product
 import com.troves.presintation.core.mvi.ObserveEffect
 import com.troves.presintation.ui.components.FilterBottomSheet
+import com.troves.presintation.ui.components.NoConnectionState
 import com.troves.presintation.ui.components.SortBottomSheet
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
@@ -119,6 +120,10 @@ fun ProductsScreen(
 
             when {
                 state.isLoading -> ProductsShimmer()
+
+                state.showOfflineState -> NoConnectionState(
+                    onRetry = { viewModel.onIntent(ProductsIntent.Retry) },
+                )
 
                 state.hasError -> ProductsError(
                     message = state.errorMessage.orEmpty(),
