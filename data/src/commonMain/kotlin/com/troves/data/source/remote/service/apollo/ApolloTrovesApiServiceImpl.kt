@@ -81,7 +81,7 @@ class ApolloTrovesApiServiceImpl(
                 query = "vendor:'$vendorName'",
             )
         ) { data ->
-            data.products.edges.map { it.node.toDomainProduct() }
+            data.products.edges.map { it.node.productCard.toDomainProduct() }
         }
 
     override suspend fun getProductsByCollection(collectionId: String): Result<List<Product>> =
