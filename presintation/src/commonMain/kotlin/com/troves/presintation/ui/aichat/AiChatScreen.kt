@@ -31,6 +31,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.troves.designsystem.theme.Theme
 import com.troves.presintation.core.mvi.ObserveEffect
+import com.troves.presintation.ui.components.NoConnectionState
 import com.troves.presintation.ui.aichat.components.AiChatHeader
 import com.troves.presintation.ui.aichat.components.AiChatHistorySheet
 import com.troves.presintation.ui.aichat.components.AssistantMessageBubble
@@ -213,32 +214,39 @@ fun AiChatScreen(
             }
         },
     ) { paddingValues ->
-        LazyColumn(
-            state = listState,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            items(state.messages, key = { it.id }) { msg ->
-                when (msg.sender) {
-                    AiSender.USER -> UserMessageBubble(text = msg.text, image = msg.image)
-                    AiSender.ASSISTANT -> AssistantMessageBubble(
-                        text = msg.text,
-                        products = msg.products,
-                        isSuggestion = msg.isSuggestion,
-                        suggestionHeader = suggestionHeader,
-                        viewAllLabel = viewAllLabel,
-                        onProductClick = { onIntent(AiChatIntent.ProductClicked(it)) },
-                        onFavoriteClick = { onIntent(AiChatIntent.ToggleFavorite(it)) },
-                        onViewAll = { onIntent(AiChatIntent.ViewAllRecommendations) },
-                    )
+        if (state.showOfflineState) {
+            NoConnectionState(
+                onRetry = { /* auto-recovers once connectivity returns */ },
+                modifier = Modifier.padding(paddingValues),
+            )
+        } else {
+            LazyColumn(
+                state = listState,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
+                contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                items(state.messages, key = { it.id }) { msg ->
+                    when (msg.sender) {
+                        AiSender.USER -> UserMessageBubble(text = msg.text, image = msg.image)
+                        AiSender.ASSISTANT -> AssistantMessageBubble(
+                            text = msg.text,
+                            products = msg.products,
+                            isSuggestion = msg.isSuggestion,
+                            suggestionHeader = suggestionHeader,
+                            viewAllLabel = viewAllLabel,
+                            onProductClick = { onIntent(AiChatIntent.ProductClicked(it)) },
+                            onFavoriteClick = { onIntent(AiChatIntent.ToggleFavorite(it)) },
+                            onViewAll = { onIntent(AiChatIntent.ViewAllRecommendations) },
+                        )
+                    }
                 }
-            }
 
-            if (state.isSending) {
-                item { TypingIndicator() }
+                if (state.isSending) {
+                    item { TypingIndicator() }
+                }
             }
         }
     }

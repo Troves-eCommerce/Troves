@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.troves.domain.repository.AuthenticationRepository
 import com.troves.domain.usecase.auth.ReloadUserUseCase
 import com.troves.domain.usecase.auth.SendEmailVerificationUseCase
+import com.troves.domain.usecase.shared.ObserveConnectivityUseCase
 import com.troves.domain.utils.Result
 import com.troves.presintation.core.mvi.DefaultEffectPublisher
 import com.troves.presintation.core.mvi.DefaultStateHolder
@@ -20,7 +21,8 @@ import kotlin.time.Duration.Companion.milliseconds
 class EmailVerificationViewModel(
     private val sendEmailVerificationUseCase: SendEmailVerificationUseCase,
     private val reloadUserUseCase: ReloadUserUseCase,
-    private val authenticationRepository: AuthenticationRepository
+    private val authenticationRepository: AuthenticationRepository,
+    private val observeConnectivity: ObserveConnectivityUseCase,
 ) : ViewModel(),
     StateHolder<EmailVerificationState> by DefaultStateHolder(EmailVerificationState()),
     EffectPublisher<EmailVerificationEffect> by DefaultEffectPublisher() {
@@ -52,6 +54,7 @@ class EmailVerificationViewModel(
 
     private fun resendEmail() {
         if (!currentState.canResend) return
+        if (!ensureOnline()) return
 
         viewModelScope.launch {
             updateState { copy(isResending = true, errorMessage = null) }
@@ -88,6 +91,7 @@ class EmailVerificationViewModel(
     }
 
     private fun checkStatus() {
+        if (!ensureOnline()) return
         viewModelScope.launch {
             updateState { copy(isChecking = true, errorMessage = null) }
             when (val result = reloadUserUseCase()) {
@@ -118,6 +122,17 @@ class EmailVerificationViewModel(
         }
     }
 
+    /**
+     * Pre-flight connectivity guard: when offline, show the message and skip the
+     * network call rather than spinning.
+     */
+    private fun ensureOnline(): Boolean {
+        if (observeConnectivity.isOnlineNow()) return true
+        updateState { copy(isResending = false, isChecking = false, errorMessage = NO_CONNECTION_MESSAGE) }
+        sendEffect(EmailVerificationEffect.ShowError(NO_CONNECTION_MESSAGE))
+        return false
+    }
+
     override fun onCleared() {
         cooldownJob?.cancel()
         super.onCleared()
@@ -125,5 +140,6 @@ class EmailVerificationViewModel(
 
     private companion object {
         const val RESEND_COOLDOWN_SECONDS = 60
+        const val NO_CONNECTION_MESSAGE = "No internet connection"
     }
 }

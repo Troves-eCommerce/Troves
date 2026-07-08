@@ -35,6 +35,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
+import com.troves.presintation.ui.components.NoConnectionState
 import com.troves.designsystem.components.cards.OrderSummaryInfoCard
 import com.troves.designsystem.components.cards.OrderSummaryItemCard
 import com.troves.designsystem.components.chip.OrderStatusBadge
@@ -99,6 +100,11 @@ fun OrderDetailsScreen(
             when {
                 state.isLoading -> {
                     OrderDetailsLoadingContent()
+                }
+                state.showOfflineState -> {
+                    NoConnectionState(
+                        onRetry = { viewModel.onIntent(OrderDetailsIntent.Load(orderId)) },
+                    )
                 }
                 state.isError -> {
                     BasicText(

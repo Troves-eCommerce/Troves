@@ -7,10 +7,14 @@ import com.troves.domain.usecase.home.GetBrandsUseCase
 import com.troves.domain.usecase.home.GetCategoriesUseCase
 import com.troves.domain.usecase.search.SearchProductsUseCase
 import com.troves.domain.usecase.shared.GetProductsUseCase
+import com.troves.domain.usecase.shared.ObserveConnectivityUseCase
 import com.troves.domain.usecase.wishlist.GetWishlistUseCase
 import com.troves.domain.usecase.wishlist.ToggleFavoriteResult
 import com.troves.domain.usecase.wishlist.ToggleFavoriteUseCase
 import com.troves.domain.utils.Result
+import com.troves.domain.utils.connectivity.ConnectivityStatus
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.map
 import com.troves.domain.utils.fold
 import com.troves.domain.utils.getOrElse
 import com.troves.presintation.core.mvi.DefaultEffectPublisher
@@ -59,6 +63,7 @@ class SearchScreenViewModel(
     private val searchProductsUseCase: SearchProductsUseCase,
     private val toggleFavoriteUseCase: ToggleFavoriteUseCase,
     private val getWishlistUseCase: GetWishlistUseCase,
+    private val observeConnectivity: ObserveConnectivityUseCase,
 ) : ViewModel(),
     StateHolder<SearchUiState> by DefaultStateHolder(SearchUiState()),
     EffectPublisher<SearchEffect> by DefaultEffectPublisher() {
@@ -66,6 +71,24 @@ class SearchScreenViewModel(
     private val searchQueryFlow = MutableStateFlow("")
 
     init {
+        val online = observeConnectivity()
+            .map { it == ConnectivityStatus.Available }
+            .distinctUntilChanged()
+
+        online
+            .onEach { isOnline -> updateState { copy(isOffline = !isOnline) } }
+            .launchIn(viewModelScope)
+
+        online
+            .drop(1)
+            .onEach { isOnline ->
+                if (isOnline) {
+                    load()
+                    if (state.value.query.isNotBlank()) runSearch(state.value.query)
+                }
+            }
+            .launchIn(viewModelScope)
+
         searchQueryFlow
             .filterNot { it.isBlank() }
             .debounce(500.milliseconds)

@@ -7,13 +7,20 @@ import com.troves.domain.usecase.cart.AddToCartUseCase
 import com.troves.domain.usecase.cart.CartOperationResult
 import com.troves.domain.usecase.details.GetProductByIdUseCase
 import com.troves.domain.usecase.wishlist.IsProductFavoritedUseCase
+import com.troves.domain.usecase.shared.ObserveConnectivityUseCase
 import com.troves.domain.usecase.wishlist.ToggleFavoriteResult
 import com.troves.domain.usecase.wishlist.ToggleFavoriteUseCase
+import com.troves.domain.utils.connectivity.ConnectivityStatus
 import com.troves.presintation.core.mvi.DefaultEffectPublisher
 import com.troves.presintation.core.mvi.DefaultStateHolder
 import com.troves.presintation.core.mvi.EffectPublisher
 import com.troves.presintation.core.mvi.StateHolder
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import com.troves.domain.utils.Result
 import com.troves.domain.entity.Review
@@ -44,6 +51,7 @@ class ProductDetailsViewModel(
     private val getProductReviews: GetProductReviewsUseCase,
     private val submitReviewUseCase: SubmitReviewUseCase,
     private val getReviewerIdentity: GetReviewerIdentityUseCase,
+    private val observeConnectivity: ObserveConnectivityUseCase,
 ) : ViewModel(),
     StateHolder<ProductDetailUiState> by DefaultStateHolder(ProductDetailUiState()),
     EffectPublisher<ProductDetailsEffect> by DefaultEffectPublisher() {
@@ -52,6 +60,25 @@ class ProductDetailsViewModel(
     private var cartJob: Job? = null
     private var bannerDismissJob: Job? = null
     private var currentProductId: String = ""
+
+    init {
+        val online = observeConnectivity()
+            .map { it == ConnectivityStatus.Available }
+            .distinctUntilChanged()
+
+        online
+            .onEach { isOnline -> updateState { copy(isOffline = !isOnline) } }
+            .launchIn(viewModelScope)
+
+        online
+            .drop(1)
+            .onEach { isOnline ->
+                if (isOnline && currentState.product == null && currentProductId.isNotEmpty()) {
+                    fetchProduct(currentProductId)
+                }
+            }
+            .launchIn(viewModelScope)
+    }
 
     fun onIntent(intent: ProductDetailsIntent) {
         when (intent) {

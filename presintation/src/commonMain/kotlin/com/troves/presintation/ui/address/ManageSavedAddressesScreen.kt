@@ -40,6 +40,7 @@ import com.troves.domain.entity.Address
 import com.troves.domain.entity.AddressIcon
 import kotlinx.coroutines.launch
 import com.troves.designsystem.components.emptystate.EmptyState
+import com.troves.presintation.ui.components.NoConnectionState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocationOn
 import troves.designsystem.generated.resources.address_empty_title
@@ -157,7 +158,11 @@ fun ManageSavedAddressesScreenContent(
                 modifier = Modifier.padding(bottom = Theme.spacing.medium)
             )
 
-            if (state.addresses.isEmpty()) {
+            if (state.showOfflineState) {
+                NoConnectionState(
+                    onRetry = { onIntent(ManageSavedAddressesIntent.OnRefresh) },
+                )
+            } else if (state.addresses.isEmpty()) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     EmptyState(
                         title = stringResource(Res.string.address_empty_title),

@@ -63,6 +63,7 @@ import com.troves.domain.entity.Brand
 import com.troves.domain.entity.Category
 import com.troves.domain.entity.Product
 import com.troves.presintation.core.mvi.ObserveEffect
+import com.troves.presintation.ui.components.NoConnectionState
 import com.troves.presintation.ui.components.SignUpPromptDialog
 import com.troves.presintation.ui.home.components.AdData
 import com.troves.presintation.ui.home.components.AdSlider
@@ -180,20 +181,26 @@ fun HomeScreen(
                 )
             )
 
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .padding(top = 20.dp, bottom = 120.dp),
-                verticalArrangement = Arrangement.spacedBy(20.dp),
-            ) {
-                if (state.isLoading) {
-                    HomeShimmer()
-                } else {
-                    HomeContent(
-                        state = state,
-                        onIntent = onIntent,
-                    )
+            if (state.showOfflineState) {
+                NoConnectionState(
+                    onRetry = { viewModel.onIntent(HomeIntent.Retry) },
+                )
+            } else {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
+                        .padding(top = 20.dp, bottom = 120.dp),
+                    verticalArrangement = Arrangement.spacedBy(20.dp),
+                ) {
+                    if (state.isLoading) {
+                        HomeShimmer()
+                    } else {
+                        HomeContent(
+                            state = state,
+                            onIntent = onIntent,
+                        )
+                    }
                 }
             }
         }

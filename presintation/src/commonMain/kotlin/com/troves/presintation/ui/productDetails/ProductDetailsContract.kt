@@ -29,8 +29,11 @@ data class ProductDetailUiState(
     val showReviewEditor: Boolean = false,   // editor mode inside that sheet
     val reviewDraft: ReviewDraft = ReviewDraft(),
     val isSubmittingReview: Boolean = false,
+    val isOffline: Boolean = false,
 ) {
     val hasError = errorMessage != null
+
+    val showOfflineState: Boolean get() = isOffline && product == null && !isLoading
 
 
     val displayOptions: List<ProductOption>

@@ -18,8 +18,16 @@ data class HomeUiState(
     val isSurveyDone: Boolean = false,
     val isLoggedIn: Boolean = false,
     val cartItemCount: Int = 0,
+    val isOffline: Boolean = false,
 ) {
     val hasError: Boolean get() = errorMessage != null
+
+
+    val isEmpty: Boolean
+        get() = brands.isEmpty() && categories.isEmpty() &&
+            justForYou.isEmpty() && trending.isEmpty()
+
+    val showOfflineState: Boolean get() = isOffline && isEmpty && !isLoading
 }
 
 sealed interface HomeEffect {
