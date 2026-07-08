@@ -8,6 +8,6 @@ interface LocationRepository {
     suspend fun getCountries(): Result<List<String>>
     suspend fun getCities(countryName: String): Result<List<String>>
 
-    suspend fun reverseGeocode(coordinates: LocationCoordinates): LocationAddress
+    suspend fun reverseGeocode(coordinates: LocationCoordinates): Result<LocationAddress>
     suspend fun getCurrentLocationCoordinates(): LocationCoordinates
 }

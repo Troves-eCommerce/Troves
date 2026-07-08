@@ -27,14 +27,14 @@ data class Address(
     val suburb: String?
 ) {
     fun toDomain(): LocationAddress = LocationAddress(
-        city = city ?: "Unknown",
-        country = country ?: "Unknown",
-        countryCode = countryCode ?: "Unknown",
-        houseNumber = houseNumber ?: "Unknown",
-        neighbourhood = neighbourhood ?: "Unknown",
-        postcode = postcode ?: "Unknown",
-        road = road ?: "Unknown",
-        state = state ?: "Unknown",
-        suburb = suburb ?: "Unknown"
+        city = city.orEmpty(),
+        country = country.orEmpty(),
+        countryCode = countryCode.orEmpty(),
+        houseNumber = houseNumber.orEmpty(),
+        neighbourhood = neighbourhood.orEmpty(),
+        postcode = postcode.orEmpty(),
+        road = road.orEmpty(),
+        state = state.orEmpty(),
+        suburb = suburb.orEmpty()
     )
 }

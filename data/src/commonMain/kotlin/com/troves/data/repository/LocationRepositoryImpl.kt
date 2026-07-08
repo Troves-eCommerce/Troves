@@ -6,7 +6,6 @@ import com.troves.domain.entity.LocationAddress
 import com.troves.domain.entity.LocationCoordinates
 import com.troves.domain.repository.LocationRepository
 import com.troves.domain.utils.Result
-import com.troves.domain.utils.getOrThrow
 import com.troves.domain.utils.map
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -36,14 +35,20 @@ class LocationRepositoryImpl(
 
     // Framework Location
 
-    override suspend fun reverseGeocode(coordinates: LocationCoordinates): LocationAddress {
-        return frameworkLocationDatasource
+    override suspend fun reverseGeocode(
+        coordinates: LocationCoordinates
+    ): Result<LocationAddress> = withContext(coroutineDispatcher) {
+        frameworkLocationDatasource
             .reverseGeocode(
                 coordinates = com.troves.data.source.framework.location.service.LocationCoordinates(
                     coordinates.lan,
                     coordinates.lon
                 )
-            ).getOrThrow().address?.toDomain() ?: error("Address not found")
+            )
+            // A Result.Error (e.g. LocationIQ 404 "Unable to geocode") passes
+            // straight through — never thrown. A 200 with a null address
+            // degrades to EMPTY, handled downstream as "no usable fields".
+            .map { response -> response.address?.toDomain() ?: LocationAddress.EMPTY }
     }
 
     override suspend fun getCurrentLocationCoordinates(): LocationCoordinates =
