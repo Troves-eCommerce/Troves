@@ -48,6 +48,7 @@ import com.troves.domain.usecase.settings.SetLanguageUseCase
 import com.troves.domain.usecase.settings.SetThemeModeUseCase
 import com.troves.domain.usecase.shared.GetCurrentLocationCoordinatesUseCase
 import com.troves.domain.usecase.shared.GetProductsUseCase
+import com.troves.domain.usecase.shared.ObserveConnectivityUseCase
 import com.troves.domain.usecase.shared.ReverseGeocodingUseCase
 import com.troves.domain.usecase.wishlist.GetWishlistUseCase
 import com.troves.domain.usecase.wishlist.IsProductFavoritedUseCase
@@ -89,7 +90,7 @@ val domainModule = module {
     // Wishlist
     factory { GetWishlistUseCase(get()) }
     factory { IsProductFavoritedUseCase(get()) }
-    factory { ToggleFavoriteUseCase(get(),get()) }
+    factory { ToggleFavoriteUseCase(get(), get(), get()) }
 
     // Authentication
     factory { LoginUseCase(get()) }
@@ -101,11 +102,11 @@ val domainModule = module {
     factory { LogoutUseCase(get(), get(), get()) }
 
     factory { GetCartStreamUseCase(get()) }
-    factory { AddToCartUseCase(get(), get()) }
+    factory { AddToCartUseCase(get(), get(), get()) }
     factory { RemoveFromCartUseCase(get(), get()) }
     factory { RemoveAllFromCartUseCase(get(), get()) }
     factory { UpdateCartQuantityUseCase(get(), get()) }
-    factory { ApplyDiscountUseCase(get(), get()) }
+    factory { ApplyDiscountUseCase(get(), get(), get()) }
     factory { RefreshCartUseCase(get(), get()) }
     single { SyncCartUseCase(get(), get()) }
 
@@ -113,7 +114,7 @@ val domainModule = module {
     factory { GetDefaultAddressUseCase(get()) }
     factory { GetOrdersUseCase(get()) }
     factory { GetOrderByIdUseCase(get()) }
-    factory { PlaceCodOrderUseCase(get(), get()) }
+    factory { PlaceCodOrderUseCase(get(), get(), get()) }
     factory { com.troves.domain.usecase.order.AttachAddressToCartUseCase(get()) }
     factory { ClearCartUseCase(get()) }
     factory { GetClientSecretUseCase(get()) }
@@ -121,10 +122,10 @@ val domainModule = module {
 
     // Address
     factory { com.troves.domain.usecase.address.GetSavedAddressesUseCase(get()) }
-    factory { com.troves.domain.usecase.address.AddAddressUseCase(get()) }
-    factory { com.troves.domain.usecase.address.UpdateAddressUseCase(get()) }
-    factory { com.troves.domain.usecase.address.DeleteAddressUseCase(get()) }
-    factory { com.troves.domain.usecase.address.SetDefaultAddressUseCase(get()) }
+    factory { com.troves.domain.usecase.address.AddAddressUseCase(get(), get()) }
+    factory { com.troves.domain.usecase.address.UpdateAddressUseCase(get(), get()) }
+    factory { com.troves.domain.usecase.address.DeleteAddressUseCase(get(), get()) }
+    factory { com.troves.domain.usecase.address.SetDefaultAddressUseCase(get(), get()) }
     factory { com.troves.domain.usecase.address.GetSavedAddressByIdUseCase(get()) }
     factory { com.troves.domain.usecase.address.GetDefaultSavedAddressUseCase(get()) }
     factory { com.troves.domain.usecase.address.RefreshAddressesUseCase(get()) }
@@ -133,6 +134,9 @@ val domainModule = module {
 
     factory { ReverseGeocodingUseCase(get()) }
     factory { GetCurrentLocationCoordinatesUseCase(get()) }
+
+    // Connectivity
+    factory { ObserveConnectivityUseCase(get()) }
 
 
     // Settings
@@ -144,13 +148,13 @@ val domainModule = module {
     factory { FetchLatestRatesUseCase(get()) }
 
     // AI assistant
-    factory { SendAiMessageUseCase(get()) }
+    factory { SendAiMessageUseCase(get(), get()) }
     factory { GetAiConversationsUseCase(get(), get()) }
     factory { SaveAiConversationUseCase(get(), get()) }
     factory { DeleteAiConversationUseCase(get(), get()) }
 
     // Product reviews
     factory { com.troves.domain.usecase.review.GetProductReviewsUseCase(get(), get()) }
-    factory { com.troves.domain.usecase.review.SubmitReviewUseCase(get(), get()) }
+    factory { com.troves.domain.usecase.review.SubmitReviewUseCase(get(), get(), get()) }
     factory { com.troves.domain.usecase.review.GetReviewerIdentityUseCase(get(), get()) }
 }
