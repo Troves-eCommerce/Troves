@@ -65,7 +65,13 @@ class ProfileViewModel(
         when (intent) {
             is ProfileIntent.LoadData -> loadData()
             is ProfileIntent.EditProfileClicked -> emitEffect(ProfileEffect.NavigateToEditProfile)
-            is ProfileIntent.ManageAddressesClicked -> emitEffect(ProfileEffect.NavigateToAddresses)
+            is ProfileIntent.ManageAddressesClicked -> {
+                if (observeConnectivity.isOnlineNow()) {
+                    emitEffect(ProfileEffect.NavigateToAddresses)
+                } else {
+                    _uiState.update { it.copy(showOfflineDialog = true) }
+                }
+            }
             is ProfileIntent.OrderHistoryClicked -> emitEffect(ProfileEffect.NavigateToOrders)
             is ProfileIntent.PaymentMethodsClicked -> emitEffect(ProfileEffect.NavigateToPaymentMethods)
             is ProfileIntent.AiAssistantClicked -> emitEffect(ProfileEffect.NavigateToAiAssistant)

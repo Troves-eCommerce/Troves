@@ -169,6 +169,18 @@ fun ProfileScreen(
                                 thickness = 1.dp,
                                 modifier = Modifier.padding(horizontal = 16.dp)
                             )
+                            
+                            ProfileRowItem(
+                                icon = Res.drawable.ic_location,
+                                title = stringResource(ResP.string.profile_manage_addresses),
+                                description = stringResource(ResP.string.profile_manage_addresses_desc),
+                                onClick = { viewModel.onIntent(ProfileIntent.ManageAddressesClicked) }
+                            )
+                            HorizontalDivider(
+                                color = Theme.colors.onPrimary,
+                                thickness = 1.dp,
+                                modifier = Modifier.padding(horizontal = 16.dp)
+                            )
                         }
 
                         LiveRatesRow(
