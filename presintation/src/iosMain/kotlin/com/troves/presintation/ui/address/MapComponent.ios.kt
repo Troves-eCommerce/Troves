@@ -1,3 +1,4 @@
+@file:OptIn(ExperimentalForeignApi::class)
 package com.troves.presintation.ui.address
 
 import androidx.compose.foundation.layout.fillMaxSize
@@ -6,17 +7,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.interop.UIKitView
 import com.troves.domain.entity.LocationCoordinates
+import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.ObjCAction
+import kotlinx.cinterop.useContents
 import platform.CoreLocation.CLLocationCoordinate2DMake
+import platform.Foundation.NSSelectorFromString
 import platform.MapKit.MKCoordinateRegionMakeWithDistance
 import platform.MapKit.MKMapView
 import platform.MapKit.MKPointAnnotation
 import platform.UIKit.UIGestureRecognizerStateRecognized
 import platform.UIKit.UITapGestureRecognizer
 import platform.darwin.NSObject
-import kotlinx.cinterop.ObjCAction
 
-@OptIn(ExperimentalForeignApi::class)
 @Composable
 actual fun MapBox(
     selectedLatitude: Double?,
@@ -31,7 +34,7 @@ actual fun MapBox(
     val mkMapView = remember { 
         MKMapView().apply {
             showsUserLocation = true
-            val tapGesture = UITapGestureRecognizer(target = tapDelegate, action = kotlinx.cinterop.NSSelectorFromString("handleTap:"))
+            val tapGesture = UITapGestureRecognizer(target = tapDelegate, action = NSSelectorFromString("handleTap:"))
             addGestureRecognizer(tapGesture)
             tapDelegate.mapView = this
         } 
@@ -62,13 +65,16 @@ class MapTapDelegate(
 ) : NSObject() {
     var mapView: MKMapView? = null
 
+    @OptIn(BetaInteropApi::class, ExperimentalForeignApi::class)
     @ObjCAction
     fun handleTap(sender: UITapGestureRecognizer) {
         val map = mapView ?: return
         if (sender.state == UIGestureRecognizerStateRecognized) {
             val locationInView = sender.locationInView(map)
             val coordinate = map.convertPoint(locationInView, toCoordinateFromView = map)
-            onMapClick(coordinate.latitude, coordinate.longitude)
+            coordinate.useContents {
+                onMapClick(latitude, longitude)
+            }
         }
     }
 }
