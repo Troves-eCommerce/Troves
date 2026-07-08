@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Troves</string>
+    <string name="mapbox_access_token" translatable="false" tools:ignore="UnusedResources">YOUR_MAPBOX_ACCESS_TOKEN_HERE</string>
 </resources>
