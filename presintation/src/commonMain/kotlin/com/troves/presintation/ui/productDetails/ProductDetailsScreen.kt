@@ -86,6 +86,7 @@ import troves.designsystem.generated.resources.wishlist_remove_msg
 import troves.designsystem.generated.resources.wishlist_remove
 import troves.designsystem.generated.resources.profile_cancel
 import troves.designsystem.generated.resources.ic_solid_heart
+import troves.designsystem.generated.resources.product_details_size
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -410,7 +411,7 @@ fun ProductDetailsScreenContent(
                         } else {
                             if (option.name == "Size") {
                                 SectionHeaderRow(
-                                    title = option.name,
+                                    title = stringResource(Res.string.product_details_size),
                                     onActionClick = onSizeGuide
                                 )
                             } else {
