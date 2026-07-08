@@ -195,7 +195,7 @@ fun CheckoutScreen(
                             paymentDescription = if (cod) stringResource(StringRes.string.checkout_payment_cod_desc)
                             else stringResource(StringRes.string.checkout_payment_online_desc),
                             paymentSubDescription = if (cod) stringResource(StringRes.string.checkout_payment_cod_limit) else null,
-                            addressTitle = address?.label ?: "Delivery address",
+                            addressTitle = address?.label ?: stringResource(StringRes.string.checkout_title_delivery_address),
                             recipientName = address?.recipientName.orEmpty(),
                             addressLines = address?.lines.orEmpty(),
                             phone = address?.phone.orEmpty(),

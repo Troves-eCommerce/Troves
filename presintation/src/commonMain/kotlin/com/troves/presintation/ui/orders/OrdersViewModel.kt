@@ -18,6 +18,10 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.getString
+import troves.presintation.generated.resources.Res
+import troves.presintation.generated.resources.order_status_processing
+import troves.presintation.generated.resources.orders_error_load
 
 class OrdersViewModel(
     private val getOrders: GetOrdersUseCase,
@@ -60,16 +64,18 @@ class OrdersViewModel(
                 return@launch
             }
             try {
+                val processingLabel = getString(Res.string.order_status_processing)
                 val orders = getOrders()
                     .sortedByDescending { it.processedAt }
-                    .map { it.toUi() }
+                    .map { it.toUi(processingLabel) }
                 updateState { copy(isLoading = false, isNotSignedIn = false, orders = orders) }
             } catch (e: Exception) {
+                val fallback = getString(Res.string.orders_error_load)
                 updateState {
                     copy(
                         isLoading = false,
                         isError = true,
-                        errorMessage = e.message ?: "Failed to load orders",
+                        errorMessage = e.message ?: fallback,
                         isOffline = !observeConnectivity.isOnlineNow(),
                     )
                 }

@@ -59,8 +59,12 @@ import troves.presintation.generated.resources.order_details_subtotal
 import troves.presintation.generated.resources.order_details_shipping
 import troves.presintation.generated.resources.order_details_tax
 import troves.presintation.generated.resources.checkout_total
+import troves.presintation.generated.resources.checkout_items_count
 import troves.presintation.generated.resources.order_details_help
 import troves.presintation.generated.resources.order_details_support
+import troves.presintation.generated.resources.order_details_qty
+import troves.presintation.generated.resources.order_details_order_number
+import troves.presintation.generated.resources.order_details_placed_on
 
 @Composable
 fun OrderDetailsScreen(
@@ -207,7 +211,7 @@ private fun OrderDetailsContent(
                             )
                         }
                         BasicText(
-                            text = "Qty: ${item.quantity}",
+                            text = stringResource(ResP.string.order_details_qty, item.quantity),
                             style = Theme.typography.body.medium.copy(color = Theme.colors.secondaryFont),
                         )
                     }
@@ -407,14 +411,14 @@ private fun OrderSummaryHeaderCard(orderDetails: OrderDetailsUi) {
         ) {
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 BasicText(
-                    text = "Order #${orderDetails.orderNumber}",
+                    text = stringResource(ResP.string.order_details_order_number, orderDetails.orderNumber),
                     style = Theme.typography.body.large.copy(
                         color = Theme.colors.primaryFont,
                         fontWeight = FontWeight.Bold,
                     ),
                 )
                 BasicText(
-                    text = "Placed on ${orderDetails.orderDate}",
+                    text = stringResource(ResP.string.order_details_placed_on, orderDetails.orderDate),
                     style = Theme.typography.body.small.copy(color = Theme.colors.secondaryFont),
                 )
             }
@@ -436,7 +440,7 @@ private fun OrderSummaryHeaderCard(orderDetails: OrderDetailsUi) {
                 OrderStatusBadge(status = orderDetails.status)
             }
             BasicText(
-                text = "${orderDetails.itemCount} items",
+                text = stringResource(ResP.string.checkout_items_count, orderDetails.itemCount),
                 style = Theme.typography.body.medium.copy(color = Theme.colors.secondaryFont),
             )
         }

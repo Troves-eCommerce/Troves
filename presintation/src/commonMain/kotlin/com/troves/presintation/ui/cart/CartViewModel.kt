@@ -19,6 +19,13 @@ import com.troves.presintation.core.mvi.StateHolder
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.getString
+import troves.presintation.generated.resources.Res
+import troves.presintation.generated.resources.cart_clear_failed
+import troves.presintation.generated.resources.cart_max_quantity
+import troves.presintation.generated.resources.cart_remove_failed
+import troves.presintation.generated.resources.cart_update_failed
+import troves.presintation.generated.resources.no_internet_connection
 
 class CartViewModel(
     getCartStream: GetCartStreamUseCase,
@@ -37,7 +44,7 @@ class CartViewModel(
 
     private fun ensureOnline(): Boolean {
         if (observeConnectivity.isOnlineNow()) return true
-        sendEffect(CartEffect.ShowToast(NO_CONNECTION_MESSAGE))
+        viewModelScope.launch { sendEffect(CartEffect.ShowToast(getString(Res.string.no_internet_connection))) }
         return false
     }
 
@@ -90,7 +97,7 @@ class CartViewModel(
             when (removeFromCart(lineId)) {
                 CartOperationResult.RequiresLogin -> sendEffect(CartEffect.ShowLoginRequiredDialog)
                 is CartOperationResult.Error ->
-                    sendEffect(CartEffect.ShowToast("Couldn't remove item from cart"))
+                    sendEffect(CartEffect.ShowToast(getString(Res.string.cart_remove_failed)))
                 CartOperationResult.Success -> Unit
             }
         }
@@ -109,7 +116,7 @@ class CartViewModel(
         }
         val max = item.maxQuantity
         if (delta > 0 && max != null && newQuantity > max) {
-            sendEffect(CartEffect.ShowToast("You have reached the maximum quantity"))
+            viewModelScope.launch { sendEffect(CartEffect.ShowToast(getString(Res.string.cart_max_quantity))) }
             return
         }
         updatingLines.add(lineId)
@@ -126,7 +133,7 @@ class CartViewModel(
                 }
                 is CartOperationResult.Error -> {
                     refreshCart() // revert optimistic bump; re-sync from Shopify
-                    sendEffect(CartEffect.ShowToast("Couldn't update cart"))
+                    sendEffect(CartEffect.ShowToast(getString(Res.string.cart_update_failed)))
                 }
                 CartOperationResult.Success -> Unit
             }
@@ -138,7 +145,7 @@ class CartViewModel(
         viewModelScope.launch {
             when (removeAllFromCart()) {
                 CartOperationResult.RequiresLogin -> sendEffect(CartEffect.ShowLoginRequiredDialog)
-                is CartOperationResult.Error -> sendEffect(CartEffect.ShowToast("Couldn't clear cart"))
+                is CartOperationResult.Error -> sendEffect(CartEffect.ShowToast(getString(Res.string.cart_clear_failed)))
                 CartOperationResult.Success -> Unit
             }
         }
@@ -166,9 +173,5 @@ class CartViewModel(
             checkoutUrl = cart.checkoutUrl,
             isLoading = false,
         )
-    }
-
-    private companion object {
-        const val NO_CONNECTION_MESSAGE = "No internet connection"
     }
 }

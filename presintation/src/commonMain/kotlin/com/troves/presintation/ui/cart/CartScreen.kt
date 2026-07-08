@@ -70,6 +70,7 @@ import troves.designsystem.generated.resources.ic_arrow_back
 import troves.designsystem.generated.resources.*
 import troves.presintation.generated.resources.Res as ResP
 import troves.presintation.generated.resources.cart_remove_item_confirm
+import troves.presintation.generated.resources.cart_login_required
 
 @Composable
 fun CartScreen(
@@ -100,7 +101,7 @@ fun CartScreen(
 
     if (showLoginRequiredDialog) {
         LoginRequiredDialog(
-            message = "You need to be logged in to manage your cart.",
+            message = stringResource(ResP.string.cart_login_required),
             onLoginClick = {
                 showLoginRequiredDialog = false
                 onNavigateToLogin()
