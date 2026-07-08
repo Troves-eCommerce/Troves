@@ -347,6 +347,7 @@
     <string name="map_fly_to_location">الانتقال إلى الموقع الحالي</string>
     <string name="map_confirm_location">تأكيد الموقع</string>
     <string name="map_getting_address">جارٍ الحصول على تفاصيل العنوان…</string>
+    <string name="address_map_no_address">تعذّر تحديد عنوان هنا. يمكنك استخدام هذا الموقع وإدخال التفاصيل يدويًا.</string>
 
     <!-- Survey (display chrome) -->
     <string name="survey_next">التالي</string>

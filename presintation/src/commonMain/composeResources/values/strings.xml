@@ -345,6 +345,7 @@
     <string name="map_fly_to_location">Fly to current location</string>
     <string name="map_confirm_location">Confirm location</string>
     <string name="map_getting_address">Getting address details…</string>
+    <string name="address_map_no_address">We couldn\'t identify an address here. You can still use this spot and fill the details manually.</string>
 
     <!-- Survey (display chrome) -->
     <string name="survey_next">Next</string>
