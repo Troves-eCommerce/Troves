@@ -26,6 +26,9 @@ import com.composables.icons.lucide.Image
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Mic
 import com.troves.designsystem.components.textfield.CustomTextField
+import org.jetbrains.compose.resources.stringResource
+import troves.presintation.generated.resources.Res
+import troves.presintation.generated.resources.ai_send
 import com.composables.icons.lucide.MicOff
 import com.troves.designsystem.theme.Theme
 
@@ -82,7 +85,7 @@ fun ChatInputBar(
         ) {
             Icon(
                 painter = rememberVectorPainter(Lucide.ArrowUp),
-                contentDescription = "Send",
+                contentDescription = stringResource(Res.string.ai_send),
                 tint = Theme.colors.onPrimary,
                 modifier = Modifier.size(22.dp),
             )

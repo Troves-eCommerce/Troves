@@ -24,8 +24,12 @@ import com.composables.icons.lucide.Sparkles
 import com.troves.designsystem.components.topbar.IconBox
 import com.troves.designsystem.theme.Theme
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import troves.designsystem.generated.resources.Res
 import troves.designsystem.generated.resources.ic_arrow_back
+import troves.presintation.generated.resources.Res as ResP
+import troves.presintation.generated.resources.ai_history_title
+import troves.presintation.generated.resources.common_back
 
 @Composable
 fun AiChatHeader(
@@ -45,7 +49,7 @@ fun AiChatHeader(
     ) {
         IconBox(
             icon = painterResource(Res.drawable.ic_arrow_back),
-            contentDescription = "Back",
+            contentDescription = stringResource(ResP.string.common_back),
             onClick = onBack,
         )
 
@@ -79,7 +83,7 @@ fun AiChatHeader(
 
         IconBox(
             icon = rememberVectorPainter(Lucide.Clock),
-            contentDescription = "Chat history",
+            contentDescription = stringResource(ResP.string.ai_history_title),
             onClick = onHistoryClick,
             iconTint = Theme.colors.primaryFont,
             backgroundColor = Theme.colors.backGround,
