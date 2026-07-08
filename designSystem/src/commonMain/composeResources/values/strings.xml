@@ -138,6 +138,7 @@
     <string name="register_password_not_match">Passwords do not match</string>
     <string name="login_google_failed">Google Sign-In failed</string>
     <string name="login_google_unsupported">Google Sign-In is not supported on this platform</string>
+    <string name="verify_email_continue_as_guest">Continue as Guest</string>
 
     <!-- Home Screen -->
     <string name="home_login_required">Please login to continue</string>

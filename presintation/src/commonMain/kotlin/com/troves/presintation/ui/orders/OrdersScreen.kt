@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import com.troves.designsystem.components.topbar.BaseTopAppBar
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -73,13 +74,16 @@ fun OrdersScreen(
         viewModel.onIntent(OrdersIntent.Load)
     }
 
-    Box(
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Theme.colors.backGround)
             .statusBarsPadding(),
     ) {
-        when {
+        BaseTopAppBar(title = stringResource(Res.string.orders_title))
+        
+        Box(modifier = Modifier.fillMaxSize().weight(1f)) {
+            when {
                 state.isNotSignedIn -> SignInRequiredState(
                     description = stringResource(Res.string.orders_auth_required_desc),
                     onSignIn = onNavigateToRegister,
@@ -115,16 +119,6 @@ fun OrdersScreen(
                     ),
                     verticalArrangement = Arrangement.spacedBy(Theme.spacing.medium),
                 ) {
-                    item {
-                        BasicText(
-                            text = stringResource(Res.string.orders_title),
-                            style = Theme.typography.title.copy(
-                                color = Theme.colors.primaryFont,
-                                fontWeight = FontWeight.Bold,
-                            ),
-                            modifier = Modifier.padding(bottom = Theme.spacing.small)
-                        )
-                    }
                     items(state.orders, key = { it.id }) { order -> 
                         OrderCard(
                             order = order,
@@ -135,6 +129,7 @@ fun OrdersScreen(
             }
         }
     }
+}
 
 @Composable
 private fun OrdersLoadingContent() {

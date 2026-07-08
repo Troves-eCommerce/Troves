@@ -1,6 +1,8 @@
 package com.troves.presintation.ui.survey.components
 
 import androidx.compose.foundation.background
+import org.jetbrains.compose.resources.stringResource
+import troves.presintation.generated.resources.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,7 +23,7 @@ import androidx.compose.ui.unit.dp
 import com.troves.designsystem.components.button.PrimaryButton
 import com.troves.designsystem.theme.Theme
 import org.jetbrains.compose.resources.painterResource
-import troves.designsystem.generated.resources.Res
+import troves.designsystem.generated.resources.Res as DesignRes
 import troves.designsystem.generated.resources.ic_ai_sparkles
 
 import androidx.compose.material.icons.Icons
@@ -58,13 +60,13 @@ fun SurveyBannerCard(
                 horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small),
             ) {
                 Icon(
-                    painter = painterResource(Res.drawable.ic_ai_sparkles),
+                    painter = painterResource(DesignRes.drawable.ic_ai_sparkles),
                     contentDescription = null,
                     tint = Theme.colors.primary,
                     modifier = Modifier.size(20.dp),
                 )
                 BasicText(
-                    text = "Personalised for you",
+                    text = stringResource(Res.string.survey_banner_title),
                     style = Theme.typography.body.small.copy(
                         color = Theme.colors.primary,
                         fontWeight = FontWeight.SemiBold,
@@ -78,14 +80,14 @@ fun SurveyBannerCard(
             ) {
                 Icon(
                     imageVector = Icons.Default.Close,
-                    contentDescription = "Close",
+                    contentDescription = stringResource(Res.string.profile_cancel),
                     tint = Theme.colors.secondaryFont
                 )
             }
         }
 
         BasicText(
-            text = "Help us know your style",
+            text = stringResource(Res.string.survey_banner_subtitle),
             style = Theme.typography.title.copy(
                 color = Theme.colors.primaryFont,
                 fontWeight = FontWeight.Bold,
@@ -93,7 +95,7 @@ fun SurveyBannerCard(
         )
 
         BasicText(
-            text = "Answer a few quick questions and we'll personalise your shopping experience.",
+            text = stringResource(Res.string.survey_banner_desc),
             style = Theme.typography.body.medium.copy(
                 color = Theme.colors.secondaryFont,
             ),
@@ -102,7 +104,7 @@ fun SurveyBannerCard(
         Spacer(Modifier.height(Theme.spacing.extraSmall))
 
         PrimaryButton(
-            caption = "Start Survey",
+            caption = stringResource(Res.string.survey_banner_start),
             onClick = onStartSurvey,
             modifier = Modifier.fillMaxWidth(),
         )
@@ -115,9 +117,14 @@ fun SurveyBannerCard(
             contentAlignment = Alignment.Center
         ) {
             BasicText(
-                text = "Don't show again",
+                text = stringResource(Res.string.survey_banner_never),
                 style = Theme.typography.body.medium.copy(color = Theme.colors.secondaryFont, fontWeight = FontWeight.SemiBold)
             )
         }
     }
 }
+
+
+
+
+

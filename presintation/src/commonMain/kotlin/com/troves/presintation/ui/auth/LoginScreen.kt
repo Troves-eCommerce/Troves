@@ -52,6 +52,8 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import troves.designsystem.generated.resources.*
+import troves.presintation.generated.resources.*
+import troves.presintation.generated.resources.Res as ResP
 
 import com.troves.presintation.ui.auth.google.LocalGoogleAuthHandler
 
@@ -306,13 +308,13 @@ fun LoginScreen(
                 colors = androidx.compose.material3.ButtonDefaults.textButtonColors(contentColor = Theme.colors.primaryFont)
             ) {
                 BasicText(
-                    text = stringResource(Res.string.verify_email_continue_as_guest),
+                    text = stringResource(ResP.string.verify_email_continue_as_guest),
                     style = Theme.typography.body.large.copy(fontWeight = FontWeight.Medium, color = Theme.colors.primaryFont)
                 )
             }
         }
-
-        TrovesToastHost(state = toast)
     }
+
+    TrovesToastHost(state = toast)
 }
 }

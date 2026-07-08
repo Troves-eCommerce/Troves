@@ -9,9 +9,11 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.SnackbarHostState
 import com.troves.designsystem.components.toast.TrovesSnackbarHost
 import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Column
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.troves.designsystem.components.topbar.BaseTopAppBar
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.troves.designsystem.components.dialog.LoginRequiredDialog
 import com.troves.designsystem.components.dialog.TrovesDialog
@@ -25,6 +27,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import troves.designsystem.generated.resources.Res
 import troves.designsystem.generated.resources.wishlist_auth_required_desc
+import troves.presintation.generated.resources.wishlist_header_title
 
 @Composable
 fun WishlistScreen(
@@ -106,11 +109,14 @@ fun WishlistScreen(
         )
     }
 
-    Box(
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Theme.colors.backGround)
     ) {
+        BaseTopAppBar(title = stringResource(troves.presintation.generated.resources.Res.string.wishlist_header_title))
+        
+        Box(modifier = Modifier.fillMaxSize().weight(1f)) {
 
         if (state.isNotSignedIn) {
             SignInRequiredState(
@@ -137,5 +143,6 @@ fun WishlistScreen(
                 .statusBarsPadding()
                 .padding(16.dp)
         )
+        }
     }
 }

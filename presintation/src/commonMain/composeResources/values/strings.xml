@@ -71,10 +71,10 @@
     <string name="currency_eur">Euro</string>
     <string name="currency_sar">Saudi Riyal</string>
     <string name="language_english">English</string>
-    <string name="language_arabic">العربية</string>
+    <string name="language_arabic">Ø§Ù„Ø¹Ø±Ø¨ÙŠØ©</string>
     <string name="profile_navigate">Navigate</string>
 
-    <!-- Checkout · shared -->
+    <!-- Checkout Â· shared -->
     <string name="checkout_continue">Continue</string>
     <string name="checkout_place_order">Place Order</string>
     <string name="checkout_order_summary">Order Summary</string>
@@ -83,7 +83,7 @@
     <string name="checkout_title_confirm_order">Confirm Order</string>
     <string name="checkout_login_required">You need to be logged in to place an order.</string>
 
-    <!-- Checkout · Order Summary step -->
+    <!-- Checkout Â· Order Summary step -->
     <string name="checkout_review_subtitle">Review your items and apply a coupon.</string>
     <string name="checkout_coupon_label">Coupon Code</string>
     <string name="checkout_coupon_hint">Enter coupon code</string>
@@ -93,14 +93,14 @@
     <string name="checkout_remove_coupon">Remove coupon</string>
     <string name="checkout_total">Total</string>
 
-    <!-- Checkout · Address step -->
+    <!-- Checkout Â· Address step -->
     <string name="checkout_address_step_title">Select Delivery Address</string>
     <string name="checkout_address_step_subtitle">Choose where you want your order to be delivered.</string>
     <string name="checkout_no_saved_addresses">You don\'t have any saved addresses yet.</string>
     <string name="checkout_address_default">Default</string>
     <string name="checkout_add_new_address">Add New Address</string>
 
-    <!-- Checkout · Payment step -->
+    <!-- Checkout Â· Payment step -->
     <string name="checkout_payment_step_title">Select Payment Method</string>
     <string name="checkout_payment_step_subtitle">Choose how you\'d like to pay for your order.</string>
     <string name="checkout_payment_cod_title">Cash on Delivery (COD)</string>
@@ -114,7 +114,7 @@
     <string name="checkout_secure_title">Secure Checkout</string>
     <string name="checkout_secure_desc">Your payment information is encrypted and safe with us.</string>
 
-    <!-- Checkout · Confirm &amp; Place Order step -->
+    <!-- Checkout Â· Confirm &amp; Place Order step -->
     <string name="checkout_confirm_step_title">Confirm &amp; Place Order</string>
     <string name="checkout_confirm_step_subtitle">Review your details and place your order.</string>
     <string name="checkout_section_payment_method">Payment Method</string>
@@ -128,7 +128,7 @@
     <!-- AI Assistant -->
     <string name="ai_assistant_name">Troves AI</string>
     <string name="ai_assistant_subtitle">Your smart shopping assistant</string>
-    <string name="ai_input_hint">Ask anything…</string>
+    <string name="ai_input_hint">Ask anythingâ€¦</string>
     <string name="ai_suggestion_header">You might also like</string>
     <string name="ai_view_all_recommendations">View all recommendations</string>
     <string name="ai_disclaimer">Troves AI can make mistakes. Please double-check important info.</string>
@@ -140,7 +140,7 @@
     <string name="ai_voice_permission_denied">Microphone permission is needed for voice input. Enable it in Settings.</string>
     <string name="ai_voice_no_speech">Didn\'t catch that. Please try again.</string>
     <string name="ai_voice_error">Voice input failed. Please try again.</string>
-    <string name="ai_voice_listening">Listening… tap the mic to stop</string>
+    <string name="ai_voice_listening">Listeningâ€¦ tap the mic to stop</string>
 
     <!-- Email Verification -->
     <string name="verify_email_title">Verify your email</string>
@@ -200,4 +200,53 @@
     <string name="order_details_subtotal">Subtotal</string>
     <string name="order_details_shipping">Shipping</string>
     <string name="order_details_tax">Tax</string>
+    <string name="survey_categories_title">What do you love to shop?</string>
+    <string name="survey_categories_subtitle">Pick everything that matches your style</string>
+    <string name="survey_opt_shoes">Shoes</string>
+    <string name="survey_opt_tshirts">T-Shirts</string>
+    <string name="survey_opt_hoodies">Hoodies</string>
+    <string name="survey_opt_jackets">Jackets</string>
+    <string name="survey_opt_accessories">Accessories</string>
+    <string name="survey_opt_pants">Pants</string>
+    <string name="survey_opt_dresses">Dresses</string>
+    <string name="survey_opt_bags">Bags</string>
+    <string name="survey_budget_title">What\'s your budget?</string>
+    <string name="survey_budget_subtitle">We\'ll personalise picks to fit your wallet</string>
+    <string name="survey_opt_budget">Budget</string>
+    <string name="survey_opt_midrange">Mid-range</string>
+    <string name="survey_opt_premium">Premium</string>
+    <string name="survey_opt_luxury">Luxury</string>
+    <string name="survey_style_title">Describe your style</string>
+    <string name="survey_style_subtitle">Pick the vibe that fits you best</string>
+    <string name="survey_style_casual">Casual</string>
+    <string name="survey_style_casual_desc">Everyday comfort and ease</string>
+    <string name="survey_style_sport">Sport</string>
+    <string name="survey_style_sport_desc">Performance meets style</string>
+    <string name="survey_style_streetwear">Streetwear</string>
+    <string name="survey_style_streetwear_desc">Bold, urban expression</string>
+    <string name="survey_style_elegant">Elegant</string>
+    <string name="survey_style_elegant_desc">Refined and sophisticated</string>
+    <string name="survey_style_minimal">Minimal</string>
+    <string name="survey_style_minimal_desc">Clean lines, simple palette</string>
+    <string name="survey_style_formal">Formal</string>
+    <string name="survey_style_formal_desc">Sharp and professional</string>
+    <string name="survey_gender_title">Shop for …</string>
+    <string name="survey_opt_men">Men</string>
+    <string name="survey_opt_women">Women</string>
+    <string name="survey_opt_unisex">Unisex</string>
+    <string name="survey_banner_title">Personalised for you</string>
+    <string name="survey_banner_subtitle">Help us know your style</string>
+    <string name="survey_banner_desc">Answer a few quick questions and we\'ll personalise your shopping experience.</string>
+    <string name="survey_banner_start">Start Survey</string>
+    <string name="survey_banner_never">Don\'t show again</string>
+    <string name="survey_error_generic">Something went wrong</string>
+    <string name="survey_error_ok">OK</string>
+    <string name="survey_btn_finish">Finish</string>
+    <string name="survey_btn_next">Next ?</string>
+    <string name="survey_btn_saving">Saving…</string>
+    <string name="survey_btn_back">Back</string>
+    <string name="survey_confirm_title">You\'re all set!</string>
+    <string name="survey_confirm_desc">We\'ll use your preferences to recommend products you\'ll love.</string>
+    <string name="survey_confirm_shop">Continue Shopping</string>
+    <string name="survey_question_header">Question %1$d of %2$d</string>
 </resources>

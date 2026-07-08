@@ -135,6 +135,7 @@
     <string name="register_password_not_match">كلمتا المرور غير متطابقتين</string>
     <string name="login_google_failed">فشل تسجيل الدخول باستخدام جوجل</string>
     <string name="login_google_unsupported">تسجيل الدخول باستخدام جوجل غير مدعوم على هذه المنصة</string>
+    <string name="verify_email_continue_as_guest">المتابعة كضيف</string>
 
     <!-- Home Screen -->
     <string name="home_login_required">يرجى تسجيل الدخول للمتابعة</string>

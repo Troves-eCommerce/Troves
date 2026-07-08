@@ -1,6 +1,8 @@
 package com.troves.presintation.ui.survey
 
 import androidx.compose.animation.AnimatedContent
+import org.jetbrains.compose.resources.stringResource
+import troves.presintation.generated.resources.*
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -88,10 +90,10 @@ fun SurveyBottomSheet(
     if (errorMessage != null) {
         AlertDialog(
             onDismissRequest = { errorMessage = null },
-            title = { Text("Something went wrong") },
+            title = { Text(stringResource(Res.string.survey_error_generic)) },
             text = { Text(errorMessage!!) },
             confirmButton = {
-                TextButton(onClick = { errorMessage = null }) { Text("OK") }
+                TextButton(onClick = { errorMessage = null }) { Text(stringResource(Res.string.survey_error_ok)) }
             },
         )
     }
@@ -201,7 +203,7 @@ fun SurveyBottomSheet(
                     // Only show explicit "Next" button for multi-select steps
                     if (!isSingleSelect) {
                         PrimaryButton(
-                            caption = if (state.isLastStep) "Finish" else "Next →",
+                            caption = if (state.isLastStep) stringResource(Res.string.survey_btn_finish) else stringResource(Res.string.survey_btn_next),
                             onClick = { advance() },
                             modifier = Modifier.fillMaxWidth(),
                             isDisabled = !state.isCurrentAnswered,
@@ -209,7 +211,7 @@ fun SurveyBottomSheet(
                         )
                     } else if (state.isSubmitting) {
                         PrimaryButton(
-                            caption = "Saving…",
+                            caption = stringResource(Res.string.survey_btn_saving),
                             onClick = {},
                             modifier = Modifier.fillMaxWidth(),
                             isLoading = true,
@@ -229,3 +231,6 @@ fun SurveyScreen(
 ) {
     SurveyBottomSheet(onDismiss = onNavigateBack, viewModel = viewModel)
 }
+
+
+

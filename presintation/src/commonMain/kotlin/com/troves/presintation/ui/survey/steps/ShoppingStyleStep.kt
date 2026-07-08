@@ -1,6 +1,8 @@
 package com.troves.presintation.ui.survey.steps
 
 import androidx.compose.foundation.layout.Arrangement
+import org.jetbrains.compose.resources.stringResource
+import troves.presintation.generated.resources.*
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
@@ -25,13 +27,17 @@ fun ShoppingStyleStep(
     ) {
         question.options.forEach { option ->
             SurveyOptionCard(
-                label = option.label,
-                description = option.description,
+                label = stringResource(option.label),
+                description = stringResource(option.description),
                 icon = option.icon,
-                isSelected = option.label == selected,
-                onClick = { onIntent(SurveyIntent.SelectSingleOption(option.label)) },
+                isSelected = option.id == selected,
+                onClick = { onIntent(SurveyIntent.SelectSingleOption(option.id)) },
                 modifier = Modifier.fillMaxWidth(),
             )
         }
     }
 }
+
+
+
+

@@ -1,6 +1,8 @@
 package com.troves.presintation.ui.survey.steps
 
 import androidx.compose.foundation.layout.Arrangement
+import org.jetbrains.compose.resources.stringResource
+import troves.presintation.generated.resources.*
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import com.troves.designsystem.components.button.PrimaryButton
 import com.troves.designsystem.theme.Theme
 import org.jetbrains.compose.resources.painterResource
-import troves.designsystem.generated.resources.Res
+import troves.designsystem.generated.resources.Res as DesignRes
 import troves.designsystem.generated.resources.ic_ai_sparkles
 
 @Composable
@@ -33,7 +35,7 @@ fun ConfirmationStep(
         Spacer(Modifier.height(Theme.spacing.extraLarge))
 
         Icon(
-            painter = painterResource(Res.drawable.ic_ai_sparkles),
+            painter = painterResource(DesignRes.drawable.ic_ai_sparkles),
             contentDescription = null,
             tint = Theme.colors.primary,
             modifier = Modifier.size(80.dp),
@@ -42,7 +44,7 @@ fun ConfirmationStep(
         Spacer(Modifier.height(Theme.spacing.medium))
 
         BasicText(
-            text = "You're all set!",
+            text = stringResource(Res.string.survey_confirm_title),
             style = Theme.typography.display.copy(
                 color = Theme.colors.primaryFont,
                 fontWeight = FontWeight.Bold,
@@ -51,7 +53,7 @@ fun ConfirmationStep(
         )
 
         BasicText(
-            text = "We'll use your preferences to recommend products you'll love.",
+            text = stringResource(Res.string.survey_confirm_desc),
             style = Theme.typography.body.large.copy(
                 color = Theme.colors.secondaryFont,
                 textAlign = TextAlign.Center,
@@ -61,9 +63,13 @@ fun ConfirmationStep(
         Spacer(Modifier.height(Theme.spacing.extraLarge))
 
         PrimaryButton(
-            caption = "Continue Shopping",
+            caption = stringResource(Res.string.survey_confirm_shop),
             onClick = onContinue,
             modifier = Modifier.fillMaxWidth(),
         )
     }
 }
+
+
+
+

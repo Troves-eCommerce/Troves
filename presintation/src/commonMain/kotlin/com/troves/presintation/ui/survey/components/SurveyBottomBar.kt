@@ -1,6 +1,8 @@
 package com.troves.presintation.ui.survey.components
 
 import androidx.compose.foundation.layout.Arrangement
+import org.jetbrains.compose.resources.stringResource
+import troves.presintation.generated.resources.*
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
@@ -10,7 +12,7 @@ import com.troves.designsystem.components.button.PrimaryButton
 import com.troves.designsystem.components.button.SecondaryButton
 import com.troves.designsystem.theme.Theme
 import org.jetbrains.compose.resources.painterResource
-import troves.designsystem.generated.resources.Res
+import troves.designsystem.generated.resources.Res as DesignRes
 import troves.designsystem.generated.resources.ic_arrow_back
 
 @Composable
@@ -29,7 +31,7 @@ fun SurveyBottomBar(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         PrimaryButton(
-            caption = if (isLastStep) "Finish" else "Next",
+            caption = if (isLastStep) stringResource(Res.string.survey_btn_finish) else stringResource(Res.string.survey_btn_next),
             onClick = onNext,
             modifier = Modifier.fillMaxWidth(),
             isDisabled = !isAnswered,
@@ -37,11 +39,15 @@ fun SurveyBottomBar(
         )
         if (canGoBack) {
             SecondaryButton(
-                caption = "Back",
+                caption = stringResource(Res.string.survey_btn_back),
                 onClick = onBack,
                 modifier = Modifier.fillMaxWidth(),
-                iconPainter = painterResource(Res.drawable.ic_arrow_back),
+                iconPainter = painterResource(DesignRes.drawable.ic_arrow_back),
             )
         }
     }
 }
+
+
+
+

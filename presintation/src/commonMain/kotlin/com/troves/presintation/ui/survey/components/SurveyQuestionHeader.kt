@@ -1,12 +1,15 @@
 package com.troves.presintation.ui.survey.components
 
 import androidx.compose.foundation.layout.Arrangement
+import org.jetbrains.compose.resources.stringResource
+import troves.presintation.generated.resources.*
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import org.jetbrains.compose.resources.StringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.troves.designsystem.theme.Theme
@@ -15,8 +18,8 @@ import com.troves.designsystem.theme.Theme
 fun SurveyQuestionHeader(
     currentStep: Int,
     totalSteps: Int,
-    title: String,
-    subtitle: String?,
+    title: StringResource,
+    subtitle: StringResource?,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -24,14 +27,14 @@ fun SurveyQuestionHeader(
         verticalArrangement = Arrangement.spacedBy(Theme.spacing.extraSmall),
     ) {
         BasicText(
-            text = "Question ${currentStep + 1} of $totalSteps",
+            text = stringResource(Res.string.survey_question_header, currentStep + 1, totalSteps),
             style = Theme.typography.body.small.copy(
                 color = Theme.colors.secondaryFont,
             ),
         )
         Spacer(Modifier.height(4.dp))
         BasicText(
-            text = title,
+            text = stringResource(title),
             style = Theme.typography.displayMedium.copy(
                 color = Theme.colors.primaryFont,
                 fontWeight = FontWeight.Bold,
@@ -39,7 +42,7 @@ fun SurveyQuestionHeader(
         )
         if (subtitle != null) {
             BasicText(
-                text = subtitle,
+                text = stringResource(subtitle),
                 style = Theme.typography.body.medium.copy(
                     color = Theme.colors.secondaryFont,
                 ),
@@ -47,3 +50,7 @@ fun SurveyQuestionHeader(
         }
     }
 }
+
+
+
+

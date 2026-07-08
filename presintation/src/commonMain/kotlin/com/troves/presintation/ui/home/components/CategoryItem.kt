@@ -20,6 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.troves.designsystem.theme.SpTheme
 import com.troves.designsystem.theme.Theme
 import com.troves.designsystem.util.bounceClick
@@ -74,6 +75,7 @@ fun CategoryItem(
             style = Theme.typography.body.small.copy(
                 color = Theme.colors.primaryFont,
                 fontWeight = FontWeight.Medium,
+                fontSize = 11.sp,
             ),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
