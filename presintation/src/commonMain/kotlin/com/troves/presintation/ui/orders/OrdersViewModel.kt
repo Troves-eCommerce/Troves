@@ -29,11 +29,18 @@ class OrdersViewModel(
 
     init {
         load()
-        observeConnectivity()
+
+        val online = observeConnectivity()
             .map { it == ConnectivityStatus.Available }
             .distinctUntilChanged()
+
+        online
+            .onEach { isOnline -> updateState { copy(isOffline = !isOnline) } }
+            .launchIn(viewModelScope)
+
+        online
             .drop(1)
-            .onEach { online -> if (online) load() }
+            .onEach { isOnline -> if (isOnline) load() }
             .launchIn(viewModelScope)
     }
 
