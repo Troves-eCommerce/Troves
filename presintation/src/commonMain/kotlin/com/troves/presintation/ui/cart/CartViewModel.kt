@@ -3,23 +3,26 @@ package com.troves.presintation.ui.cart
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.troves.domain.entity.Cart
-import com.troves.domain.entity.CartMoney
 import com.troves.domain.usecase.cart.CartOperationResult
 import com.troves.domain.usecase.cart.GetCartStreamUseCase
 import com.troves.domain.usecase.cart.RefreshCartUseCase
 import com.troves.domain.usecase.cart.RemoveAllFromCartUseCase
 import com.troves.domain.usecase.cart.RemoveFromCartUseCase
+import com.troves.domain.usecase.cart.SetCartHintShownUseCase
+import com.troves.domain.usecase.cart.ShouldShowCartHintUseCase
 import com.troves.domain.usecase.cart.UpdateCartQuantityUseCase
 import com.troves.presintation.core.mvi.DefaultEffectPublisher
 import com.troves.presintation.core.mvi.DefaultStateHolder
 import com.troves.presintation.core.mvi.EffectPublisher
 import com.troves.presintation.core.mvi.StateHolder
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 class CartViewModel(
     getCartStream: GetCartStreamUseCase,
+    shouldShowCartHint: ShouldShowCartHintUseCase,
+    private val setCartHintShown: SetCartHintShownUseCase,
     private val updateCartQuantity: UpdateCartQuantityUseCase,
     private val removeFromCart: RemoveFromCartUseCase,
     private val removeAllFromCart: RemoveAllFromCartUseCase,
@@ -31,9 +34,13 @@ class CartViewModel(
     private val updatingLines = mutableSetOf<String>()
 
     init {
-        getCartStream()
-            .onEach { cart -> updateState { applyCart(cart) } }
-            .launchIn(viewModelScope)
+        combine(
+            getCartStream(),
+            shouldShowCartHint()
+        ) { cart, hintShown ->
+            updateState { applyCart(cart).copy(shouldShowCartHint = !hintShown) }
+        }.launchIn(viewModelScope)
+
         viewModelScope.launch { refreshCart() }
     }
 
@@ -47,11 +54,25 @@ class CartViewModel(
                 val item = currentState.items.find { it.lineId == intent.lineId } ?: return
                 sendEffect(CartEffect.ShowRemoveConfirmationDialog(item))
             }
+
             is CartIntent.OnRemoveItemConfirm -> removeItem(intent.lineId)
             CartIntent.OnClearCartClick -> {
                 if (currentState.items.isNotEmpty()) sendEffect(CartEffect.ShowClearCartConfirmationDialog)
             }
+
             CartIntent.OnClearCartConfirm -> clearCart()
+            is CartIntent.OnItemClick -> {
+                val item = currentState.items.find { it.lineId == intent.lineId } ?: return
+                sendEffect(CartEffect.NavigateToProductDetails(item.productId))
+            }
+
+            CartIntent.OnDismissCartHint -> dismissHint()
+        }
+    }
+
+    private fun dismissHint() {
+        viewModelScope.launch {
+            setCartHintShown(true)
         }
     }
 
@@ -118,12 +139,13 @@ class CartViewModel(
 
     private fun CartUiState.applyCart(cart: Cart?): CartUiState {
         if (cart == null) {
-            return copy(items = emptyList(), subtotalFormatted = format(null), totalFormatted = format(null), checkoutUrl = null, isLoading = false)
+            return copy(items = emptyList(), subtotal = null, total = null, checkoutUrl = null, isLoading = false)
         }
         return copy(
             items = cart.lines.map { line ->
                 CartLineUi(
                     lineId = line.lineId,
+                    productId = line.productId.toString(),
                     title = line.productTitle,
                     variantTitle = line.variantTitle,
                     imageUrl = line.imageUrl,
@@ -132,14 +154,10 @@ class CartViewModel(
                     maxQuantity = line.maxQuantity,
                 )
             },
-            subtotalFormatted = format(cart.subtotal),
-            totalFormatted = format(cart.total),
+            subtotal = cart.subtotal,
+            total = cart.total,
             checkoutUrl = cart.checkoutUrl,
             isLoading = false,
         )
     }
-}
-
-private fun format(money: CartMoney?): String {
-    return money?.amount ?: "0.00"
 }

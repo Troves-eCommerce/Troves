@@ -69,7 +69,7 @@
     <string name="cart_checkout">Checkout</string>
     <string name="cart_total">Total Price</string>
     <string name="cart_discount_code">Discount code</string>
-    <string name="cart_items_count">%s item(s)</string>
+    <string name="cart_items_count">%1$d item(s)</string>
 
     <!-- Address Management -->
     <string name="address_manage_title">Saved Addresses</string>

@@ -300,6 +300,9 @@ fun AppNav() {
                 onNavigateBack = { backStack.removeLastOrNull() },
                 onNavigateToCheckout = { backStack.add(AppRoute.Checkout) },
                 onNavigateToLogin = { backStack.add(AppRoute.Login) },
+                onNavigateToProductDetails = { productId ->
+                    backStack.add(AppRoute.ProductDetails(productId))
+                }
             )
         }
         entry<AppRoute.Checkout> {

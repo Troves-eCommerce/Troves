@@ -151,6 +151,7 @@ class TrovesRepositoryImpl(
     override val selectedLanguage: Flow<String> = dataSource.selectedLanguage
     override val themeMode: Flow<String> = dataSource.themeMode
     override val selectedCurrency: Flow<String> = dataSource.selectedCurrency
+    override val isCartHintShown: Flow<Boolean> = dataSource.isCartHintShown
 
     override suspend fun setSelectedLanguage(language: String) {
         dataSource.setSelectedLanguage(language)
@@ -165,6 +166,9 @@ class TrovesRepositoryImpl(
 
     override suspend fun setSelectedCurrency(currency: String) =
         dataSource.setSelectedCurrency(currency)
+
+    override suspend fun setCartHintShown(shown: Boolean) =
+        dataSource.setCartHintShown(shown)
 
 
     // ── Cart (Shopify = source of truth) ─────────────────────────────────────
