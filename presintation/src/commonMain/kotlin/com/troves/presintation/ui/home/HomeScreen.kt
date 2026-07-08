@@ -267,19 +267,24 @@ private fun HomeContent(
         AdSlider(
             ads = state.ads.mapIndexed { index, ad ->
                 val imageRes = adImages[index % adImages.size]
+                val resolvedButtonText = when (ad.buttonText) {
+                    "Shop now" -> stringResource(Res.string.home_preview_ad_button)
+                    "Copy code" -> stringResource(Res.string.home_copy_code_button)
+                    else -> ad.buttonText
+                }
                 AdData(
                     titleTop = ad.titleTop,
                     titleBottom = ad.titleBottom,
                     description = ad.description,
                     imagePainter = painterResource(imageRes),
-                    buttonText = ad.buttonText,
+                    buttonText = resolvedButtonText,
                 )
             },
             arrowIconPainter = chevron,
             onShopNowClick = { clicked ->
                 val ad = state.ads.firstOrNull { it.titleTop == clicked.titleTop }
                 if (ad != null) {
-                    if (ad.buttonText == copyCodeButtonText) {
+                    if (ad.buttonText == "Copy code" || ad.buttonText == copyCodeButtonText) {
                         clipboardManager.setText(AnnotatedString(ad.titleTop))
                     }
                     onIntent(HomeIntent.AdClicked(ad))
