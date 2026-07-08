@@ -9,4 +9,5 @@ interface LocationRepository {
     suspend fun getCities(countryName: String): Result<List<String>>
 
     suspend fun reverseGeocode(coordinates: LocationCoordinates): LocationAddress
+    suspend fun getCurrentLocationCoordinates(): LocationCoordinates
 }

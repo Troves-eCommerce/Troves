@@ -43,6 +43,9 @@ class LocationRepositoryImpl(
                     coordinates.lan,
                     coordinates.lon
                 )
-            ).getOrThrow().address?.toDomain()?: error("Address not found")
+            ).getOrThrow().address?.toDomain() ?: error("Address not found")
     }
+
+    override suspend fun getCurrentLocationCoordinates(): LocationCoordinates =
+        frameworkLocationDatasource.getCurrentLocationCoordinates().toDomain()
 }

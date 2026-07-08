@@ -46,6 +46,7 @@ import com.troves.domain.usecase.settings.ObserveProfilePreferencesUseCase
 import com.troves.domain.usecase.settings.SetCurrencyUseCase
 import com.troves.domain.usecase.settings.SetLanguageUseCase
 import com.troves.domain.usecase.settings.SetThemeModeUseCase
+import com.troves.domain.usecase.shared.GetCurrentLocationCoordinatesUseCase
 import com.troves.domain.usecase.shared.GetProductsUseCase
 import com.troves.domain.usecase.shared.ReverseGeocodingUseCase
 import com.troves.domain.usecase.wishlist.GetWishlistUseCase
@@ -131,6 +132,9 @@ val domainModule = module {
     factory { com.troves.domain.usecase.shared.GetCitiesUseCase(get()) }
 
     factory { ReverseGeocodingUseCase(get()) }
+    factory { GetCurrentLocationCoordinatesUseCase(get()) }
+
+
     // Settings
     factory { SetLanguageUseCase(get()) }
     factory { SetCurrencyUseCase(get()) }
