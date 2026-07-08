@@ -472,21 +472,7 @@ class CheckoutViewModel(
     override fun onFailure(msg: String?) {
         if (isPaymentHandled) return
         isPaymentHandled = true
-        val snapshot = currentState
-        val address = currentState.selectedAddress
-        resetCheckoutProgress()
-        sendEffect(
-            CheckoutEffect.NavigateToOrderResult(
-                buildResultFromState(
-                    state = snapshot,
-                    address = address,
-                    success = false,
-                    orderName = null,
-                    errorMessage = msg ?: "Payment failed. Please try again.",
-                    paymentLabel = "Card Payment",
-                )
-            )
-        )
+        sendEffect(CheckoutEffect.ShowToast("Payment Cancelled"))
     }
 
     override fun onPending() {
