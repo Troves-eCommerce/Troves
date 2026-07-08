@@ -49,7 +49,6 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import troves.designsystem.generated.resources.Res
 import troves.designsystem.generated.resources.ic_arrow_back
-import troves.designsystem.generated.resources.ic_home_selected
 import troves.designsystem.generated.resources.ic_location
 import troves.designsystem.generated.resources.ic_payment_method
 import troves.presintation.generated.resources.checkout_continue
@@ -281,7 +280,7 @@ private fun PaymentOption.toMethod(): CheckoutPaymentMethod = when (this) {
 @Composable
 private fun Address.toAddressUi(): AddressUi {
     val iconRes = when (icon) {
-        AddressIcon.HOME -> Res.drawable.ic_home_selected
+        AddressIcon.HOME -> Res.drawable.ic_location
         AddressIcon.WORK -> Res.drawable.ic_location
         AddressIcon.OTHER -> Res.drawable.ic_location
     }
