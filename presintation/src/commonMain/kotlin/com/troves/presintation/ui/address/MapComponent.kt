@@ -38,8 +38,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -101,11 +105,14 @@ fun MapSelectionScreenContent(
     onGetCurrentLocationClick: () -> Unit,
     searchQuery: String = "",
     searchSuggestions: List<MapboxSuggestionModel> = emptyList(),
-    isSearchLoading: Boolean = false,
     onSearchQueryChange: (String) -> Unit = {},
     onSearchSuggestionClick: (String) -> Unit = {}
 ) {
     var flyToTrigger by remember { mutableStateOf(0) }
+
+    LaunchedEffect(currentLocation){
+        flyToTrigger++
+    }
 
     Box(
         modifier = modifier.fillMaxSize(),
@@ -129,7 +136,7 @@ fun MapSelectionScreenContent(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().padding(top = Theme.spacing.large),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     IconButton(
@@ -145,22 +152,23 @@ fun MapSelectionScreenContent(
                             tint = Theme.colors.primaryFont
                         )
                     }
-                    
+
                     Spacer(modifier = Modifier.width(Theme.spacing.small))
 
                     CustomTextField(
                         text = searchQuery,
-                        onTextChange = onSearchQueryChange,
+                        onTextChange = {
+                            onSearchQueryChange(it)
+                        },
                         modifier = Modifier
                             .weight(1f)
-                            .shadow(4.dp, Theme.shapes.small)
-                            .background(Theme.colors.surface, Theme.shapes.small),
+                            .shadow(4.dp),
                         hint = "Search location",
                         maxLines = 1,
                         singleLine = true
                     )
                 }
-                
+
                 AnimatedVisibility(
                     visible = searchSuggestions.isNotEmpty(),
                     enter = slideInVertically { -it } + fadeIn(),
@@ -196,9 +204,10 @@ fun MapSelectionScreenContent(
                                 }
                             }
                             if (searchSuggestions.lastOrNull()?.id != suggestion.id) {
-                                androidx.compose.material3.Divider(
-                                    color = androidx.compose.ui.graphics.Color.LightGray,
-                                    thickness = 1.dp
+                                HorizontalDivider(
+                                    Modifier,
+                                    thickness = 1.dp,
+                                    color = Color.LightGray
                                 )
                             }
                         }
@@ -211,18 +220,18 @@ fun MapSelectionScreenContent(
                     exit = slideOutVertically { -it } + fadeOut(),
                     modifier = Modifier.padding(top = Theme.spacing.medium)
                 ) {
-                LocationInfoCard(
-                    locationAddress = selectedLocationAddress,
-                    isLoading = isGeocodingLoading,
-                    geocodingFailed = geocodingFailed,
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
+                    LocationInfoCard(
+                        locationAddress = selectedLocationAddress,
+                        isLoading = isGeocodingLoading,
+                        geocodingFailed = geocodingFailed,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
             }
         }
-        
+
         IconButton(
-            onClick = { 
+            onClick = {
                 flyToTrigger++
                 onGetCurrentLocationClick()
             },

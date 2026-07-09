@@ -22,7 +22,7 @@ import com.troves.presintation.core.mvi.DefaultStateHolder
 import com.troves.presintation.core.mvi.EffectPublisher
 import com.troves.presintation.core.mvi.StateHolder
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
 import troves.presintation.generated.resources.Res
@@ -34,6 +34,7 @@ import troves.presintation.generated.resources.address_save_failed
 import troves.presintation.generated.resources.address_select_location_first
 import troves.presintation.generated.resources.address_sign_in_again
 import troves.presintation.generated.resources.address_updated
+import kotlin.time.Duration.Companion.milliseconds
 
 data class NewAddressUiState(
     val label: String = "",
@@ -106,6 +107,7 @@ sealed interface NewAddressEffect {
 
     /** Address persisted on Shopify — show [message], then close. */
     data class SavedAndClose(val message: String) : NewAddressEffect
+
     /** Shopify customer token missing — route the user to re-authenticate. */
     data class RequireLogin(val message: String) : NewAddressEffect
     data class ShowToast(val message: String) : NewAddressEffect
@@ -171,6 +173,7 @@ class NewAddressViewModel(
             NewAddressIntent.GetCurrentLocation -> {
                 sendEffect(NewAddressEffect.RequestLocationPermission)
             }
+
             is NewAddressIntent.OnSearchQueryChange -> {
                 updateState { copy(searchQuery = intent.query) }
                 if (intent.query.length > 2) {
@@ -179,6 +182,7 @@ class NewAddressViewModel(
                     updateState { copy(searchSuggestions = emptyList()) }
                 }
             }
+
             is NewAddressIntent.OnSearchSuggestionClick -> {
                 retrieveLocationDetails(intent.mapboxId)
             }
@@ -211,7 +215,11 @@ class NewAddressViewModel(
                                     errorMessage = t.message
                                 )
                             }
-                            sendEffect(NewAddressEffect.ShowToast(t.message ?: "Something wrong happened!"))
+                            sendEffect(
+                                NewAddressEffect.ShowToast(
+                                    t.message ?: "Something wrong happened!"
+                                )
+                            )
                         }
                     }
                 }
@@ -294,23 +302,35 @@ class NewAddressViewModel(
     private fun fetchSuggestions(query: String) {
         searchJob?.cancel()
         searchJob = viewModelScope.launch {
-            kotlinx.coroutines.delay(300) // Debounce
+            delay(300.milliseconds)
             updateState { copy(isSearchLoading = true) }
             getMapboxSuggestionsUseCase(query).fold(
                 onSuccess = { suggestions ->
-                    updateState { copy(searchSuggestions = suggestions, isSearchLoading = false) }
+                    updateState {
+                        copy(searchSuggestions = suggestions, isSearchLoading = false)
+                    }
                 },
                 onError = {
                     updateState { copy(isSearchLoading = false) }
                 },
-                onLoading = {}
+                onLoading = {
+                    updateState {
+                        copy(isSearchLoading = true)
+                    }
+                }
             )
         }
     }
 
     private fun retrieveLocationDetails(mapboxId: String) {
         viewModelScope.launch {
-            updateState { copy(isGeocodingLoading = true, searchSuggestions = emptyList(), searchQuery = "") }
+            updateState {
+                copy(
+                    isGeocodingLoading = true,
+                    searchSuggestions = emptyList(),
+                    searchQuery = ""
+                )
+            }
             retrieveMapboxLocationUseCase(mapboxId).fold(
                 onSuccess = { details ->
                     val coords = details.coordinates
@@ -323,9 +343,10 @@ class NewAddressViewModel(
                             country = details.address?.country?.ifBlank { country } ?: country,
                             city = details.address?.city?.ifBlank { city } ?: city,
                             street = details.address?.road?.ifBlank { street } ?: street
-                        )
+                        ).also {
+                            onIntent(NewAddressIntent.OnMapClick(coords.lan, coords.lon))
+                        }
                     }
-                    onIntent(NewAddressIntent.OnMapClick(coords.lan, coords.lon))
                 },
                 onError = {
                     updateState { copy(isGeocodingLoading = false, geocodingFailed = true) }

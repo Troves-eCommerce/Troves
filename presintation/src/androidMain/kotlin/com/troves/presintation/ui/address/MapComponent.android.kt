@@ -51,6 +51,20 @@ actual fun MapBox(
         }
     }
 
+    LaunchedEffect(selectedLatitude, selectedLongitude) {
+        if (selectedLatitude != null && selectedLongitude != null) {
+            viewportState.flyTo(
+                cameraOptions = CameraOptions.Builder()
+                    .center(Point.fromLngLat(selectedLongitude, selectedLatitude))
+                    .zoom(14.0)
+                    .build(),
+                animationOptions = MapAnimationOptions.mapAnimationOptions {
+                    duration(1000)
+                }
+            )
+        }
+    }
+
     MapboxMap(
         Modifier.fillMaxSize(),
         mapViewportState = viewportState,
