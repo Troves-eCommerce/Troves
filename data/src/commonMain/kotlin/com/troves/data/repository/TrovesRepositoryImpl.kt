@@ -146,20 +146,27 @@ class TrovesRepositoryImpl(
     ): Result<List<com.troves.domain.entity.SurveyRecommendedItem>> {
         return withContext(coroutineDispatcher) {
             val request = com.troves.data.source.remote.dto.SurveyRecommendationRequestDto(
-                categories = surveyAnswers.favoriteCategories,
-                preferredPriceRange = surveyAnswers.preferredPriceRange,
-                shoppingStyle = surveyAnswers.shoppingStyle,
-                gender = surveyAnswers.gender,
+                survey = com.troves.data.source.remote.dto.SurveyAnswersDto(
+                    favoriteCategories = surveyAnswers.favoriteCategories,
+                    favoriteBrands = surveyAnswers.favoriteBrands,
+                    preferredPriceRange = surveyAnswers.preferredPriceRange,
+                    shoppingStyle = surveyAnswers.shoppingStyle,
+                    favoriteColors = surveyAnswers.favoriteColors,
+                    gender = surveyAnswers.gender,
+                    ageGroup = surveyAnswers.ageGroup,
+                    shoppingFrequency = surveyAnswers.shoppingFrequency,
+                    completed = true,
+                )
             )
             remoteDataSource.getSurveyRecommendations(request).map { response ->
                 response.products.map { dto ->
                     com.troves.domain.entity.SurveyRecommendedItem(
-                        id = dto.id,
+                        id = dto.id.split("/").lastOrNull() ?: dto.id,
                         title = dto.title,
-                        vendor = dto.vendor,
-                        imageUrl = dto.imageUrl,
-                        price = dto.price,
-                        status = dto.status,
+                        vendor = "", // API doesn't provide vendor currently
+                        imageUrl = dto.featuredImage,
+                        price = dto.price?.amount ?: "",
+                        status = if (dto.available) "active" else "archived",
                     )
                 }
             }

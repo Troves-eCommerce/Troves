@@ -11,23 +11,30 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class SurveyRecommendationRequestDto(
-    val categories: List<String> = emptyList(),
-    val preferredPriceRange: String = "",
-    val shoppingStyle: String = "",
-    val gender: String = "",
+    val cartId: String? = null,
+    val survey: com.troves.data.source.remote.dto.SurveyAnswersDto? = null,
 )
 
 @Serializable
 data class SurveyRecommendationResponseDto(
+    val reasoning: String = "",
+    val language: String = "en",
+    @SerialName("clarifying_question") val clarifyingQuestion: String? = null,
+    @SerialName("no_match") val noMatch: Boolean = false,
+    val suggested: Boolean = false,
+    val followups: List<String> = emptyList(),
     val products: List<SurveyRecommendedProductDto> = emptyList(),
+    val cartId: String? = null
 )
 
 @Serializable
 data class SurveyRecommendedProductDto(
     val id: String = "",
+    val handle: String = "",
     val title: String = "",
-    val vendor: String = "",
-    @SerialName("image_url") val imageUrl: String? = null,
-    val price: String = "",
-    val status: String = "active",
+    val description: String = "",
+    val featuredImage: String? = null,
+    val price: com.troves.data.source.remote.ai.dto.AiPriceDto? = null,
+    val available: Boolean = true,
+    val why: String = ""
 )

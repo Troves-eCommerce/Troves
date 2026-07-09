@@ -16,10 +16,18 @@ import com.troves.domain.entity.Product
 import com.troves.domain.entity.ProductSearchParams
 import com.troves.domain.utils.Result
 import dev.gitlive.firebase.firestore.FirebaseFirestore
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
+import io.ktor.client.statement.bodyAsText
+import io.ktor.http.contentType
+import io.ktor.http.path
 
 class RemoteDatasourceImpl(
     private val trovesApiService: TrovesApiService,
     private val firestore: FirebaseFirestore,
+    private val aiClient: HttpClient,
 ) : RemoteDatasource {
     override suspend fun createProduct(productDto: ProductDto): Result<ProductDto> {
         TODO("Not yet implemented")
@@ -175,17 +183,22 @@ class RemoteDatasourceImpl(
     }
 
     // ── Survey Recommendations ────────────────────────────────────────────────
-    // TODO: Replace this stub with a real Ktor call once the backend endpoint
-    //       URL is provided. The shape of SurveyRecommendationResponseDto is
-    //       already defined and ready to deserialize the real response.
     override suspend fun getSurveyRecommendations(
         request: com.troves.data.source.remote.dto.SurveyRecommendationRequestDto,
     ): Result<com.troves.data.source.remote.dto.SurveyRecommendationResponseDto> {
-        return Result.Success(
-            com.troves.data.source.remote.dto.SurveyRecommendationResponseDto(
-                products = emptyList() // Real data comes once the endpoint is wired
-            )
-        )
+        return try {
+            val response = aiClient.post {
+                url { path("survey") }
+                contentType(io.ktor.http.ContentType.Application.Json)
+                setBody(request)
+            }
+            when (response.status) {
+                io.ktor.http.HttpStatusCode.OK -> Result.Success(response.body())
+                else -> Result.Error(Throwable("${response.status}: ${response.bodyAsText()}"))
+            }
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
     }
 
     private fun aiChatsCollection(userId: String) =

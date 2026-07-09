@@ -107,7 +107,7 @@ val dataModule = module {
     single<AiDataSource> { AiDataSourceImpl(get()) }
 
     // ── Remote data source ────────────────────────────────────────────────────
-    single<RemoteDatasource> { RemoteDatasourceImpl(get(), get()) }
+    single<RemoteDatasource> { RemoteDatasourceImpl(get(), get(), get<io.ktor.client.HttpClient>(named(AI_CLIENT))) }
     single { CurrencyRemoteDataSource(get(named(LOCATION_CLIENT))) }
 
     // ── Local ─────────────────────────────────────────────────────────────────
