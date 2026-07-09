@@ -57,6 +57,7 @@ interface RemoteDatasource {
     suspend fun setUserCartId(userId: String, cartId: String)
     suspend fun clearUserCartId(userId: String)
     suspend fun saveSurveyAnswers(userId: String, answers: com.troves.data.source.remote.dto.SurveyAnswersDto): Result<Unit>
+    suspend fun getSurveyAnswers(userId: String): com.troves.data.source.remote.dto.SurveyAnswersDto?
     //endregion
 
     //region aiChats
@@ -71,4 +72,10 @@ interface RemoteDatasource {
     //endregion
 
     suspend fun getDiscountCodes(): Result<List<com.troves.domain.entity.DiscountCode>>
+
+    //region survey recommendations
+    suspend fun getSurveyRecommendations(
+        request: com.troves.data.source.remote.dto.SurveyRecommendationRequestDto,
+    ): Result<com.troves.data.source.remote.dto.SurveyRecommendationResponseDto>
+    //endregion
 }

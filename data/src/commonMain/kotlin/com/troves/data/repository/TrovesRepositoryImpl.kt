@@ -3,6 +3,7 @@ package com.troves.data.repository
 import com.troves.data.mapper.toBrand
 import com.troves.data.mapper.toCategory
 import com.troves.data.mapper.toDomain
+import com.troves.data.mapper.toDto
 import com.troves.data.source.local.preferenceses.TrovesPreferences
 import com.troves.data.source.remote.RemoteDatasource
 import com.troves.data.source.remote.dto.ReviewDto
@@ -138,6 +139,35 @@ class TrovesRepositoryImpl(
     override suspend fun getDiscountCodes(): Result<List<DiscountCode>> {
         return withContext(coroutineDispatcher) {
             remoteDataSource.getDiscountCodes()
+        }
+    }
+
+    override suspend fun getSurveyRecommendations(): Result<List<com.troves.domain.entity.SurveyRecommendedItem>> {
+        return withContext(coroutineDispatcher) {
+            // No saved survey means nothing to personalise on; the endpoint would
+            // return zero products anyway.
+            val surveyAnswers = authenticationRepository.getSurveyAnswers()
+                ?: return@withContext Result.Success(emptyList())
+
+            val request = com.troves.data.source.remote.dto.SurveyRecommendationRequestDto(
+                cartId = resolveCartId(),
+                survey = surveyAnswers.toDto(),
+            )
+            remoteDataSource.getSurveyRecommendations(request).map { response ->
+                response.products.mapNotNull { dto ->
+                    // "gid://shopify/Product/10285325648154" → "10285325648154"
+                    val id = dto.id.substringAfterLast('/').takeIf { it.isNotBlank() }
+                        ?: return@mapNotNull null
+                    com.troves.domain.entity.SurveyRecommendedItem(
+                        id = id,
+                        title = dto.title,
+                        vendor = "", // API doesn't provide vendor currently
+                        imageUrl = dto.featuredImage,
+                        price = dto.price?.amount ?: "",
+                        status = if (dto.available) "active" else "archived",
+                    )
+                }
+            }
         }
     }
 

@@ -73,6 +73,8 @@ import com.troves.presintation.ui.home.components.AdData
 import com.troves.presintation.ui.home.components.AdSlider
 import com.troves.presintation.ui.home.components.BrandItem
 import com.troves.presintation.ui.home.components.CategoryItem
+import com.troves.presintation.ui.home.components.YourTrovesSection
+
 import com.troves.presintation.ui.survey.components.SurveyBannerCard
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
@@ -337,6 +339,13 @@ private fun HomeContent(
             },
         )
     }
+
+    YourTrovesSection(
+        products = state.yourTroves,
+        isLoading = state.isLoadingYourTroves,
+        favoriteIds = state.favoriteProductIds,
+        onIntent = onIntent,
+    )
 
     if (state.categories.isNotEmpty()) {
         SectionHeader(

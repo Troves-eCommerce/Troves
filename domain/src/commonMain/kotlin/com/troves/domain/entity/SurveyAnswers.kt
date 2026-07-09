@@ -9,6 +9,8 @@ data class SurveyAnswers(
     val gender: String = "",
     val ageGroup: String = "",
     val shoppingFrequency: String = "",
-    val completed: Boolean = true,
-    val completedAt: String = ""
+    val completed: Boolean = false,
+    // Null when unknown. The AI `/survey` endpoint rejects a blank string with
+    // `validation_error: Invalid datetime`, but accepts the field being absent.
+    val completedAt: String? = null,
 )

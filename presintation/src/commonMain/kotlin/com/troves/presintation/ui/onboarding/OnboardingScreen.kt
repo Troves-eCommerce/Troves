@@ -149,7 +149,7 @@ fun OnboardingScreen(
                     Text(
                         text = stringResource(ResP.string.onboarding_skip),
                         style = Theme.typography.body.medium,
-                        color = Theme.colors.secondaryFont
+                        color = Theme.colors.primaryFont
                     )
                 }
             }

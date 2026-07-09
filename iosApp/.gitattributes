@@ -1,0 +1,4 @@
+# Vendored binary SDK: never apply text/EOL/encoding normalization to any file inside it.
+# The compiled storyboards (*.storyboardc/Info.plist) are binary property lists; a single
+# re-encoded byte makes UIStoryboard reject the whole storyboard at runtime.
+PaymobSDK*/** binary

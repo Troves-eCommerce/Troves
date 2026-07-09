@@ -2,35 +2,39 @@ package com.troves.presintation.ui.survey
 
 import com.troves.domain.entity.SurveyAnswers
 
-fun Map<Int, SurveyAnswer>.toDomainEntity(): SurveyAnswers {
-    // Assuming the structure matches SurveyViewModel.buildQuestions()
-    // 0: Category (MultiChip)
-    // 1: Brands (MultiChip)
-    // 2: Price Range (SingleChip)
-    // 3: Shopping Style (StyleCards)
-    // 4: Colors (ColorPicker)
-    // 5: Gender (SingleChip)
-    // 6: Age Group (SingleChip)
-    // 7: Shopping Frequency (SingleChip)
+/**
+ * Answers are stored keyed by step index, so they must be resolved through
+ * [questions] rather than by hardcoded positions — otherwise reordering or
+ * adding a question silently maps answers onto the wrong fields.
+ */
+fun Map<Int, SurveyAnswer>.toDomainEntity(
+    questions: List<SurveyQuestion>,
+    completedAt: String,
+): SurveyAnswers {
+    fun answerFor(key: SurveyKey): SurveyAnswer? =
+        questions.indexOfFirst { it.key == key }
+            .takeIf { it >= 0 }
+            ?.let { this[it] }
 
-    val favoriteCategories = (this[0] as? SurveyAnswer.MultiSelection)?.selected?.toList() ?: emptyList()
-    val favoriteBrands = (this[1] as? SurveyAnswer.MultiSelection)?.selected?.toList() ?: emptyList()
-    val preferredPriceRange = (this[2] as? SurveyAnswer.SingleSelection)?.selected ?: ""
-    val shoppingStyle = (this[3] as? SurveyAnswer.SingleSelection)?.selected ?: ""
-    val favoriteColors = (this[4] as? SurveyAnswer.ColorSelection)?.selected?.toList() ?: emptyList()
-    val gender = (this[5] as? SurveyAnswer.SingleSelection)?.selected ?: ""
-    val ageGroup = (this[6] as? SurveyAnswer.SingleSelection)?.selected ?: ""
-    val shoppingFrequency = (this[7] as? SurveyAnswer.SingleSelection)?.selected ?: ""
+    fun multi(key: SurveyKey): List<String> = when (val answer = answerFor(key)) {
+        is SurveyAnswer.MultiSelection -> answer.selected.toList()
+        is SurveyAnswer.ColorSelection -> answer.selected.toList()
+        else -> emptyList()
+    }
+
+    fun single(key: SurveyKey): String =
+        (answerFor(key) as? SurveyAnswer.SingleSelection)?.selected.orEmpty()
 
     return SurveyAnswers(
-        favoriteCategories = favoriteCategories,
-        favoriteBrands = favoriteBrands,
-        preferredPriceRange = preferredPriceRange,
-        shoppingStyle = shoppingStyle,
-        favoriteColors = favoriteColors,
-        gender = gender,
-        ageGroup = ageGroup,
-        shoppingFrequency = shoppingFrequency,
+        favoriteCategories = multi(SurveyKey.Categories),
+        favoriteBrands = multi(SurveyKey.Brands),
+        preferredPriceRange = single(SurveyKey.PriceRange),
+        shoppingStyle = single(SurveyKey.Style),
+        favoriteColors = multi(SurveyKey.Colors),
+        gender = single(SurveyKey.Gender),
+        ageGroup = single(SurveyKey.AgeGroup),
+        shoppingFrequency = single(SurveyKey.ShoppingFrequency),
         completed = true,
+        completedAt = completedAt,
     )
 }

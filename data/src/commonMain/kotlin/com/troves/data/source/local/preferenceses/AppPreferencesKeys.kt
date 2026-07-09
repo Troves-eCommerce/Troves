@@ -4,10 +4,14 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.stringSetPreferencesKey
 
 internal object AppPreferencesKeys {
     val IS_ONBOARDING_DONE    = booleanPreferencesKey("is_onboarding_done")
-    val IS_SURVEY_DONE         = booleanPreferencesKey("is_survey_done")
+    // Whether the survey is *done* is per-account and lives in Firestore. Only the
+    // "never show the banner again" choice is local, and it is scoped by user id —
+    // a device-wide flag leaked one account's state onto the next.
+    val SURVEY_BANNER_DISMISSED_UIDS = stringSetPreferencesKey("survey_banner_dismissed_uids")
     val IS_CART_HINT_SHOWN    = booleanPreferencesKey("is_cart_hint_shown")
     val IS_LOGGED_IN          = booleanPreferencesKey("is_logged_in")
     val SELECTED_LANGUAGE     = stringPreferencesKey("selected_language")
