@@ -69,10 +69,10 @@ class TrovesPreferencesImpl(
             .catchIOException()
             .map { it[AppPreferencesKeys.IS_ONBOARDING_DONE] ?: false }
 
-    override val isSurveyDone: Flow<Boolean>
+    override val surveyBannerDismissedUids: Flow<Set<String>>
         get() = dataStore.data
             .catchIOException()
-            .map { it[AppPreferencesKeys.IS_SURVEY_DONE] ?: false }
+            .map { it[AppPreferencesKeys.SURVEY_BANNER_DISMISSED_UIDS] ?: emptySet() }
 
     override val isCartHintShown: Flow<Boolean>
         get() = dataStore.data
@@ -131,8 +131,11 @@ class TrovesPreferencesImpl(
         dataStore.edit { it[AppPreferencesKeys.IS_ONBOARDING_DONE] = done }
     }
 
-    override suspend fun setSurveyDone(done: Boolean) {
-        dataStore.edit { it[AppPreferencesKeys.IS_SURVEY_DONE] = done }
+    override suspend fun addSurveyBannerDismissedUid(userId: String) {
+        dataStore.edit {
+            val current = it[AppPreferencesKeys.SURVEY_BANNER_DISMISSED_UIDS] ?: emptySet()
+            it[AppPreferencesKeys.SURVEY_BANNER_DISMISSED_UIDS] = current + userId
+        }
     }
 
     override suspend fun setCartHintShown(shown: Boolean) {
