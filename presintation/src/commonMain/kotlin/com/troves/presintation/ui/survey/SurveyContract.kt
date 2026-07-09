@@ -78,6 +78,7 @@ sealed interface SurveyIntent {
     data class ToggleMultiOption(val option: String) : SurveyIntent
     data class SelectSingleOption(val option: String) : SurveyIntent
     data class ToggleColor(val colorName: String) : SurveyIntent
+    data object Reset : SurveyIntent
 }
 
 sealed interface SurveyEffect {

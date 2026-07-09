@@ -29,6 +29,7 @@ class SurveyViewModel(
             is SurveyIntent.ToggleMultiOption -> toggleMulti(intent.option)
             is SurveyIntent.SelectSingleOption -> selectSingle(intent.option)
             is SurveyIntent.ToggleColor -> toggleColor(intent.colorName)
+            SurveyIntent.Reset -> updateState { copy(currentStep = 0, answers = emptyMap(), isSubmitting = false) }
         }
     }
 

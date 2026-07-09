@@ -80,6 +80,10 @@ fun SurveyBottomSheet(
     val scope = rememberCoroutineScope()
     var errorMessage by remember { mutableStateOf<String?>(null) }
 
+    LaunchedEffect(Unit) {
+        viewModel.onIntent(SurveyIntent.Reset)
+    }
+
     // After auto-advance on single-select, we auto-submit when we reach past last step
     fun advance() = viewModel.onIntent(SurveyIntent.NextStep)
 
