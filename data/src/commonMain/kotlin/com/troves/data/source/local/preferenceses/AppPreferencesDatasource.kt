@@ -4,7 +4,8 @@ import kotlinx.coroutines.flow.Flow
 
 interface TrovesPreferences {
     val isOnboardingDone: Flow<Boolean>
-    val isSurveyDone: Flow<Boolean>
+    /** User ids that chose "never show the survey banner again" on this device. */
+    val surveyBannerDismissedUids: Flow<Set<String>>
     val isCartHintShown: Flow<Boolean>
     val isLoggedIn: Flow<Boolean>
     val selectedLanguage: Flow<String>
@@ -33,7 +34,7 @@ interface TrovesPreferences {
 
 
     suspend fun setOnboardingDone(done: Boolean)
-    suspend fun setSurveyDone(done: Boolean)
+    suspend fun addSurveyBannerDismissedUid(userId: String)
     suspend fun setCartHintShown(shown: Boolean)
     suspend fun setLoggedIn(loggedIn: Boolean)
     suspend fun setSelectedLanguage(language: String)

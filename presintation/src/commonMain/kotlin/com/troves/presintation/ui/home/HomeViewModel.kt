@@ -3,11 +3,13 @@ package com.troves.presintation.ui.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.troves.domain.entity.Product
+import com.troves.domain.entity.SurveyRecommendedItem
 import com.troves.domain.usecase.auth.IsLoggedInUseCase
 import com.troves.domain.usecase.home.GetAdsUseCase
 import com.troves.domain.usecase.home.GetBrandsUseCase
 import com.troves.domain.usecase.home.GetCategoriesUseCase
 import com.troves.domain.usecase.home.GetJustForYouProductsUseCase
+import com.troves.domain.usecase.home.GetSurveyRecommendationsUseCase
 import com.troves.domain.usecase.home.GetTrendingProductsUseCase
 import com.troves.domain.usecase.shared.ObserveConnectivityUseCase
 import com.troves.domain.usecase.wishlist.GetWishlistUseCase
@@ -26,6 +28,7 @@ import com.troves.presintation.core.mvi.DefaultStateHolder
 import com.troves.presintation.core.mvi.EffectPublisher
 import com.troves.presintation.core.mvi.StateHolder
 import com.troves.presintation.ui.home.HomeEffect.*
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
@@ -36,6 +39,7 @@ import troves.presintation.generated.resources.favorites_update_failed
 import troves.presintation.generated.resources.home_copied_to_clipboard
 import troves.presintation.generated.resources.home_source_just_for_you
 import troves.presintation.generated.resources.home_source_trending_now
+import troves.presintation.generated.resources.home_source_your_troves
 
 
 class HomeViewModel(
@@ -48,10 +52,11 @@ class HomeViewModel(
     private val getWishlist: GetWishlistUseCase,
     private val toggleFavoriteUseCase: ToggleFavoriteUseCase,
     private val observeSurveyDone: com.troves.domain.usecase.survey.ObserveSurveyDoneUseCase,
-    private val completeSurvey: com.troves.domain.usecase.survey.CompleteSurveyUseCase,
+    private val dismissSurveyBanner: com.troves.domain.usecase.survey.DismissSurveyBannerUseCase,
     private val getCartStream: com.troves.domain.usecase.cart.GetCartStreamUseCase,
     private val refreshCart: com.troves.domain.usecase.cart.RefreshCartUseCase,
     private val observeConnectivity: ObserveConnectivityUseCase,
+    private val getSurveyRecommendations: GetSurveyRecommendationsUseCase,
 ) : ViewModel(),
     StateHolder<HomeUiState> by DefaultStateHolder(HomeUiState()),
     EffectPublisher<HomeEffect> by DefaultEffectPublisher() {
@@ -120,6 +125,15 @@ class HomeViewModel(
                         sourceType = "collection",
                         sourceId = "trending",
                         sourceName = getString(Res.string.home_source_trending_now),
+                    ),
+                )
+            }
+            HomeIntent.ViewAllYourTrovesClicked -> viewModelScope.launch {
+                sendEffect(
+                    NavigateToProducts(
+                        sourceType = "collection",
+                        sourceId = "your-troves",
+                        sourceName = getString(Res.string.home_source_your_troves),
                     ),
                 )
             }
@@ -222,18 +236,61 @@ class HomeViewModel(
         }
     }
 
+    private var yourTrovesJob: Job? = null
+
     private fun loadSurveyStatus() {
-        viewModelScope.launch {
-            observeSurveyDone().collect { done ->
+        // Not deduped here: the source only emits on account switch, banner dismissal,
+        // or a fresh survey save — each of which should re-resolve the section.
+        observeSurveyDone()
+            .onEach { done ->
                 updateState { copy(isSurveyDone = done) }
+                if (done) {
+                    loadSurveyRecommendations()
+                } else {
+                    // Signed out, or a different account signed in: drop the previous
+                    // user's recommendations instead of leaving them on screen.
+                    yourTrovesJob?.cancel()
+                    updateState { copy(yourTroves = emptyList(), isLoadingYourTroves = false) }
+                }
+            }
+            .launchIn(viewModelScope)
+    }
+
+    private fun loadSurveyRecommendations() {
+        yourTrovesJob?.cancel()
+        yourTrovesJob = viewModelScope.launch {
+            updateState { copy(isLoadingYourTroves = true) }
+            val products = getSurveyRecommendations()
+                .getOrElse(emptyList())
+                .mapNotNull { it.toProduct() }
+
+            updateState {
+                copy(
+                    yourTroves = products,
+                    isLoadingYourTroves = false,
+                )
             }
         }
+    }
+
+    /** Drops recommendations whose Shopify id isn't numeric — [Product.id] is a Long, and
+     *  collapsing them all to 0L would duplicate keys in the LazyRow. */
+    private fun SurveyRecommendedItem.toProduct(): Product? {
+        val numericId = id.toLongOrNull() ?: return null
+        return Product(
+            id = numericId,
+            title = title,
+            vendor = vendor,
+            price = price,
+            imageUrl = imageUrl ?: "",
+            status = status,
+        )
     }
 
     private fun dismissSurveyPermanently() {
         viewModelScope.launch {
             updateState { copy(isSurveyDone = true) }
-            completeSurvey(com.troves.domain.entity.SurveyAnswers())
+            dismissSurveyBanner()
         }
     }
 

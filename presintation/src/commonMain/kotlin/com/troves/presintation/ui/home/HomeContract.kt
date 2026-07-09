@@ -21,6 +21,8 @@ data class HomeUiState(
     val isLoggedIn: Boolean = false,
     val cartItemCount: Int = 0,
     val isOffline: Boolean = false,
+    val yourTroves: List<Product> = emptyList(),
+    val isLoadingYourTroves: Boolean = false,
 ) {
     val hasError: Boolean get() = errorMessage != null
 
@@ -57,6 +59,7 @@ sealed interface HomeIntent {
     data object ViewAllCategoriesClicked : HomeIntent
     data object ViewAllJustForYouClicked : HomeIntent
     data object ViewAllTrendingClicked : HomeIntent
+    data object ViewAllYourTrovesClicked : HomeIntent
     data object SearchClicked : HomeIntent
     data object CartClicked : HomeIntent
     data object AiClicked : HomeIntent

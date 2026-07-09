@@ -173,7 +173,7 @@
     <!-- Search Section -->
     <string name="recent_searches">Recent Searches</string>
     <string name="search_discovery_title">Find your next favourite</string>
-    <string name="search_discovery_desc">Search for products, brands or categories\nand discover amazing deals.</string>
+    <string name="search_discovery_desc">Search for products, brands or categoriesn and discover amazing deals.</string>
     <string name="search_hint_title">What are you looking for?</string>
     <string name="search_hint_desc">Pick up where you left off</string>
     <string name="empty_search_title">No products</string>
@@ -243,7 +243,7 @@
     <string name="survey_btn_saving">Saving…</string>
     <string name="survey_btn_back">Back</string>
     <string name="survey_confirm_title">You're all set!</string>
-    <string name="survey_confirm_desc">We'll use your preferences to recommend products you\'ll love.</string>
+    <string name="survey_confirm_desc">We'll use your preferences to recommend products you'll love.</string>
     <string name="survey_confirm_shop">Continue Shopping</string>
     <string name="survey_question_header">Question %1$d of %2$d</string>
     <string name="order_details_qty">Qty: %1$d</string>
@@ -317,6 +317,7 @@
     <!-- Home / See All / Categories -->
     <string name="home_source_just_for_you">Just For You</string>
     <string name="home_source_trending_now">Trending Now</string>
+    <string name="home_source_your_troves">Your Troves</string>
     <string name="home_copied_to_clipboard">Copied %1$s to clipboard</string>
     <string name="all_categories_title">All Categories</string>
 
@@ -409,18 +410,18 @@
     <string name="survey_banner_start">Start Survey</string>
     <string name="survey_banner_dismiss">Don't show again</string>
     <string name="survey_confirmation_title">You're all set!</string>
-    <string name="survey_confirmation_body">We'll use your preferences to recommend products you\'ll love.</string>
+    <string name="survey_confirmation_body">We'll use your preferences to recommend products you'll love.</string>
     <string name="survey_confirmation_continue">Continue Shopping</string>
 
     <!-- Onboarding -->
-    <string name="onboarding_page1_title">Discover\nCurated Styles</string>
+    <string name="onboarding_page1_title">Discover nCurated Styles</string>
     <string name="onboarding_page1_desc">Explore thousands of trendy fashion pieces handpicked just for you.</string>
-    <string name="onboarding_page2_title">Find What\nFits You</string>
+    <string name="onboarding_page2_title">Find What nFits You</string>
     <string name="onboarding_page2_desc">Find looks that match your style, mood, and everyday moments.</string>
-    <string name="onboarding_page3_title">Shop. Love.\nRepeat.</string>
+    <string name="onboarding_page3_title">Shop. Love. nRepeat.</string>
     <string name="onboarding_page3_desc">Shop your favorites, save what you love, and stay ahead of trends.</string>
     <string name="onboarding_skip">Skip</string>
-    <string name="onboarding_get_started">Let\'s get started</string>
+    <string name="onboarding_get_started">Let 's get started</string>
     <string name="onboarding_next">Next</string>
 
     <!-- AI chat (additional) -->

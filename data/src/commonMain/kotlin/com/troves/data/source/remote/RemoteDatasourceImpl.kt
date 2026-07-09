@@ -16,10 +16,18 @@ import com.troves.domain.entity.Product
 import com.troves.domain.entity.ProductSearchParams
 import com.troves.domain.utils.Result
 import dev.gitlive.firebase.firestore.FirebaseFirestore
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
+import io.ktor.client.statement.bodyAsText
+import io.ktor.http.contentType
+import io.ktor.http.path
 
 class RemoteDatasourceImpl(
     private val trovesApiService: TrovesApiService,
     private val firestore: FirebaseFirestore,
+    private val aiClient: HttpClient,
 ) : RemoteDatasource {
     override suspend fun createProduct(productDto: ProductDto): Result<ProductDto> {
         TODO("Not yet implemented")
@@ -174,6 +182,38 @@ class RemoteDatasourceImpl(
         }
     }
 
+    override suspend fun getSurveyAnswers(userId: String): com.troves.data.source.remote.dto.SurveyAnswersDto? {
+        return try {
+            val snapshot = userDoc(userId).get()
+            if (snapshot.exists) {
+                snapshot.get<com.troves.data.source.remote.dto.SurveyAnswersDto?>("survey")
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    // ── Survey Recommendations ────────────────────────────────────────────────
+    override suspend fun getSurveyRecommendations(
+        request: com.troves.data.source.remote.dto.SurveyRecommendationRequestDto,
+    ): Result<com.troves.data.source.remote.dto.SurveyRecommendationResponseDto> {
+        return try {
+            val response = aiClient.post {
+                url { path("survey") }
+                contentType(io.ktor.http.ContentType.Application.Json)
+                setBody(request)
+            }
+            when (response.status) {
+                io.ktor.http.HttpStatusCode.OK -> Result.Success(response.body())
+                else -> Result.Error(Throwable("${response.status}: ${response.bodyAsText()}"))
+            }
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
+
     private fun aiChatsCollection(userId: String) =
         firestore.collection("users").document(userId).collection("aiChats")
 
@@ -208,8 +248,12 @@ class RemoteDatasourceImpl(
         }
     }
 
+    /** Firestore document ids cannot contain '/', so strip the Shopify GID prefix. */
+    private fun productDocumentId(productId: String): String =
+        productId.trimEnd('/').substringAfterLast('/').ifBlank { productId.replace("/", "_") }
+
     private fun reviewsCollection(productId: String) =
-        firestore.collection("products").document(productId).collection("reviews")
+        firestore.collection("products").document(productDocumentId(productId)).collection("reviews")
 
     override suspend fun getProductReviews(productId: String): Result<List<com.troves.data.source.remote.dto.ReviewDto>> {
         return try {

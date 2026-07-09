@@ -19,6 +19,6 @@ data class SurveyAnswersDto(
     val gender: String = "",
     val ageGroup: String = "",
     val shoppingFrequency: String = "",
-    val completed: Boolean = true,
-    val completedAt: String = ""
+    val completed: Boolean = false,
+    val completedAt: String? = null,
 )
