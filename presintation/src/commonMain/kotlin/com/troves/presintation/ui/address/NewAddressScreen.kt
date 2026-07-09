@@ -150,7 +150,12 @@ fun NewAddressScreen(
             onMapClick = { lat, lng -> viewModel.onIntent(NewAddressIntent.OnMapClick(lat, lng)) },
             onAddNewAddressClick = { viewModel.onIntent(NewAddressIntent.OnNewMapAddressSelected) },
             currentLocation = state.currentLocation,
-            onGetCurrentLocationClick = { viewModel.onIntent(NewAddressIntent.GetCurrentLocation) }
+            onGetCurrentLocationClick = { viewModel.onIntent(NewAddressIntent.GetCurrentLocation) },
+            searchQuery = state.searchQuery,
+            searchSuggestions = state.searchSuggestions,
+            isSearchLoading = state.isSearchLoading,
+            onSearchQueryChange = { viewModel.onIntent(NewAddressIntent.OnSearchQueryChange(it)) },
+            onSearchSuggestionClick = { viewModel.onIntent(NewAddressIntent.OnSearchSuggestionClick(it)) }
         )
     } else {
         NewAddressScreenContent(
