@@ -1,6 +1,7 @@
 package com.troves.data.di
 
 import com.apollographql.apollo.ApolloClient
+import com.troves.data.config.MapboxConfig
 import com.troves.data.source.local.database.DatabaseFactory
 import com.troves.data.source.local.database.TrovesDatabase
 import com.troves.data.network.provideApolloClient
@@ -19,6 +20,7 @@ import com.troves.data.network.providePaymobClient
 import com.troves.data.repository.AddressRepositoryImpl
 import com.troves.data.repository.CurrencyRepositoryImpl
 import com.troves.data.repository.LocationRepositoryImpl
+import com.troves.data.repository.MapboxSearchRepositoryImpl
 import com.troves.data.repository.PaymentRepositoryImpl
 import com.troves.data.repository.TrovesRepositoryImpl
 import com.troves.data.repository.WishlistRepositoryImpl
@@ -38,6 +40,8 @@ import com.troves.data.source.remote.location.LocationApiService
 import com.troves.data.source.remote.location.LocationApiServiceImpl
 import com.troves.data.source.remote.location.LocationDataSource
 import com.troves.data.source.remote.location.LocationDataSourceImpl
+import com.troves.data.source.remote.location.MapboxSearchApiService
+import com.troves.data.source.remote.location.MapboxSearchApiServiceImpl
 import com.troves.data.source.remote.service.TrovesApiService
 import com.troves.data.source.remote.service.StorefrontApiService
 import com.troves.data.source.remote.service.admin.ShopifyAdminCustomerService
@@ -50,6 +54,7 @@ import com.troves.domain.repository.AddressRepository
 import com.troves.domain.repository.AuthenticationRepository
 import com.troves.domain.repository.CurrencyRepository
 import com.troves.domain.repository.LocationRepository
+import com.troves.domain.repository.MapboxSearchRepository
 import com.troves.domain.repository.PaymentRepository
 import com.troves.domain.repository.TrovesRepository
 import com.troves.domain.repository.WishlistRepository
@@ -139,11 +144,13 @@ val dataModule = module {
     single<FrameworkLocationService> { provideLocationService() }
     single<FrameworkLocationDatasource> { FrameworkLocationDatasourceImpl(get(),get(named(LOCATION_IQ))) }
 
-
-
-
-
-
+    // Mapbox Search
+    single<MapboxSearchApiService> {
+        MapboxSearchApiServiceImpl(get(named(LOCATION_CLIENT)), MapboxConfig.ACCESS_TOKEN)
+    }
+    single<MapboxSearchRepository> {
+        MapboxSearchRepositoryImpl(get())
+    }
 
 }
 

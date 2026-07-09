@@ -178,6 +178,10 @@ buildkonfig {
             localProperties.getProperty("SHOPIFY_REST_URL") ?: ""
         )
         buildConfigField(
+            STRING, "MAPBOX_ACCESS_TOKEN",
+            localProperties.getProperty("MAPBOX_ACCESS_TOKEN") ?: error("Can not find the MAPBOX_ACCESS_TOKEN")
+        )
+        buildConfigField(
             STRING, "SHOPIFY_CUSTOMER_PASSWORD_SECRET",
             localProperties.getProperty("SHOPIFY_CUSTOMER_PASSWORD_SECRET") ?: "troves-shopify-oauth-salt-v1"
         )
