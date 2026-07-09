@@ -28,6 +28,7 @@ import org.koin.compose.koinInject
 
 @Composable
 fun App() {
+    InitializeCoil()
     val mainViewModel: MainViewModel = koinViewModel()
     val appState by mainViewModel.uiState.collectAsState()
     val banner by mainViewModel.banner.collectAsState()

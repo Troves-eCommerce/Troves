@@ -94,6 +94,9 @@ kotlin {
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.navigation3)
 
+            implementation(libs.coil.gif)
+
+
             implementation(libs.androidx.datastore)
             // The Preferences DataStore library
             implementation(libs.androidx.datastore.preferences)
