@@ -174,6 +174,20 @@ class RemoteDatasourceImpl(
         }
     }
 
+    // ── Survey Recommendations ────────────────────────────────────────────────
+    // TODO: Replace this stub with a real Ktor call once the backend endpoint
+    //       URL is provided. The shape of SurveyRecommendationResponseDto is
+    //       already defined and ready to deserialize the real response.
+    override suspend fun getSurveyRecommendations(
+        request: com.troves.data.source.remote.dto.SurveyRecommendationRequestDto,
+    ): Result<com.troves.data.source.remote.dto.SurveyRecommendationResponseDto> {
+        return Result.Success(
+            com.troves.data.source.remote.dto.SurveyRecommendationResponseDto(
+                products = emptyList() // Real data comes once the endpoint is wired
+            )
+        )
+    }
+
     private fun aiChatsCollection(userId: String) =
         firestore.collection("users").document(userId).collection("aiChats")
 

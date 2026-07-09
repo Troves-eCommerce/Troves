@@ -149,6 +149,8 @@
     <string name="home_top_brands">Top Brands</string>
     <string name="home_trending_now">Trending Now</string>
     <string name="home_copy_code_button">Copy code</string>
+    <string name="home_your_troves">Your Troves</string>
+    <string name="home_your_troves_subtitle">Picked by AI just for you ✦</string>
 
     <!-- See All screen headers -->
     <string name="seeall_categories_title">Categories</string>

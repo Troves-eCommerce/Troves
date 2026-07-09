@@ -317,6 +317,7 @@
     <!-- Home / See All / Categories -->
     <string name="home_source_just_for_you">Just For You</string>
     <string name="home_source_trending_now">Trending Now</string>
+    <string name="home_source_your_troves">Your Troves</string>
     <string name="home_copied_to_clipboard">Copied %1$s to clipboard</string>
     <string name="all_categories_title">All Categories</string>
 

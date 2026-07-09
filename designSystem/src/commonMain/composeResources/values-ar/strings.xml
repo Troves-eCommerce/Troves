@@ -144,6 +144,8 @@
     <string name="home_top_brands">أفضل العلامات التجارية</string>
     <string name="home_trending_now">الأكثر رواجاً</string>
     <string name="home_copy_code_button">نسخ الكود</string>
+    <string name="home_your_troves">تروفز الخاصة بك</string>
+    <string name="home_your_troves_subtitle">اختيارات الذكاء الاصطناعي لك ✦</string>
 
     <!-- See All screen headers -->
     <string name="seeall_categories_title">الفئات</string>

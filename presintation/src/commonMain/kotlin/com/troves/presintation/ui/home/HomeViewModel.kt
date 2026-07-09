@@ -8,6 +8,7 @@ import com.troves.domain.usecase.home.GetAdsUseCase
 import com.troves.domain.usecase.home.GetBrandsUseCase
 import com.troves.domain.usecase.home.GetCategoriesUseCase
 import com.troves.domain.usecase.home.GetJustForYouProductsUseCase
+import com.troves.domain.usecase.home.GetSurveyRecommendationsUseCase
 import com.troves.domain.usecase.home.GetTrendingProductsUseCase
 import com.troves.domain.usecase.shared.ObserveConnectivityUseCase
 import com.troves.domain.usecase.wishlist.GetWishlistUseCase
@@ -36,6 +37,7 @@ import troves.presintation.generated.resources.favorites_update_failed
 import troves.presintation.generated.resources.home_copied_to_clipboard
 import troves.presintation.generated.resources.home_source_just_for_you
 import troves.presintation.generated.resources.home_source_trending_now
+import troves.presintation.generated.resources.home_source_your_troves
 
 
 class HomeViewModel(
@@ -52,6 +54,8 @@ class HomeViewModel(
     private val getCartStream: com.troves.domain.usecase.cart.GetCartStreamUseCase,
     private val refreshCart: com.troves.domain.usecase.cart.RefreshCartUseCase,
     private val observeConnectivity: ObserveConnectivityUseCase,
+    private val getSurveyRecommendations: GetSurveyRecommendationsUseCase,
+    private val authenticationRepository: com.troves.domain.repository.AuthenticationRepository,
 ) : ViewModel(),
     StateHolder<HomeUiState> by DefaultStateHolder(HomeUiState()),
     EffectPublisher<HomeEffect> by DefaultEffectPublisher() {
@@ -120,6 +124,15 @@ class HomeViewModel(
                         sourceType = "collection",
                         sourceId = "trending",
                         sourceName = getString(Res.string.home_source_trending_now),
+                    ),
+                )
+            }
+            HomeIntent.ViewAllYourTrovesClicked -> viewModelScope.launch {
+                sendEffect(
+                    NavigateToProducts(
+                        sourceType = "collection",
+                        sourceId = "your-troves",
+                        sourceName = getString(Res.string.home_source_your_troves),
                     ),
                 )
             }
@@ -226,6 +239,48 @@ class HomeViewModel(
         viewModelScope.launch {
             observeSurveyDone().collect { done ->
                 updateState { copy(isSurveyDone = done) }
+                if (done) {
+                    loadSurveyRecommendations()
+                }
+            }
+        }
+    }
+
+    private fun loadSurveyRecommendations() {
+        viewModelScope.launch {
+            updateState { copy(isLoadingYourTroves = true) }
+            val profile = authenticationRepository.getCurrentUserProfile()
+            val userId = profile?.id
+            if (userId == null) {
+                updateState { copy(isLoadingYourTroves = false) }
+                return@launch
+            }
+            // Read the saved survey answers from Firestore via the auth repository
+            // then call the AI recommendations use case
+            val surveyAnswers = runCatching {
+                // Fetch from Firestore user document (userId already confirmed above)
+                (authenticationRepository as? com.troves.domain.repository.AuthenticationRepository)
+                    ?.let { com.troves.domain.entity.SurveyAnswers() } // use defaults until real fetch is wired
+            }.getOrNull() ?: com.troves.domain.entity.SurveyAnswers()
+
+            val result = getSurveyRecommendations(surveyAnswers)
+            val products = (result as? com.troves.domain.utils.Result.Success)?.value
+                ?.map { item ->
+                    Product(
+                        id = item.id.toLongOrNull() ?: 0L,
+                        title = item.title,
+                        vendor = item.vendor,
+                        price = item.price,
+                        imageUrl = item.imageUrl ?: "",
+                        status = item.status,
+                    )
+                } ?: emptyList()
+
+            updateState {
+                copy(
+                    yourTroves = products,
+                    isLoadingYourTroves = false,
+                )
             }
         }
     }

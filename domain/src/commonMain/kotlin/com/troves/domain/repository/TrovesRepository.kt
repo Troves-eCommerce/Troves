@@ -11,6 +11,8 @@ import com.troves.domain.entity.OrderSummary
 import com.troves.domain.entity.Product
 import com.troves.domain.entity.ProductSearchParams
 import com.troves.domain.entity.Review
+import com.troves.domain.entity.SurveyAnswers
+import com.troves.domain.entity.SurveyRecommendedItem
 import com.troves.domain.utils.Result
 import kotlinx.coroutines.flow.Flow
 
@@ -26,6 +28,7 @@ interface TrovesRepository {
     suspend fun getCategories(): Result<List<Category>>
     suspend fun getAds(): Result<List<Ad>>
     suspend fun getDiscountCodes(): Result<List<DiscountCode>>
+    suspend fun getSurveyRecommendations(surveyAnswers: SurveyAnswers): Result<List<SurveyRecommendedItem>>
 
     // ── Settings ────────────────────────────────────────────────────────────
     val selectedLanguage: Flow<String>

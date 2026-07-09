@@ -71,4 +71,10 @@ interface RemoteDatasource {
     //endregion
 
     suspend fun getDiscountCodes(): Result<List<com.troves.domain.entity.DiscountCode>>
+
+    //region survey recommendations
+    suspend fun getSurveyRecommendations(
+        request: com.troves.data.source.remote.dto.SurveyRecommendationRequestDto,
+    ): Result<com.troves.data.source.remote.dto.SurveyRecommendationResponseDto>
+    //endregion
 }

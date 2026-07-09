@@ -141,6 +141,31 @@ class TrovesRepositoryImpl(
         }
     }
 
+    override suspend fun getSurveyRecommendations(
+        surveyAnswers: com.troves.domain.entity.SurveyAnswers,
+    ): Result<List<com.troves.domain.entity.SurveyRecommendedItem>> {
+        return withContext(coroutineDispatcher) {
+            val request = com.troves.data.source.remote.dto.SurveyRecommendationRequestDto(
+                categories = surveyAnswers.favoriteCategories,
+                preferredPriceRange = surveyAnswers.preferredPriceRange,
+                shoppingStyle = surveyAnswers.shoppingStyle,
+                gender = surveyAnswers.gender,
+            )
+            remoteDataSource.getSurveyRecommendations(request).map { response ->
+                response.products.map { dto ->
+                    com.troves.domain.entity.SurveyRecommendedItem(
+                        id = dto.id,
+                        title = dto.title,
+                        vendor = dto.vendor,
+                        imageUrl = dto.imageUrl,
+                        price = dto.price,
+                        status = dto.status,
+                    )
+                }
+            }
+        }
+    }
+
     // ── Settings ────────────────────────────────────────────────────────────
 
     override suspend fun getAds(): Result<List<Ad>> = Result.Success(localAdsDataSource.getAds())
