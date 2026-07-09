@@ -1,5 +1,7 @@
 package com.troves.domain.di
 
+import com.troves.domain.usecase.address.GetMapboxSuggestionsUseCase
+import com.troves.domain.usecase.address.RetrieveMapboxLocationUseCase
 import com.troves.domain.usecase.ai.DeleteAiConversationUseCase
 import com.troves.domain.usecase.ai.GetAiConversationsUseCase
 import com.troves.domain.usecase.ai.SaveAiConversationUseCase
@@ -161,4 +163,8 @@ val domainModule = module {
     factory { com.troves.domain.usecase.review.GetProductReviewsUseCase(get(), get()) }
     factory { com.troves.domain.usecase.review.SubmitReviewUseCase(get(), get(), get()) }
     factory { com.troves.domain.usecase.review.GetReviewerIdentityUseCase(get(), get()) }
+
+    // Mapbox Search
+    factory { GetMapboxSuggestionsUseCase(get()) }
+    factory { RetrieveMapboxLocationUseCase(get()) }
 }
