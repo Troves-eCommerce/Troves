@@ -130,19 +130,19 @@ internal fun spTypographyOf(fontFamily: FontFamily): SPTextStyle = SPTextStyle(
             fontFamily = fontFamily,
             fontSize = 16.sp,
             fontWeight = FontWeight.Normal,
-            lineHeight = 14.sp
+            lineHeight = 24.sp
         ),
         medium = TextStyle(
             fontFamily = fontFamily,
             fontSize = 14.sp,
             fontWeight = FontWeight.Normal,
-            lineHeight = 12.sp
+            lineHeight = 22.sp
         ),
         small = TextStyle(
             fontFamily = fontFamily,
             fontSize = 12.sp,
             fontWeight = FontWeight.Normal,
-            lineHeight = 12.sp
+            lineHeight = 18.sp
         )
     ),
     hint = SizedTextStyle(

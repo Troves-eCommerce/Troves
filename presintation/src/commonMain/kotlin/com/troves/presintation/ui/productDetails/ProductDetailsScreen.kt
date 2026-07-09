@@ -437,7 +437,6 @@ fun ProductDetailsScreenContent(
                             text = uiState.description.stripHtml(),
                             style = Theme.typography.body.medium,
                             color = Theme.colors.secondaryFont,
-                            lineHeight = 22.sp,
                             maxLines = if (isDescriptionExpanded) Int.MAX_VALUE else 3,
                             overflow = TextOverflow.Ellipsis,
                             modifier = Modifier.padding(vertical = 4.dp)
