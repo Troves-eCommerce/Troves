@@ -9,8 +9,6 @@
 /* Begin PBXBuildFile section */
 		8F15B5EB2FF442DE003370E3 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 8F15B5EA2FF442DE003370E3 /* GoogleSignIn */; };
 		8FC6B81F2FF6B3BA00F0FB86 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 8FC6B81E2FF6B3BA00F0FB86 /* FirebaseFirestore */; };
-		8FD333122FFA726B00E404F4 /* PaymobSDK.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD333112FFA726B00E404F4 /* PaymobSDK.xcframework */; };
-		8FD333132FFA726B00E404F4 /* PaymobSDK.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD333112FFA726B00E404F4 /* PaymobSDK.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A1B2C3D4E5F600000000FB04 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = A1B2C3D4E5F600000000FB02 /* FirebaseCore */; };
 		A1B2C3D4E5F600000000FB05 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = A1B2C3D4E5F600000000FB03 /* FirebaseAuth */; };
 /* End PBXBuildFile section */
@@ -22,7 +20,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				8FD333132FFA726B00E404F4 /* PaymobSDK.xcframework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -31,7 +28,6 @@
 
 /* Begin PBXFileReference section */
 		39C6066C41D1F01C81012DF5 /* Troves.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Troves.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		8FD333112FFA726B00E404F4 /* PaymobSDK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = PaymobSDK.xcframework; path = "PaymobSDK 1.0.23/PaymobSDK.xcframework"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -69,7 +65,6 @@
 				8FC6B81F2FF6B3BA00F0FB86 /* FirebaseFirestore in Frameworks */,
 				A1B2C3D4E5F600000000FB05 /* FirebaseAuth in Frameworks */,
 				8F15B5EB2FF442DE003370E3 /* GoogleSignIn in Frameworks */,
-				8FD333122FFA726B00E404F4 /* PaymobSDK.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -89,17 +84,8 @@
 			children = (
 				EE1631766CF9A2D700FA7A11 /* Configuration */,
 				82503C5625A7276763DCC40D /* iosApp */,
-				8F15B5E92FF442DE003370E3 /* Frameworks */,
 				17F62922834373791CF4E3A6 /* Products */,
 			);
-			sourceTree = "<group>";
-		};
-		8F15B5E92FF442DE003370E3 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				8FD333112FFA726B00E404F4 /* PaymobSDK.xcframework */,
-			);
-			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -227,11 +213,13 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = iosApp/Info.plist;
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Troves needs access to your location to help you find and select your address easily on the map.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Troves uses the microphone so you can talk to the AI shopping assistant.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Troves uses speech recognition to turn your voice into shopping requests for the AI assistant.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = NO;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -314,11 +302,13 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = iosApp/Info.plist;
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Troves needs access to your location to help you find and select your address easily on the map.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Troves uses the microphone so you can talk to the AI shopping assistant.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Troves uses speech recognition to turn your voice into shopping requests for the AI assistant.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = NO;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
