@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -28,19 +30,29 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.troves.designsystem.components.button.PrimaryButton
+import com.troves.designsystem.components.textfield.CustomTextField
 import com.troves.designsystem.theme.Theme
 import com.troves.domain.entity.LocationAddress
 import com.troves.domain.entity.LocationCoordinates
+import com.troves.domain.repository.MapboxSuggestionModel
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import troves.designsystem.generated.resources.Res
@@ -90,9 +102,17 @@ fun MapSelectionScreenContent(
     currentLocation: LocationCoordinates,
     onAddNewAddressClick: () -> Unit,
     onMapClick: (latitude: Double, longitude: Double) -> Unit,
-    onGetCurrentLocationClick: () -> Unit
+    onGetCurrentLocationClick: () -> Unit,
+    searchQuery: String = "",
+    searchSuggestions: List<MapboxSuggestionModel> = emptyList(),
+    onSearchQueryChange: (String) -> Unit = {},
+    onSearchSuggestionClick: (String) -> Unit = {}
 ) {
-    var flyToTrigger by remember { androidx.compose.runtime.mutableStateOf(0) }
+    var flyToTrigger by remember { mutableStateOf(0) }
+
+    LaunchedEffect(currentLocation){
+        flyToTrigger++
+    }
 
     Box(
         modifier = modifier.fillMaxSize(),
@@ -112,40 +132,106 @@ fun MapSelectionScreenContent(
                 .statusBarsPadding()
                 .padding(Theme.spacing.medium)
         ) {
-            IconButton(
-                onClick = onDismissRequest,
-                modifier = Modifier
-                    .align(Alignment.TopStart)
-                    .shadow(4.dp, CircleShape)
-                    .background(Theme.colors.surface, CircleShape)
-                    .size(48.dp)
+            Column(
+                modifier = Modifier.fillMaxWidth()
             ) {
-                Icon(
-                    painter = painterResource(Res.drawable.ic_arrow_back),
-                    contentDescription = stringResource(ResP.string.common_back),
-                    tint = Theme.colors.primaryFont
-                )
-            }
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(top = Theme.spacing.large),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    IconButton(
+                        onClick = onDismissRequest,
+                        modifier = Modifier
+                            .shadow(4.dp, CircleShape)
+                            .background(Theme.colors.surface, CircleShape)
+                            .size(48.dp)
+                    ) {
+                        Icon(
+                            painter = painterResource(Res.drawable.ic_arrow_back),
+                            contentDescription = stringResource(ResP.string.common_back),
+                            tint = Theme.colors.primaryFont
+                        )
+                    }
 
-            AnimatedVisibility(
-                visible = selectedLocationAddress != null || isGeocodingLoading || geocodingFailed,
-                enter = slideInVertically { -it } + fadeIn(),
-                exit = slideOutVertically { -it } + fadeOut(),
-                modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .padding(top = 64.dp) // Below the back button
-            ) {
-                LocationInfoCard(
-                    locationAddress = selectedLocationAddress,
-                    isLoading = isGeocodingLoading,
-                    geocodingFailed = geocodingFailed,
-                    modifier = Modifier.fillMaxWidth()
-                )
+                    Spacer(modifier = Modifier.width(Theme.spacing.small))
+
+                    CustomTextField(
+                        text = searchQuery,
+                        onTextChange = {
+                            onSearchQueryChange(it)
+                        },
+                        modifier = Modifier
+                            .weight(1f)
+                            .shadow(4.dp),
+                        hint = "Search location",
+                        maxLines = 1,
+                        singleLine = true
+                    )
+                }
+
+                AnimatedVisibility(
+                    visible = searchSuggestions.isNotEmpty(),
+                    enter = slideInVertically { -it } + fadeIn(),
+                    exit = slideOutVertically { -it } + fadeOut()
+                ) {
+                    LazyColumn(
+                        modifier = Modifier
+                            .padding(top = Theme.spacing.small, start = 56.dp)
+                            .fillMaxWidth()
+                            .shadow(8.dp, Theme.shapes.medium)
+                            .background(Theme.colors.surface, Theme.shapes.medium)
+                            .heightIn(max = 250.dp)
+                    ) {
+                        items(searchSuggestions) { suggestion ->
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable { onSearchSuggestionClick(suggestion.id) }
+                                    .padding(Theme.spacing.medium)
+                            ) {
+                                Text(
+                                    text = suggestion.name,
+                                    style = Theme.typography.body.large,
+                                    color = Theme.colors.primaryFont
+                                )
+                                if (suggestion.formattedAddress.isNotBlank()) {
+                                    Text(
+                                        text = suggestion.formattedAddress,
+                                        style = Theme.typography.body.small,
+                                        color = Theme.colors.secondaryFont,
+                                        maxLines = 2
+                                    )
+                                }
+                            }
+                            if (searchSuggestions.lastOrNull()?.id != suggestion.id) {
+                                HorizontalDivider(
+                                    Modifier,
+                                    thickness = 1.dp,
+                                    color = Color.LightGray
+                                )
+                            }
+                        }
+                    }
+                }
+
+                AnimatedVisibility(
+                    visible = (selectedLocationAddress != null || isGeocodingLoading || geocodingFailed) && searchSuggestions.isEmpty(),
+                    enter = slideInVertically { -it } + fadeIn(),
+                    exit = slideOutVertically { -it } + fadeOut(),
+                    modifier = Modifier.padding(top = Theme.spacing.medium)
+                ) {
+                    LocationInfoCard(
+                        locationAddress = selectedLocationAddress,
+                        isLoading = isGeocodingLoading,
+                        geocodingFailed = geocodingFailed,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
             }
         }
-        
+
         IconButton(
-            onClick = { 
+            onClick = {
                 flyToTrigger++
                 onGetCurrentLocationClick()
             },

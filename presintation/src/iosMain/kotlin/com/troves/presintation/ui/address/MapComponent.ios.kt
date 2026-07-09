@@ -52,6 +52,14 @@ actual fun MapBox(
         }
     }
 
+    LaunchedEffect(selectedLatitude, selectedLongitude) {
+        if (selectedLatitude != null && selectedLongitude != null) {
+            val center = CLLocationCoordinate2DMake(selectedLatitude, selectedLongitude)
+            val region = MKCoordinateRegionMakeWithDistance(center, 10000.0, 10000.0)
+            mkMapView.setRegion(region, animated = true)
+        }
+    }
+
     UIKitView(
         factory = {
             mkMapView

@@ -6,6 +6,7 @@ import com.troves.domain.entity.Address
 import com.troves.domain.entity.AddressIcon
 import com.troves.domain.entity.LocationAddress
 import com.troves.domain.entity.LocationCoordinates
+import com.troves.domain.repository.MapboxSuggestionModel
 import com.troves.domain.usecase.address.AddAddressUseCase
 import com.troves.domain.usecase.address.GetSavedAddressByIdUseCase
 import com.troves.domain.usecase.address.UpdateAddressUseCase
@@ -21,7 +22,7 @@ import com.troves.presintation.core.mvi.DefaultStateHolder
 import com.troves.presintation.core.mvi.EffectPublisher
 import com.troves.presintation.core.mvi.StateHolder
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
 import troves.presintation.generated.resources.Res
@@ -33,6 +34,7 @@ import troves.presintation.generated.resources.address_save_failed
 import troves.presintation.generated.resources.address_select_location_first
 import troves.presintation.generated.resources.address_sign_in_again
 import troves.presintation.generated.resources.address_updated
+import kotlin.time.Duration.Companion.milliseconds
 
 data class NewAddressUiState(
     val label: String = "",
@@ -52,6 +54,11 @@ data class NewAddressUiState(
     val isGeocodingLoading: Boolean = false,
     val geocodingFailed: Boolean = false,
     val hasLocationPermission: Boolean = false,
+
+    val searchQuery: String = "",
+    val searchSuggestions: List<MapboxSuggestionModel> = emptyList(),
+    val isSearchLoading: Boolean = false,
+
 
     val isEditMode: Boolean = false,
 
@@ -85,6 +92,8 @@ sealed interface NewAddressIntent {
     data class OnDefaultChange(val isDefault: Boolean) : NewAddressIntent
     data class OnIconChange(val icon: AddressIcon) : NewAddressIntent
     data object OnNewMapAddressSelected : NewAddressIntent
+    data class OnSearchQueryChange(val query: String) : NewAddressIntent
+    data class OnSearchSuggestionClick(val mapboxId: String) : NewAddressIntent
 
     data class Load(val addressId: String?) : NewAddressIntent
     data object OnSaveClick : NewAddressIntent
@@ -98,6 +107,7 @@ sealed interface NewAddressEffect {
 
     /** Address persisted on Shopify — show [message], then close. */
     data class SavedAndClose(val message: String) : NewAddressEffect
+
     /** Shopify customer token missing — route the user to re-authenticate. */
     data class RequireLogin(val message: String) : NewAddressEffect
     data class ShowToast(val message: String) : NewAddressEffect
@@ -112,7 +122,9 @@ class NewAddressViewModel(
     private val updateAddressUseCase: UpdateAddressUseCase,
     private val getSavedAddressByIdUseCase: GetSavedAddressByIdUseCase,
     private val reverseGeocodingUseCase: ReverseGeocodingUseCase,
-    private val getCurrentLocationCoordinatesUseCase: GetCurrentLocationCoordinatesUseCase
+    private val getCurrentLocationCoordinatesUseCase: GetCurrentLocationCoordinatesUseCase,
+    private val getMapboxSuggestionsUseCase: com.troves.domain.usecase.address.GetMapboxSuggestionsUseCase,
+    private val retrieveMapboxLocationUseCase: com.troves.domain.usecase.address.RetrieveMapboxLocationUseCase
 ) : ViewModel(),
     StateHolder<NewAddressUiState> by DefaultStateHolder(NewAddressUiState()),
     EffectPublisher<NewAddressEffect> by DefaultEffectPublisher() {
@@ -162,6 +174,19 @@ class NewAddressViewModel(
                 sendEffect(NewAddressEffect.RequestLocationPermission)
             }
 
+            is NewAddressIntent.OnSearchQueryChange -> {
+                updateState { copy(searchQuery = intent.query) }
+                if (intent.query.length > 2) {
+                    fetchSuggestions(intent.query)
+                } else {
+                    updateState { copy(searchSuggestions = emptyList()) }
+                }
+            }
+
+            is NewAddressIntent.OnSearchSuggestionClick -> {
+                retrieveLocationDetails(intent.mapboxId)
+            }
+
             is NewAddressIntent.OnLocationPermissionResult -> {
                 updateState { copy(hasLocationPermission = intent.granted) }
                 if (!intent.granted) {
@@ -190,7 +215,11 @@ class NewAddressViewModel(
                                     errorMessage = t.message
                                 )
                             }
-                            sendEffect(NewAddressEffect.ShowToast(t.message ?: "Something wrong happened!"))
+                            sendEffect(
+                                NewAddressEffect.ShowToast(
+                                    t.message ?: "Something wrong happened!"
+                                )
+                            )
                         }
                     }
                 }
@@ -265,6 +294,66 @@ class NewAddressViewModel(
                     )
                 }
             }
+        }
+    }
+
+    private var searchJob: kotlinx.coroutines.Job? = null
+
+    private fun fetchSuggestions(query: String) {
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
+            delay(300.milliseconds)
+            updateState { copy(isSearchLoading = true) }
+            getMapboxSuggestionsUseCase(query).fold(
+                onSuccess = { suggestions ->
+                    updateState {
+                        copy(searchSuggestions = suggestions, isSearchLoading = false)
+                    }
+                },
+                onError = {
+                    updateState { copy(isSearchLoading = false) }
+                },
+                onLoading = {
+                    updateState {
+                        copy(isSearchLoading = true)
+                    }
+                }
+            )
+        }
+    }
+
+    private fun retrieveLocationDetails(mapboxId: String) {
+        viewModelScope.launch {
+            updateState {
+                copy(
+                    isGeocodingLoading = true,
+                    searchSuggestions = emptyList(),
+                    searchQuery = ""
+                )
+            }
+            retrieveMapboxLocationUseCase(mapboxId).fold(
+                onSuccess = { details ->
+                    val coords = details.coordinates
+                    updateState {
+                        copy(
+                            selectedMapLocation = coords,
+                            isGeocodingLoading = false,
+                            geocodingFailed = false,
+                            selectedLocationAddress = details.address,
+                            country = details.address?.country?.ifBlank { country } ?: country,
+                            city = details.address?.city?.ifBlank { city } ?: city,
+                            street = details.address?.road?.ifBlank { street } ?: street
+                        ).also {
+                            onIntent(NewAddressIntent.OnMapClick(coords.lan, coords.lon))
+                        }
+                    }
+                },
+                onError = {
+                    updateState { copy(isGeocodingLoading = false, geocodingFailed = true) }
+                    sendEffect(NewAddressEffect.ShowToast("Failed to get location details"))
+                },
+                onLoading = {}
+            )
         }
     }
 
