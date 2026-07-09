@@ -7,7 +7,6 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -85,8 +84,7 @@ fun IdleSearchScreen(
 
 @Composable
 private fun SearchDiscoveryPrompt(modifier: Modifier = Modifier) {
-    val isDark = isSystemInDarkTheme()
-    val iconBg = if (isDark) Color(0xFF2C2C2C) else Theme.colors.primary.copy(alpha = 0.08f)
+    val iconBg = Theme.colors.onPrimary
 
     // Gentle pulse animation on the icon
     val pulse = rememberInfiniteTransition(label = "pulse")
@@ -124,7 +122,7 @@ private fun SearchDiscoveryPrompt(modifier: Modifier = Modifier) {
 
         Text(
             text = stringResource(Res.string.search_discovery_title),
-            style = MaterialTheme.typography.headlineSmall,
+            style = Theme.typography.title,
             color = Theme.colors.primaryFont,
             textAlign = TextAlign.Center,
         )
@@ -133,7 +131,7 @@ private fun SearchDiscoveryPrompt(modifier: Modifier = Modifier) {
 
         Text(
             text = stringResource(Res.string.search_discovery_desc),
-            style = MaterialTheme.typography.bodyMedium,
+            style = Theme.typography.body.medium,
             color = Theme.colors.secondaryFont,
             textAlign = TextAlign.Center,
         )
@@ -142,8 +140,7 @@ private fun SearchDiscoveryPrompt(modifier: Modifier = Modifier) {
 
 @Composable
 private fun SearchHintBanner(modifier: Modifier = Modifier) {
-    val isDark = isSystemInDarkTheme()
-    val iconBg = if (isDark) Color(0xFF2C2C2C) else Theme.colors.primary.copy(alpha = 0.08f)
+    val iconBg = Theme.colors.onPrimary
 
     Column(
         modifier = modifier,
@@ -167,7 +164,7 @@ private fun SearchHintBanner(modifier: Modifier = Modifier) {
 
         Text(
             text = stringResource(Res.string.search_hint_title),
-            style = MaterialTheme.typography.titleMedium,
+            style = Theme.typography.body.large,
             color = Theme.colors.primaryFont,
             textAlign = TextAlign.Center,
         )
@@ -176,7 +173,7 @@ private fun SearchHintBanner(modifier: Modifier = Modifier) {
 
         Text(
             text = stringResource(Res.string.search_hint_desc),
-            style = MaterialTheme.typography.bodySmall,
+            style = Theme.typography.body.small,
             color = Theme.colors.secondaryFont,
             textAlign = TextAlign.Center,
         )

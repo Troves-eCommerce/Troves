@@ -129,13 +129,13 @@ fun SearchScreen(
                             LazyVerticalGrid(
                                 columns = GridCells.Fixed(2),
                                 modifier = Modifier.fillMaxSize(),
-                                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                                verticalArrangement = Arrangement.spacedBy(16.dp),
+                                horizontalArrangement = Arrangement.spacedBy(Theme.spacing.medium),
+                                verticalArrangement = Arrangement.spacedBy(Theme.spacing.medium),
                                 contentPadding = PaddingValues(
-                                    start = 16.dp,
-                                    end = 16.dp,
-                                    top = 8.dp,
-                                    bottom = 16.dp
+                                    start = Theme.spacing.medium,
+                                    end = Theme.spacing.medium,
+                                    top = Theme.spacing.small,
+                                    bottom = Theme.spacing.medium
                                 )
                             ) {
                                 item(span = { GridItemSpan(2) }) {
@@ -175,13 +175,13 @@ fun SearchScreen(
                             LazyVerticalGrid(
                                 columns = GridCells.Fixed(2),
                                 modifier = Modifier.fillMaxSize(),
-                                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                                verticalArrangement = Arrangement.spacedBy(16.dp),
+                                horizontalArrangement = Arrangement.spacedBy(Theme.spacing.medium),
+                                verticalArrangement = Arrangement.spacedBy(Theme.spacing.medium),
                                 contentPadding = PaddingValues(
-                                    start = 16.dp,
-                                    end = 16.dp,
-                                    top = 8.dp,
-                                    bottom = 16.dp
+                                    start = Theme.spacing.medium,
+                                    end = Theme.spacing.medium,
+                                    top = Theme.spacing.small,
+                                    bottom = Theme.spacing.medium
                                 )
                             ) {
                                 items(
@@ -239,7 +239,7 @@ fun SearchScreen(
                         Modifier
                             .align(Alignment.BottomCenter)
                             .navigationBarsPadding()
-                            .padding(16.dp)
+                            .padding(Theme.spacing.medium)
                             .fillMaxWidth()
                     },
                 )

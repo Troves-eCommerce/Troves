@@ -1,6 +1,7 @@
 package com.troves
 
 import android.app.Application
+import com.troves.data.config.MapboxConfig
 import com.mapbox.common.MapboxOptions
 import com.troves.di.initKoin
 import org.koin.android.ext.koin.androidContext
@@ -10,7 +11,7 @@ class TrovesApp : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        MapboxOptions.accessToken = getString(R.string.mapbox_access_token)
+        MapboxOptions.accessToken = MapboxConfig.ACCESS_TOKEN
 
         initKoin {
             androidLogger()

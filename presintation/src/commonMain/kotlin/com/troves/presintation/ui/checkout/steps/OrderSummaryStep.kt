@@ -156,7 +156,7 @@ fun OrderSummaryStepContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(1.dp)
-                    .background(Theme.colors.primary),
+                    .background(Theme.colors.onPrimary),
             )
         }
 

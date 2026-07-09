@@ -142,7 +142,6 @@ fun ProductDetailsScreen(
             message = stringResource(Res.string.wishlist_remove_msg),
             confirmText = stringResource(Res.string.wishlist_remove),
             dismissText = stringResource(Res.string.profile_cancel),
-            icon = painterResource(Res.drawable.ic_solid_heart),
             onConfirm = {
                 showRemoveFavoriteDialog = false
                 viewModel.onIntent(ProductDetailsIntent.OnFavoriteClick)
@@ -431,7 +430,7 @@ fun ProductDetailsScreenContent(
                     Spacer(Modifier.height(16.dp))
 
                     SectionHeaderRow(title = stringResource(Res.string.product_details_description))
-                    Spacer(Modifier.height(10.dp))
+                    Spacer(Modifier.height(12.dp))
 
                     Column(modifier = Modifier.animateContentSize()) {
                         Text(
@@ -439,7 +438,8 @@ fun ProductDetailsScreenContent(
                             style = Theme.typography.body.medium,
                             color = Theme.colors.secondaryFont,
                             maxLines = if (isDescriptionExpanded) Int.MAX_VALUE else 3,
-                            overflow = TextOverflow.Ellipsis
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.padding(vertical = 4.dp)
                         )
                         if (!isDescriptionExpanded) {
                             Spacer(Modifier.height(6.dp))
@@ -466,7 +466,7 @@ fun ProductDetailsScreenContent(
                         onWriteReviewClick = onWriteReview,
                     )
 
-                    Spacer(Modifier.height(16.dp))
+                    Spacer(Modifier.height(40.dp))
                 }
             }
         }
