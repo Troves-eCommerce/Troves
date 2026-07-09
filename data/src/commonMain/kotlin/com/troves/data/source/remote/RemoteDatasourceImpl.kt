@@ -182,6 +182,19 @@ class RemoteDatasourceImpl(
         }
     }
 
+    override suspend fun getSurveyAnswers(userId: String): com.troves.data.source.remote.dto.SurveyAnswersDto? {
+        return try {
+            val snapshot = userDoc(userId).get()
+            if (snapshot.exists) {
+                snapshot.get<com.troves.data.source.remote.dto.SurveyAnswersDto?>("survey")
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            null
+        }
+    }
+
     // ── Survey Recommendations ────────────────────────────────────────────────
     override suspend fun getSurveyRecommendations(
         request: com.troves.data.source.remote.dto.SurveyRecommendationRequestDto,
@@ -235,8 +248,12 @@ class RemoteDatasourceImpl(
         }
     }
 
+    /** Firestore document ids cannot contain '/', so strip the Shopify GID prefix. */
+    private fun productDocumentId(productId: String): String =
+        productId.trimEnd('/').substringAfterLast('/').ifBlank { productId.replace("/", "_") }
+
     private fun reviewsCollection(productId: String) =
-        firestore.collection("products").document(productId).collection("reviews")
+        firestore.collection("products").document(productDocumentId(productId)).collection("reviews")
 
     override suspend fun getProductReviews(productId: String): Result<List<com.troves.data.source.remote.dto.ReviewDto>> {
         return try {
