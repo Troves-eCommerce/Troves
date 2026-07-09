@@ -148,7 +148,6 @@ fun MapSelectionScreenContent(
             onClick = { 
                 flyToTrigger++
                 onGetCurrentLocationClick()
-                onMapClick(currentLocation.lan,currentLocation.lon)
             },
             modifier = Modifier
                 .align(Alignment.BottomEnd)

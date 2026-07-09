@@ -61,8 +61,11 @@ data class NewAddressUiState(
     val cities: List<String> = emptyList(),
     val isCitiesLoading: Boolean = false,
     val citiesError: String? = null,
-    val isSaving: Boolean = false
-)
+    val isSaving: Boolean = false,
+    val errorMessage: String? = null
+) {
+    val hasError = errorMessage != null
+}
 
 sealed interface NewAddressIntent {
     data class OnLabelChange(val label: String) : NewAddressIntent
@@ -126,7 +129,14 @@ class NewAddressViewModel(
             is NewAddressIntent.OnRecipientNameChange -> updateState { copy(recipientName = intent.name) }
             is NewAddressIntent.OnPhoneChange -> updateState { copy(phone = intent.phone) }
             is NewAddressIntent.OnCountryChange -> {
-                updateState { copy(country = intent.country, city = "", cities = emptyList(), citiesError = null) }
+                updateState {
+                    copy(
+                        country = intent.country,
+                        city = "",
+                        cities = emptyList(),
+                        citiesError = null
+                    )
+                }
                 if (intent.country.isNotBlank()) loadCities(intent.country)
             }
 
@@ -142,15 +152,16 @@ class NewAddressViewModel(
             NewAddressIntent.OnSaveClick -> saveAddress()
             NewAddressIntent.LoadCountries -> loadCountries()
             NewAddressIntent.ShowMap -> {
-                onIntent(NewAddressIntent.GetCurrentLocation)
                 sendEffect(NewAddressEffect.ShowMap)
             }
+
             NewAddressIntent.HideMap -> sendEffect(NewAddressEffect.HideMap)
             is NewAddressIntent.OnMapClick -> onMapClick(intent.latitude, intent.longitude)
             NewAddressIntent.OnNewMapAddressSelected -> saveMapAddress()
             NewAddressIntent.GetCurrentLocation -> {
                 sendEffect(NewAddressEffect.RequestLocationPermission)
             }
+
             is NewAddressIntent.OnLocationPermissionResult -> {
                 updateState { copy(hasLocationPermission = intent.granted) }
                 if (!intent.granted) {
@@ -164,10 +175,22 @@ class NewAddressViewModel(
                                         currentLocation = currentLocation
                                     )
                                 }
+                                onIntent(
+                                    NewAddressIntent.OnMapClick(
+                                        currentLocation.lan,
+                                        currentLocation.lon
+                                    )
+                                )
                             }
                         } catch (c: CancellationException) {
                             throw c
                         } catch (t: Throwable) {
+                            updateState {
+                                copy(
+                                    errorMessage = t.message
+                                )
+                            }
+                            sendEffect(NewAddressEffect.ShowToast(t.message ?: "Something wrong happened!"))
                         }
                     }
                 }
