@@ -20,10 +20,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import com.troves.designsystem.components.topbar.BaseTopAppBar
 import com.troves.designsystem.theme.Theme
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import troves.designsystem.generated.resources.Res
+import troves.designsystem.generated.resources.orders_title
 import troves.designsystem.generated.resources.troves_logo
 import troves.presintation.generated.resources.Res as ResP
 import troves.presintation.generated.resources.*
@@ -57,15 +59,6 @@ fun ProfileHeaderCard(
         label = "PulseAlpha"
     )
     Column {
-        BasicText(
-            text = "Your Account",
-            style = Theme.typography.body.large.copy(
-                color = Theme.colors.primaryFont,
-                fontWeight = FontWeight.Bold
-            ),
-            modifier = Modifier.padding(horizontal = Theme.spacing.medium)
-        )
-        Spacer(modifier = Modifier.height(8.dp))
         Card(
             modifier = Modifier
                 .fillMaxWidth()

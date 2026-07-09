@@ -31,8 +31,8 @@ fun QuickFilterSection(
 
     LazyRow(
         modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
+        horizontalArrangement = Arrangement.spacedBy(Theme.spacing.small),
+        contentPadding = PaddingValues(horizontal = Theme.spacing.medium, vertical = Theme.spacing.small)
     ) {
         items(categories, key = { it.id }) { category ->
             val isSelected = selectedCategoryIds.contains(category.id.toString())

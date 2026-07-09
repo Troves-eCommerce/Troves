@@ -65,7 +65,7 @@ fun ProductCardSkeleton(
             Box(
                 modifier = Modifier
                     .align(Alignment.BottomStart)
-                    .padding(16.dp)
+                    .padding(Theme.spacing.medium)
                     .width(80.dp)
                     .height(14.dp)
                     .clip(RoundedCornerShape(6.dp))

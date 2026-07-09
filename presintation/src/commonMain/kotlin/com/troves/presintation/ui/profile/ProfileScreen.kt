@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.troves.designsystem.components.dialog.TrovesDialog
 import com.troves.designsystem.components.toast.TrovesSnackbarHost
+import com.troves.designsystem.components.topbar.BaseTopAppBar
 import com.troves.designsystem.theme.Theme
 import com.troves.designsystem.util.autoMirror
 import com.troves.presintation.ui.profile.components.LiveRatesRow
@@ -120,14 +121,18 @@ fun ProfileScreen(
         )
     }
 
-    Scaffold(
-        containerColor = Theme.colors.backGround,
-    )
-    { paddingValues ->
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Theme.colors.backGround)
+            .statusBarsPadding(),
+    ) {
+        BaseTopAppBar(title = stringResource(Res.string.profile_title))
+
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
+                .weight(1f)
         ) {
             TrovesSnackbarHost(
                 hostState = snackbarHostState,
@@ -274,7 +279,9 @@ fun LanguageBottomSheet(
         ) {
             Text(
                 text = stringResource(ResP.string.profile_select_language),
-                style = Theme.typography.title,
+                style = Theme.typography.title.copy(
+                    color = Theme.colors.primaryFont
+                ),
                 modifier = Modifier.padding(vertical = 16.dp)
             )
 
@@ -283,7 +290,7 @@ fun LanguageBottomSheet(
                 isSelected = selectedLanguage == "en",
                 onClick = { onLanguageSelected("en") }
             )
-            HorizontalDivider(color = Theme.colors.onPrimary)
+            HorizontalDivider(color = Theme.colors.secondary)
             LanguageItem(
                 title = stringResource(ResP.string.language_arabic),
                 isSelected = selectedLanguage == "ar",
@@ -385,15 +392,6 @@ fun ProfileGuestHeader(
                 .padding(horizontal = 24.dp, vertical = 28.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            BasicText(
-                text = "Your Account",
-                style = Theme.typography.body.medium.copy(
-                    color = Theme.colors.primaryFont,
-                    fontWeight = FontWeight.Bold
-                ),
-                modifier = Modifier.padding(horizontal = Theme.spacing.medium)
-            )
-            Spacer(modifier = Modifier.height(8.dp))
             Box(
                 modifier = Modifier
                     .size(70.dp)
