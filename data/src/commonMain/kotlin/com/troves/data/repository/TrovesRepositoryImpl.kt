@@ -3,6 +3,7 @@ package com.troves.data.repository
 import com.troves.data.mapper.toBrand
 import com.troves.data.mapper.toCategory
 import com.troves.data.mapper.toDomain
+import com.troves.data.mapper.toDto
 import com.troves.data.source.local.preferenceses.TrovesPreferences
 import com.troves.data.source.remote.RemoteDatasource
 import com.troves.data.source.remote.dto.ReviewDto
@@ -141,27 +142,24 @@ class TrovesRepositoryImpl(
         }
     }
 
-    override suspend fun getSurveyRecommendations(
-        surveyAnswers: com.troves.domain.entity.SurveyAnswers,
-    ): Result<List<com.troves.domain.entity.SurveyRecommendedItem>> {
+    override suspend fun getSurveyRecommendations(): Result<List<com.troves.domain.entity.SurveyRecommendedItem>> {
         return withContext(coroutineDispatcher) {
+            // No saved survey means nothing to personalise on; the endpoint would
+            // return zero products anyway.
+            val surveyAnswers = authenticationRepository.getSurveyAnswers()
+                ?: return@withContext Result.Success(emptyList())
+
             val request = com.troves.data.source.remote.dto.SurveyRecommendationRequestDto(
-                survey = com.troves.data.source.remote.dto.SurveyAnswersDto(
-                    favoriteCategories = surveyAnswers.favoriteCategories,
-                    favoriteBrands = surveyAnswers.favoriteBrands,
-                    preferredPriceRange = surveyAnswers.preferredPriceRange,
-                    shoppingStyle = surveyAnswers.shoppingStyle,
-                    favoriteColors = surveyAnswers.favoriteColors,
-                    gender = surveyAnswers.gender,
-                    ageGroup = surveyAnswers.ageGroup,
-                    shoppingFrequency = surveyAnswers.shoppingFrequency,
-                    completed = true,
-                )
+                cartId = resolveCartId(),
+                survey = surveyAnswers.toDto(),
             )
             remoteDataSource.getSurveyRecommendations(request).map { response ->
-                response.products.map { dto ->
+                response.products.mapNotNull { dto ->
+                    // "gid://shopify/Product/10285325648154" → "10285325648154"
+                    val id = dto.id.substringAfterLast('/').takeIf { it.isNotBlank() }
+                        ?: return@mapNotNull null
                     com.troves.domain.entity.SurveyRecommendedItem(
-                        id = dto.id.split("/").lastOrNull() ?: dto.id,
+                        id = id,
                         title = dto.title,
                         vendor = "", // API doesn't provide vendor currently
                         imageUrl = dto.featuredImage,
