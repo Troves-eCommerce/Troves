@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.troves.domain.usecase.survey.CompleteSurveyUseCase
 import com.troves.domain.usecase.survey.IsSurveyDoneUseCase
+import com.troves.presintation.core.time.nowIso8601
 import com.troves.presintation.core.mvi.DefaultEffectPublisher
 import com.troves.presintation.core.mvi.DefaultStateHolder
 import com.troves.presintation.core.mvi.EffectPublisher
@@ -80,7 +81,10 @@ class SurveyViewModel(
     private fun submit() {
         viewModelScope.launch {
             updateState { copy(isSubmitting = true) }
-            val answersEntity = currentState.answers.toDomainEntity()
+            val answersEntity = currentState.answers.toDomainEntity(
+                questions = currentState.questions,
+                completedAt = nowIso8601(),
+            )
             val result = completeSurvey(answersEntity)
             updateState { copy(isSubmitting = false) }
 

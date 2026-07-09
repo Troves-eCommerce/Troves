@@ -18,29 +18,39 @@ data class SurveyUiState(
     val isCompleted: Boolean get() = totalSteps > 0 && currentStep >= totalSteps
 }
 
+/** Identifies what a question asks, so answers survive reordering the steps. */
+enum class SurveyKey {
+    Categories, Brands, PriceRange, Style, Colors, Gender, AgeGroup, ShoppingFrequency
+}
+
 sealed interface SurveyQuestion {
+    val key: SurveyKey
     val title: StringResource
     val subtitle: StringResource?
 
     data class MultiChip(
+        override val key: SurveyKey,
         override val title: StringResource,
         override val subtitle: StringResource? = null,
         val options: List<SurveyOption>,
     ) : SurveyQuestion
 
     data class SingleChip(
+        override val key: SurveyKey,
         override val title: StringResource,
         override val subtitle: StringResource? = null,
         val options: List<SurveyOption>,
     ) : SurveyQuestion
 
     data class StyleCards(
+        override val key: SurveyKey,
         override val title: StringResource,
         override val subtitle: StringResource? = null,
         val options: List<StyleOption>,
     ) : SurveyQuestion
 
     data class ColorPicker(
+        override val key: SurveyKey,
         override val title: StringResource,
         override val subtitle: StringResource? = null,
         val colors: List<ColorOption>,
@@ -90,18 +100,21 @@ sealed interface SurveyEffect {
 fun buildSurveyQuestions(): List<SurveyQuestion> = listOf(
     // Step 0 — Categories
     SurveyQuestion.MultiChip(
+        key = SurveyKey.Categories,
         title = Res.string.survey_categories_title,
         subtitle = Res.string.survey_categories_subtitle,
         options = listOf(SurveyOption("Shoes", Res.string.survey_opt_shoes), SurveyOption("T-Shirts", Res.string.survey_opt_tshirts), SurveyOption("Hoodies", Res.string.survey_opt_hoodies), SurveyOption("Jackets", Res.string.survey_opt_jackets), SurveyOption("Accessories", Res.string.survey_opt_accessories), SurveyOption("Pants", Res.string.survey_opt_pants), SurveyOption("Dresses", Res.string.survey_opt_dresses), SurveyOption("Bags", Res.string.survey_opt_bags)),
     ),
     // Step 1 — Price Range
     SurveyQuestion.SingleChip(
+        key = SurveyKey.PriceRange,
         title = Res.string.survey_budget_title,
         subtitle = Res.string.survey_budget_subtitle,
         options = listOf(SurveyOption("Budget", Res.string.survey_opt_budget), SurveyOption("Mid-range", Res.string.survey_opt_midrange), SurveyOption("Premium", Res.string.survey_opt_premium), SurveyOption("Luxury", Res.string.survey_opt_luxury)),
     ),
     // Step 2 — Style
     SurveyQuestion.StyleCards(
+        key = SurveyKey.Style,
         title = Res.string.survey_style_title,
         subtitle = Res.string.survey_style_subtitle,
         options = listOf(
@@ -115,6 +128,7 @@ fun buildSurveyQuestions(): List<SurveyQuestion> = listOf(
     ),
     // Step 3 — Gender
     SurveyQuestion.SingleChip(
+        key = SurveyKey.Gender,
         title = Res.string.survey_gender_title,
         subtitle = null,
         options = listOf(SurveyOption("Men", Res.string.survey_opt_men), SurveyOption("Women", Res.string.survey_opt_women)),
