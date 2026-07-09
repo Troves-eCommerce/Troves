@@ -7,6 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -55,85 +56,95 @@ fun ProfileHeaderCard(
         ),
         label = "PulseAlpha"
     )
-
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onEditProfileClick() },
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Theme.colors.surface),
-        border = BorderStroke(1.dp, Theme.colors.onPrimary)
-    ) {
-        Row(
+    Column {
+        BasicText(
+            text = "Your Account",
+            style = Theme.typography.body.large.copy(
+                color = Theme.colors.primaryFont,
+                fontWeight = FontWeight.Bold
+            ),
+            modifier = Modifier.padding(horizontal = Theme.spacing.medium)
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(24.dp),
-            verticalAlignment = Alignment.CenterVertically
+                .clickable { onEditProfileClick() },
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(containerColor = Theme.colors.surface),
+            border = BorderStroke(1.dp, Theme.colors.onPrimary)
         ) {
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier.size(85.dp)
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(24.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Box(
-                    modifier = Modifier
-                        .size(64.dp)
-                        .graphicsLayer {
-                            scaleX = pulseScale
-                            scaleY = pulseScale
-                            alpha = pulseAlpha
-                        }
-                        .background(Theme.colors.primary, shape = CircleShape)
-                )
-                Box(
-                    modifier = Modifier
-                        .size(64.dp)
-                        .clip(CircleShape)
-                        .background(Theme.colors.surfaceVariant)
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier.size(85.dp)
                 ) {
-                    if (!profileImageUrl.isNullOrEmpty()) {
-                        AsyncImage(
-                            model = profileImageUrl,
-                            contentDescription = null,
-                            modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.Crop
-                        )
-                    } else {
-                        Icon(
-                            painter = painterResource(Res.drawable.troves_logo),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(12.dp),
-                            tint = Theme.colors.hint
-                        )
+                    Box(
+                        modifier = Modifier
+                            .size(64.dp)
+                            .graphicsLayer {
+                                scaleX = pulseScale
+                                scaleY = pulseScale
+                                alpha = pulseAlpha
+                            }
+                            .background(Theme.colors.primary, shape = CircleShape)
+                    )
+                    Box(
+                        modifier = Modifier
+                            .size(64.dp)
+                            .clip(CircleShape)
+                            .background(Theme.colors.surfaceVariant)
+                    ) {
+                        if (!profileImageUrl.isNullOrEmpty()) {
+                            AsyncImage(
+                                model = profileImageUrl,
+                                contentDescription = null,
+                                modifier = Modifier.fillMaxSize(),
+                                contentScale = ContentScale.Crop
+                            )
+                        } else {
+                            Icon(
+                                painter = painterResource(Res.drawable.troves_logo),
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(12.dp),
+                                tint = Theme.colors.hint
+                            )
+                        }
                     }
                 }
-            }
 
-            Spacer(modifier = Modifier.width(12.dp))
+                Spacer(modifier = Modifier.width(12.dp))
 
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = stringResource(ResP.string.profile_welcome_back),
-                    style = Theme.typography.body.small.copy(
-                        color = Theme.colors.secondaryFont,
-                        fontWeight = FontWeight.Bold
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = stringResource(ResP.string.profile_welcome_back),
+                        style = Theme.typography.body.small.copy(
+                            color = Theme.colors.secondaryFont,
+                            fontWeight = FontWeight.Bold
+                        )
                     )
-                )
-                Text(
-                    text = name,
-                    style = Theme.typography.body.medium.copy(
-                        color = Theme.colors.primaryFont,
-                        fontWeight = FontWeight.Bold
+                    Text(
+                        text = name,
+                        style = Theme.typography.body.medium.copy(
+                            color = Theme.colors.primaryFont,
+                            fontWeight = FontWeight.Bold
+                        )
                     )
-                )
-                Text(
-                    text = email,
-                    style = Theme.typography.body.small.copy(color = Theme.colors.secondaryFont)
-                )
+                    Text(
+                        text = email,
+                        style = Theme.typography.body.small.copy(color = Theme.colors.secondaryFont)
+                    )
+                }
             }
         }
     }

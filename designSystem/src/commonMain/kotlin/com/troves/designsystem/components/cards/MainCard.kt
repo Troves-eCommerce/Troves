@@ -53,7 +53,7 @@ fun MainCard(
             .shadow(elevation = 0.2.dp, shape = cardShape, clip = false)
             .clip(cardShape)
             .background(resolvedContainer)
-            .border(1.5.dp, Theme.colors.onPrimaryVariant, cardShape)
+            .border(1.dp, Theme.colors.onPrimary, cardShape)
             .bounceClick(
                 shape = cardShape,
                 onClick = onClick

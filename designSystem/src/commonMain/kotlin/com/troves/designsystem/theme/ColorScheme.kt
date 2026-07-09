@@ -30,7 +30,7 @@ data class ColorScheme(
     val tint: Color
 )
 val lightColors = ColorScheme(
-    primary = Color(0xFFA9B6A1),         // Green primary color
+    primary = Color(0xFF70856F),         // Green primary color
     primaryVariant = Color(0xFF8E9B86),  // A slightly darker variant of the green for light mode
     onPrimary = Color(0xFFECECEC),       // Dark text for better readability on green
     secondary = Color(0xFFD2D9CC),       // Light neutral secondary color

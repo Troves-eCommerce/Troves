@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -311,7 +312,9 @@ fun ThemeBottomSheet(
         ) {
             Text(
                 text = stringResource(ResP.string.profile_select_theme),
-                style = Theme.typography.title,
+                style = Theme.typography.title.copy(
+                    color = Theme.colors.primaryFont
+                ),
                 modifier = Modifier.padding(vertical = 16.dp)
             )
 
@@ -320,13 +323,13 @@ fun ThemeBottomSheet(
                 isSelected = selectedTheme == "system",
                 onClick = { onThemeSelected("system") }
             )
-            HorizontalDivider(color = Theme.colors.onPrimary)
+            HorizontalDivider(color = Theme.colors.secondary)
             LanguageItem(
                 title = stringResource(ResP.string.profile_theme_light),
                 isSelected = selectedTheme == "light",
                 onClick = { onThemeSelected("light") }
             )
-            HorizontalDivider(color = Theme.colors.onPrimary)
+            HorizontalDivider(color = Theme.colors.secondary)
             LanguageItem(
                 title = stringResource(ResP.string.profile_theme_dark),
                 isSelected = selectedTheme == "dark",
@@ -357,7 +360,7 @@ fun LanguageItem(
         )
         if (isSelected) {
             Icon(
-                painter = painterResource(Res.drawable.ic_star),
+                painter = painterResource(Res.drawable.ic_check),
                 contentDescription = null,
                 tint = Theme.colors.primary,
                 modifier = Modifier.size(20.dp)
@@ -382,6 +385,15 @@ fun ProfileGuestHeader(
                 .padding(horizontal = 24.dp, vertical = 28.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            BasicText(
+                text = "Your Account",
+                style = Theme.typography.body.medium.copy(
+                    color = Theme.colors.primaryFont,
+                    fontWeight = FontWeight.Bold
+                ),
+                modifier = Modifier.padding(horizontal = Theme.spacing.medium)
+            )
+            Spacer(modifier = Modifier.height(8.dp))
             Box(
                 modifier = Modifier
                     .size(70.dp)

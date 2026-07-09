@@ -49,6 +49,8 @@
 
     <!-- Wishlist Screen -->
     <string name="wishlist_title">قائمة الأمنيات</string>
+    <string name="wishlist_empty_title">قائمة الأمنيات فارغة</string>
+    <string name="wishlist_empty_desc">احفظ المنتجات التي تعجبك هنا لتتمكن من العثور عليها بسهولة لاحقاً.</string>
     <string name="wishlist_remove_title">حذف المنتج</string>
     <string name="wishlist_remove_msg">هل أنت متأكد أنك تريد حذف هذا المنتج من قائمة الأمنيات؟</string>
     <string name="wishlist_clear_title">مسح قائمة الأمنيات</string>
@@ -58,6 +60,8 @@
 
     <!-- Cart Screen -->
     <string name="cart_title">السلة</string>
+    <string name="cart_empty_title">سلة التسوق فارغة</string>
+    <string name="cart_empty_desc">يبدو أنك لم تقم بإضافة أي شيء بعد.</string>
     <string name="cart_remove_title">حذف المنتج</string>
     <string name="cart_remove_msg">هل أنت متأكد أنك تريد حذف هذا المنتج من سلتك؟</string>
     <string name="cart_clear_title">مسح السلة</string>
@@ -66,11 +70,13 @@
     <string name="cart_checkout">الدفع</string>
     <string name="cart_total">السعر الإجمالي</string>
     <string name="cart_discount_code">كود الخصم</string>
-    <string name="cart_items_count">%s منتج</string>
+    <string name="cart_items_count">%1$d منتج</string>
 
     <!-- Address Management -->
     <string name="address_manage_title">العناوين المحفوظة</string>
     <string name="address_manage_desc">إدارة مواقع التسليم الخاصة بك</string>
+    <string name="address_empty_title">لا توجد عناوين بعد</string>
+    <string name="address_empty_desc">لم تقم بإضافة أي عناوين حتى الآن. أضف عنوانك الأول للبدء.</string>
     <string name="address_add_new">إضافة عنوان جديد</string>
     <string name="address_delete_title">حذف العنوان</string>
     <string name="address_delete_msg">هل أنت متأكد أنك تريد حذف هذا العنوان؟ لا يمكن التراجع عن هذا الإجراء.</string>
@@ -235,6 +241,10 @@
     <string name="orders_title">طلباتي</string>
     <string name="orders_empty_title">لا توجد طلبات بعد</string>
     <string name="orders_empty_desc">سيظهر سجل طلباتك هنا بمجرد تقديم طلبك الأول.</string>
+
+    <!-- Search Screen -->
+    <string name="search_empty_title">لا توجد نتائج</string>
+    <string name="search_empty_desc">لم نتمكن من العثور على ما تبحث عنه. جرب مصطلح بحث مختلف.</string>
 
     <!-- Sign-in required (guest) empty states -->
     <string name="auth_required_title">لم تقم بتسجيل الدخول</string>

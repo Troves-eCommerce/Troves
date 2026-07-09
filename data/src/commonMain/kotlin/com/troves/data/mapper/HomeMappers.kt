@@ -27,7 +27,7 @@ fun ProductDto.toDomain(): Product = Product(
         ?.filterNotNull()
         ?: emptyList(),
     description = bodyHtml ?: "",
-    rating = Random.nextInt(0,5)
+    rating = Random.nextInt(3,5)
 )
 
 fun SmartCollection.toBrand(): Brand = Brand(
