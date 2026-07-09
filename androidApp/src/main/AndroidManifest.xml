@@ -19,6 +19,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/launcher_round"
         android:supportsRtl="true"
+
         android:theme="@style/Theme.Troves">
 
         <service
@@ -35,6 +36,7 @@
             android:exported="true"
             android:name=".MainActivity"
             android:windowSoftInputMode="adjustResize"
+            android:screenOrientation="locked"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

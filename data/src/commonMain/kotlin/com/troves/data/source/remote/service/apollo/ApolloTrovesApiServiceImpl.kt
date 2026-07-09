@@ -44,7 +44,6 @@ import com.troves.domain.entity.DiscountCode
 import com.troves.domain.utils.Result
 import kotlinx.coroutines.flow.first
 
-
 class ApolloTrovesApiServiceImpl(
     private val apolloClient: ApolloClient,
     private val preferences: TrovesPreferences,
@@ -73,11 +72,6 @@ class ApolloTrovesApiServiceImpl(
 
     override suspend fun searchProducts(params: ProductSearchParams): Result<List<Product>> {
         val freeText = params.query?.trim().orEmpty()
-        // Shopify Admin `products(query:)` only searches the primary-locale (English) fields, so an
-        // Arabic term never matches its index. For an Arabic term, fetch the catalogue (with
-        // translations) and match client-side; for anything else keep Shopify's server search.
-        // Both branches then narrow to localized-title matches — this is the single search-text
-        // filter (TrovesRepositoryImpl.searchProducts no longer re-filters by title).
         return if (freeText.containsArabic()) {
             apolloClient.runQuery(
                 GetProductsBySearchQuery(
@@ -115,7 +109,8 @@ class ApolloTrovesApiServiceImpl(
     override suspend fun getProductsByCollection(collectionId: String): Result<List<Product>> =
         apolloClient.runQuery(
             GetProductsByCollectionQuery(
-                id = collectionId.toCollectionGid(),
+                // SAFE: Extracts the number before applying the GID prefix
+                id = collectionId.sanitizeId().toCollectionGid(),
                 first = SOURCE_PRODUCTS_PAGE_SIZE,
                 after = Optional.Absent,
                 sortKey = Optional.present(ProductCollectionSortKeys.BEST_SELLING),
@@ -132,7 +127,13 @@ class ApolloTrovesApiServiceImpl(
     }
 
     override suspend fun getProductById(productId: String): Result<Product> =
-        apolloClient.runQuery(GetProductByIdQuery(id = productId.toProductGid(), locale = locale())) { data ->
+        apolloClient.runQuery(
+            GetProductByIdQuery(
+                // SAFE: Extracts the number before applying the GID prefix
+                id = productId.sanitizeId().toProductGid(),
+                locale = locale()
+            )
+        ) { data ->
             val product = data.product?.productCard
                 ?: throw NoSuchElementException("Product not found: $productId")
             product.toDomainProduct()
@@ -141,7 +142,11 @@ class ApolloTrovesApiServiceImpl(
     override suspend fun getLocalizedProductTitles(productIds: List<String>): Result<Map<Long, String>> {
         if (productIds.isEmpty()) return Result.Success(emptyMap())
         return apolloClient.runQuery(
-            GetLocalizedProductTitlesQuery(ids = productIds.map { it.toProductGid() }, locale = locale())
+            GetLocalizedProductTitlesQuery(
+                // SAFE: Extracts the numbers before applying the GID prefix
+                ids = productIds.map { it.sanitizeId().toProductGid() },
+                locale = locale()
+            )
         ) { data ->
             data.nodes.mapNotNull { node ->
                 val product = node?.onProduct ?: return@mapNotNull null
@@ -212,7 +217,8 @@ class ApolloTrovesApiServiceImpl(
             lineItems = Optional.present(
                 lineItems.map { (variantId, quantity) ->
                     OrderCreateLineItemInput(
-                        variantId = Optional.present(variantId.toVariantGid()),
+                        // SAFE: Extracts the number before applying the GID prefix
+                        variantId = Optional.present(variantId.sanitizeId().toVariantGid()),
                         quantity = quantity,
                     )
                 }
@@ -223,6 +229,9 @@ class ApolloTrovesApiServiceImpl(
             data.orderCreate?.order?.name ?: error("Order creation returned no order")
         }
     }
+
+    /** Helper to guarantee we only process the numeric ID, avoiding "gid://shopify/Product/gid://..." errors */
+    private fun String.sanitizeId(): String = this.substringAfterLast('/')
 
     /** Current app language as a Shopify locale code ("ar"/"en") for `translations(locale:)`. */
     private suspend fun locale(): String =
@@ -241,7 +250,6 @@ class ApolloTrovesApiServiceImpl(
         country = Optional.presentIfNotNull(country),
     )
 
-
     /** True when the text has any Arabic characters (base, supplement, extended-A blocks). */
     private fun String.containsArabic(): Boolean =
         any { it in '؀'..'ۿ' || it in 'ݐ'..'ݿ' || it in 'ࢠ'..'ࣿ' }
@@ -257,6 +265,5 @@ class ApolloTrovesApiServiceImpl(
         const val CATEGORIES_QUERY = "collection_type:Collection"
         const val PRODUCT_TYPE_QUERY =  "collection_type:product_type"
         const val DEFAULT_LOCALE = "en"
-
     }
 }
