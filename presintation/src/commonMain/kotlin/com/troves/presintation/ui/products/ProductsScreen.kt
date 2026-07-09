@@ -70,6 +70,8 @@ import troves.presintation.generated.resources.common_back
 import com.troves.designsystem.components.emptystate.EmptyState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import kotlin.math.round
+import kotlin.random.Random
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -299,7 +301,7 @@ private fun ProductsGrid(
             MainCard(
                 title = product.title,
                 price = formatPrice(product.price),
-                rating = product.rating.toDouble(),
+                rating = round(Random.nextDouble(3.0,5.0) * 10.0 ) / 10.0,
                 imagePainter = rememberAsyncImagePainter(
                     model = product.imageUrl,
                     placeholder = placeholder,

@@ -52,7 +52,7 @@ fun OrderSummaryItemCard(
            .shadow(elevation =0.4.dp, shape = Theme.shapes.medium, clip = false)
             .clip(Theme.shapes.medium)
             .background(Theme.colors.surface)
-            .border(1.dp, Theme.colors.onPrimaryVariant, Theme.shapes.medium)
+            .border(1.dp, Theme.colors.onPrimary, Theme.shapes.medium)
             .padding(Theme.spacing.small),
         horizontalArrangement = Arrangement.spacedBy(Theme.spacing.medium),
         verticalAlignment = Alignment.CenterVertically,

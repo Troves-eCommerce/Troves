@@ -169,7 +169,7 @@
     <string name="signup_prompt_confirm">إنشاء حساب</string>
 
     <!-- Wishlist Header -->
-    <string name="wishlist_header_title">قائمة أمنياتك</string>
+    <string name="wishlist_header_title">مفضلك</string>
     <string name="wishlist_header_items_count">%1$d منتجات محفوظة لوقت لاحق</string>
 
     <!-- Search Section -->
@@ -376,6 +376,7 @@
     <string name="profile_rates_error">الأسعار: %1$s</string>
     <string name="profile_user_fallback">مستخدم</string>
     <string name="profile_logout_failed">فشل تسجيل الخروج</string>
+    <string name = "profile_header">حسابك</string>
 
     <!-- Address -->
     <string name="address_location_permission_required">يلزم إذن الموقع للحصول على الموقع الحالي</string>

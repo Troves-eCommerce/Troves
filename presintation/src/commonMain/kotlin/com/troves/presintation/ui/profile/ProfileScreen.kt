@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -20,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.troves.designsystem.components.dialog.TrovesDialog
 import com.troves.designsystem.components.toast.TrovesSnackbarHost
+import com.troves.designsystem.components.topbar.BaseTopAppBar
 import com.troves.designsystem.theme.Theme
 import com.troves.designsystem.util.autoMirror
 import com.troves.presintation.ui.profile.components.LiveRatesRow
@@ -119,14 +121,18 @@ fun ProfileScreen(
         )
     }
 
-    Scaffold(
-        containerColor = Theme.colors.backGround,
-    )
-    { paddingValues ->
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Theme.colors.backGround)
+            .statusBarsPadding(),
+    ) {
+        BaseTopAppBar(title = stringResource(Res.string.profile_title))
+
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
+                .weight(1f)
         ) {
             TrovesSnackbarHost(
                 hostState = snackbarHostState,
@@ -273,7 +279,9 @@ fun LanguageBottomSheet(
         ) {
             Text(
                 text = stringResource(ResP.string.profile_select_language),
-                style = Theme.typography.title,
+                style = Theme.typography.title.copy(
+                    color = Theme.colors.primaryFont
+                ),
                 modifier = Modifier.padding(vertical = 16.dp)
             )
 
@@ -282,7 +290,7 @@ fun LanguageBottomSheet(
                 isSelected = selectedLanguage == "en",
                 onClick = { onLanguageSelected("en") }
             )
-            HorizontalDivider(color = Theme.colors.onPrimary)
+            HorizontalDivider(color = Theme.colors.secondary)
             LanguageItem(
                 title = stringResource(ResP.string.language_arabic),
                 isSelected = selectedLanguage == "ar",
@@ -311,7 +319,9 @@ fun ThemeBottomSheet(
         ) {
             Text(
                 text = stringResource(ResP.string.profile_select_theme),
-                style = Theme.typography.title,
+                style = Theme.typography.title.copy(
+                    color = Theme.colors.primaryFont
+                ),
                 modifier = Modifier.padding(vertical = 16.dp)
             )
 
@@ -320,13 +330,13 @@ fun ThemeBottomSheet(
                 isSelected = selectedTheme == "system",
                 onClick = { onThemeSelected("system") }
             )
-            HorizontalDivider(color = Theme.colors.onPrimary)
+            HorizontalDivider(color = Theme.colors.secondary)
             LanguageItem(
                 title = stringResource(ResP.string.profile_theme_light),
                 isSelected = selectedTheme == "light",
                 onClick = { onThemeSelected("light") }
             )
-            HorizontalDivider(color = Theme.colors.onPrimary)
+            HorizontalDivider(color = Theme.colors.secondary)
             LanguageItem(
                 title = stringResource(ResP.string.profile_theme_dark),
                 isSelected = selectedTheme == "dark",
@@ -357,7 +367,7 @@ fun LanguageItem(
         )
         if (isSelected) {
             Icon(
-                painter = painterResource(Res.drawable.ic_star),
+                painter = painterResource(Res.drawable.ic_check),
                 contentDescription = null,
                 tint = Theme.colors.primary,
                 modifier = Modifier.size(20.dp)

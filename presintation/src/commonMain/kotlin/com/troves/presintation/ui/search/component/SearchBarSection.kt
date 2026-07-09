@@ -1,7 +1,6 @@
 package com.troves.presintation.ui.search.component
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -40,13 +39,13 @@ fun SearchBarSection(
     onClearSearches: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val barBg = if (isSystemInDarkTheme()) Color(0xFF2C2C2C) else Color(0xFFEFEFEF)
+    val barBg = Theme.colors.onPrimary
 
     Row(
         modifier = modifier
             .fillMaxWidth()
             .background(Theme.colors.backGround)
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+            .padding(horizontal = Theme.spacing.medium, vertical = Theme.spacing.small),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {

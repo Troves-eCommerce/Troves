@@ -90,8 +90,7 @@ fun EmptyState(
 
         Text(
             text = title,
-            fontSize = 19.sp,
-            fontWeight = FontWeight.Bold,
+            style = Theme.typography.body.small.copy(fontWeight = FontWeight.Bold),
             color = Theme.colors.primaryFont,
             textAlign = TextAlign.Center
         )
@@ -100,8 +99,7 @@ fun EmptyState(
 
         Text(
             text = description,
-            fontSize = 14.sp,
-            lineHeight = 20.sp,
+            style = Theme.typography.body.medium,
             color = Theme.colors.secondaryFont,
             textAlign = TextAlign.Center
         )

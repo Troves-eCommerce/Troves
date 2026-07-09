@@ -496,6 +496,7 @@ private fun HomeContent(
             onIntent = onIntent,
         )
     }
+    Spacer( modifier = Modifier.height(20.dp))
 }
 
 @Composable

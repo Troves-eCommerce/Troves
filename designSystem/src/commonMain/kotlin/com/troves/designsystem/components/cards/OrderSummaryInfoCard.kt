@@ -43,7 +43,7 @@ fun OrderSummaryInfoCard(
           .shadow(elevation = 0.2.dp, shape = Theme.shapes.medium, clip = false)
             .clip(Theme.shapes.medium)
             .background(Theme.colors.surface)
-            .border(1.dp, Theme.colors.onPrimaryVariant, Theme.shapes.medium)
+            .border(1.dp, Theme.colors.onPrimary, Theme.shapes.medium)
             .padding(Theme.spacing.medium),
         verticalArrangement = Arrangement.spacedBy(Theme.spacing.small),
     ) {

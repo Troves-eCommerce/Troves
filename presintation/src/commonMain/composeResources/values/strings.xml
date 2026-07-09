@@ -96,13 +96,13 @@
     <!-- Checkout · Address step -->
     <string name="checkout_address_step_title">Select Delivery Address</string>
     <string name="checkout_address_step_subtitle">Choose where you want your order to be delivered.</string>
-    <string name="checkout_no_saved_addresses">You don\'t have any saved addresses yet.</string>
+    <string name="checkout_no_saved_addresses">You don't have any saved addresses yet.</string>
     <string name="checkout_address_default">Default</string>
     <string name="checkout_add_new_address">Add New Address</string>
 
     <!-- Checkout · Payment step -->
     <string name="checkout_payment_step_title">Select Payment Method</string>
-    <string name="checkout_payment_step_subtitle">Choose how you\'d like to pay for your order.</string>
+    <string name="checkout_payment_step_subtitle">Choose how you'd like to pay for your order.</string>
     <string name="checkout_payment_cod_title">Cash on Delivery (COD)</string>
     <string name="checkout_paymob_cod_title">Paymob</string>
     <string name="checkout_paymob_cod_desc">Pay securely in-app using Paymob </string>
@@ -134,11 +134,11 @@
     <string name="ai_disclaimer">Troves AI can make mistakes. Please double-check important info.</string>
     <string name="ai_error_generic">Something went wrong. Please try again.</string>
     <string name="ai_retry">Retry</string>
-    <string name="ai_rate_limited">You\'ve reached the chat limit. Try again in %1$s.</string>
+    <string name="ai_rate_limited">You've reached the chat limit. Try again in %1$s.</string>
     <string name="ai_profile_entry">Troves AI</string>
-    <string name="ai_voice_unavailable">Voice input isn\'t available on this device.</string>
+    <string name="ai_voice_unavailable">Voice input isn't available on this device.</string>
     <string name="ai_voice_permission_denied">Microphone permission is needed for voice input. Enable it in Settings.</string>
-    <string name="ai_voice_no_speech">Didn\'t catch that. Please try again.</string>
+    <string name="ai_voice_no_speech">Didn't catch that. Please try again.</string>
     <string name="ai_voice_error">Voice input failed. Please try again.</string>
     <string name="ai_voice_listening">Listening… tap the mic to stop</string>
 
@@ -154,7 +154,7 @@
     <string name="ai_history_empty">No conversations yet</string>
     <string name="ai_history_empty_subtitle">Your chats with Troves AI will appear here.</string>
     <string name="ai_history_guest">Sign in to see your chat history</string>
-    <string name="ai_history_error">Couldn\'t load your chat history.</string>
+    <string name="ai_history_error">Couldn't load your chat history.</string>
     <string name="ai_history_delete">Delete conversation</string>
     <string name="ai_history_delete_title">Delete conversation?</string>
     <string name="ai_history_delete_message">This conversation will be permanently removed.</string>
@@ -167,7 +167,7 @@
     <string name="signup_prompt_confirm">Sign Up</string>
 
     <!-- Wishlist Header -->
-    <string name="wishlist_header_title">My Wishlist</string>
+    <string name="wishlist_header_title">Wishlist</string>
     <string name="wishlist_header_items_count">%1$d items saved for later</string>
 
     <!-- Search Section -->
@@ -210,8 +210,8 @@
     <string name="survey_opt_pants">Pants</string>
     <string name="survey_opt_dresses">Dresses</string>
     <string name="survey_opt_bags">Bags</string>
-    <string name="survey_budget_title">What\'s your budget?</string>
-    <string name="survey_budget_subtitle">We\'ll personalise picks to fit your wallet</string>
+    <string name="survey_budget_title">What's your budget?</string>
+    <string name="survey_budget_subtitle">We'll personalise picks to fit your wallet</string>
     <string name="survey_opt_budget">Budget</string>
     <string name="survey_opt_midrange">Mid-range</string>
     <string name="survey_opt_premium">Premium</string>
@@ -234,16 +234,16 @@
     <string name="survey_opt_men">Men</string>
     <string name="survey_opt_women">Women</string>
     <string name="survey_opt_unisex">Unisex</string>
-    <string name="survey_banner_desc">Answer a few quick questions and we\'ll personalise your shopping experience.</string>
-    <string name="survey_banner_never">Don\'t show again</string>
+    <string name="survey_banner_desc">Answer a few quick questions and we'll personalise your shopping experience.</string>
+    <string name="survey_banner_never">Don't show again</string>
     <string name="survey_error_generic">Something went wrong</string>
     <string name="survey_error_ok">OK</string>
     <string name="survey_btn_finish">Finish</string>
     <string name="survey_btn_next">Next ?</string>
     <string name="survey_btn_saving">Saving…</string>
     <string name="survey_btn_back">Back</string>
-    <string name="survey_confirm_title">You\'re all set!</string>
-    <string name="survey_confirm_desc">We\'ll use your preferences to recommend products you\'ll love.</string>
+    <string name="survey_confirm_title">You're all set!</string>
+    <string name="survey_confirm_desc">We'll use your preferences to recommend products you\'ll love.</string>
     <string name="survey_confirm_shop">Continue Shopping</string>
     <string name="survey_question_header">Question %1$d of %2$d</string>
     <string name="order_details_qty">Qty: %1$d</string>
@@ -373,6 +373,7 @@
     <string name="profile_rates_error">Rates: %1$s</string>
     <string name="profile_user_fallback">User</string>
     <string name="profile_logout_failed">Failed to logout</string>
+    <string name = "profile_header">Account</string>
 
     <!-- Address -->
     <string name="address_location_permission_required">Location permission is required to get current location</string>
@@ -392,7 +393,7 @@
     <string name="map_fly_to_location">Fly to current location</string>
     <string name="map_confirm_location">Confirm location</string>
     <string name="map_getting_address">Getting address details…</string>
-    <string name="address_map_no_address">We couldn\'t identify an address here. You can still use this spot and fill the details manually.</string>
+    <string name="address_map_no_address">We couldn't identify an address here. You can still use this spot and fill the details manually.</string>
 
     <!-- Survey (display chrome) -->
     <string name="survey_next">Next</string>
@@ -407,9 +408,9 @@
     <string name="survey_banner_title">Help us know your style</string>
     <string name="survey_banner_subtitle">Answer a few quick questions and we'll personalise your shopping experience.</string>
     <string name="survey_banner_start">Start Survey</string>
-    <string name="survey_banner_dismiss">Don\'t show again</string>
-    <string name="survey_confirmation_title">You\'re all set!</string>
-    <string name="survey_confirmation_body">We\'ll use your preferences to recommend products you\'ll love.</string>
+    <string name="survey_banner_dismiss">Don't show again</string>
+    <string name="survey_confirmation_title">You're all set!</string>
+    <string name="survey_confirmation_body">We'll use your preferences to recommend products you\'ll love.</string>
     <string name="survey_confirmation_continue">Continue Shopping</string>
 
     <!-- Onboarding -->
