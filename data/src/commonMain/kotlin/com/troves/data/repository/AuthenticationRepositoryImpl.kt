@@ -14,11 +14,13 @@ import dev.gitlive.firebase.auth.GoogleAuthProvider
 import dev.gitlive.firebase.auth.auth
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 import com.troves.data.source.remote.RemoteDatasource
 import com.troves.data.mapper.toDto
+import com.troves.data.mapper.toDomain
 import com.troves.domain.entity.SurveyAnswers
 
 interface PlatformAuthenticationRepository : AuthenticationRepository
@@ -139,25 +141,54 @@ class AuthenticationRepositoryFirebaseImpl(
         preferences.setOnboardingDone(true)
     }
 
-    override val isSurveyDoneStream: Flow<Boolean> = preferences.isSurveyDone
+    // Re-emits after the survey is saved, so the stream reflects the write without
+    // waiting for an auth event.
+    private val surveyRefresh = kotlinx.coroutines.flow.MutableStateFlow(0)
 
-    override suspend fun isSurveyDone(): Boolean =
-        preferences.isSurveyDone.first()
+    // Survey completion is a property of the *account*, read from Firestore — never a
+    // device-wide flag, or signing into a second account inherits the first one's state.
+    // Declared after currentUserStream: property initializers run top-to-bottom.
+    // Each input is deduped: DataStore re-emits the whole preference set on any write,
+    // and idTokenChanged fires on every token refresh — neither should re-hit Firestore.
+    // The result is deliberately *not* deduped, so saving a survey reloads the
+    // recommendations even when the flag was already true (banner dismissed earlier).
+    override val isSurveyDoneStream: Flow<Boolean> =
+        combine(
+            currentUserStream.map { it?.id }.distinctUntilChanged(),
+            preferences.surveyBannerDismissedUids.distinctUntilChanged(),
+            surveyRefresh,
+        ) { userId, dismissedUids, _ -> userId to dismissedUids }
+            .map { (userId, dismissedUids) ->
+                when {
+                    userId == null -> false
+                    userId in dismissedUids -> true
+                    else -> runCatching { remoteDatasource.getSurveyAnswers(userId) }
+                        .getOrNull()?.completed == true
+                }
+            }
 
-    override suspend fun setSurveyDone() {
-        preferences.setSurveyDone(true)
+    override suspend fun isSurveyDone(): Boolean = isSurveyDoneStream.first()
+
+    override suspend fun dismissSurveyBanner() {
+        val userId = getCurrentUserId() ?: return
+        preferences.addSurveyBannerDismissedUid(userId)
     }
 
     override suspend fun saveSurveyAnswers(answers: SurveyAnswers): Result<Unit> {
         val userId = getCurrentUserId() ?: return Result.Error(Exception("User not logged in"))
-        
+
         val dto = answers.toDto()
         val remoteResult = remoteDatasource.saveSurveyAnswers(userId, dto)
-        
+
         if (remoteResult is Result.Success) {
-            setSurveyDone()
+            surveyRefresh.value++
         }
         return remoteResult
+    }
+
+    override suspend fun getSurveyAnswers(): SurveyAnswers? {
+        val userId = getCurrentUserId() ?: return null
+        return remoteDatasource.getSurveyAnswers(userId)?.toDomain()
     }
 
     override fun getCurrentUserId(): String? = firebaseAuth.currentUser?.uid
