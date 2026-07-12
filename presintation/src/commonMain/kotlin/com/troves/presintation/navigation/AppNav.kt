@@ -57,8 +57,12 @@ import com.troves.presintation.ui.search.SearchScreenViewModel
 import com.troves.presintation.ui.seeall.SeeAllScreen
 import com.troves.presintation.ui.splash.SplashScreen
 import com.troves.presintation.ui.survey.SurveyScreen
+import kotlinx.serialization.InternalSerializationApi
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.modules.PolymorphicModuleBuilder
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
+import kotlinx.serialization.serializer
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import troves.designsystem.generated.resources.Res
@@ -75,35 +79,40 @@ import troves.presintation.generated.resources.nav_home
 import troves.presintation.generated.resources.nav_orders
 import troves.presintation.generated.resources.nav_profile
 import troves.presintation.generated.resources.nav_wishlist
+import kotlin.reflect.KClass
 import troves.presintation.generated.resources.Res as StringRes
 
 private val navSavedStateConfiguration = SavedStateConfiguration {
     serializersModule = SerializersModule {
         polymorphic(NavKey::class) {
-            subclass(AppRoute.Splash::class, AppRoute.Splash.serializer())
-            subclass(AppRoute.Onboarding::class, AppRoute.Onboarding.serializer())
-            subclass(AppRoute.Login::class, AppRoute.Login.serializer())
-            subclass(AppRoute.Register::class, AppRoute.Register.serializer())
-            subclass(AppRoute.EmailVerification::class, AppRoute.EmailVerification.serializer())
-            subclass(AppRoute.Home::class, AppRoute.Home.serializer())
-            subclass(AppRoute.Products::class, AppRoute.Products.serializer())
-            subclass(AppRoute.SeeAll::class, AppRoute.SeeAll.serializer())
-            subclass(AppRoute.Favorites::class, AppRoute.Favorites.serializer())
-            subclass(AppRoute.Profile::class, AppRoute.Profile.serializer())
-            subclass(AppRoute.AiChat::class, AppRoute.AiChat.serializer())
-            subclass(AppRoute.ProductDetails::class, AppRoute.ProductDetails.serializer())
-            subclass(AppRoute.Cart::class, AppRoute.Cart.serializer())
-            subclass(AppRoute.Checkout::class, AppRoute.Checkout.serializer())
-            subclass(AppRoute.Orders::class, AppRoute.Orders.serializer())
-            subclass(AppRoute.OrderDetails::class, AppRoute.OrderDetails.serializer())
-            subclass(AppRoute.Search::class, AppRoute.Search.serializer())
-            subclass(AppRoute.ManageAddresses::class, AppRoute.ManageAddresses.serializer())
-            subclass(AppRoute.NewAddress::class, AppRoute.NewAddress.serializer())
-            subclass(AppRoute.PaymentMethods::class, AppRoute.PaymentMethods.serializer())
-            subclass(AppRoute.OrderResult::class, AppRoute.OrderResult.serializer())
-            subclass(AppRoute.Survey::class, AppRoute.Survey.serializer())
+            serializableSubclass(AppRoute.Splash::class             as KClass<NavKey>,)
+            serializableSubclass(AppRoute.Onboarding::class         as KClass<NavKey>,)
+            serializableSubclass(AppRoute.Login::class              as KClass<NavKey>,)
+            serializableSubclass(AppRoute.Register::class           as KClass<NavKey>,)
+            serializableSubclass(AppRoute.EmailVerification::class  as KClass<NavKey>,)
+            serializableSubclass(AppRoute.Home::class               as KClass<NavKey>,)
+            serializableSubclass(AppRoute.Products::class           as KClass<NavKey>,)
+            serializableSubclass(AppRoute.SeeAll::class             as KClass<NavKey>,)
+            serializableSubclass(AppRoute.Favorites::class          as KClass<NavKey>,)
+            serializableSubclass(AppRoute.Profile::class            as KClass<NavKey>,)
+            serializableSubclass(AppRoute.AiChat::class             as KClass<NavKey>,)
+            serializableSubclass(AppRoute.ProductDetails::class     as KClass<NavKey>,)
+            serializableSubclass(AppRoute.Cart::class               as KClass<NavKey>,)
+            serializableSubclass(AppRoute.Checkout::class           as KClass<NavKey>,)
+            serializableSubclass(AppRoute.Orders::class             as KClass<NavKey>,)
+            serializableSubclass(AppRoute.OrderDetails::class       as KClass<NavKey>,)
+            serializableSubclass(AppRoute.Search::class             as KClass<NavKey>,)
+            serializableSubclass(AppRoute.ManageAddresses::class    as KClass<NavKey>,)
+            serializableSubclass(AppRoute.NewAddress::class         as KClass<NavKey>,)
+            serializableSubclass(AppRoute.PaymentMethods::class     as KClass<NavKey>,)
+            serializableSubclass(AppRoute.OrderResult::class        as KClass<NavKey>,)
+            serializableSubclass(AppRoute.Survey::class             as KClass<NavKey>,)
         }
     }
+}
+@OptIn(InternalSerializationApi::class)
+private fun PolymorphicModuleBuilder<NavKey>.serializableSubclass(kclass: KClass<NavKey>){
+    subclass(kclass, kclass.serializer())
 }
 
 @Composable
